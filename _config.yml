@@ -1,0 +1,16 @@
+title: COP 5725 Fall 26
+description: Database Management at the University of Florida
+logo: /assets/img/logo.png
+show_downloads: false
+theme: jekyll-theme-minimal
+baseurl: /cop5725fa26
+
+markdown: kramdown
+highlighter: rouge
+commonmark:
+  options: ["SMART", "FOOTNOTES"]
+  extensions: ["strikethrough", "autolink", "table", "alerts"]
+kramdown:
+  parse_block_html: true
+  html_to_native: true
+github: [metadata]
