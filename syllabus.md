@@ -4,9 +4,11 @@ layout: default
 
 # COP 5725 Database Management Fall 2026 #
 
+**Class Number:** 27221 | **Section:** 7LL9
+
 
 **Class Hours:** Monday, Wednesday, Friday 2nd Period _(8:30 AM to 9:20 AM)_<br/>
-**Location:** TBA
+**Location:** [Matherly Hall, MALA 1000](https://campusmap.ufl.edu/#/index/1024)
 
 **Final Exam:** During finals period (December 5-11, 2026)
 
@@ -74,19 +76,9 @@ Outcomes will be evaluated through assignments, projects, and examinations.
 
 ## Required Textbooks and Software
 
-### Textbooks
+### Textbook
 
 **Required:**
-
-- Abraham Silberschatz, Henry Korth, and S. Sudarshan. *Database System Concepts*, 7th Edition. McGraw-Hill, 2019. ([db-book.com](https://www.db-book.com/))
-
-**Recommended:**
-
-- Raghu Ramakrishnan and Johannes Gehrke. *Database Management Systems*, 3rd Edition. McGraw-Hill, 2003.
-
-- Peter Bailis, Joseph Hellerstein, and Michael Stonebraker, editors. *Readings in Database Systems*, 5th Edition. ([redbook.io](http://www.redbook.io/)) Free online.
-
-**Supplementary:**
 
 - Hector Garcia-Molina, Jeffrey Ullman, and Jennifer Widom. *Database Systems: The Complete Book*, 2nd Edition. Pearson, 2008.
 
