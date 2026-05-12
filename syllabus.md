@@ -10,7 +10,7 @@ layout: default
 **Class Hours:** Monday, Wednesday, Friday 2nd Period _(8:30 AM to 9:20 AM)_<br/>
 **Location:** [Matherly Hall, MALA 1000](https://campusmap.ufl.edu/#/index/1024)
 
-**Final Exam:** During finals period (December 5-11, 2026)
+**Exams:** Exam 1 on Wed, Oct 14; Exam 2 on Wed, Nov 18; Final Exam during the finals period (December 5-11, 2026)
 
 
 ## Instructors
@@ -37,18 +37,22 @@ The course balances theoretical foundations with hands-on experience using Postg
 
 Topics include:
 
-1. Relational model and relational algebra
-2. SQL and advanced query writing
-3. Database design and normalization
-4. Storage engines and file organization
-5. Indexing structures (B+ trees, hash indexes)
-6. Query processing and join algorithms
-7. Query optimization and cost estimation
-8. Transaction management and ACID properties
-9. Concurrency control (locking, MVCC)
-10. Crash recovery and write-ahead logging
-11. Distributed databases
-12. Modern analytical systems and column stores
+1. Relational model, data types, and relational algebra
+2. Entity-relationship modeling and translation to relations
+3. Functional dependencies and normalization
+4. SQL fundamentals: DDL, joins, aggregation, subqueries
+5. Advanced SQL: common table expressions, window functions, recursive queries, views, triggers
+6. Python and DuckDB for query exploration and visualization
+7. Storage hierarchy and file organization
+8. Row stores versus column stores
+9. Indexing structures: B+ trees, hash indexes, PostgreSQL GiST/GIN/BRIN
+10. External sorting and join algorithms
+11. Query execution: iterator model and vectorized execution
+12. Query optimization and cost estimation
+13. Transaction management and ACID properties
+14. Concurrency control: locking, timestamps, MVCC, snapshot isolation
+15. Crash recovery and write-ahead logging (ARIES)
+16. Distributed databases and modern analytical systems
 
 
 ## Course Pre-Requisites
@@ -108,22 +112,23 @@ Many of the graded class _activities_ will not be announced.
 
 | Week | Topic |
 | ---- | ----- |
-| 0  | Course Introduction (Aug 21) |
-| 1  | Relational Model and SQL Fundamentals |
-| 2  | Database Design and Normalization |
-| 3  | Storage and File Organization |
-| 4  | Buffer Management and Memory |
-| 5  | Indexing I: B+ Trees and Hash Indexes |
-| 6  | Indexing II: Advanced Indexes and Sorting |
-| 7  | Join Algorithms |
-| 8  | Query Processing and Execution Models |
-| 9  | Query Optimization |
-| 10 | Transaction Management |
-| 11 | Concurrency Control |
-| 12 | Recovery and Write-Ahead Logging |
-| 13 | Distributed Databases |
-| 14 | **Thanksgiving Break** |
-| 15 | Modern Systems, Column Stores, and Review |
+| 1  | Welcome (Aug 21 only) |
+| 2  | Database History, Relational Model, Data Types, Algebra |
+| 3  | Relational Algebra, ER Modeling, ER to Relations |
+| 4  | Functional Dependencies and Normalization |
+| 5  | SQL Fundamentals |
+| 6  | Advanced SQL I: Subqueries, CTEs, Window Functions |
+| 7  | Advanced SQL II: Window Frames, Recursive Queries, Views |
+| 8  | Programming with Python, psycopg, DuckDB, Visualization |
+| 9  | Exam 1 (Oct 14), Storage Hierarchy |
+| 10 | Row vs Column Stores, B+ Trees |
+| 11 | Hash Indexes, PostgreSQL Index Types, External Sorting |
+| 12 | Join Algorithms and Iterator Model |
+| 13 | Vectorized Execution and Query Optimization |
+| 14 | Transactions, Exam 2 (Nov 18), Two-Phase Locking |
+| 15 | **Thanksgiving Break** |
+| 16 | MVCC, Recovery, Distributed and Modern Systems |
+| Finals | Final Exam (Exam 3) and Final Project Presentations |
 
 See the [Schedule](schedule) page for detailed week-by-week topics and deliverables.
 
@@ -136,20 +141,39 @@ The grade breakdown will be as follows:
 
 | |Percentage|
 | --- |--- |
-| Assignments | 25%|
-| Midterm Exam | 20%|
-| Project | 25%|
-| Final Exam | 30%|
+| In-class clicker checks (participation) | 15%|
+| Project 1 (Schema + SQL) | 4%|
+| Project 2 (Advanced SQL) | 6%|
+| Project 3 (Indexing + Query Plans) | 10%|
+| Final Project (capstone) | 15%|
+| Exam 1 (Oct 14) | 15%|
+| Exam 2 (Nov 18) | 15%|
+| Final Exam (Exam 3, finals week) | 20%|
 |         |**100%**|
 
-**Assignments** include SQL exercises, written problem sets, and implementation tasks using PostgreSQL and DuckDB.
+Projects increase in weight as the semester progresses, reflecting growing scope and difficulty.
+Project 0 is a pass/fail setup check; failure to submit reduces the final grade by one full letter.
 
-**Project** is a multi-phase team or individual project involving database design, implementation, and performance analysis.
-- Proposal (Week 4)
-- Checkpoint (Week 8)
-- Final Report and Presentation (Week 15)
+**In-class clicker checks** are short comprehension questions delivered through the UF-supported clicker system multiple times per lecture.
+They verify that students are following along; grading is on participation, not correctness.
+The lowest 3-5 class days are dropped from the participation total to absorb absences and tech issues.
+Project 0 is a pass/fail setup check and is not weighted in the table above; failure to submit reduces the final grade by one full letter.
+
+**Projects** are individual and modeled on real industry tasks.
+Each student creates a private GitHub repository on their own account named `cop5725fa26-project` and adds `cegme` as Admin so the TA and instructor can review.
+Each student claims a unique dataset from the approved roster, and successive projects build on the same dataset.
+Project 0 is setup and dataset claim (P/F).
+Project 1 is schema design and SQL ETL ("load this new source").
+Project 2 is advanced SQL analytics ("write the metrics").
+Project 3 is indexing and query optimization ("this dashboard is slow").
+The Final Project ships a complete artifact (analytics report, data API, dashboard, or pipeline).
+Each project has a public rubric and a peer-grading rubric subset.
+After each deadline, students present in small breakout groups; the highest-scored student in each group then presents to the full class.
 
 **Exams** cover conceptual understanding of database internals, algorithms, and tradeoffs.
+Exam 1 covers Sections 1-3 (foundations, SQL, programming).
+Exam 2 covers Sections 4-5 (storage, indexing, query processing).
+The Final Exam is cumulative, weighted toward Sections 6-7 (transactions, concurrency, recovery, distributed and modern systems).
 
 ### Late Policy
 

@@ -6,235 +6,296 @@ layout: default
 
 ## Key Dates
 
-- **Classes Begin:** August 20, 2026
-- **Labor Day (no class):** September 7, 2026
-- **Veterans Day (no class):** November 11, 2026
-- **Thanksgiving Break:** November 23-28, 2026
-- **Classes End:** December 2, 2026
-- **Finals:** December 5-11, 2026
+- **Classes Begin:** Thursday, August 20, 2026 (first MWF meeting: Friday, August 21)
+- **Labor Day (no class):** Monday, September 7, 2026
+- **Homecoming (no class):** Thursday-Friday, October 9-10, 2026
+- **Veterans Day (no class):** Wednesday, November 11, 2026
+- **Thanksgiving Break (no class):** Monday-Saturday, November 23-28, 2026
+- **Drop/Withdrawal Deadline:** Monday, November 16, 2026
+- **Classes End:** Wednesday, December 2, 2026
+- **Reading Days:** Thursday-Friday, December 3-4, 2026
+- **Finals Week:** Saturday-Friday, December 5-11, 2026
+
+A total of **39 class meetings** for the semester.
 
 ---
 
-## Assignments
+## Course Structure
 
-| Assignment | Due Date | Points | Description |
-|------------|----------|--------|-------------|
-| Assignment 0 | Sep 1, 11:59 PM | 25 | PostgreSQL & DuckDB setup, basic SQL |
-| Assignment 1 | Sep 18, 11:59 PM | 75 | Relational algebra, schema design, normalization |
-| Assignment 2 | Oct 9, 11:59 PM | 75 | Indexing and storage analysis |
-| Assignment 3 | Oct 30, 11:59 PM | 75 | Query optimization and execution plans |
-| Assignment 4 | Nov 20, 11:59 PM | 75 | Transactions and concurrency control |
+The course is divided into seven content sections.
+Each section closes with an in-class quiz on a Friday.
+Two midterm exams and one final exam mark major checkpoints.
+There are no in-class review periods; a practice exam with worked solutions is published one week before each exam.
+Four individual projects plus a final capstone are spaced two to three weeks apart, each peer-graded with small-group presentations.
 
-## Project Milestones
-
-| Milestone | Due Date | Points | Description |
-|-----------|----------|--------|-------------|
-| Project Proposal | Sep 25, 11:59 PM | 50 | Problem statement and database design |
-| Checkpoint | Oct 23, 11:59 PM | 75 | Working prototype with schema and queries |
-| Final Report | Dec 2, 11:59 PM | 125 | Complete report and presentation |
-
-*More details will be released as the semester progresses.*
+| # | Section | Weeks | Classes | Closes |
+|---|---------|-------|---------|--------|
+| 1 | Foundations: Relational Model, Algebra, Design | 1-4 | 9 | Fri, Sep 11 |
+| 2 | SQL Mastery: Basic to Advanced | 5-7 | 9 | Fri, Oct 2 |
+| 3 | Programming and Tools: Python and DuckDB | 8 | 2 | Exam 1 (Oct 14) |
+| 4 | Storage and Indexing | 9-11 | 7 | Fri, Oct 30 |
+| 5 | Query Processing and Optimization | 12-13 | 6 | Fri, Nov 13 |
+| 6 | Transactions, Concurrency, Recovery | 14, 16 | 5 | Wed, Dec 2 |
+| 7 | Distributed and Modern Systems | 16 | 1 | Final Exam |
 
 ---
 
-## Weekly Schedule
+## Exams
 
-### Week 0: Course Introduction (Aug 21)
-
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Fri | Course Introduction | Syllabus, expectations, software setup |
-
-**Assigned:** Assignment 0
+| Exam | Date | Coverage | Weight |
+|------|------|----------|--------|
+| Exam 1 | Wed, Oct 14 | Sections 1-3 (Foundations, SQL, Programming) | 15% |
+| Exam 2 | Wed, Nov 18 | Sections 4-5 (Storage, Indexing, Query Processing) | 15% |
+| Exam 3 (Final) | TBA in Dec 5-11 | Cumulative, weighted toward Sections 6-7 | 20% |
 
 ---
 
-### Week 1: Relational Model and SQL Fundamentals (Aug 24, 26, 28)
+## In-Class Clicker Checks
 
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | The Relational Model | Relations, tuples, keys, constraints |
-| Wed | Relational Algebra | Selection, projection, joins, set operations |
-| Fri | SQL Basics with PostgreSQL | CREATE, INSERT, SELECT, WHERE, GROUP BY |
+Each lecture embeds 2-4 short multiple-choice comprehension questions delivered through the UF-supported clicker system.
+Grading is on participation, not correctness; the lowest 3-5 class days are dropped at end of semester.
+Total weight: 15%.
 
-**Reading:** Silberschatz Ch. 1-2, 6
+See [Assignments and Clicker Checks](assignments) for details.
 
 ---
 
-### Week 2: Database Design and Normalization (Aug 31, Sep 2, 4)
+## Projects
 
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | Entity-Relationship Modeling | ER diagrams, mapping to relations |
-| Wed | Functional Dependencies | Armstrong's axioms, closure algorithms |
-| Fri | Normal Forms | 1NF through BCNF, decomposition |
+Projects mirror real industry tasks.
+Each student creates a **private** GitHub repo on their own account named `cop5725fa26-project` (adding `cegme` as Admin), and claims a **unique dataset** from the approved roster — no two students share the same slice.
+Projects build on the same dataset across the semester: Project 0 loads it; Project 1 normalizes and queries it; Project 2 runs advanced analytics; Project 3 tunes performance; the Final Project ships a complete artifact.
+Project weights increase progressively: Project 1 is smallest (4%), Project 3 the largest before the capstone (10%), and the Final Project the largest overall (15%).
+After each deadline, students present in small breakout groups; the highest-scored from each group presents to the full class.
 
-**Due:** Assignment 0 (Sep 1)
-**Reading:** Silberschatz Ch. 7-8
+| Project | Weight | Released | Due | Presentations | Industry analog |
+|---------|--------|----------|-----|---------------|-----------------|
+| [Project 0](projects/project0) | P/F | Fri, Aug 21 | Fri, Sep 4 | none (setup only) | "Onboarding ticket": tools + claim your dataset |
+| [Project 1](projects/project1) | 4% | Wed, Sep 2 | Fri, Sep 25 | Mon Sep 28 / Wed Sep 30 | "Load this new source": schema + ETL + business queries |
+| [Project 2](projects/project2) | 6% | Mon, Sep 21 | Fri, Oct 23 | Mon Oct 26 / Wed Oct 28 | "Write the metrics": advanced SQL analytics |
+| [Project 3](projects/project3) | 10% | Mon, Oct 19 | Fri, Nov 13 | Mon Nov 16 / Fri Nov 20 | "This dashboard is slow": indexing + tuning report |
+| [Final Project](projects/project-final) | 15% | Mon, Nov 16 | Wed, Dec 9 | Wed Dec 9 (finals window) | Ship a real artifact (report / API / dashboard / pipeline) |
+
+See [Projects](projects) for the full specification and deliverables for each milestone.
 
 ---
 
-### Week 3: Storage and File Organization (Sep 9, 11)
+## Featured Readings (SIGMOD / VLDB / CIDR)
+
+Five paper discussions are spaced through the semester.
+Each comes with a short reading guide and a one-page written response (graded as part of the relevant quiz).
+
+| Week | Paper |
+|------|-------|
+| 3 | Codd, "A Relational Model of Data for Large Shared Data Banks," CACM 1970 |
+| 6 | Hirn and Grust, "A Fix for the Fixation on Fixpoints," CIDR 2023 (recursive CTEs) |
+| 10 | Stonebraker et al., "C-Store: A Column-oriented DBMS," VLDB 2005 |
+| 13 | Leis et al., "How Good Are Query Optimizers, Really?" PVLDB 2015 |
+| 14 | Mohan et al., "ARIES: A Transaction Recovery Method..." ACM TODS 1992 |
+| 16 | Raasveldt and Mühleisen, "DuckDB: An Embeddable Analytical Database," SIGMOD 2019 |
+
+A complete reading list, including supplementary papers tied to each lecture, is maintained in [LECTURE_READINGS.md](LECTURE_READINGS.md).
+
+---
+
+# Weekly Schedule
+
+---
+
+## Week 1: Welcome (Aug 17-21)
+
+| Day | Date | Topic | Activity |
+|-----|------|-------|----------|
+| Fri | Aug 21 | Course Introduction | Syllabus, expectations, repo tour, software preview |
+
+**Note:** Week 1 contains no graded work. Project 0 is released Friday and is purely a setup pass/fail check due in Week 3.
+
+---
+
+## Week 2: From History to the Relational Model (Aug 24-28)
+
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Aug 24 | History of Databases | Codd 1970 (assigned), GMW Ch. 1 |
+| Wed | Aug 26 | Relational Model and Data Types | GMW Ch. 2.1-2.3 |
+| Fri | Aug 28 | Relational Algebra I: Selection, Projection, Sets | GMW Ch. 2.4 |
+
+**Discussion:** PostgreSQL data type families (numeric, text, date/time, JSON, arrays, geometric, range) and how each fits the relational model.
+
+---
+
+## Week 3: Design Theory I (Aug 31 - Sep 4)
+
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Aug 31 | Relational Algebra II: Joins, Division, Extended RA | GMW Ch. 2.4-2.5 |
+| Wed | Sep 2 | Entity-Relationship Modeling | GMW Ch. 4.1-4.5 |
+| Fri | Sep 4 | ER-to-Relations Translation | GMW Ch. 4.5-4.6 |
+
+**Due:** Project 0 (setup, P/F) by 11:59 PM Fri Sep 4
+**Assigned:** Project 1 (released Wed Sep 2)
+
+---
+
+## Week 4: Design Theory II (Sep 7-11)
 
 *Monday Sep 7 - Labor Day, no class*
 
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Wed | Disk Storage and File Organization | Pages, records, heap files, sorted files |
-| Fri | Row Stores vs Column Stores | PostgreSQL (row) vs DuckDB (columnar) architecture |
-
-**Reading:** Silberschatz Ch. 13
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Wed | Sep 9 | Functional Dependencies, Closure, Keys | GMW Ch. 3.1-3.3 |
+| Fri | Sep 11 | Normalization (1NF, 2NF, 3NF, BCNF) | GMW Ch. 3.4-3.7 |
 
 ---
 
-### Week 4: Buffer Management and Memory (Sep 14, 16, 18)
+## Week 5: SQL Fundamentals (Sep 14-18)
 
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | Buffer Pool Management | Replacement policies, pin/unpin, dirty pages |
-| Wed | Memory Management Strategies | Clock replacement, LRU, DuckDB buffer manager |
-| Fri | Advanced SQL Workshop | Window functions, CTEs, analytical queries in DuckDB |
-
-**Assigned:** Assignment 1 (due Sep 18), Project Proposal (due Sep 25)
-**Reading:** Silberschatz Ch. 13.5
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Sep 14 | SQL DDL and SELECT Basics | GMW Ch. 6.1-6.2 |
+| Wed | Sep 16 | SQL Joins: Inner, Outer, Semi, Anti | GMW Ch. 6.3 |
+| Fri | Sep 18 | Aggregation, GROUP BY, HAVING | GMW Ch. 6.4 |
 
 ---
 
-### Week 5: Indexing I (Sep 21, 23, 25)
+## Week 6: Advanced SQL I (Sep 21-25)
 
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | B+ Tree Structure | Insertion, deletion, search, bulk loading |
-| Wed | B+ Tree Analysis | Cost analysis, fan-out, height calculations |
-| Fri | Hash-Based Indexing | Static hashing, extendible hashing, linear hashing |
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Sep 21 | Subqueries: Nested, Correlated, EXISTS, IN | GMW Ch. 6.3.6, 10.2 |
+| Wed | Sep 23 | Common Table Expressions (WITH) | PostgreSQL docs Ch. 7.8 |
+| Fri | Sep 25 | Window Functions I: OVER, PARTITION BY | PostgreSQL docs Ch. 3.5 |
 
-**Due:** Project Proposal (Sep 25)
-**Reading:** Silberschatz Ch. 14
-
----
-
-### Week 6: Indexing II and External Sorting (Sep 28, 30, Oct 2)
-
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | PostgreSQL Indexing | CREATE INDEX, EXPLAIN ANALYZE, GiST, GIN |
-| Wed | External Sorting | Two-way merge sort, multi-way merge sort |
-| Fri | Hashing for Grouping and Joins | Hash partitioning, grace hash join |
-
-**Reading:** Silberschatz Ch. 14-15
+**Due:** Project 1 (Schema + SQL) by 11:59 PM Fri Sep 25
+**Assigned:** Project 2 (released Mon Sep 21)
 
 ---
 
-### Week 7: Join Algorithms (Oct 5, 7, 9)
+## Week 7: Advanced SQL II (Sep 28 - Oct 2)
 
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | Nested Loop Joins | Simple, block, index nested loop |
-| Wed | Sort-Merge Join and Hash Join | Algorithm analysis and comparison |
-| Fri | Join Performance Lab | PostgreSQL and DuckDB join strategies (EXPLAIN) |
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Sep 28 | Window Functions II: Frames, Ranking, LAG/LEAD | PostgreSQL docs Ch. 9.22 |
+| Wed | Sep 30 | Recursive Queries (WITH RECURSIVE) | GMW Ch. 10.2; Hirn and Grust 2023 |
+| Fri | Oct 2 | Views, Constraints, Triggers | GMW Ch. 7-8 |
 
-**Due:** Assignment 2 (Oct 9)
-**Reading:** Silberschatz Ch. 15
-
----
-
-### Week 8: Query Processing and Execution (Oct 12, 14, 16)
-
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | Iterator Model (Volcano) | Open-next-close, pipelining |
-| Wed | Vectorized Execution | Batch processing, DuckDB's execution engine |
-| Fri | **Midterm Review** | Review session |
-
-**Due:** Project Checkpoint (Oct 23)
+**Project 1 presentations:** Mon Sep 28 (group breakouts), Wed Sep 30 (winners to class)
 
 ---
 
-### Week 9: Midterm and Query Optimization (Oct 19, 21, 23)
+## Week 8: Programming and Tools (Oct 5-9)
 
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | **Midterm Exam** | Covers Weeks 0-8 |
-| Wed | Query Optimization Overview | Equivalence rules, logical plan enumeration |
-| Fri | Cost-Based Optimization | Selectivity estimation, catalog statistics |
+*Friday Oct 9 - Homecoming, no class*
 
-**Due:** Project Checkpoint (Oct 23)
-**Reading:** Silberschatz Ch. 16
+| Day | Date | Topic | Reading |
+|-----|------|-------|---------|
+| Mon | Oct 5 | Python + psycopg + pandas for SQL Results | psycopg docs |
+| Wed | Oct 7 | DuckDB + Notebooks + Visualization | DuckDB docs |
 
 ---
 
-### Week 10: Query Optimization II and Transactions (Oct 26, 28, 30)
+## Week 9: Storage Introduction + Exam 1 (Oct 12-16)
 
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | Query Plan Selection | Dynamic programming, System R optimizer |
-| Wed | PostgreSQL and DuckDB Optimizers | EXPLAIN output comparison and analysis |
-| Fri | Transaction Concepts | ACID properties, serializability, schedules |
-
-**Due:** Assignment 3 (Oct 30)
-**Reading:** Silberschatz Ch. 16-17
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Oct 12 | Storage Hierarchy: Disks, SSDs, Pages, Records | GMW Ch. 13.1-13.4 |
+| Wed | Oct 14 | **Exam 1** (covers Weeks 1-8) | — |
+| Fri | Oct 16 | Buffer Management and Memory | GMW Ch. 13.5-13.6 |
 
 ---
 
-### Week 11: Concurrency Control (Nov 2, 4, 6)
+## Week 10: Column Stores + B+ Trees (Oct 19-23)
 
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | Lock-Based Protocols | Two-phase locking, deadlock detection |
-| Wed | Timestamp and Validation Protocols | Timestamp ordering, optimistic concurrency |
-| Fri | Multi-Version Concurrency Control | MVCC in PostgreSQL, snapshot isolation |
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Oct 19 | Row Stores vs Column Stores | GMW Ch. 13.7-13.8; Stonebraker C-Store |
+| Wed | Oct 21 | B+ Trees I: Structure, Search, Bulk Loading | GMW Ch. 14.1-14.2 |
+| Fri | Oct 23 | B+ Trees II: Insert, Delete, Cost Analysis | GMW Ch. 14.2-14.3 |
 
-**Reading:** Silberschatz Ch. 18
+**Due:** Project 2 (Advanced SQL) by 11:59 PM Fri Oct 23
+**Assigned:** Project 3 (released Mon Oct 19)
 
 ---
 
-### Week 12: Recovery and Logging (Nov 9, 13)
+## Week 11: Indexing II + Sorting (Oct 26-30)
+
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Oct 26 | Hash Indexes: Static, Extendible, Linear | GMW Ch. 14.4 |
+| Wed | Oct 28 | PostgreSQL Index Types: GiST, GIN, BRIN, Partial | PostgreSQL docs Ch. 11 |
+| Fri | Oct 30 | External Sorting | GMW Ch. 15.4 |
+
+**Project 2 presentations:** Mon Oct 26 (group breakouts), Wed Oct 28 (winners)
+
+---
+
+## Week 12: Join Algorithms and Execution (Nov 2-6)
+
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Nov 2 | Joins I: Nested Loop, Block NL, Index NL | GMW Ch. 15.2-15.3 |
+| Wed | Nov 4 | Joins II: Sort-Merge, Hash, Grace Hash | GMW Ch. 15.4-15.5 |
+| Fri | Nov 6 | Iterator (Volcano) Model and Pipelining | GMW Ch. 15.1; Graefe 1994 |
+
+---
+
+## Week 13: Optimization (Nov 9-13)
 
 *Wednesday Nov 11 - Veterans Day, no class*
 
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | Write-Ahead Logging | Log records, undo/redo, checkpointing |
-| Fri | ARIES Recovery Algorithm | Analysis, redo, undo phases; PostgreSQL WAL |
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Nov 9 | Vectorized Execution; Optimization I (Equivalence) | GMW Ch. 16.1-16.2; Boncz MonetDB/X100 |
+| Fri | Nov 13 | Optimization II: Cost Estimation, System R | GMW Ch. 16.3-16.5; Leis 2015 |
 
-**Due:** Assignment 4 (Nov 20)
-**Reading:** Silberschatz Ch. 19
-
----
-
-### Week 13: Distributed Databases (Nov 16, 18, 20)
-
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | Distributed Storage and Queries | Partitioning, replication, distributed joins |
-| Wed | Distributed Transactions | Two-phase commit, consensus |
-| Fri | CAP Theorem and Modern Tradeoffs | Consistency models, eventual consistency |
-
-**Due:** Assignment 4 (Nov 20)
-**Reading:** Silberschatz Ch. 20-21
+**Due:** Project 3 (Indexing + Query Plans) by 11:59 PM Fri Nov 13
+**Assigned:** Final Project (released Mon Nov 16)
 
 ---
 
-### Thanksgiving Break (November 23-28)
+## Week 14: Transactions + Exam 2 (Nov 16-20)
 
-*No classes. Enjoy your break!*
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Nov 16 | Transactions and ACID; Serializability | GMW Ch. 18.1-18.3 |
+| Wed | Nov 18 | **Exam 2** (covers Weeks 9-13) | — |
+| Fri | Nov 20 | Two-Phase Locking; Deadlock Handling | GMW Ch. 18.4-18.5 |
 
----
-
-### Week 15: Modern Systems and Review (Nov 30, Dec 2)
-
-| Day | Topic | Activity |
-|-----|-------|----------|
-| Mon | Column Stores and Analytical Processing | DuckDB architecture, Parquet, data lakes |
-| Wed | Course Review and Presentations | Project presentations, final exam review |
-
-**Due:** Final Report (Dec 2)
+**Project 3 presentations:** Mon Nov 16 (group breakouts), Fri Nov 20 (winners)
 
 ---
 
-### Finals Period (December 5-11)
+## Week 15: Thanksgiving Break (Nov 23-28)
 
-- **Final Exam** (date/time TBA per UF exam schedule)
+*No classes.*
+
+---
+
+## Week 16: Concurrency, Recovery, Modern (Nov 30 - Dec 2)
+
+| Day | Date | Topic | Reading (GMW) |
+|-----|------|-------|---------------|
+| Mon | Nov 30 | MVCC, Snapshot Isolation, Timestamps | GMW Ch. 18.7-18.9 |
+| Wed | Dec 2 | Recovery (WAL, ARIES) + Distributed + Modern  | GMW Ch. 17, 20-22; Mohan ARIES; DuckDB paper |
+
+*Thursday Dec 3 - Friday Dec 4: Reading days, no class*
+
+---
+
+## Finals Week (Dec 5-11)
+
+- **Final Exam (Exam 3)**: Cumulative, with emphasis on transactions, concurrency, recovery, and distributed databases. Date and time will follow the UF final exam schedule.
+- **Final Project due** Wed Dec 9 by 11:59 PM; brief in-person presentations during the final exam block.
+
+---
+
+## Notes on Rubrics and Grading
+
+Each graded artifact has a public rubric and an automated grader.
+
+- Rubrics live in [`rubrics/`](rubrics/) and are released with each assignment.
+- Automated graders live in [`scripts/grade_<assignment>.py`](scripts/) and are run by the TA after the deadline.
+- Peer grading for projects uses a rubric subset; instructor grade is the final score with peer review weighted 30%.
 
 ---
 
