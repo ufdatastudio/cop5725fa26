@@ -14,9 +14,12 @@ layout: default
 
 - [Syllabus](syllabus)
 - [Schedule](schedule)
-- [Assignments](assignments)
-- [Documents](documents)
+- [Assignments and Quizzes](assignments)
 - [Projects](projects)
+- [Lecture Readings](LECTURE_READINGS)
+- [Cited Papers](papers/)
+- [Real-World Datasets](datasets/)
+- [Documents](documents)
 
 ---
 
