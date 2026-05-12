@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 backgroundColor: #fff
-footer: 'COP 5725 - Database Management - Fall 2026'
+footer: 'COP 5725 - Database Management Systems - Fall 2026'
 math: katex
 html: true
 style: |
@@ -33,7 +33,7 @@ style: |
 
 # Day 7: ER to Relations
 
-**COP 5725 - Database Management**
+**COP 5725 - Database Management Systems**
 Friday, September 4, 2026
 
 Six rules. One diagram. A working schema.

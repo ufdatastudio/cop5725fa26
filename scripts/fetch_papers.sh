@@ -65,6 +65,17 @@ fetch codd1970        "https://www.seas.upenn.edu/~zives/03f/cis550/codd.pdf"
 fetch graefe1994      "https://cs-people.bu.edu/mathan/reading-groups/papers-classics/volcano.pdf"
 fetch mohan1992       "https://web.stanford.edu/class/cs345d-01/rl/aries.pdf"
 
+# Additional classics / industry papers (paywalled at primary source, hosted elsewhere)
+fetch codd1972        "https://forum.thethirdmanifesto.com/wp-content/uploads/asgarosforum/987737/00-efc-further-normalization.pdf"
+fetch chen1976        "https://weichselbraun.net/dbs/pdf/literature/chen.pdf"
+fetch chamberlin1981  "https://www.cs.cmu.edu/~natassa/courses/15-721/papers/p632-chamberlin.pdf"
+fetch comer1979       "https://carlosproal.com/ir/papers/p121-comer.pdf"
+fetch bernstein1981   "https://people.eecs.berkeley.edu/~brewer/cs262/concurrency-distributed-databases.pdf"
+fetch kent1983        "http://www.mathe2.uni-bayreuth.de/axel/papers/kent:a_simple_guide_to_five_normal_forms_in_relational_database_theory.pdf"
+fetch diaconu2013     "https://www.microsoft.com/en-us/research/wp-content/uploads/2013/06/Hekaton-Sigmod2013-final.pdf"
+fetch eisenberg2004   "https://sigmodrecord.org/publications/sigmodRecord/0403/E.JimAndrew-standard.pdf"
+fetch mumick1990      "https://www.vldb.org/conf/1990/P264.PDF"
+
 # Print a manual-download note for paywalled or unverified URLs
 cat > "$PDF_DIR/MANUAL.md" <<'MANUAL'
 # Manual Download Required

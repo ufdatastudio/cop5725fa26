@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 backgroundColor: #fff
-footer: 'COP 5725 - Database Management - Fall 2026'
+footer: 'COP 5725 - Database Management Systems - Fall 2026'
 math: katex
 html: true
 style: |
@@ -32,7 +32,7 @@ style: |
 
 # Day 39: Recovery, Distributed, Modern
 
-**COP 5725 - Database Management**
+**COP 5725 - Database Management Systems**
 Wednesday, December 2, 2026
 
 The last lecture. Three topics. The arc closes.

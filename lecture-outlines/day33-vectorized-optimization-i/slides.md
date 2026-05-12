@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 backgroundColor: #fff
-footer: 'COP 5725 - Database Management - Fall 2026'
+footer: 'COP 5725 - Database Management Systems - Fall 2026'
 math: katex
 html: true
 style: |
@@ -32,7 +32,7 @@ style: |
 
 # Day 33: Vectorized Execution + Optimization I
 
-**COP 5725 - Database Management**
+**COP 5725 - Database Management Systems**
 Monday, November 9, 2026
 
 Two topics. One closes Friday's execution thread. The other opens the optimization arc.

@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-# COP 5725 Database Management
+# COP 5725 Database Management Systems
 
 ### Fall 2026
 
