@@ -4,6 +4,8 @@ layout: default
 
 # Course Schedule - Fall 2026
 
+For an at-a-glance month grid with all topics, exams, quizzes, and project milestones color coded, see the [Visual Calendar](calendar).
+
 ## Key Dates
 
 - **Classes Begin:** Thursday, August 20, 2026 (first MWF meeting: Friday, August 21)
