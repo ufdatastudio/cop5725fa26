@@ -2,7 +2,7 @@
 layout: default
 ---
 
-# COP 5725 Database Management Fall 2026 #
+# COP 5725 Database Management Systems Fall 2026 #
 
 **Class Number:** 27221 | **Section:** 7LL9
 

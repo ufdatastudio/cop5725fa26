@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 backgroundColor: #fff
-footer: 'COP 5725 - Database Management - Fall 2026'
+footer: 'COP 5725 - Database Management Systems - Fall 2026'
 math: katex
 html: true
 style: |
@@ -31,7 +31,7 @@ style: |
 
 # Day 14: Common Table Expressions
 
-**COP 5725 - Database Management**
+**COP 5725 - Database Management Systems**
 Wednesday, September 23, 2026
 
 `WITH` — the named subquery

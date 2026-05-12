@@ -2,7 +2,7 @@
 layout: default
 ---
 
-# Lecture Readings - COP 5725 Database Management Fall 2026
+# Lecture Readings - COP 5725 Database Management Systems Fall 2026
 
 Each lecture has a primary chapter reading from Garcia-Molina, Ullman, Widom *Database Systems: The Complete Book* (referred to below as **GMW**).
 Five featured paper readings throughout the semester anchor the conceptual material in primary research literature.

@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 backgroundColor: #fff
-footer: 'COP 5725 - Database Management - Fall 2026'
+footer: 'COP 5725 - Database Management Systems - Fall 2026'
 math: katex
 html: true
 style: |
@@ -27,7 +27,7 @@ style: |
 
 # Day 5: Relational Algebra II
 
-**COP 5725 - Database Management**
+**COP 5725 - Database Management Systems**
 Monday, August 31, 2026
 
 Joins, division, and the operators every real query uses

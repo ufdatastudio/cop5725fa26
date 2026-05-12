@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 backgroundColor: #fff
-footer: 'COP 5725 - Database Management - Fall 2026'
+footer: 'COP 5725 - Database Management Systems - Fall 2026'
 math: katex
 html: true
 style: |
@@ -30,7 +30,7 @@ style: |
 
 # Day 8: Functional Dependencies
 
-**COP 5725 - Database Management**
+**COP 5725 - Database Management Systems**
 Wednesday, September 9, 2026
 
 The math that finds redundancy ER hides
@@ -132,16 +132,16 @@ Set up the example. The denormalized enrollment table is the canonical teaching 
 
 | sid | student_name | cid     | course_title | instructor | dept | grade |
 |-----|--------------|---------|--------------|------------|------|-------|
-| 1 | Ada | COP5725 | Database Management | Grant | CS | A |
+| 1 | Ada | COP5725 | Database Management Systems | Grant | CS | A |
 | 1 | Ada | COT5405 | Algorithms | Sahni | CS | B+ |
-| 2 | Bob | COP5725 | Database Management | Grant | CS | B |
-| 3 | Chia | COP5725 | Database Management | Grant | CS | A- |
+| 2 | Bob | COP5725 | Database Management Systems | Grant | CS | B |
+| 3 | Chia | COP5725 | Database Management Systems | Grant | CS | A- |
 
 <div class="error">
 
 **Problems visible by inspection:**
 
-- "Database Management" appears 3 times — what if it changes name?
+- "Database Management Systems" appears 3 times — what if it changes name?
 - "Grant" appears 3 times — what if I switch institutions?
 - "Ada" appears in 2 rows — what if she changes her name?
 
