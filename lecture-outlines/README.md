@@ -9,21 +9,26 @@ runnable-SQL and incremental-reveal syntax described below.
 
 ## Build
 
-One-time setup:
+`./build-slides.zsh` is the entry point. It installs the npm build libraries
+(marp-cli and the markdown-it plugins) on the first run, then builds the decks:
 
 ```bash
-npm install
-npx playwright install chromium   # only to run the spike/ verification checks
+./build-slides.zsh                 # every deck, HTML + PDF
+./build-slides.zsh day10           # one deck (matches day10-sql-ddl-select)
+./build-slides.zsh day6 day7       # several specific decks
+./build-slides.zsh --html          # HTML only
+./build-slides.zsh --pdf day20     # one deck, PDF only
 ```
 
-Build decks:
+The npm scripts do the same once `npm install` has run:
 
 ```bash
 npm run build              # HTML + PDF for every deck
 npm run build:html         # presentation HTML only
 npm run build:pdf          # student PDF only
-node build.mjs --only day10   # one deck (matches day10-..., not day1-...)
+node build.mjs --only day10   # one deck
 npm run watch              # serve every deck at localhost:8080 for previewing
+npm run verify             # headless checks (needs: npx playwright install chromium)
 ```
 
 Outputs are written next to each `slides.md` / `clicker.md` and are gitignored.
@@ -215,6 +220,7 @@ forth from `slides.md`.
 ## Project Layout
 
 ```
+build-slides.zsh   entry point: installs dependencies, then builds decks
 marp.config.js     marp-cli config: registers the engine and theme
 engine.js          custom engine: wires the plugins, inlines the runtime (HTML)
 build.mjs          builds every deck, expands appear blocks for PDF
