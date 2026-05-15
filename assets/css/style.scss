@@ -1,0 +1,16 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+@media print, screen and (min-width: 960px) {
+  .wrapper {
+    width: 860px;
+    margin: 0 auto;
+  }
+  section {
+    width: 100%;
+    float: none;
+    padding-bottom: 50px;
+  }
+}
