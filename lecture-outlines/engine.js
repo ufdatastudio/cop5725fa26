@@ -1,8 +1,8 @@
 // Custom Marp engine for the COP 5725 decks.
 //
 // marp-cli calls this functional engine with the constructed Marp instance.
-// It registers the markdown-it plugins that add course-specific syntax and,
-// for HTML builds, inlines the slide runtime as a single <script>.
+// It registers the markdown-it plugins that add course-specific syntax and
+// inlines the slide runtime as a single <script>.
 //
 // MARP_TARGET selects behavior: 'html' (interactive presenting) or 'pdf'
 // (static student handout).
@@ -11,20 +11,26 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { appearPlugin } from './lib/plugin-appear.mjs';
+import { mermaidPlugin } from './lib/plugin-mermaid.mjs';
 import { sqlRunPlugin } from './lib/plugin-sql-run.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
+const runtimeFile = (name) => readFileSync(join(here, 'runtime', name), 'utf8');
 
 export default ({ marp }) => {
   const target = process.env.MARP_TARGET === 'pdf' ? 'pdf' : 'html';
 
   marp.use(sqlRunPlugin, { target });
+  marp.use(mermaidPlugin);
   marp.use(appearPlugin);
 
+  // The SQL runner and client-side Mermaid are HTML-only. The PDF build has no
+  // widgets and pre-renders Mermaid to images (lib/render-mermaid.mjs), because
+  // foreignObject SVG labels do not survive Chromium's print path.
   if (target === 'html') {
-    const runtime = readFileSync(join(here, 'runtime', 'slide-runtime.js'), 'utf8');
+    const runtime = [runtimeFile('mermaid.js'), runtimeFile('slide-runtime.js')].join('\n');
     // Append the runtime as a trailing <script> so every HTML deck is
-    // self-contained — no per-deck <script> line, nothing to host.
+    // self-contained: no per-deck <script> line, nothing to host.
     marp.use((md) => {
       md.core.ruler.push('cop5725-runtime', (state) => {
         if (state.env.__cop5725Runtime) return;

@@ -15,6 +15,7 @@ import { readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 
 import { expandFragments, hasAppear } from './lib/expand-fragments.mjs';
+import { createMermaidRenderer, hasMermaid, replaceMermaid } from './lib/render-mermaid.mjs';
 
 const MARP = join('node_modules', '.bin', 'marp');
 
@@ -59,20 +60,31 @@ async function buildHtml(decks) {
   console.log('done');
 }
 
-async function buildPdf(deck) {
+async function buildPdf(deck, source, renderer) {
   const out = join(dirname(deck), `${basename(deck, '.md')}.pdf`);
-  const source = await readFile(deck, 'utf8');
+  const pdfArgs = ['--pdf', '--allow-local-files', '-o', out];
 
-  if (!hasAppear(source)) {
-    await marp([deck], ['--pdf', '--allow-local-files', '-o', out], 'pdf');
+  let markdown = source;
+  let rewritten = false;
+  // Pre-render Mermaid to images: foreignObject SVG labels do not survive print.
+  if (renderer && hasMermaid(markdown)) {
+    markdown = await replaceMermaid(markdown, renderer);
+    rewritten = true;
+  }
+  // Expand `::: appear` blocks into one slide per reveal step.
+  if (hasAppear(markdown)) {
+    markdown = expandFragments(markdown, (m) => console.warn(`  warn ${deck}: ${m}`));
+    rewritten = true;
+  }
+  if (!rewritten) {
+    await marp([deck], pdfArgs, 'pdf');
     return;
   }
-  // Expand appear blocks into a temp deck beside the original so relative
-  // image paths still resolve.
+  // Write the transformed deck beside the original so relative images resolve.
   const tmp = join(dirname(deck), `.${basename(deck, '.md')}.pdf-src.md`);
-  await writeFile(tmp, expandFragments(source, (m) => console.warn(`  warn ${deck}: ${m}`)));
+  await writeFile(tmp, markdown);
   try {
-    await marp([tmp], ['--pdf', '--allow-local-files', '-o', out], 'pdf');
+    await marp([tmp], pdfArgs, 'pdf');
   } finally {
     await rm(tmp, { force: true });
   }
@@ -88,15 +100,34 @@ if (wantHtml) await buildHtml(decks);
 
 if (wantPdf) {
   console.log(`PDF   ${decks.length} deck(s) …`);
-  let failed = 0;
-  for (const deck of decks) {
+  const sources = await Promise.all(decks.map((d) => readFile(d, 'utf8')));
+
+  // One browser-backed Mermaid renderer for the whole run, if any deck uses it.
+  let renderer = null;
+  if (sources.some(hasMermaid)) {
     try {
-      await buildPdf(deck);
-      console.log(`  ok   ${deck}`);
+      process.stdout.write('      starting mermaid renderer … ');
+      renderer = await createMermaidRenderer();
+      console.log('ok');
     } catch (error) {
-      failed += 1;
-      console.error(`  FAIL ${deck} — ${error.message}`);
+      console.log('unavailable');
+      console.warn(`      mermaid pre-render skipped: ${error.message}`);
     }
+  }
+
+  let failed = 0;
+  try {
+    for (let i = 0; i < decks.length; i += 1) {
+      try {
+        await buildPdf(decks[i], sources[i], renderer);
+        console.log(`  ok   ${decks[i]}`);
+      } catch (error) {
+        failed += 1;
+        console.error(`  FAIL ${decks[i]} — ${error.message}`);
+      }
+    }
+  } finally {
+    if (renderer) await renderer.close();
   }
   if (failed) {
     console.error(`\n${failed} PDF build(s) failed.`);

@@ -18,13 +18,14 @@ function step(label, cmd, args, env = {}) {
 
 mkdirSync('_verify', { recursive: true });
 
-step('build fixture: test-sql', MARP,
-  ['spike/test-sql.md', '--html', '-o', '_verify/test-sql.html'], { MARP_TARGET: 'html' });
-step('build fixture: test-appear', MARP,
-  ['spike/test-appear.md', '--html', '-o', '_verify/test-appear.html'], { MARP_TARGET: 'html' });
+for (const name of ['test-sql', 'test-appear', 'test-mermaid']) {
+  step(`build fixture: ${name}`, MARP,
+    [`spike/${name}.md`, '--html', '-o', `_verify/${name}.html`], { MARP_TARGET: 'html' });
+}
 
 step('verify: PDF fragment expansion', process.execPath, ['spike/verify-expand.mjs']);
 step('verify: ::: appear reveal', process.execPath, ['spike/verify-appear.mjs']);
 step('verify: DuckDB SQL runner', process.execPath, ['spike/verify-runner.mjs']);
+step('verify: mermaid rendering', process.execPath, ['spike/verify-mermaid.mjs']);
 
 console.log('\nAll checks passed.');

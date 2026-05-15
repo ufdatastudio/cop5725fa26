@@ -143,9 +143,11 @@ graph LR
 ```
 ````
 
-Rendering these to SVG needs a Mermaid renderer wired into the build. That is
-not yet in place, so a `mermaid` block currently shows as a code block. Track
-this as a known gap before relying on diagrams in a built deck.
+The HTML build renders them to SVG client-side. The PDF build pre-renders each
+diagram to an image, because Mermaid puts flowchart labels in SVG
+`<foreignObject>` elements and Chromium clips those when it prints. Pre-rendering
+drives the system Chrome that the PDF build already needs, so there is no extra
+setup.
 
 ## Speaker Notes
 
@@ -223,12 +225,17 @@ forth from `slides.md`.
 build-slides.zsh   entry point: installs dependencies, then builds decks
 marp.config.js     marp-cli config: registers the engine and theme
 engine.js          custom engine: wires the plugins, inlines the runtime (HTML)
-build.mjs          builds every deck, expands appear blocks for PDF
+build.mjs          builds every deck; expands appear blocks and pre-renders
+                   mermaid for PDF
 lib/
   plugin-sql-run.mjs    ```sql run``` -> widget (HTML) / code (PDF)
   plugin-appear.mjs     ::: appear ::: -> fragment markup
+  plugin-mermaid.mjs    ```mermaid -> div.mermaid for client-side rendering
   expand-fragments.mjs  PDF: one page per appear step
+  render-mermaid.mjs    PDF: pre-render mermaid diagrams to images
 themes/cop5725.css      shared theme
-runtime/slide-runtime.js  DuckDB runner, inlined into HTML builds
+runtime/
+  slide-runtime.js      DuckDB SQL runner, inlined into HTML builds
+  mermaid.js            client-side mermaid rendering, inlined into HTML builds
 spike/             standalone DuckDB spike and headless verification checks
 ```
