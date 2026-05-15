@@ -1,28 +1,11 @@
 ---
 marp: true
-theme: default
+theme: cop5725
 paginate: true
 backgroundColor: #fff
 footer: 'COP 5725 - Database Management - Fall 2026'
 math: katex
 html: true
-style: |
-  footer { font-size: 0.6em; }
-  section.lead h1 { text-align: center; }
-  .footnote { font-size: 0.6em; color: #666; position: absolute; bottom: 30px; }
-  img { display: block; margin: 0 auto; }
-  table { font-size: 0.85em; }
-  .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-  .columns-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-  .columns-left-wide { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
-  .columns-right-wide { display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; }
-  .rows { display: grid; grid-template-rows: 1fr 1fr; gap: 1rem; }
-  .small { font-size: 0.8em; }
-  mark { background: #fef3c7; padding: 0 0.2em; }
-  blockquote { border-left: 4px solid #6366f1; padding-left: 1rem; color: #444; }
-  .mermaid { text-align: center; }
-  .portrait img { border-radius: 50%; max-height: 220px; }
-  .caption { font-size: 0.75em; color: #666; text-align: center; }
 ---
 
 <!-- _class: lead -->
@@ -530,6 +513,91 @@ We write SQL exclusively. But QUEL is worth a Wikipedia tab in your spare time.
 
 <!--
 "Worse-is-better" applies cleanly here: the inferior-but-shipped language beat the better-but-late one. The story repeats with JavaScript, C, and many other languages. Don Chamberlin's 2012 ACM oral history interview discusses why he designed SQL the way he did — natural language influence from his earlier work at IBM.
+-->
+
+---
+
+# IBM DB2: System R Becomes a Product
+
+<div class="columns">
+<div>
+
+DB2 carries System R from research prototype into IBM's mainframe customer base. By 1990 it runs the back office of most major banks, insurers, airlines, and clearing houses, and a large fraction of those workloads still run on it today.
+
+- **1981** SQL/DS ships on VM/CMS, IBM's first SQL product
+- **1983** DB2 V1 on MVS mainframes
+- **1988** DB2 for AS/400 (now IBM i)
+- **1993** DB2 LUW reaches Linux, UNIX, Windows
+- **1996** DB2 UDB adds object-relational types
+- **2009** pureScale brings shared-disk clustering
+- **2013** BLU Acceleration adds in-memory columnar
+- **2017** Renamed Db2
+
+</div>
+<div>
+
+```mermaid
+graph TD
+  SR["System R<br/>1974-79"] --> SDS["SQL/DS<br/>1981"]
+  SR --> DB2["DB2 V1<br/>1983"]
+  DB2 --> ZOS["DB2 for z/OS<br/>(mainframe)"]
+  DB2 --> LUW["DB2 LUW<br/>1993"]
+  LUW --> UDB["DB2 UDB<br/>1996"]
+  UDB --> Db2["Db2<br/>2017"]
+```
+
+Three IBM platforms each shipped their own DB2 lineage; they converged gradually after 1996.
+
+</div>
+</div>
+
+<!--
+DB2 is often invisible to students because it lives behind ATMs, ticketing systems, and clearing houses rather than consumer web apps. The IBM mainframe still processes a large share of the world's financial transactions, and DB2 sits at the center of that workload. Three pieces of this course came directly out of DB2 development at IBM Almaden: Mohan's ARIES recovery (Week 14), Selinger-style cost-based optimization (Week 13), and most of the SQL surface that later became the ANSI standard.
+-->
+
+---
+
+# SQL Standards: Forty Years of Additions
+
+```mermaid
+timeline
+  title Revisions of the SQL Standard (ISO/IEC 9075)
+  1986 : SQL-86, first ANSI then ISO standard
+       : SELECT, INSERT, UPDATE, DELETE
+       : Schemas, basic DDL, views
+  1989 : SQL-89 integrity enhancements
+       : PRIMARY KEY, FOREIGN KEY, CHECK
+  1992 : SQL-92 (SQL2) major rewrite
+       : Outer joins, CASE, CAST
+       : UNION, INTERSECT, EXCEPT
+       : INFORMATION_SCHEMA, date and time types
+  1999 : SQL3, procedural and recursive
+       : WITH RECURSIVE (recursive CTEs)
+       : Triggers, user-defined types, roles
+       : Regex, BOOLEAN, CUBE, ROLLUP
+  2003 : Analytical surface
+       : Window functions (OVER, PARTITION BY)
+       : MERGE, sequences, identity columns
+       : XML data type, generated columns
+  2006 : XQuery integration via SQL/XML
+  2008 : Ergonomic cleanups
+       : FETCH FIRST n ROWS, OFFSET
+       : INSTEAD OF triggers, ORDER BY in subqueries
+  2011 : Temporal databases
+       : System-versioned tables (AS OF SYSTEM_TIME)
+       : Application-time period tables
+       : Window function enhancements
+  2016 : JSON and pattern matching
+       : JSON path expressions and functions
+       : Row pattern matching (MATCH_RECOGNIZE)
+       : Polymorphic table functions
+  2019 : Multidimensional arrays (SQL/MDA)
+  2023 : Property graph queries (SQL/PGQ)
+       : First-class JSON data type
+```
+
+<!--
+The standard moves slowly and vendors ship ahead of it, but the standard's vocabulary is what survives across engines. PostgreSQL implements most of SQL:2016 plus selected features from later revisions; DuckDB tracks the modern shape closely. We anchor SQL details on PostgreSQL documentation in this course rather than the standard text itself, because the standard is paywalled and the docs are precise about what actually executes. We work through CTEs (1999) and window functions (2003) in Week 6, JSON (2016) and temporal queries (2011) in Week 7.
 -->
 
 ---

@@ -1,0 +1,10 @@
+node_modules/
+_verify/
+spike/_shots/
+
+# Build outputs (decks are uploaded to Canvas, not committed)
+day*/slides.html
+day*/slides.pdf
+day*/clicker.html
+day*/clicker.pdf
+day*/.*.pdf-src.md

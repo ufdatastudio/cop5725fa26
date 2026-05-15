@@ -1,0 +1,19 @@
+{
+  "name": "cop5725-slides",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Marp build tooling for COP 5725 lecture decks",
+  "scripts": {
+    "build": "node build.mjs",
+    "build:html": "node build.mjs --html",
+    "build:pdf": "node build.mjs --pdf",
+    "watch": "marp -s .",
+    "verify": "node spike/verify.mjs"
+  },
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.4.0",
+    "markdown-it-container": "^4.0.0",
+    "playwright": "^1.60.0"
+  }
+}

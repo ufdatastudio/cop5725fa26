@@ -1,16 +1,11 @@
 ---
 marp: true
-theme: default
+theme: cop5725
 paginate: true
 backgroundColor: #fff8e1
 footer: 'Clicker Checks — Day39 Recovery Distributed Modern — Instructor Only'
 math: katex
 html: true
-style: |
-  footer { font-size: 0.6em; }
-  section.lead h1 { text-align: center; }
-  table { font-size: 0.85em; }
-  .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 ---
 
 <!-- _class: lead -->

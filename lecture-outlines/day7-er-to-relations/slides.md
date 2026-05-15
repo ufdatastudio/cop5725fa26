@@ -1,32 +1,11 @@
 ---
 marp: true
-theme: default
+theme: cop5725
 paginate: true
 backgroundColor: #fff
 footer: 'COP 5725 - Database Management - Fall 2026'
 math: katex
 html: true
-style: |
-  footer { font-size: 0.6em; }
-  section.lead h1 { text-align: center; }
-  .footnote { font-size: 0.6em; color: #666; position: absolute; bottom: 30px; }
-  img { display: block; margin: 0 auto; }
-  table { font-size: 0.85em; }
-  .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-  .columns-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-  .columns-left-wide { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
-  .columns-right-wide { display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; }
-  .rows { display: grid; grid-template-rows: 1fr 1fr; gap: 1rem; }
-  .small { font-size: 0.8em; }
-  mark { background: #fef3c7; padding: 0 0.2em; }
-  blockquote { border-left: 4px solid #6366f1; padding-left: 1rem; color: #444; }
-  .mermaid { text-align: center; }
-  .entity { background: #e3f2fd; border: 2px solid #1976d2; padding: 0.4em 0.8em; border-radius: 4px; display: inline-block; color: #0d47a1; font-weight: 600; }
-  .relationship { background: #fff9c4; border: 2px solid #f57f17; padding: 0.4em 0.8em; border-radius: 4px; display: inline-block; color: #e65100; font-weight: 600; }
-  .weak { background: #ffebee; border: 2px dashed #c62828; padding: 0.4em 0.8em; border-radius: 4px; display: inline-block; color: #b71c1c; font-weight: 600; }
-  .rule { background: #e8f5e9; border-left: 4px solid #388e3c; padding: 1em; border-radius: 4px; }
-  .tradeoff { background: #fff3e0; border-left: 4px solid #ff6f00; padding: 1em; border-radius: 4px; }
-  pre code { font-size: 0.85em; }
 ---
 
 <!-- _class: lead -->

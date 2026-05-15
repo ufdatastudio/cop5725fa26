@@ -1,0 +1,155 @@
+/* @theme cop5725 */
+
+/*
+ * Shared theme for all COP 5725 lecture decks.
+ * Replaces the per-deck `style:` front-matter block. A deck opts in with
+ * `theme: cop5725` and carries no inline CSS of its own.
+ */
+
+@import 'default';
+
+/* ---- base layout ------------------------------------------------------- */
+
+footer { font-size: 0.6em; }
+section.lead h1 { text-align: center; }
+.footnote { font-size: 0.6em; color: #666; position: absolute; bottom: 30px; }
+img { display: block; margin: 0 auto; }
+table { font-size: 0.85em; }
+pre code { font-size: 0.85em; }
+
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.columns-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+.columns-left-wide { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
+.columns-right-wide { display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; }
+.rows { display: grid; grid-template-rows: 1fr 1fr; gap: 1rem; }
+
+.small { font-size: 0.8em; }
+mark { background: #fef3c7; padding: 0 0.2em; }
+blockquote { border-left: 4px solid #6366f1; padding-left: 1rem; color: #444; }
+.mermaid { text-align: center; }
+.portrait img { border-radius: 50%; max-height: 220px; }
+.caption { font-size: 0.75em; color: #666; text-align: center; }
+
+/* ---- callout boxes (consolidated from every deck) ---------------------- */
+
+.interactive { background: #fff3e0; border-left: 4px solid #ff6f00; padding: 1em; border-radius: 4px; }
+.error { background: #ffebee; border-left: 4px solid #c62828; padding: 1em; border-radius: 4px; }
+.doc { background: #e3f2fd; border-left: 4px solid #1976d2; padding: 1em; border-radius: 4px; }
+.rule { background: #e8f5e9; border-left: 4px solid #388e3c; padding: 1em; border-radius: 4px; }
+.axiom { background: #e8f5e9; border-left: 4px solid #388e3c; padding: 1em; border-radius: 4px; }
+.nf { background: #e8f5e9; border-left: 4px solid #388e3c; padding: 1em; border-radius: 4px; }
+.tradeoff { background: #fff3e0; border-left: 4px solid #ff6f00; padding: 1em; border-radius: 4px; }
+.anomaly { background: #ffebee; border-left: 4px solid #c62828; padding: 1em; border-radius: 4px; }
+.clicker { background: #fff8e1; border-left: 6px solid #f57f17; padding: 1.2em; border-radius: 4px; }
+.quiz { background: #ffebee; border-left: 6px solid #c62828; padding: 1.2em; border-radius: 4px; }
+
+/* ---- ER-diagram inline tokens ----------------------------------------- */
+
+.entity { background: #e3f2fd; border: 2px solid #1976d2; padding: 0.4em 0.8em; border-radius: 4px; display: inline-block; color: #0d47a1; font-weight: 600; }
+.relationship { background: #fff9c4; border: 2px solid #f57f17; padding: 0.4em 0.8em; border-radius: 4px; display: inline-block; color: #e65100; font-weight: 600; }
+.weak { background: #ffebee; border: 2px dashed #c62828; padding: 0.4em 0.8em; border-radius: 4px; display: inline-block; color: #b71c1c; font-weight: 600; }
+.attr { background: #f3e5f5; border: 1px solid #7b1fa2; padding: 0.3em 0.6em; border-radius: 20px; display: inline-block; color: #4a148c; }
+.key { text-decoration: underline; text-decoration-style: solid; text-decoration-thickness: 2px; }
+
+/* ---- SQL runner widget (hydrated by slide-runtime.js in HTML builds) --- */
+
+.sql-runner {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0.6em 0;
+  font-size: 0.8em;
+}
+.sql-runner__editor textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 0;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.6em 0.8em;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 1em;
+  line-height: 1.45;
+  resize: vertical;
+  background: #1e293b;
+  color: #e2e8f0;
+}
+.sql-runner__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+  padding: 0.4em 0.6em;
+  background: #f1f5f9;
+}
+.sql-runner__run {
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border: 0;
+  border-radius: 4px;
+  padding: 0.35em 0.9em;
+  background: #4338ca;
+  color: #fff;
+}
+.sql-runner__run:disabled { opacity: 0.55; cursor: progress; }
+.sql-runner__status { color: #475569; font-size: 0.9em; }
+.sql-runner__output { max-height: 9em; overflow: auto; padding: 0 0.6em; }
+.sql-runner__output:empty { padding: 0; }
+.sql-runner__output table { font-size: 0.95em; border-collapse: collapse; width: 100%; }
+.sql-runner__output th, .sql-runner__output td {
+  border: 1px solid #e2e8f0; padding: 0.2em 0.5em; text-align: left;
+}
+.sql-runner__output th { background: #f8fafc; }
+.sql-runner__error {
+  color: #b91c1c;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  padding: 0.5em 0;
+}
+
+/* PDF / static fallback: the plugin emits a plain code block instead, but if
+   a .sql-runner ever reaches print, keep its query readable. */
+@media print {
+  .sql-runner__toolbar, .sql-runner__output:empty { display: none; }
+}
+
+/* ---- incremental reveal (::: appear :::) ------------------------------ */
+
+/*
+ * Marp's bespoke template tags each fragment element with
+ * data-bespoke-marp-fragment="active|inactive" and hides inactive ones with
+ * visibility:hidden. These rules (higher specificity) override that so the
+ * reveal animates instead of snapping, while inactive fragments still reserve
+ * layout space — content does not jump when an item appears.
+ */
+.appear[data-marpit-fragment] {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.appear[data-bespoke-marp-fragment="inactive"] {
+  visibility: visible;
+  opacity: 0;
+  pointer-events: none;
+}
+.appear[data-bespoke-marp-fragment="active"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Variant offsets — applied while inactive, cleared by the active rule above. */
+.appear--fade-up[data-bespoke-marp-fragment="inactive"] { transform: translateY(0.7em); }
+.appear--fade-down[data-bespoke-marp-fragment="inactive"] { transform: translateY(-0.7em); }
+.appear--slide-left[data-bespoke-marp-fragment="inactive"] { transform: translateX(1.2em); }
+.appear--slide-right[data-bespoke-marp-fragment="inactive"] { transform: translateX(-1.2em); }
+.appear--scale-in[data-bespoke-marp-fragment="inactive"] { transform: scale(0.9); }
+
+/* Overview grid: show every fragment regardless of step. */
+body[data-bespoke-view="overview"] .appear[data-bespoke-marp-fragment="inactive"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media print {
+  .appear { opacity: 1 !important; transform: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .appear { transition: none; }
+}

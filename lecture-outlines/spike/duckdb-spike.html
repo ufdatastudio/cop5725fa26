@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DuckDB-WASM spike</title>
+<style>
+  body { font: 15px/1.5 -apple-system, system-ui, sans-serif; margin: 2rem; max-width: 60rem; }
+  h1 { font-size: 1.3rem; }
+  .case { border: 1px solid #ddd; border-radius: 6px; padding: 0.5rem 1rem; margin: 0.75rem 0; }
+  .case h2 { font-size: 0.95rem; margin: 0.25rem 0; }
+  pre { background: #f6f6f6; padding: 0.6rem; border-radius: 4px; overflow-x: auto; font-size: 13px; }
+  .pass { color: #15803d; font-weight: 600; }
+  .fail { color: #b91c1c; font-weight: 600; }
+  #status { font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>DuckDB-WASM browser spike</h1>
+<p id="status">Loading DuckDB-WASM from jsDelivr&hellip;</p>
+<div id="cases"></div>
+
+<script type="module">
+// Spike goal: prove @duckdb/duckdb-wasm loads from CDN and runs SQL fully in
+// the browser, with no server and no COOP/COEP headers. Mirrors the load path
+// the real slide runner will use.
+const DUCKDB_VERSION = '1.32.0';
+const statusEl = document.getElementById('status');
+const casesEl = document.getElementById('cases');
+const results = [];
+
+function jsonSafe(value) {
+  // DuckDB returns BIGINT columns as JS BigInt, which JSON.stringify rejects.
+  return JSON.stringify(value, (_, v) => (typeof v === 'bigint' ? v.toString() : v), 2);
+}
+
+function record(name, ok, detail) {
+  results.push({ name, ok, detail });
+  const div = document.createElement('div');
+  div.className = 'case';
+  div.innerHTML = `<h2>${name} <span class="${ok ? 'pass' : 'fail'}">${ok ? 'PASS' : 'FAIL'}</span></h2>`
+    + `<pre>${detail}</pre>`;
+  casesEl.appendChild(div);
+}
+
+async function main() {
+  const duckdb = await import(`https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@${DUCKDB_VERSION}/+esm`);
+
+  // selectBundle picks a browser-appropriate bundle. Without cross-origin
+  // isolation it lands on the single-threaded "eh" bundle automatically.
+  const bundles = duckdb.getJsDelivrBundles();
+  const bundle = await duckdb.selectBundle(bundles);
+
+  // Same-origin Worker requirement: wrap the CDN worker in a blob shim.
+  const workerUrl = URL.createObjectURL(
+    new Blob([`importScripts("${bundle.mainWorker}");`], { type: 'text/javascript' }),
+  );
+  const worker = new Worker(workerUrl);
+  const db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
+  await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+  URL.revokeObjectURL(workerUrl);
+
+  const conn = await db.connect();
+  statusEl.textContent = `DuckDB-WASM ${DUCKDB_VERSION} ready — bundle: ${bundle.mainModule.split('/').pop()}`;
+
+  // Case 1: scalar query.
+  try {
+    const t = await conn.query('SELECT 6 * 7 AS answer');
+    const rows = t.toArray().map((r) => r.toJSON());
+    record('scalar query', rows[0].answer === 42n || rows[0].answer === 42, jsonSafe(rows));
+  } catch (e) { record('scalar query', false, String(e)); }
+
+  // Case 2: shared connection keeps state across queries (CREATE then SELECT).
+  try {
+    await conn.query(`CREATE TABLE student(id INTEGER, name VARCHAR, gpa DOUBLE)`);
+    await conn.query(`INSERT INTO student VALUES (1,'Ada',3.9),(2,'Bose',3.4),(3,'Chen',3.7)`);
+    const t = await conn.query('SELECT name, gpa FROM student ORDER BY gpa DESC');
+    const rows = t.toArray().map((r) => r.toJSON());
+    record('CREATE + INSERT + SELECT (shared state)', rows.length === 3 && rows[0].name === 'Ada', jsonSafe(rows));
+  } catch (e) { record('CREATE + INSERT + SELECT (shared state)', false, String(e)); }
+
+  // Case 3: aggregate — exercises BIGINT (COUNT) return path.
+  try {
+    const t = await conn.query('SELECT COUNT(*) AS n, ROUND(AVG(gpa),2) AS avg_gpa FROM student');
+    const rows = t.toArray().map((r) => r.toJSON());
+    const cols = t.schema.fields.map((f) => f.name);
+    record('aggregate + BIGINT handling', Number(rows[0].n) === 3, `columns: ${cols.join(', ')}\n${jsonSafe(rows)}`);
+  } catch (e) { record('aggregate + BIGINT handling', false, String(e)); }
+
+  // Case 4: a bad query must surface a catchable error, not crash the page.
+  try {
+    await conn.query('SELECT * FROM no_such_table');
+    record('error surfaces cleanly', false, 'expected an error but query succeeded');
+  } catch (e) {
+    record('error surfaces cleanly', /no_such_table|Catalog/i.test(String(e)), String(e));
+  }
+
+  await conn.close();
+  const allOk = results.every((r) => r.ok);
+  window.__spike = { done: true, ok: allOk, results };
+  statusEl.textContent += allOk ? '  —  ALL CASES PASS' : '  —  SOME CASES FAILED';
+}
+
+main().catch((e) => {
+  statusEl.textContent = 'SPIKE FAILED TO LOAD: ' + e;
+  statusEl.className = 'fail';
+  window.__spike = { done: true, ok: false, error: String(e) };
+});
+</script>
+</body>
+</html>
