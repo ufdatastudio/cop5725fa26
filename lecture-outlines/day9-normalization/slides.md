@@ -3,7 +3,7 @@ marp: true
 theme: cop5725
 paginate: true
 backgroundColor: #fff
-footer: 'COP 5725 - Database Management - Fall 2026'
+footer: 'COP 5725 - Database Management Systems - Fall 2026'
 math: katex
 html: true
 ---
@@ -12,7 +12,7 @@ html: true
 
 # Day 9: Normal Forms — Section 1 Closes
 
-**COP 5725 - Database Management**
+**COP 5725 - Database Management Systems**
 Friday, September 11, 2026
 
 Anomaly → decomposition → normal form
@@ -96,10 +96,10 @@ graph LR
 
 | sid | student_name | cid | course_title | instructor | dept | grade |
 |-----|--------------|-----|--------------|------------|------|-------|
-| 1 | Ada | COP5725 | Database Management | Grant | CS | A |
+| 1 | Ada | COP5725 | Database Management Systems | Grant | CS | A |
 | 1 | Ada | COT5405 | Algorithms | Sahni | CS | B+ |
-| 2 | Bob | COP5725 | Database Management | Grant | CS | B |
-| 3 | Chia | COP5725 | Database Management | Grant | CS | A- |
+| 2 | Bob | COP5725 | Database Management Systems | Grant | CS | B |
+| 3 | Chia | COP5725 | Database Management Systems | Grant | CS | A- |
 
 FDs at work:
 

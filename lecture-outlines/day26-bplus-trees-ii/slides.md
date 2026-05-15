@@ -3,7 +3,7 @@ marp: true
 theme: cop5725
 paginate: true
 backgroundColor: #fff
-footer: 'COP 5725 - Database Management - Fall 2026'
+footer: 'COP 5725 - Database Management Systems - Fall 2026'
 math: katex
 html: true
 ---
@@ -12,7 +12,7 @@ html: true
 
 # Day 26: B+ Trees II
 
-**COP 5725 - Database Management**
+**COP 5725 - Database Management Systems**
 Friday, October 23, 2026
 
 Insert. Delete. Cost. Project 2 due tonight.

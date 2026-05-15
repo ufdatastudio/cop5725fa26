@@ -3,7 +3,7 @@ marp: true
 theme: cop5725
 paginate: true
 backgroundColor: #fff
-footer: 'COP 5725 - Database Management - Fall 2026'
+footer: 'COP 5725 - Database Management Systems - Fall 2026'
 math: katex
 html: true
 ---
@@ -12,7 +12,7 @@ html: true
 
 # Day 25: B+ Trees I
 
-**COP 5725 - Database Management**
+**COP 5725 - Database Management Systems**
 Wednesday, October 21, 2026
 
 Structure · Search · Bulk Loading

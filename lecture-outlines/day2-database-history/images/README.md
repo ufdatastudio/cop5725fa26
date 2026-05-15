@@ -1,38 +1,46 @@
 # Day 2 Images
 
-The slide deck references images in this directory.
-Each filename below is what the slides expect.
-Place a public-domain or CC-licensed photo at each path before publishing.
+13 of 16 images are present in this directory, fetched by
+`scripts/fetch_day2_images.sh` from Wikipedia/Wikimedia Commons and
+official press kits.
 
-Suggested sources are listed; verify the license each time.
+## Present
 
-## People
+| Filename | Source |
+|----------|--------|
+| `codd.jpg` | Wikimedia Commons — Edgar F. Codd page |
+| `stonebraker.jpg` | Wikimedia Commons — Michael Stonebraker page |
+| `gray.jpg` | Wikimedia Commons — Jim Gray (Computing in the 21st Century 2006) |
+| `selinger.jpg` | Wikimedia Commons — Pat Selinger at Stonebraker70 |
+| `chamberlin.jpg` | Wikimedia Commons — Don Chamberlin |
+| `ritchie-thompson.jpg` | Wikimedia Commons — Ken Thompson (2019) |
+| `dean-ghemawat.jpg` | Wikimedia Commons — Jeff Dean (2025) |
+| `cutting.jpg` | Wikimedia Commons — Doug Cutting |
+| `bell-labs-murray-hill.jpg` | Wikimedia Commons — Nokia Bell Labs (2023) |
+| `ibm-almaden.jpg` | Wikimedia Commons — IBM Research Almaden |
+| `postgresql-logo.png` | PostgreSQL wiki press kit |
+| `duckdb-logo.png` | DuckDB.org official logo |
 
-| Filename | Person | Suggested source |
-|----------|--------|-----------------|
-| `codd.jpg` | Edgar F. Codd | Wikipedia (en.wikipedia.org/wiki/Edgar_F._Codd) |
-| `stonebraker.jpg` | Michael Stonebraker | MIT CSAIL faculty page, Wikipedia |
-| `gray.jpg` | Jim Gray | Wikipedia (en.wikipedia.org/wiki/Jim_Gray_(computer_scientist)) |
-| `selinger.jpg` | Patricia Selinger | ACM SIGMOD award page |
-| `chamberlin.jpg` | Donald Chamberlin | IBM Research alumni page |
-| `ullman.jpg` | Jeffrey Ullman | Stanford CS faculty page |
-| `aho.jpg` | Alfred Aho | Columbia CS faculty page |
-| `ritchie-thompson.jpg` | Ritchie & Thompson at PDP-11 | Bell Labs archive, Wikipedia |
-| `dean-ghemawat.jpg` | Jeff Dean & Sanjay Ghemawat | Google Research press kit, Wikipedia |
-| `cutting.jpg` | Doug Cutting | Cloudera press kit, Wikipedia |
+## Still to Source Manually
 
-## Places
+Wikipedia's API returned no thumbnail for these (no image on the page); use these starting points:
 
-| Filename | Place | Suggested source |
-|----------|-------|-----------------|
-| `ibm-almaden.jpg` | IBM Almaden Research Center | IBM Research press kit |
-| `berkeley-soda.jpg` | Berkeley CS / Soda Hall | UC Berkeley press kit |
-| `bell-labs-murray-hill.jpg` | Bell Labs Murray Hill | Nokia Bell Labs archive |
+| Filename | Suggested source |
+|----------|------------------|
+| `ullman.jpg` | Stanford CS faculty page http://infolab.stanford.edu/~ullman/ — or ACM Turing Award 2020 page for Aho/Ullman |
+| `aho.jpg` | Columbia CS faculty page http://www.cs.columbia.edu/~aho/ — or ACM Turing Award 2020 page |
+| `berkeley-soda.jpg` | Wikipedia commons has Soda Hall images; search `Soda_Hall_Berkeley` directly on commons |
 
-## Logos
+For ACM Turing Award photos, see https://amturing.acm.org/award_winners/aho_5077907.cfm and https://amturing.acm.org/award_winners/ullman_5077395.cfm.
 
-| Filename | Logo |
-|----------|------|
-| `postgresql-logo.png` | PostgreSQL elephant — postgresql.org press kit |
-| `duckdb-logo.png` | DuckDB duck — duckdb.org press kit |
-| `system-r-paper.png` | System R paper title page screenshot |
+## Re-fetching
+
+```bash
+bash scripts/fetch_day2_images.sh
+```
+
+The script is idempotent. After adding the three missing images by hand,
+re-run to verify nothing else changed.
+
+All images are used **only** in the Day 2 lecture slides; they are not
+distributed on the public course site. The slides go to Canvas.
