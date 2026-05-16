@@ -47,7 +47,7 @@ export async function createMermaidRenderer() {
   return {
     async render(source) {
       const id = `m${counter++}`;
-      const width = await page.evaluate(async ({ id, src }) => {
+      const size = await page.evaluate(async ({ id, src }) => {
         const { svg } = await window.__mermaid.render(`render-${id}`, src);
         const host = document.createElement('div');
         host.id = `host-${id}`;
@@ -61,12 +61,12 @@ export async function createMermaidRenderer() {
         el.setAttribute('height', box.height);
         el.style.maxWidth = 'none';
         await document.fonts.ready;
-        return box.width;
+        return { width: box.width, height: box.height };
       }, { id, src: source });
 
       const png = await page.locator(`#host-${id}`).screenshot({ omitBackground: true });
       await page.evaluate((id) => document.getElementById(`host-${id}`)?.remove(), id);
-      return { dataUri: `data:image/png;base64,${png.toString('base64')}`, width };
+      return { dataUri: `data:image/png;base64,${png.toString('base64')}`, ...size };
     },
     async close() {
       await browser.close();
@@ -90,8 +90,10 @@ export async function replaceMermaid(source, renderer) {
     let j = i + 1;
     while (j < lines.length && !/^```\s*$/.test(lines[j])) body.push(lines[j++]);
     try {
-      const { dataUri, width } = await renderer.render(body.join('\n'));
-      out.push(`<img class="mermaid" src="${dataUri}" width="${Math.round(width)}" />`);
+      const { dataUri, width, height } = await renderer.render(body.join('\n'));
+      out.push(
+        `<img class="mermaid" src="${dataUri}" width="${Math.round(width)}" height="${Math.round(height)}" />`,
+      );
     } catch {
       out.push('```mermaid', ...body, '```');
     }

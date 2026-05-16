@@ -25,18 +25,8 @@
     // font rather than a fallback.
     if (document.fonts && document.fonts.ready) await document.fonts.ready;
     await mermaid.run({ nodes: blocks });
-
-    // Pin each diagram to its natural pixel size. Mermaid otherwise sizes the
-    // SVG to width:100%, and a CSS-scaled SVG drops its <foreignObject> label
-    // text when Chromium prints the deck to PDF.
-    for (const svg of document.querySelectorAll('div.mermaid svg')) {
-      const box = svg.viewBox.baseVal;
-      if (box && box.width) {
-        svg.setAttribute('width', box.width);
-        svg.setAttribute('height', box.height);
-        svg.style.maxWidth = `${box.width}px`;
-      }
-    }
+    // Sizing is left to the theme (.mermaid svg in cop5725.css), which caps the
+    // diagram to the slide. The PDF build uses pre-rendered images instead.
     root.setAttribute('data-mermaid', 'done');
   } catch (error) {
     console.error('mermaid: render failed', error);
