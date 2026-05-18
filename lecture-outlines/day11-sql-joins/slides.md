@@ -152,7 +152,15 @@ This is the "natural join footgun" we promised on Day 5. Worth emphasizing becau
 
 > "List every student with their department, including the department building."
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE department(dname TEXT, building TEXT);
+INSERT INTO department VALUES
+  ('CS','Malachowsky Hall'), ('EE','New Engineering'), ('Math','Little Hall');
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, dname TEXT);
+INSERT INTO student VALUES
+  (1,'Ada','CS','CS'), (2,'Bose','EE','EE'), (3,'Chen','CS','CS'),
+  (4,'Devi','Math','Math'), (5,'Evan','CS','CS');
+-- @query
 SELECT s.name, d.dname, d.building
 FROM   student s
 JOIN   department d ON s.dname = d.dname;
@@ -206,7 +214,15 @@ When a row from the kept side has no match, missing columns become NULL.
 
 # LEFT JOIN: Find Students Who Have Not Enrolled
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, dname TEXT);
+INSERT INTO student VALUES
+  (1,'Ada','CS','CS'), (2,'Bose','EE','EE'), (3,'Chen','CS','CS'),
+  (4,'Devi','Math','Math'), (5,'Evan','CS','CS');
+CREATE OR REPLACE TABLE enrollment(sid INT, cid TEXT, grade TEXT);
+INSERT INTO enrollment VALUES
+  (1,'COP5725','A'), (1,'COP5536',NULL), (2,'COP5725','B'), (3,'COP5725',NULL);
+-- @query
 SELECT s.sid, s.name
 FROM   student s
 LEFT JOIN enrollment e ON e.sid = s.sid
@@ -288,7 +304,15 @@ This is the single most common SQL bug among intermediate writers. The fix is th
 
 > "Students who have enrolled in *at least one* course."
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, dname TEXT);
+INSERT INTO student VALUES
+  (1,'Ada','CS','CS'), (2,'Bose','EE','EE'), (3,'Chen','CS','CS'),
+  (4,'Devi','Math','Math'), (5,'Evan','CS','CS');
+CREATE OR REPLACE TABLE enrollment(sid INT, cid TEXT, grade TEXT);
+INSERT INTO enrollment VALUES
+  (1,'COP5725','A'), (1,'COP5536',NULL), (2,'COP5725','B'), (3,'COP5725',NULL);
+-- @query
 SELECT s.sid, s.name
 FROM   student s
 WHERE  EXISTS (
@@ -306,7 +330,15 @@ The pattern: `WHERE EXISTS (correlated subquery)`.
 
 > "Students who have *not* enrolled in any course."
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, dname TEXT);
+INSERT INTO student VALUES
+  (1,'Ada','CS','CS'), (2,'Bose','EE','EE'), (3,'Chen','CS','CS'),
+  (4,'Devi','Math','Math'), (5,'Evan','CS','CS');
+CREATE OR REPLACE TABLE enrollment(sid INT, cid TEXT, grade TEXT);
+INSERT INTO enrollment VALUES
+  (1,'COP5725','A'), (1,'COP5536',NULL), (2,'COP5725','B'), (3,'COP5725',NULL);
+-- @query
 SELECT s.sid, s.name
 FROM   student s
 WHERE  NOT EXISTS (
@@ -395,7 +427,12 @@ Reference: [PostgreSQL Ch. 7.2.1.1](https://www.postgresql.org/docs/current/quer
 
 > "Find pairs of students with the same major."
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, dname TEXT);
+INSERT INTO student VALUES
+  (1,'Ada','CS','CS'), (2,'Bose','EE','EE'), (3,'Chen','CS','CS'),
+  (4,'Devi','Math','Math'), (5,'Evan','CS','CS');
+-- @query
 SELECT s1.name, s2.name, s1.major
 FROM   student s1
 JOIN   student s2
