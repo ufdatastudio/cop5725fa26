@@ -63,14 +63,26 @@
     return String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   }
 
-  function renderCell(value, scale) {
+  // Arrow column kinds that need special formatting: DECIMAL arrives as an
+  // unscaled integer, DATE (Arrow typeId 8) as epoch milliseconds.
+  function columnKind(type) {
+    if (!type) return null;
+    if (typeof type.scale === 'number') return { decimal: type.scale };
+    if (type.typeId === 8) return { date: true };
+    return null;
+  }
+
+  function renderCell(value, kind) {
     if (value === null || value === undefined) {
       return '<td><em style="color:#94a3b8">NULL</em></td>';
     }
-    // DuckDB DECIMAL columns arrive as the unscaled integer; rescale them.
-    if (scale != null) {
-      return `<td>${(Number(value) / 10 ** scale).toFixed(scale)}</td>`;
+    if (kind && kind.decimal != null) {
+      return `<td>${(Number(value) / 10 ** kind.decimal).toFixed(kind.decimal)}</td>`;
     }
+    if (kind && kind.date) {
+      return `<td>${new Date(Number(value)).toISOString().slice(0, 10)}</td>`;
+    }
+    if (value instanceof Date) return `<td>${value.toISOString().slice(0, 10)}</td>`;
     if (typeof value === 'bigint') return `<td>${value.toString()}</td>`;
     return `<td>${escapeHtml(value)}</td>`;
   }
@@ -78,8 +90,7 @@
   function renderResult(table, outEl) {
     const fields = table.schema.fields;
     const columns = fields.map((f) => f.name);
-    // Arrow Decimal types carry a numeric `scale`; other column types do not.
-    const scales = fields.map((f) => (typeof f.type?.scale === 'number' ? f.type.scale : null));
+    const kinds = fields.map((f) => columnKind(f.type));
     const rows = table.toArray();
     if (columns.length === 0) {
       outEl.innerHTML = '<p style="color:#15803d;margin:.4em 0">Statement executed.</p>';
@@ -88,7 +99,7 @@
     const head = columns.map((c) => `<th>${escapeHtml(c)}</th>`).join('');
     const body = rows
       .slice(0, MAX_ROWS)
-      .map((row) => '<tr>' + columns.map((c, i) => renderCell(row[c], scales[i])).join('') + '</tr>')
+      .map((row) => '<tr>' + columns.map((c, i) => renderCell(row[c], kinds[i])).join('') + '</tr>')
       .join('');
     outEl.innerHTML = `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
     return rows.length;
@@ -96,8 +107,10 @@
 
   // ---- run a widget's query --------------------------------------------
   async function runQuery(widget) {
-    const sql = widget.textarea.value.trim();
-    if (!sql) return;
+    const query = widget.textarea.value.trim();
+    if (!query) return;
+    // Prepend the hidden setup so the slide's tables exist for the query.
+    const sql = widget.setup ? `${widget.setup}\n${query}` : query;
     widget.runButton.disabled = true;
     widget.status.textContent = 'loading DuckDB…';
     widget.output.innerHTML = '';
@@ -125,7 +138,12 @@
 
   // ---- hydrate one `.sql-runner` ---------------------------------------
   function hydrate(root) {
-    const code = root.querySelector('code');
+    // Hidden setup (CREATE/INSERT) runs before the query but is never shown.
+    const setupCode = root.querySelector('.sql-runner__setup code');
+    const setup = setupCode ? setupCode.textContent.replace(/\n+$/, '') : '';
+    // The shown query is the last code block (setup, if any, comes first).
+    const codes = root.querySelectorAll('code');
+    const code = codes[codes.length - 1];
     if (!code) return;
     const sql = code.textContent.replace(/\n+$/, '');
 
@@ -162,7 +180,7 @@
     root.append(editor, toolbar, output);
     root.classList.add('is-hydrated');
 
-    const widget = { textarea, runButton, status, output };
+    const widget = { textarea, runButton, status, output, setup };
     runButton.addEventListener('click', () => runQuery(widget));
     resetButton.addEventListener('click', async () => {
       resetButton.disabled = true;

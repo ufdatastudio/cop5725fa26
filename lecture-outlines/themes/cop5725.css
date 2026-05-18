@@ -73,6 +73,8 @@ img.mermaid {
   margin: 0.6em 0;
   font-size: 0.8em;
 }
+/* Hidden CREATE/INSERT setup — runs before the query, never shown. */
+.sql-runner__setup { display: none; }
 .sql-runner__editor textarea {
   width: 100%;
   box-sizing: border-box;
