@@ -98,7 +98,22 @@ WHERE  e.grade IS NULL;
 
 A view is a **named SELECT**. The database treats it like a table; the SQL behind it runs each time the view is queried.
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT);
+INSERT INTO student VALUES (1,'Ada'),(2,'Bose'),(3,'Ana'),(4,'Devi');
+CREATE OR REPLACE TABLE course(cid TEXT, title TEXT);
+INSERT INTO course VALUES ('COP5725','Database Management'),('COP5536','Data Structures');
+CREATE OR REPLACE TABLE enrollment(sid INT, cid TEXT, section_num INT, term TEXT, grade TEXT);
+INSERT INTO enrollment VALUES
+  (1,'COP5725',1,'Fall2026',NULL), (2,'COP5725',1,'Fall2026','A'),
+  (3,'COP5536',1,'Fall2026',NULL), (4,'COP5725',1,'Fall2026',NULL);
+CREATE OR REPLACE VIEW active_enrollments AS
+SELECT e.sid, e.cid, e.section_num, e.term, s.name AS student, c.title
+FROM   enrollment e
+JOIN   student s USING (sid)
+JOIN   course  c USING (cid)
+WHERE  e.grade IS NULL;
+-- @query
 SELECT * FROM active_enrollments WHERE student LIKE 'A%';
 ```
 
