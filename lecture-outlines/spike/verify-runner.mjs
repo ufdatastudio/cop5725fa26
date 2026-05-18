@@ -1,5 +1,5 @@
 // Headless check of the SQL runner: serves a built deck over http, opens each
-// runnable slide, clicks Run, and asserts the result table renders.
+// runnable slide, clicks Run, and asserts the result modal renders.
 // Run from lecture-outlines/:  node spike/verify-runner.mjs
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -51,10 +51,10 @@ try {
     }
 
     await runner.locator('.sql-runner__run').click();
-    // Either a result table or an error box must appear.
-    await runner.locator('.sql-runner__output table, .sql-runner__error').first()
-      .waitFor({ timeout: 90000 });
-    const text = (await runner.locator('.sql-runner__output').innerText()).replace(/\s+/g, ' ');
+    // The result opens in the modal overlay (table or error box).
+    const modal = page.locator('.sql-modal:not([hidden])');
+    await modal.locator('table, .sql-runner__error').first().waitFor({ timeout: 90000 });
+    const text = (await modal.locator('.sql-modal__body').innerText()).replace(/\s+/g, ' ');
     const status = await runner.locator('.sql-runner__status').innerText();
     const missing = expect.filter((s) => !text.includes(s));
     const ok = missing.length === 0;
@@ -62,7 +62,7 @@ try {
     console.log(`  ${ok ? 'PASS' : 'FAIL'}  slide ${slide}  [${status}]`);
     console.log(`        result: ${text.slice(0, 120)}`);
     if (!ok) console.log(`        missing: ${missing.join(', ')}`);
-    await runner.screenshot({ path: `spike/_shots/runner-result-s${slide}.png` });
+    await modal.locator('.sql-modal__panel').screenshot({ path: `spike/_shots/runner-result-s${slide}.png` });
     await page.close();
   }
 } finally {

@@ -82,8 +82,8 @@ img.mermaid {
   border-bottom: 1px solid #e2e8f0;
   padding: 0.6em 0.8em;
   font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 1em;
-  line-height: 1.45;
+  font-size: 0.8em;
+  line-height: 1.4;
   resize: vertical;
   background: #1e293b;
   color: #e2e8f0;
@@ -117,25 +117,9 @@ img.mermaid {
 }
 .sql-runner__reset:disabled { opacity: 0.55; cursor: progress; }
 .sql-runner__status { color: #475569; font-size: 0.9em; }
-.sql-runner__output { max-height: 9em; overflow: auto; padding: 0 0.6em; }
-.sql-runner__output:empty { padding: 0; }
-.sql-runner__output table { font-size: 0.95em; border-collapse: collapse; width: 100%; }
-.sql-runner__output th, .sql-runner__output td {
-  border: 1px solid #e2e8f0; padding: 0.2em 0.5em; text-align: left;
-}
-.sql-runner__output th { background: #f8fafc; }
-.sql-runner__error {
-  color: #b91c1c;
-  font-family: ui-monospace, Menlo, Consolas, monospace;
-  white-space: pre-wrap;
-  padding: 0.5em 0;
-}
-
-/* PDF / static fallback: the plugin emits a plain code block instead, but if
-   a .sql-runner ever reaches print, keep its query readable. */
-@media print {
-  .sql-runner__toolbar, .sql-runner__output:empty { display: none; }
-}
+/* The result modal is appended to <body>, outside any <section>, so Marp's
+   slide-scoped theme CSS cannot reach it. slide-runtime.js injects the modal
+   styles into <head> instead. */
 
 /* ---- incremental reveal (::: appear :::) ------------------------------ */
 

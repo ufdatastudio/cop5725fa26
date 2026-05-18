@@ -14,6 +14,19 @@
   const DUCKDB_VERSION = '1.32.0';
   const MAX_ROWS = 200;
 
+  // The modal lives outside any <section>, so Marp's slide-scoped theme CSS
+  // does not reach it. Inject its styles globally instead.
+  const MODAL_CSS = `
+.sql-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.55);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.sql-modal[hidden]{display:none}
+.sql-modal__panel{position:relative;background:#fff;border-radius:8px;padding:26px 22px 22px;max-width:86vw;max-height:84vh;overflow:auto;box-shadow:0 12px 48px rgba(0,0,0,.35)}
+.sql-modal__close{position:absolute;top:4px;right:8px;border:0;background:transparent;font-size:22px;line-height:1;cursor:pointer;color:#64748b}
+.sql-modal__ok{color:#15803d;margin:0;font-size:16px}
+.sql-modal__body table{border-collapse:collapse;font-size:15px}
+.sql-modal__body th,.sql-modal__body td{border:1px solid #e2e8f0;padding:5px 13px;text-align:left}
+.sql-modal__body th{background:#f8fafc}
+.sql-modal__error{color:#b91c1c;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;margin:0;font-size:14px}`;
+
   // ---- DuckDB-WASM: lazy, single shared connection ----------------------
   let connectionPromise = null;
   let sharedDb = null;
@@ -87,7 +100,8 @@
     return `<td>${escapeHtml(value)}</td>`;
   }
 
-  function renderResult(table, outEl) {
+  // Build the result table HTML; returns it together with the row count.
+  function resultHtml(table) {
     const fields = table.schema.fields;
     const columns = fields.map((f) => f.name);
     const kinds = fields.map((f) => columnKind(f.type));
@@ -96,16 +110,54 @@
     const vectors = fields.map((_, i) => table.getChildAt(i));
     const rowCount = table.numRows;
     if (columns.length === 0) {
-      outEl.innerHTML = '<p style="color:#15803d;margin:.4em 0">Statement executed.</p>';
-      return rowCount;
+      return { html: '<p class="sql-modal__ok">Statement executed.</p>', rowCount };
     }
     const head = columns.map((c) => `<th>${escapeHtml(c)}</th>`).join('');
     let body = '';
     for (let r = 0; r < Math.min(rowCount, MAX_ROWS); r += 1) {
       body += '<tr>' + vectors.map((v, i) => renderCell(v.get(r), kinds[i])).join('') + '</tr>';
     }
-    outEl.innerHTML = `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
-    return rowCount;
+    return { html: `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`, rowCount };
+  }
+
+  // ---- result modal -----------------------------------------------------
+  // Results appear in a centered overlay so they are readable regardless of
+  // how little room the slide leaves below the editor.
+  let modal = null;
+  function showModal(html) {
+    if (!modal) {
+      const style = document.createElement('style');
+      style.textContent = MODAL_CSS;
+      document.head.appendChild(style);
+      const overlay = document.createElement('div');
+      overlay.className = 'sql-modal';
+      overlay.hidden = true;
+      const panel = document.createElement('div');
+      panel.className = 'sql-modal__panel';
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'sql-modal__close';
+      close.textContent = '✕';
+      const body = document.createElement('div');
+      body.className = 'sql-modal__body';
+      panel.append(close, body);
+      overlay.append(panel);
+      document.body.appendChild(overlay);
+      const hide = () => { overlay.hidden = true; };
+      close.addEventListener('click', hide);
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) hide();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !overlay.hidden) {
+          event.stopPropagation();
+          hide();
+        }
+      });
+      modal = { overlay, body };
+    }
+    modal.body.innerHTML = html;
+    modal.overlay.hidden = false;
   }
 
   // ---- run a widget's query --------------------------------------------
@@ -116,23 +168,21 @@
     const sql = widget.setup ? `${widget.setup}\n${query}` : query;
     widget.runButton.disabled = true;
     widget.status.textContent = 'loading DuckDB…';
-    widget.output.innerHTML = '';
     try {
       const conn = await duckdbConnection();
       widget.status.textContent = 'running…';
       const started = performance.now();
       const table = await conn.query(sql);
       const elapsed = Math.round(performance.now() - started);
-      const total = renderResult(table, widget.output);
-      const shown = Math.min(total, MAX_ROWS);
+      const { html, rowCount } = resultHtml(table);
+      showModal(html);
+      const shown = Math.min(rowCount, MAX_ROWS);
       widget.status.textContent =
-        `${total} row${total === 1 ? '' : 's'} · ${elapsed} ms` +
-        (total > shown ? ` (showing first ${shown})` : '');
+        `${rowCount} row${rowCount === 1 ? '' : 's'} · ${elapsed} ms` +
+        (rowCount > shown ? ` (first ${shown})` : '');
     } catch (error) {
-      const box = document.createElement('div');
-      box.className = 'sql-runner__error';
-      box.textContent = String(error && error.message ? error.message : error);
-      widget.output.appendChild(box);
+      const message = String(error && error.message ? error.message : error);
+      showModal(`<div class="sql-modal__error">${escapeHtml(message)}</div>`);
       widget.status.textContent = 'error';
     } finally {
       widget.runButton.disabled = false;
@@ -176,18 +226,14 @@
     toolbar.className = 'sql-runner__toolbar';
     toolbar.append(runButton, resetButton, status);
 
-    const output = document.createElement('div');
-    output.className = 'sql-runner__output';
-
     root.textContent = '';
-    root.append(editor, toolbar, output);
+    root.append(editor, toolbar);
     root.classList.add('is-hydrated');
 
-    const widget = { textarea, runButton, status, output, setup };
+    const widget = { textarea, runButton, status, setup };
     runButton.addEventListener('click', () => runQuery(widget));
     resetButton.addEventListener('click', async () => {
       resetButton.disabled = true;
-      widget.output.innerHTML = '';
       widget.status.textContent = 'resetting database…';
       await resetDatabase();
       widget.status.textContent = 'database reset — Run to rebuild';
