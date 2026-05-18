@@ -241,7 +241,15 @@ graph LR
 
 # Peek Backward and Forward
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE enrollment(sid INT, enrollment_date DATE);
+INSERT INTO enrollment VALUES
+  (1,DATE '2026-09-01'),(2,DATE '2026-09-01'),
+  (3,DATE '2026-09-02'),(4,DATE '2026-09-02'),(5,DATE '2026-09-02'),
+  (6,DATE '2026-09-03'),(7,DATE '2026-09-03'),
+  (8,DATE '2026-09-06'),(9,DATE '2026-09-06'),(10,DATE '2026-09-06'),(11,DATE '2026-09-06'),
+  (12,DATE '2026-09-07'),(13,DATE '2026-09-07'),(14,DATE '2026-09-07');
+-- @query
 SELECT
   enrollment_date,
   count(*)                                AS today,
@@ -291,7 +299,12 @@ Use 0 to make boundary rows show a delta of "the value itself" rather than NULL.
 
 # Refer to the Ends of the Window
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE faculty(fid INT, name TEXT, dname TEXT, salary INT);
+INSERT INTO faculty VALUES
+  (1,'Grant','CS',95000), (2,'Sahni','CS',110000), (3,'Dobra','CS',102000),
+  (4,'Lee','EE',88000), (5,'Rao','EE',99000);
+-- @query
 SELECT
   name, dname, salary,
   first_value(salary) OVER (
@@ -342,7 +355,15 @@ This is one of the great SQL gotchas. Every working SQL writer trips over LAST_V
 
 # 7-Day Moving Average
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE enrollment(sid INT, enrollment_date DATE);
+INSERT INTO enrollment VALUES
+  (1,DATE '2026-09-01'),(2,DATE '2026-09-01'),
+  (3,DATE '2026-09-02'),(4,DATE '2026-09-02'),(5,DATE '2026-09-02'),
+  (6,DATE '2026-09-03'),(7,DATE '2026-09-03'),
+  (8,DATE '2026-09-06'),(9,DATE '2026-09-06'),(10,DATE '2026-09-06'),(11,DATE '2026-09-06'),
+  (12,DATE '2026-09-07'),(13,DATE '2026-09-07'),(14,DATE '2026-09-07');
+-- @query
 SELECT
   enrollment_date,
   count(*) AS daily,
@@ -358,7 +379,11 @@ GROUP BY enrollment_date;
 
 # Cumulative Distribution
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada',3.95),(2,'Bob',2.90),(3,'Chia',3.70),(4,'Dev',3.85),(5,'Eve',3.20);
+-- @query
 SELECT
   name, gpa,
   cume_dist() OVER (ORDER BY gpa) AS cdf,
@@ -377,7 +402,15 @@ Together they answer "what percentile is this row in?" without manual quartile m
 
 > "Find runs of consecutive enrollment days."
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE enrollment(sid INT, enrollment_date DATE);
+INSERT INTO enrollment VALUES
+  (1,DATE '2026-09-01'),(2,DATE '2026-09-01'),
+  (3,DATE '2026-09-02'),(4,DATE '2026-09-02'),(5,DATE '2026-09-02'),
+  (6,DATE '2026-09-03'),(7,DATE '2026-09-03'),
+  (8,DATE '2026-09-06'),(9,DATE '2026-09-06'),(10,DATE '2026-09-06'),(11,DATE '2026-09-06'),
+  (12,DATE '2026-09-07'),(13,DATE '2026-09-07'),(14,DATE '2026-09-07');
+-- @query
 WITH dated AS (
   SELECT enrollment_date,
          enrollment_date - (row_number() OVER (ORDER BY enrollment_date))::int AS grp
