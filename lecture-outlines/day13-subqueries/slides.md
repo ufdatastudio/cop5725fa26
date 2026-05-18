@@ -109,7 +109,12 @@ Three forms, three locations, three sets of pitfalls.
 
 # Scalar Subqueries: One Value
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, dname TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.9), (2,'Bose','CS',3.1), (3,'Chen','CS',3.5),
+  (4,'Devi','EE',3.8), (5,'Evan','EE',2.9), (6,'Fei','EE',3.4);
+-- @query
 -- "Students whose GPA exceeds the average"
 SELECT name, gpa
 FROM   student
@@ -135,7 +140,15 @@ The "exactly one row, one column" constraint is what makes the subquery *scalar*
 
 # Table Subqueries: Use Like a Table
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, dname TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.9), (2,'Bose','CS',3.1), (3,'Chen','CS',3.5), (4,'Devi','EE',3.8);
+CREATE OR REPLACE TABLE enrollment(sid INT, cid TEXT);
+INSERT INTO enrollment VALUES
+  (1,'C1'),(1,'C2'),(1,'C3'), (2,'C1'),(2,'C2'), (3,'C1'),
+  (4,'C1'),(4,'C2'),(4,'C3'),(4,'C4');
+-- @query
 -- Pre-aggregate, then join
 SELECT s.name, ec.course_count
 FROM   student s
@@ -155,7 +168,12 @@ The pre-aggregate-then-join pattern is one of the most useful shapes in SQL. It 
 
 # Correlated Subqueries: Refer to the Outer Row
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, dname TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.9), (2,'Bose','CS',3.1), (3,'Chen','CS',3.5),
+  (4,'Devi','EE',3.8), (5,'Evan','EE',2.9), (6,'Fei','EE',3.4);
+-- @query
 -- "Students with GPA above their department's average"
 SELECT s.name, s.gpa, s.dname
 FROM   student s
@@ -293,7 +311,12 @@ The `SELECT`-list correlated subquery and the `FROM`-clause table subquery do si
 
 > "For each department, the two highest-paid faculty."
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE faculty(fid INT, dname TEXT, name TEXT, salary INT);
+INSERT INTO faculty VALUES
+  (1,'CS','Grant',150000), (2,'CS','Hoare',165000), (3,'CS','Liskov',172000),
+  (4,'EE','Shannon',180000), (5,'EE','Bode',140000);
+-- @query
 SELECT f.dname, f.name, f.salary
 FROM   faculty f
 WHERE  (
