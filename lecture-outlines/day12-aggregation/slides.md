@@ -97,7 +97,12 @@ This bug appears in dashboards everywhere. The grader is sometimes the first to 
 
 # DISTINCT Inside Aggregates
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE enrollment(sid INT, cid TEXT, term TEXT);
+INSERT INTO enrollment VALUES
+  (1,'COP5725','Fall2026'), (1,'COP5725','Spring2026'), (1,'COP5536','Fall2026'),
+  (2,'COP5725','Fall2026'), (3,'COP5536','Fall2026'), (3,'COP5536','Spring2026');
+-- @query
 -- How many courses has each student enrolled in?
 SELECT sid, count(DISTINCT cid) AS distinct_courses
 FROM   enrollment
@@ -127,7 +132,13 @@ GROUP BY s.sid;
 
 # The Anatomy of a GROUP BY Query
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.9), (2,'Bose','CS',3.4), (3,'Chen','CS',4.0),
+  (4,'Devi','CS',2.8), (5,'Evan','CS',3.6), (6,'Fei','CS',3.1),
+  (7,'Gita','EE',3.8), (8,'Hari','EE',2.9), (9,'Ivy','EE',NULL);
+-- @query
 SELECT  major, count(*) AS n, avg(gpa) AS mean_gpa
 FROM    student
 GROUP BY major
@@ -253,11 +264,13 @@ The logical order in the next part explains why.
 
 # Per-Aggregate Filtering with FILTER
 
-```sql
--- Old way: one aggregate, one query
-SELECT major, count(*) FROM student WHERE gpa >= 3.5 GROUP BY major;
-
--- Better: multiple per-aggregate filters in one pass
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.9), (2,'Bose','CS',3.4), (3,'Chen','CS',4.0),
+  (4,'Devi','CS',2.8), (5,'Evan','CS',3.6), (6,'Fei','CS',3.1),
+  (7,'Gita','EE',3.8), (8,'Hari','EE',2.9), (9,'Ivy','EE',NULL);
+-- @query
 SELECT
   major,
   count(*)                                AS total,
@@ -434,7 +447,13 @@ Or a CTE (Day 14 preview). The optimizer collapses these into the same plan.
 
 > "Among the majors with at least 5 students, show the average GPA, the number of honors students (GPA ≥ 3.5), and rank by average descending."
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.9), (2,'Bose','CS',3.4), (3,'Chen','CS',4.0),
+  (4,'Devi','CS',2.8), (5,'Evan','CS',3.6), (6,'Fei','CS',3.1),
+  (7,'Gita','EE',3.8), (8,'Hari','EE',2.9), (9,'Ivy','EE',NULL);
+-- @query
 SELECT
   major,
   count(*)                            AS total,
