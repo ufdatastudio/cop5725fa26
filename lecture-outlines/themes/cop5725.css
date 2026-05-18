@@ -104,6 +104,16 @@ img.mermaid {
   color: #fff;
 }
 .sql-runner__run:disabled { opacity: 0.55; cursor: progress; }
+.sql-runner__reset {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 0.35em 0.8em;
+  background: #fff;
+  color: #475569;
+}
+.sql-runner__reset:disabled { opacity: 0.55; cursor: progress; }
 .sql-runner__status { color: #475569; font-size: 0.9em; }
 .sql-runner__output { max-height: 9em; overflow: auto; padding: 0 0.6em; }
 .sql-runner__output:empty { padding: 0; }

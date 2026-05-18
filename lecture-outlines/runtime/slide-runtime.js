@@ -16,6 +16,7 @@
 
   // ---- DuckDB-WASM: lazy, single shared connection ----------------------
   let connectionPromise = null;
+  let sharedDb = null;
   function duckdbConnection() {
     if (connectionPromise) return connectionPromise;
     connectionPromise = (async () => {
@@ -30,9 +31,31 @@
       const db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
       await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
       URL.revokeObjectURL(workerUrl);
+      sharedDb = db;
       return db.connect();
     })();
     return connectionPromise;
+  }
+
+  // Discard the shared database so the next Run starts from an empty one.
+  async function resetDatabase() {
+    const pending = connectionPromise;
+    connectionPromise = null;
+    if (!pending) return;
+    try {
+      await pending;
+    } catch {
+      /* init failed — nothing to tear down */
+    }
+    const db = sharedDb;
+    sharedDb = null;
+    if (db) {
+      try {
+        await db.terminate();
+      } catch {
+        /* already gone */
+      }
+    }
   }
 
   // ---- result rendering -------------------------------------------------
@@ -40,16 +63,23 @@
     return String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   }
 
-  function renderCell(value) {
+  function renderCell(value, scale) {
     if (value === null || value === undefined) {
       return '<td><em style="color:#94a3b8">NULL</em></td>';
+    }
+    // DuckDB DECIMAL columns arrive as the unscaled integer; rescale them.
+    if (scale != null) {
+      return `<td>${(Number(value) / 10 ** scale).toFixed(scale)}</td>`;
     }
     if (typeof value === 'bigint') return `<td>${value.toString()}</td>`;
     return `<td>${escapeHtml(value)}</td>`;
   }
 
   function renderResult(table, outEl) {
-    const columns = table.schema.fields.map((f) => f.name);
+    const fields = table.schema.fields;
+    const columns = fields.map((f) => f.name);
+    // Arrow Decimal types carry a numeric `scale`; other column types do not.
+    const scales = fields.map((f) => (typeof f.type?.scale === 'number' ? f.type.scale : null));
     const rows = table.toArray();
     if (columns.length === 0) {
       outEl.innerHTML = '<p style="color:#15803d;margin:.4em 0">Statement executed.</p>';
@@ -58,7 +88,7 @@
     const head = columns.map((c) => `<th>${escapeHtml(c)}</th>`).join('');
     const body = rows
       .slice(0, MAX_ROWS)
-      .map((row) => '<tr>' + columns.map((c) => renderCell(row[c])).join('') + '</tr>')
+      .map((row) => '<tr>' + columns.map((c, i) => renderCell(row[c], scales[i])).join('') + '</tr>')
       .join('');
     outEl.innerHTML = `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
     return rows.length;
@@ -113,12 +143,17 @@
     runButton.className = 'sql-runner__run';
     runButton.textContent = 'Run ▶';
 
+    const resetButton = document.createElement('button');
+    resetButton.type = 'button';
+    resetButton.className = 'sql-runner__reset';
+    resetButton.textContent = 'Reset DB';
+
     const status = document.createElement('span');
     status.className = 'sql-runner__status';
 
     const toolbar = document.createElement('div');
     toolbar.className = 'sql-runner__toolbar';
-    toolbar.append(runButton, status);
+    toolbar.append(runButton, resetButton, status);
 
     const output = document.createElement('div');
     output.className = 'sql-runner__output';
@@ -129,6 +164,14 @@
 
     const widget = { textarea, runButton, status, output };
     runButton.addEventListener('click', () => runQuery(widget));
+    resetButton.addEventListener('click', async () => {
+      resetButton.disabled = true;
+      widget.output.innerHTML = '';
+      widget.status.textContent = 'resetting database…';
+      await resetDatabase();
+      widget.status.textContent = 'database reset — Run to rebuild';
+      resetButton.disabled = false;
+    });
 
     // Marp's bespoke template advances slides on arrow/space/page keys.
     // Keep every keystroke inside the editor from reaching that handler.
