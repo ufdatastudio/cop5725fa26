@@ -6,8 +6,8 @@
  * labels come out truncated. Rendering each diagram to a raster image in a
  * real browser and embedding it as a data-URI <img> sidesteps that entirely.
  *
- * The HTML build keeps live client-side Mermaid (runtime/mermaid.js); on
- * screen the SVG renders correctly, and SVG stays crisp when zoomed.
+ * build.mjs uses this for both the HTML and PDF builds, so neither output
+ * depends on a CDN at view time. Repeated diagrams are cached.
  */
 import { chromium } from 'playwright';
 
@@ -39,13 +39,24 @@ export async function createMermaidRenderer() {
   await page.evaluate(async (cdn) => {
     const mod = await import(cdn);
     window.__mermaid = mod.default;
-    window.__mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'loose' });
+    window.__mermaid.initialize({
+      startOnLoad: false,
+      theme: 'neutral',
+      securityLevel: 'loose',
+      // Tighter layout so diagrams stay proportionate to slide text. Only the
+      // gaps between nodes shrink; node label text keeps its size.
+      flowchart: { nodeSpacing: 30, rankSpacing: 36 },
+    });
   }, MERMAID_CDN);
 
   let counter = 0;
+  const cache = new Map();
 
   return {
     async render(source) {
+      const cached = cache.get(source);
+      if (cached) return cached;
+
       const id = `m${counter++}`;
       const size = await page.evaluate(async ({ id, src }) => {
         const { svg } = await window.__mermaid.render(`render-${id}`, src);
@@ -66,7 +77,9 @@ export async function createMermaidRenderer() {
 
       const png = await page.locator(`#host-${id}`).screenshot({ omitBackground: true });
       await page.evaluate((id) => document.getElementById(`host-${id}`)?.remove(), id);
-      return { dataUri: `data:image/png;base64,${png.toString('base64')}`, ...size };
+      const result = { dataUri: `data:image/png;base64,${png.toString('base64')}`, ...size };
+      cache.set(source, result);
+      return result;
     },
     async close() {
       await browser.close();

@@ -54,40 +54,55 @@ function marp(inputs, extraArgs, target) {
   });
 }
 
-async function buildHtml(decks) {
-  process.stdout.write(`HTML  ${decks.length} deck(s) … `);
-  await marp(decks, ['--html'], 'html'); // outputs <deck>.html next to source
-  console.log('done');
-}
-
-async function buildPdf(deck, source, renderer) {
-  const out = join(dirname(deck), `${basename(deck, '.md')}.pdf`);
-  const pdfArgs = ['--pdf', '--allow-local-files', '-o', out];
+// Build one deck to one target. Mermaid is pre-rendered to images for both
+// targets, so neither build depends on a CDN at view time. `::: appear` blocks
+// expand into one page per reveal step for PDF only.
+async function buildDeck(deck, source, target, renderer) {
+  const base = basename(deck, '.md');
+  const dir = dirname(deck);
+  const ext = target === 'pdf' ? 'pdf' : 'html';
+  const out = join(dir, `${base}.${ext}`);
+  const marpArgs = target === 'pdf'
+    ? ['--pdf', '--allow-local-files', '-o', out]
+    : ['--html', '-o', out];
 
   let markdown = source;
   let rewritten = false;
-  // Pre-render Mermaid to images: foreignObject SVG labels do not survive print.
   if (renderer && hasMermaid(markdown)) {
     markdown = await replaceMermaid(markdown, renderer);
     rewritten = true;
   }
-  // Expand `::: appear` blocks into one slide per reveal step.
-  if (hasAppear(markdown)) {
+  if (target === 'pdf' && hasAppear(markdown)) {
     markdown = expandFragments(markdown, (m) => console.warn(`  warn ${deck}: ${m}`));
     rewritten = true;
   }
   if (!rewritten) {
-    await marp([deck], pdfArgs, 'pdf');
+    await marp([deck], marpArgs, target);
     return;
   }
   // Write the transformed deck beside the original so relative images resolve.
-  const tmp = join(dirname(deck), `.${basename(deck, '.md')}.pdf-src.md`);
+  const tmp = join(dir, `.${base}.${ext}-src.md`);
   await writeFile(tmp, markdown);
   try {
-    await marp([tmp], pdfArgs, 'pdf');
+    await marp([tmp], marpArgs, target);
   } finally {
     await rm(tmp, { force: true });
   }
+}
+
+async function buildAll(decks, sources, target, renderer) {
+  console.log(`${target.toUpperCase()}  ${decks.length} deck(s) …`);
+  let failed = 0;
+  for (let i = 0; i < decks.length; i += 1) {
+    try {
+      await buildDeck(decks[i], sources[i], target, renderer);
+      console.log(`  ok   ${decks[i]}`);
+    } catch (error) {
+      failed += 1;
+      console.error(`  FAIL ${decks[i]} — ${error.message}`);
+    }
+  }
+  return failed;
 }
 
 const decks = await findDecks();
@@ -95,44 +110,31 @@ if (decks.length === 0) {
   console.error('no decks found' + (only ? ` matching "${only}"` : ''));
   process.exit(1);
 }
+const sources = await Promise.all(decks.map((d) => readFile(d, 'utf8')));
 
-if (wantHtml) await buildHtml(decks);
-
-if (wantPdf) {
-  console.log(`PDF   ${decks.length} deck(s) …`);
-  const sources = await Promise.all(decks.map((d) => readFile(d, 'utf8')));
-
-  // One browser-backed Mermaid renderer for the whole run, if any deck uses it.
-  let renderer = null;
-  if (sources.some(hasMermaid)) {
-    try {
-      process.stdout.write('      starting mermaid renderer … ');
-      renderer = await createMermaidRenderer();
-      console.log('ok');
-    } catch (error) {
-      console.log('unavailable');
-      console.warn(`      mermaid pre-render skipped: ${error.message}`);
-    }
-  }
-
-  let failed = 0;
+// One browser-backed Mermaid renderer for the whole run, shared by both
+// targets; it caches repeated diagrams.
+let renderer = null;
+if (sources.some(hasMermaid)) {
   try {
-    for (let i = 0; i < decks.length; i += 1) {
-      try {
-        await buildPdf(decks[i], sources[i], renderer);
-        console.log(`  ok   ${decks[i]}`);
-      } catch (error) {
-        failed += 1;
-        console.error(`  FAIL ${decks[i]} — ${error.message}`);
-      }
-    }
-  } finally {
-    if (renderer) await renderer.close();
-  }
-  if (failed) {
-    console.error(`\n${failed} PDF build(s) failed.`);
-    process.exit(1);
+    process.stdout.write('mermaid renderer … ');
+    renderer = await createMermaidRenderer();
+    console.log('ready');
+  } catch (error) {
+    console.log('unavailable');
+    console.warn(`  mermaid pre-render skipped: ${error.message}`);
   }
 }
 
+let failed = 0;
+try {
+  if (wantHtml) failed += await buildAll(decks, sources, 'html', renderer);
+  if (wantPdf) failed += await buildAll(decks, sources, 'pdf', renderer);
+} finally {
+  if (renderer) await renderer.close();
+}
+if (failed) {
+  console.error(`\n${failed} build(s) failed.`);
+  process.exit(1);
+}
 console.log('build complete.');

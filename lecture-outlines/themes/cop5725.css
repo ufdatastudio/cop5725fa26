@@ -32,13 +32,13 @@ pre code { font-size: 0.85em; }
 mark { background: #fef3c7; padding: 0 0.2em; }
 blockquote { border-left: 4px solid #6366f1; padding-left: 1rem; color: #444; }
 .mermaid { text-align: center; }
-/* Keep diagrams within the slide: live SVG (HTML) and pre-rendered image (PDF).
-   The height cap is roughly half the 720px slide so a diagram leaves room for
-   a heading and surrounding text instead of overflowing into them. */
+/* Keep diagrams within the slide. Both builds embed a pre-rendered image;
+   `.mermaid svg` covers the live preview from `marp -s`. The height cap is a
+   generous safety net — compact rendering keeps most diagrams under it. */
 .mermaid svg,
 img.mermaid {
   max-width: 100%;
-  max-height: 360px;
+  max-height: 460px;
 }
 .portrait img { border-radius: 50%; max-height: 220px; }
 .caption { font-size: 0.75em; color: #666; text-align: center; }
