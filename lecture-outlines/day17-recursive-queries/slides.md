@@ -179,7 +179,12 @@ The org structure is a tree, encoded in the column.
 
 # The Recursive Query
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE faculty_supervision(fid INT, name TEXT, supervisor_id INT);
+INSERT INTO faculty_supervision VALUES
+  (1,'Dr. Provost',NULL), (2,'Dr. Dean',1), (3,'Dr. Chair',2),
+  (4,'Dr. Grant',3), (5,'Dr. Sahni',3), (6,'Dr. Lee',2);
+-- @query
 WITH RECURSIVE chart AS (
   -- Base: roots (no supervisor)
   SELECT fid, name, supervisor_id, 1 AS depth, name AS path
@@ -359,7 +364,7 @@ Reach for it before recursion. Most sequence problems do not need iteration.
 
 # Recursive Sequence: Fibonacci
 
-```sql
+```sql run
 WITH RECURSIVE fib(n, a, b) AS (
   SELECT 1, 0::bigint, 1::bigint
   UNION ALL
