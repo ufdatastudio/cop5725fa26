@@ -522,7 +522,7 @@ INSERT INTO student VALUES
   (1,'Ada Lovelace','CS',3.9), (2,'Alan Turing','CS',3.7),
   (3,'Grace Hopper','EE',4.0), (4,'Edsger Dijkstra','CS',2.8),
   (5,'Barbara Liskov','EE',3.5), (6,'Donald Knuth','CS',4.0);
-
+-- @query
 SELECT name, gpa
 FROM   student
 WHERE  major = 'CS'
@@ -538,7 +538,14 @@ Mechanical mapping from English to SQL. Run it — edit the data and re-run.
 
 > "Find all sections of COP5725 in any term where at least one student is still enrolled (grade is NULL)."
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE enrollment(
+  sid INT, cid TEXT, term TEXT, section_num INT, grade TEXT);
+INSERT INTO enrollment VALUES
+  (1,'COP5725','Fall 2026',1,NULL), (2,'COP5725','Fall 2026',1,NULL),
+  (3,'COP5725','Fall 2026',2,'A'), (4,'COP5725','Spring 2026',1,NULL),
+  (5,'COP3530','Fall 2026',1,NULL);
+-- @query
 SELECT DISTINCT term, section_num
 FROM   enrollment
 WHERE  cid = 'COP5725'
@@ -554,7 +561,14 @@ ORDER BY term, section_num;
 
 > "List faculty hired in the past five years, by name, salary descending."
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE faculty(name TEXT, salary INT, hire_date DATE);
+INSERT INTO faculty VALUES
+  ('Ada Byron',   152000, DATE '2024-08-16'),
+  ('Tenured Ted', 168000, DATE '2008-01-10'),
+  ('New Nadia',   128000, DATE '2025-08-18'),
+  ('Mid Marcus',  141000, DATE '2017-03-01');
+-- @query
 SELECT name, salary, hire_date
 FROM   faculty
 WHERE  hire_date > current_date - interval '5 years'
