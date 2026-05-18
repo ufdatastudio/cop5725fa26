@@ -119,7 +119,14 @@ WHERE  ec.course_count >= 3;
 
 ### CTE form
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT);
+INSERT INTO student VALUES (1,'Ada'),(2,'Bose'),(3,'Chen'),(4,'Devi');
+CREATE OR REPLACE TABLE enrollment(sid INT, cid TEXT);
+INSERT INTO enrollment VALUES
+  (1,'C1'),(1,'C2'),(1,'C3'), (2,'C1'),(2,'C2'), (3,'C1'),
+  (4,'C1'),(4,'C2'),(4,'C3'),(4,'C4');
+-- @query
 WITH ec AS (
   SELECT sid, count(*) AS course_count
   FROM   enrollment
@@ -194,7 +201,12 @@ The same data flow, presented as a sequence of named steps.
 
 # Sequential CTEs
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, dname TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.9), (2,'Bose','CS',3.1), (3,'Chen','CS',3.5),
+  (4,'Devi','EE',3.8), (5,'Evan','EE',2.9), (6,'Fei','EE',3.4);
+-- @query
 WITH dept_avg AS (
   SELECT dname, avg(gpa) AS mean_gpa
   FROM   student
@@ -423,7 +435,13 @@ The "DELETE then INSERT" archive pattern in one statement is atomic by virtue of
 
 # Pattern 1: Pre-Aggregate
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE course(cid TEXT, title TEXT);
+INSERT INTO course VALUES ('COP5725','Database Management'),('COP5536','Data Structures');
+CREATE OR REPLACE TABLE enrollment(sid INT, cid TEXT, term TEXT);
+INSERT INTO enrollment SELECT i + 1, 'COP5725', 'Fall2026' FROM range(35) t(i);
+INSERT INTO enrollment SELECT i + 1, 'COP5536', 'Fall2026' FROM range(12) t(i);
+-- @query
 WITH enrollment_counts AS (
   SELECT cid, term, count(*) AS n
   FROM   enrollment
