@@ -516,7 +516,13 @@ Answer: no ORDER BY means the "second page" depends on the row order the executo
 
 > "List the top 3 CS-major students by GPA, name and GPA only."
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada Lovelace','CS',3.9), (2,'Alan Turing','CS',3.7),
+  (3,'Grace Hopper','EE',4.0), (4,'Edsger Dijkstra','CS',2.8),
+  (5,'Barbara Liskov','EE',3.5), (6,'Donald Knuth','CS',4.0);
+
 SELECT name, gpa
 FROM   student
 WHERE  major = 'CS'
@@ -524,7 +530,7 @@ ORDER BY gpa DESC
 LIMIT  3;
 ```
 
-Mechanical mapping from English to SQL.
+Mechanical mapping from English to SQL. Run it — edit the data and re-run.
 
 ---
 
