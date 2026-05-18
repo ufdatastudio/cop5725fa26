@@ -91,18 +91,21 @@
     const fields = table.schema.fields;
     const columns = fields.map((f) => f.name);
     const kinds = fields.map((f) => columnKind(f.type));
-    const rows = table.toArray();
+    // Access columns by position, not name: a self-join can return two columns
+    // with the same name, and name lookup would render one of them twice.
+    const vectors = fields.map((_, i) => table.getChildAt(i));
+    const rowCount = table.numRows;
     if (columns.length === 0) {
       outEl.innerHTML = '<p style="color:#15803d;margin:.4em 0">Statement executed.</p>';
-      return rows.length;
+      return rowCount;
     }
     const head = columns.map((c) => `<th>${escapeHtml(c)}</th>`).join('');
-    const body = rows
-      .slice(0, MAX_ROWS)
-      .map((row) => '<tr>' + columns.map((c, i) => renderCell(row[c], kinds[i])).join('') + '</tr>')
-      .join('');
+    let body = '';
+    for (let r = 0; r < Math.min(rowCount, MAX_ROWS); r += 1) {
+      body += '<tr>' + vectors.map((v, i) => renderCell(v.get(r), kinds[i])).join('') + '</tr>';
+    }
     outEl.innerHTML = `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
-    return rows.length;
+    return rowCount;
   }
 
   // ---- run a widget's query --------------------------------------------
