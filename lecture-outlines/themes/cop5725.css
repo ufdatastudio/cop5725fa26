@@ -10,6 +10,11 @@
 
 /* ---- base layout ------------------------------------------------------- */
 
+/* Slide body text. Smaller than the default theme's 29px so the denser
+   course slides fit without overflowing. Headings and the relative sizes
+   below scale with this. */
+section { font-size: 24px; }
+
 footer { font-size: 0.6em; }
 section.lead h1 { text-align: center; }
 .footnote { font-size: 0.6em; color: #666; position: absolute; bottom: 30px; }
