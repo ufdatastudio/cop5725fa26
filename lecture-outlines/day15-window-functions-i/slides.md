@@ -107,7 +107,12 @@ Output:
 
 ### OVER
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.95), (2,'Bob','EE',2.90), (3,'Chia','CS',3.85),
+  (4,'Dev','CS',3.85), (5,'Eve','EE',3.70);
+-- @query
 SELECT name, major, gpa,
        avg(gpa) OVER (PARTITION BY major) AS major_avg
 FROM   student;
@@ -206,7 +211,12 @@ Each row's window is the partition it belongs to, optionally ordered, optionally
 
 # ROW_NUMBER
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.95), (2,'Bob','EE',2.90), (3,'Chia','CS',3.85),
+  (4,'Dev','CS',3.85), (5,'Eve','EE',3.70);
+-- @query
 SELECT name, gpa,
        row_number() OVER (ORDER BY gpa DESC) AS rk
 FROM   student;
@@ -227,7 +237,12 @@ The most common ranking function in practice. Used everywhere from leaderboards 
 
 # RANK and DENSE_RANK
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.95), (2,'Bob','EE',2.90), (3,'Chia','CS',3.85),
+  (4,'Dev','CS',3.85), (5,'Eve','EE',3.70);
+-- @query
 SELECT name, gpa,
        rank()       OVER (ORDER BY gpa DESC) AS r,
        dense_rank() OVER (ORDER BY gpa DESC) AS dr
@@ -266,7 +281,12 @@ Pick the ranking function based on the consumer of the data. Sports leagues use 
 
 # NTILE: Quantile Buckets
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.95), (2,'Bob','EE',2.90), (3,'Chia','CS',3.85),
+  (4,'Dev','CS',3.85), (5,'Eve','EE',3.70);
+-- @query
 SELECT name, gpa,
        ntile(4) OVER (ORDER BY gpa) AS quartile
 FROM   student;
@@ -294,7 +314,12 @@ Useful for percentile reporting and decile cohorts. PostgreSQL also offers `perc
 
 # Rank Within Group
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE faculty(fid INT, name TEXT, dname TEXT, salary INT);
+INSERT INTO faculty VALUES
+  (1,'Grant','CS',95000), (2,'Sahni','CS',110000), (3,'Dobra','CS',102000),
+  (4,'Lee','EE',88000), (5,'Rao','EE',99000);
+-- @query
 SELECT name, dname, salary,
        rank() OVER (PARTITION BY dname ORDER BY salary DESC) AS dept_rank
 FROM   faculty;
@@ -314,7 +339,12 @@ This is the building block for "top N per group" — the canonical use of window
 
 # Top-N Per Group (The Clean Form)
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE faculty(fid INT, name TEXT, dname TEXT, salary INT);
+INSERT INTO faculty VALUES
+  (1,'Grant','CS',95000), (2,'Sahni','CS',110000), (3,'Dobra','CS',102000),
+  (4,'Lee','EE',88000), (5,'Rao','EE',99000);
+-- @query
 -- Top 2 highest-paid faculty per department
 SELECT dname, name, salary
 FROM (
@@ -345,7 +375,12 @@ The correlated subquery version of this problem from Monday was 10 lines and ran
 
 Any aggregate function (`count`, `sum`, `avg`, `min`, `max`, ...) can be used as a window function by adding `OVER (...)`.
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE faculty(fid INT, name TEXT, dname TEXT, salary INT);
+INSERT INTO faculty VALUES
+  (1,'Grant','CS',95000), (2,'Sahni','CS',110000), (3,'Dobra','CS',102000),
+  (4,'Lee','EE',88000), (5,'Rao','EE',99000);
+-- @query
 SELECT name, dname, salary,
        avg(salary)   OVER (PARTITION BY dname) AS dept_avg,
        max(salary)   OVER (PARTITION BY dname) AS dept_max,
@@ -360,7 +395,12 @@ Every row carries its own salary plus its department's stats. No GROUP BY, no ex
 
 # Running Totals
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE faculty(fid INT, name TEXT, dname TEXT, salary INT);
+INSERT INTO faculty VALUES
+  (1,'Grant','CS',95000), (2,'Sahni','CS',110000), (3,'Dobra','CS',102000),
+  (4,'Lee','EE',88000), (5,'Rao','EE',99000);
+-- @query
 SELECT name, dname, salary,
        sum(salary) OVER (
          PARTITION BY dname
@@ -450,7 +490,12 @@ The rest are dropped.
 
 # Pattern 3: Compare Each Row to Group Stats
 
-```sql
+```sql run
+CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+INSERT INTO student VALUES
+  (1,'Ada','CS',3.95), (2,'Bob','EE',2.90), (3,'Chia','CS',3.85),
+  (4,'Dev','CS',3.85), (5,'Eve','EE',3.70);
+-- @query
 SELECT
   s.name, s.gpa,
   s.gpa - avg(s.gpa) OVER (PARTITION BY s.major)     AS vs_major_avg,
