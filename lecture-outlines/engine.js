@@ -29,16 +29,30 @@ export default ({ marp }) => {
   // foreignObject SVG labels do not survive Chromium's print path.
   if (target === 'html') {
     const runtime = [runtimeFile('mermaid.js'), runtimeFile('slide-runtime.js')].join('\n');
-    // Append the runtime as a trailing <script> so every HTML deck is
-    // self-contained: no per-deck <script> line, nothing to host.
+    // Inject the runtime as one <script>, so every HTML deck is self-contained.
+    //
+    // The rule skips inline-mode passes: Marpit renders the footer/header
+    // directive with md.parseInline, and a token pushed during that pass is
+    // stamped into every slide's footer — that was the "runtime inlined once
+    // per slide" bug. It runs before marpit_collect and inserts before the
+    // last `marpit_slide_close` (the `</section>`), so the script sits inside a
+    // slide: it executes as ordinary HTML rather than as an SVG-namespaced
+    // script, and marpit_collect keeps it with that slide for per-slide render.
     marp.use((md) => {
-      md.core.ruler.push('cop5725-runtime', (state) => {
-        if (state.env.__cop5725Runtime) return;
-        state.env.__cop5725Runtime = true;
+      md.core.ruler.before('marpit_collect', 'cop5725-runtime', (state) => {
+        if (state.inlineMode) return;
+        let closeAt = -1;
+        for (let i = state.tokens.length - 1; i >= 0; i -= 1) {
+          if (state.tokens[i].type === 'marpit_slide_close') {
+            closeAt = i;
+            break;
+          }
+        }
+        if (closeAt === -1) return;
         const token = new state.Token('html_block', '', 0);
         token.block = true;
         token.content = `<script>\n${runtime}\n</script>\n`;
-        state.tokens.push(token);
+        state.tokens.splice(closeAt, 0, token);
       });
     });
   }
