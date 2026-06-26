@@ -4,6 +4,8 @@ layout: default
 
 # COP 5725 Database Management Systems Fall 2026 #
 
+> This course is also posted in [Simple Syllabus](https://ufl.simplesyllabus.com/doc/dg5w8n4mu/Fall-2026-COP-5725-27221-Database-Management-Systems?mode=view).
+
 **Class Number:** 27221 | **Section:** 7LL9
 
 
