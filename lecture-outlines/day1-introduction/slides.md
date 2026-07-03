@@ -430,6 +430,43 @@ The AI clause is unambiguous: declare every prompt and include it with submissio
 
 ---
 
+# The Case for Hand-Coding
+
+<div class="columns">
+<div>
+
+Does AI assistance change what you learn? Anthropic randomized 52 engineers to build features with an unfamiliar Python library, with or without an AI assistant.
+
+- AI users averaged 50% on the follow-up quiz, hand-coders 67%, nearly two letter grades apart
+- Debugging skills showed the widest gap
+- The AI group finished no faster
+- Asking for explanations preserved understanding; delegating code did not
+
+> Write your own SQL this semester. If you use AI, make it a declared tutor, not a ghostwriter.
+
+</div>
+<div>
+
+![w:500px](images/anthropic-ai-coding-skills.png)
+
+<div class="caption">
+
+"How AI assistance impacts the formation of coding skills," Anthropic, Jan 29, 2026
+[anthropic.com/research/AI-assistance-coding-skills](https://www.anthropic.com/research/AI-assistance-coding-skills) · [full paper](https://arxiv.org/abs/2601.20245)
+
+</div>
+
+</div>
+</div>
+
+<!--
+This slide is the "why" behind the AI clause on the previous slide. Study details for the inevitable questions: n=52, mostly junior engineers, each with a year or more of weekly Python; the task used Trio, an async library none of them knew well; the quiz covered debugging, code reading, code writing, and concepts. The headline gap (50% vs 67%) is Cohen's d = 0.738 at p = 0.01, and the debugging sub-scores fell hardest. Debugging your own SQL and plans is a skill the projects lean on.
+Say aloud that the study also found a usable lane: participants who asked follow-up questions, requested explanations, or posed conceptual queries understood more than those who delegated code generation. That lane is exactly what the declared-use policy permits.
+Expect the "industry uses AI everywhere" pushback. Honest answer: true, and the study measures skill formation. A course is the skill-formation phase. Once the skill exists, assistance is leverage; before it exists, assistance is a substitute.
+-->
+
+---
+
 <!-- _class: lead -->
 
 # Part 5: Software and Setup
