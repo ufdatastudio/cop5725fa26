@@ -13,6 +13,9 @@ import { chromium } from 'playwright';
 
 const MERMAID_CDN = 'https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.esm.min.mjs';
 
+// Keep in sync with the img.mermaid max-height in themes/cop5725.css.
+const MAX_DISPLAY_HEIGHT = 460;
+
 /** True when the markdown has at least one ```mermaid fenced block. */
 export function hasMermaid(source) {
   return source.split('\n').some((line) => /^```mermaid\s*$/.test(line));
@@ -72,7 +75,11 @@ export async function createMermaidRenderer() {
         el.setAttribute('height', box.height);
         el.style.maxWidth = 'none';
         await document.fonts.ready;
-        return { width: box.width, height: box.height };
+        // Measure the host, not the viewBox: the screenshot captures the host,
+        // whose 4px padding is part of the raster. Sizing the <img> from the
+        // viewBox alone under-reports both dimensions and skews the ratio.
+        const rect = host.getBoundingClientRect();
+        return { width: rect.width, height: rect.height };
       }, { id, src: source });
 
       const png = await page.locator(`#host-${id}`).screenshot({ omitBackground: true });
@@ -104,9 +111,13 @@ export async function replaceMermaid(source, renderer) {
     while (j < lines.length && !/^```\s*$/.test(lines[j])) body.push(lines[j++]);
     try {
       const { dataUri, width, height } = await renderer.render(body.join('\n'));
-      out.push(
-        `<img class="mermaid" src="${dataUri}" width="${Math.round(width)}" height="${Math.round(height)}" />`,
-      );
+      // Emit width only, pre-scaled under the theme's height cap. An <img>
+      // with both attributes set distorts when the CSS max-width/max-height
+      // clamps engage (each pins one axis independently); with width alone,
+      // the browser derives height from the intrinsic ratio, so any further
+      // max-width clamp stays proportional.
+      const displayWidth = Math.round(width * Math.min(1, MAX_DISPLAY_HEIGHT / height));
+      out.push(`<img class="mermaid" src="${dataUri}" width="${displayWidth}" />`);
     } catch {
       out.push('```mermaid', ...body, '```');
     }
