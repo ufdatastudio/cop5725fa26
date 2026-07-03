@@ -347,16 +347,18 @@ The progressive weighting is deliberate: Project 1 is low-stakes so a student st
 </div>
 <div>
 
-```mermaid
-pie title Weight by Category
-  "Exams" : 50
-  "Projects" : 35
-  "Quizzes" : 15
-```
-
-Exams: 50%
-Projects: 35%
-Quizzes: 15%
+<svg viewBox="0 0 480 340" width="480" role="img" aria-label="Donut chart of grade weight by category: exams 50 percent, projects 35 percent, quizzes 15 percent" style="display:block;margin:0 auto;">
+  <path d="M 241 52 A 118 118 0 0 1 241 288" fill="none" stroke="#2a78d6" stroke-width="24"/>
+  <path d="M 239 288 A 118 118 0 0 1 143.95 101.45" fill="none" stroke="#1baf7a" stroke-width="24"/>
+  <path d="M 145.11 99.85 A 118 118 0 0 1 239 52" fill="none" stroke="#eda100" stroke-width="24"/>
+  <text x="240" y="176" text-anchor="middle" font-size="18" fill="#52514e">Final grade</text>
+  <text x="394" y="167" text-anchor="start" font-size="21" font-weight="600" fill="#0b0b0b">50%</text>
+  <text x="394" y="189" text-anchor="start" font-size="17" fill="#52514e">Exams</text>
+  <text x="103" y="237" text-anchor="end" font-size="21" font-weight="600" fill="#0b0b0b">35%</text>
+  <text x="103" y="259" text-anchor="end" font-size="17" fill="#52514e">Projects</text>
+  <text x="170" y="30" text-anchor="end" font-size="21" font-weight="600" fill="#0b0b0b">15%</text>
+  <text x="170" y="52" text-anchor="end" font-size="17" fill="#52514e">Quizzes</text>
+</svg>
 
 </div>
 </div>
