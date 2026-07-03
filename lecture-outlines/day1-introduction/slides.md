@@ -209,25 +209,18 @@ Show a real EXPLAIN ANALYZE output on the projector if time. Three lines about S
 # Seven Sections, Five Quizzes, Three Exams
 
 ```mermaid
-graph TD
-  S1["§1 Foundations<br/>(Weeks 1-4)"] --> Q1["Quiz 1 — Sep 11"]
-  Q1 --> S2["§2 SQL Mastery<br/>(Weeks 5-7)"]
-  S2 --> Q2["Quiz 2 — Oct 2"]
-  Q2 --> S3["§3 Programming<br/>(Week 8)"]
-  S3 --> E1["Exam 1 — Oct 14"]
-  E1 --> S4["§4 Storage + Indexing<br/>(Weeks 9-11)"]
-  S4 --> Q3["Quiz 3 — Oct 30"]
-  Q3 --> S5["§5 Query Processing<br/>(Weeks 12-13)"]
-  S5 --> Q4["Quiz 4 — Nov 13"]
-  Q4 --> E2["Exam 2 — Nov 18"]
-  E2 --> S6["§6 Transactions<br/>(Weeks 14, 16)"]
-  S6 --> Q5["Quiz 5 — Dec 2"]
-  Q5 --> S7["§7 Distributed<br/>(Week 16)"]
-  S7 --> EF["Final Exam — Dec 5-11"]
+timeline
+  §1 Foundations : Weeks 1-4 : Quiz 1 (Sep 11)
+  §2 SQL Mastery : Weeks 5-7 : Quiz 2 (Oct 2)
+  §3 Programming : Week 8 : Exam 1 (Oct 14)
+  §4 Storage + Indexing : Weeks 9-11 : Quiz 3 (Oct 30)
+  §5 Query Processing : Weeks 12-13 : Quiz 4 (Nov 13) : Exam 2 (Nov 18)
+  §6 Transactions : Weeks 14, 16 : Quiz 5 (Dec 2)
+  §7 Distributed : Week 16 : Final Exam (Dec 5-11)
 ```
 
 <!--
-Walk the diagram once. The key idea: every quiz closes a section so you know what is on it (and what is not). Two exams + a final spread the load.
+Walk the timeline left to right once. The key idea: every quiz closes a section so you know what is on it (and what is not). Two exams + a final spread the load.
 -->
 
 ---
