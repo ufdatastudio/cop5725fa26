@@ -26,7 +26,7 @@ Students respond in real time; the instructor reveals the right answer on the ne
 |------|------|----------|
 | Exam 1 | Wed, Oct 14 | Sections 1-3 (Foundations, SQL, Programming) |
 | Exam 2 | Wed, Nov 18 | Sections 4-5 (Storage, Indexing, Query Processing) |
-| Final Exam | Dec 5-11 | Cumulative, emphasis on Sections 6-7 |
+| Final Exam | Fri, Dec 11, 10:00 AM-12:00 PM | Cumulative, emphasis on Sections 6-7 |
 
 A practice exam packet with worked solutions is released one week before each exam.
 

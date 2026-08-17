@@ -150,7 +150,7 @@ git push origin main final
 
 ## Presentations
 
-In the assigned final exam slot (per UF schedule, within Dec 5-11):
+In the final exam slot on Friday, Dec 11, 10:00 AM-12:00 PM in MALA 1000:
 
 - 5 minutes per student
 - 3 minutes of demo (the artifact running)

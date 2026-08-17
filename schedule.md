@@ -48,7 +48,7 @@ Four individual projects plus a final capstone are spaced two to three weeks apa
 |------|------|----------|--------|
 | Exam 1 | Wed, Oct 14 | Sections 1-3 (Foundations, SQL, Programming) | 15% |
 | Exam 2 | Wed, Nov 18 | Sections 4-5 (Storage, Indexing, Query Processing) | 15% |
-| Exam 3 (Final) | TBA in Dec 5-11 | Cumulative, weighted toward Sections 6-7 | 20% |
+| Exam 3 (Final) | Fri, Dec 11, 10:00 AM-12:00 PM | Cumulative, weighted toward Sections 6-7 | 20% |
 
 ---
 
@@ -76,7 +76,7 @@ After each deadline, students present in small breakout groups; the highest-scor
 | [Project 1](projects/project1) | 4% | Wed, Sep 2 | Fri, Sep 25 | Mon Sep 28 / Wed Sep 30 | "Load this new source": schema + ETL + business queries |
 | [Project 2](projects/project2) | 6% | Mon, Sep 21 | Fri, Oct 23 | Mon Oct 26 / Wed Oct 28 | "Write the metrics": advanced SQL analytics |
 | [Project 3](projects/project3) | 10% | Mon, Oct 19 | Fri, Nov 13 | Mon Nov 16 / Fri Nov 20 | "This dashboard is slow": indexing + tuning report |
-| [Final Project](projects/project-final) | 15% | Mon, Nov 16 | Wed, Dec 9 | Wed Dec 9 (finals window) | Ship a real artifact (report / API / dashboard / pipeline) |
+| [Final Project](projects/project-final) | 15% | Mon, Nov 16 | Wed, Dec 9 | Fri Dec 11 (final exam block) | Ship a real artifact (report / API / dashboard / pipeline) |
 
 See [Projects](projects) for the full specification and deliverables for each milestone.
 
@@ -96,7 +96,7 @@ Each comes with a short reading guide and a one-page written response (graded as
 | 14 | Mohan et al., "ARIES: A Transaction Recovery Method..." ACM TODS 1992 |
 | 16 | Raasveldt and Mühleisen, "DuckDB: An Embeddable Analytical Database," SIGMOD 2019 |
 
-A complete reading list, including supplementary papers tied to each lecture, is maintained in [LECTURE_READINGS.md](LECTURE_READINGS.md).
+A complete reading list, including supplementary papers tied to each lecture, is maintained in [LECTURE_READINGS](LECTURE_READINGS).
 
 ---
 
@@ -286,8 +286,8 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 ## Finals Week (Dec 5-11)
 
-- **Final Exam (Exam 3)**: Cumulative, with emphasis on transactions, concurrency, recovery, and distributed databases. Date and time will follow the UF final exam schedule.
-- **Final Project due** Wed Dec 9 by 11:59 PM; brief in-person presentations during the final exam block.
+- **Final Exam (Exam 3)**: Cumulative, with emphasis on transactions, concurrency, recovery, and distributed databases. Friday, Dec 11, 10:00 AM-12:00 PM in MALA 1000.
+- **Final Project due** Wed Dec 9 by 11:59 PM; brief in-person presentations during the final exam block on Fri Dec 11.
 
 ---
 

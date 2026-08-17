@@ -216,7 +216,7 @@ timeline
   §4 Storage + Indexing : Weeks 9-11 : Quiz 3 (Oct 30)
   §5 Query Processing : Weeks 12-13 : Quiz 4 (Nov 13) : Exam 2 (Nov 18)
   §6 Transactions : Weeks 14, 16 : Quiz 5 (Dec 2)
-  §7 Distributed : Week 16 : Final Exam (Dec 5-11)
+  §7 Distributed : Week 16 : Final Exam (Dec 11)
 ```
 
 <!--
@@ -234,7 +234,7 @@ Walk the timeline left to right once. The key idea: every quiz closes a section 
 - Today (Fri Aug 21)
 - Quiz Fridays: Sep 11, Oct 2, Oct 30, Nov 13
 - Exam Wednesdays: Oct 14, Nov 18
-- Final: scheduled in Dec 5-11
+- Final: Fri Dec 11, 10:00 AM-12:00 PM, MALA 1000
 
 </div>
 <div>

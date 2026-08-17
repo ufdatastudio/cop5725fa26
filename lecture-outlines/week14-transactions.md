@@ -99,4 +99,4 @@ Practice packet (`practice-exams/exam2.md`) is the best preparation.
 - **Week 15 (Nov 23-28):** Thanksgiving — no classes
 - **Mon Nov 30:** MVCC, Snapshot Isolation
 - **Wed Dec 2:** Recovery (WAL, ARIES) + Distributed + Modern; **Final Project released**
-- **Dec 5-11:** Finals — Final Exam (cumulative); Final Project due Wed Dec 9
+- **Dec 5-11:** Finals — Final Exam Fri Dec 11, 10:00 AM-12:00 PM (cumulative); Final Project due Wed Dec 9

@@ -6,7 +6,7 @@ layout: default
 
 **Coverage:** Cumulative across all seven sections.
 **Released:** Wednesday, December 2, 2026.
-**Final Exam:** Scheduled within Dec 5-11, 2026 (per UF finals schedule).
+**Final Exam:** Friday, December 11, 2026, 10:00 AM-12:00 PM in MALA 1000.
 
 Solutions live in [`exam3-final-solutions.md`](exam3-final-solutions.md).
 

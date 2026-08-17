@@ -139,7 +139,7 @@ After each deadline (except Project 0 and Final):
 - **Monday after deadline:** small breakout groups (4-5 students) — each student demos for 3-4 minutes; group votes for the strongest presentation.
 - **Wednesday:** the highest-voted student from each group presents to the full class.
 
-For the Final Project, presentations happen on Wed Dec 9 during the assigned final exam block.
+For the Final Project, presentations happen during the final exam block on Fri Dec 11, 10:00 AM-12:00 PM in MALA 1000.
 
 ---
 

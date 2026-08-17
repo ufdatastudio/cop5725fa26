@@ -550,7 +550,7 @@ For full topic details, readings, and rubrics see the [Schedule](schedule) and [
 
 {:/nomarkdown}
 
-**Final Exam (Exam 3):** scheduled by UF in the Dec 5–11 finals window; the date and time are posted by the registrar.
+**Final Exam (Exam 3):** Friday, Dec 11, 10:00 AM–12:00 PM in MALA 1000.
 
 ---
 

@@ -5,7 +5,7 @@
 The final two lectures.
 Monday introduces MVCC and snapshot isolation — the answer that lets PostgreSQL run high concurrency without locking every read.
 Wednesday closes the textbook with recovery (WAL + ARIES) and a one-class survey of distributed and modern systems.
-The Final Exam runs during the Dec 5-11 finals window; the Final Project is due Wed Dec 9.
+The Final Exam is Friday, Dec 11, 10:00 AM-12:00 PM in MALA 1000; the Final Project is due Wed Dec 9.
 
 **Learning Objectives:**
 
@@ -96,8 +96,8 @@ The Final Exam runs during the Dec 5-11 finals window; the Final Project is due 
 
 ## Finals Week (December 5-11)
 
-- **Final Exam:** scheduled in the Dec 5-11 window per UF's finals schedule
+- **Final Exam:** Friday, Dec 11, 10:00 AM-12:00 PM in MALA 1000
 - **Final Project:** due Wed Dec 9 at 11:59 PM
-- **Final Project presentations:** during the assigned final exam block (or via recorded demo)
+- **Final Project presentations:** during the final exam block on Fri Dec 11 (or via recorded demo)
 
 Practice Final Exam packet released Wed Dec 2 as `practice-exams/exam3-final.md`.
