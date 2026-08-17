@@ -8,7 +8,7 @@ layout: default
 #### Class Meeting Time
 
 - Monday, Wednesday, Friday 2nd Period _(8:30 AM - 9:20 AM)_
-- Location: [Matherly Hall, MALA 1000](https://campusmap.ufl.edu/#/index/1024)
+- Location: [Malachowsky Hall, MALA 1000](https://campusmap.ufl.edu/#/index/1024)
 
 ### Resources
 

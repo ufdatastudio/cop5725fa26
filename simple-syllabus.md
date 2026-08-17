@@ -24,6 +24,12 @@ Phone: TODO add a direct or department main line
 
 Office hours: By appointment. Booking link: <https://outlook.office.com/bookwithme/user/6e844770c73a436780726b9e85b5582d@ufl.edu?anonymous&ep=plink>
 
+Teaching assistant: Ray Chen
+
+TA email: chenz1@ufl.edu
+
+TA office hours: TODO add once scheduled
+
 Course communication: Any email to the instructor or teaching assistants must include `cop5725fa26` in the subject line. Messages without it are likely filtered as junk. You may also reach classmates and staff through Canvas at <https://ufl.instructure.com/>.
 
 ## 2. Course Description
@@ -154,7 +160,7 @@ The standard UF grade-points link is included in the auto-populated University P
 
 ## 9. Course Schedule
 
-Key dates: Exam 1 on Wednesday, October 14; Exam 2 on Wednesday, November 18; Final Exam during the finals period, December 5 to 11, 2026.
+Key dates: Exam 1 on Wednesday, October 14; Exam 2 on Wednesday, November 18; Final Exam on Friday, December 11, 10:00 AM to 12:00 PM in MALA 1000.
 
 | Week | Topic |
 | ---- | ----- |
@@ -250,6 +256,7 @@ This is not an exhaustive list, and the instructors will report any potential vi
 ## Before you publish
 
 - Fill the office location and phone in section 1.
+- Fill the TA office hours in section 1 once scheduled.
 - Enter the textbook in Textbook Adoptions so section 6 populates.
 - Confirm the auto-populated meeting time and section match the registrar.
 - Publish, not just save, before about July 6, 2026.

@@ -10,9 +10,9 @@ layout: default
 
 
 **Class Hours:** Monday, Wednesday, Friday 2nd Period _(8:30 AM to 9:20 AM)_<br/>
-**Location:** [Matherly Hall, MALA 1000](https://campusmap.ufl.edu/#/index/1024)
+**Location:** [Malachowsky Hall, MALA 1000](https://campusmap.ufl.edu/#/index/1024)
 
-**Exams:** Exam 1 on Wed, Oct 14; Exam 2 on Wed, Nov 18; Final Exam during the finals period (December 5-11, 2026)
+**Exams:** Exam 1 on Wed, Oct 14; Exam 2 on Wed, Nov 18; Final Exam on Fri, Dec 11, 10:00 AM-12:00 PM in MALA 1000
 
 
 ## Instructors
@@ -20,6 +20,10 @@ layout: default
 Dr. Christan Grant
 - **Email:** christan@ufl.edu
 - **Office Hours**: By appointment (booking link [Book Here](https://outlook.office.com/bookwithme/user/6e844770c73a436780726b9e85b5582d@ufl.edu?anonymous&ep=plink))
+
+Ray Chen (Teaching Assistant)
+- **Email:** chenz1@ufl.edu
+- **Office Hours**: To be announced
 
 ---
 
