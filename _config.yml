@@ -17,6 +17,10 @@ github: [metadata]
 
 exclude:
   - simple-syllabus.md
+  - papers/README.md
+  - papers/pdfs/MANUAL.md
+  - documents/audit-cross-references.md
+  - scripts/
   - .sass-cache
   - .jekyll-cache
   - gemfiles

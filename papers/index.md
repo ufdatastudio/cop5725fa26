@@ -9,9 +9,7 @@ Featured papers are required reading assigned to a specific week.
 Foundational papers are cited throughout the slides for context and historical depth.
 Modern supplementary papers extend each topic.
 
-Each paper has a local copy in `papers/pdfs/`.
-The PDF column below uses relative links — they resolve when you view this page on the local site or directly in the repo.
-Lecture slides cite the public URL (when deployed at ufdatastudio.com/cop5725fa26) so the slide links continue to work when exported.
+Each paper links to a PDF copy hosted with the course site.
 
 ---
 
@@ -62,14 +60,6 @@ Lecture slides cite the public URL (when deployed at ufdatastudio.com/cop5725fa2
 | Pedreira, P. et al. *Velox: Meta's Unified Execution Engine*. | PVLDB 15(12) | 2022 | [PDF](pdfs/pedreira2022.pdf) |
 | Eisenberg, A. et al. *SQL:2003 Has Been Published*. | SIGMOD Record 33(1) | 2004 | [PDF](pdfs/eisenberg2004.pdf) |
 | Mumick, I., Pirahesh, H., Ramakrishnan, R. *The Magic of Duplicates and Aggregates*. | VLDB | 1990 | [PDF](pdfs/mumick1990.pdf) |
-
----
-
-## How PDFs Get Here
-
-`papers/pdfs/` should hold a local copy of every paper above, named in lowercase `firstauthorYEAR.pdf` form.
-A short shell script, [`scripts/fetch_papers.sh`](../scripts/fetch_papers.sh), seeds the directory from open-access sources.
-Papers behind paywalls require manual placement; the citation table above still resolves to a 404 page that names the missing file.
 
 ---
 
