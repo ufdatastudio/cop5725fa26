@@ -55,6 +55,9 @@ jobs:
         env:
           # marp-cli: run Chrome with --no-sandbox, required in CI runners.
           CHROME_NO_SANDBOX: "1"
+          # marp-cli derives the html lang attribute from the OS locale;
+          # runners default to C, which produced lang="C".
+          LANG: en_US.UTF-8
           # CHROME_PATH: /home/runner/.cache/ms-playwright/...   (fallback only)
         run: node build.mjs
 
