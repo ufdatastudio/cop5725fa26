@@ -21,6 +21,7 @@ exclude:
   - papers/pdfs/MANUAL.md
   - documents/audit-cross-references.md
   - scripts/
+  - lecture-outlines/
   - .sass-cache
   - .jekyll-cache
   - gemfiles

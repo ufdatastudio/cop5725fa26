@@ -1,0 +1,91 @@
+# Build the Jekyll site + Marp lecture decks and deploy to GitHub Pages.
+# Replaces the legacy branch-based Pages build (Settings > Pages > Source
+# must be "GitHub Actions" for the deploy job to succeed).
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # Future date-gating: uncomment so gated decks (see
+  # lecture-outlines/publish.mjs PUBLISH_DATES) appear on class-day mornings
+  # without a push. Note GitHub disables schedule triggers after 60 days of
+  # repo inactivity.
+  # schedule:
+  #   - cron: "0 10 * * 1,3,5"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One Pages deployment at a time; never cancel an in-flight production deploy.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: lecture-outlines/package-lock.json
+
+      - name: Install deck toolchain
+        working-directory: lecture-outlines
+        run: npm ci
+
+      # Fallback only: ubuntu-latest ships Google Chrome stable, which both
+      # marp-cli and the Playwright mermaid pre-render use. If the image ever
+      # drops Chrome, uncomment this and the CHROME_PATH line below.
+      # - name: Install Chromium fallback
+      #   working-directory: lecture-outlines
+      #   run: npx playwright install --with-deps chromium
+
+      - name: Build Marp decks (HTML + PDF)
+        working-directory: lecture-outlines
+        env:
+          # marp-cli: run Chrome with --no-sandbox, required in CI runners.
+          CHROME_NO_SANDBOX: "1"
+          # CHROME_PATH: /home/runner/.cache/ms-playwright/...   (fallback only)
+        run: node build.mjs
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build Jekyll site
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+
+      # jekyll-build-pages runs in Docker as root, so _site is root-owned;
+      # take ownership before overlaying the deck outputs into it.
+      - name: Overlay lecture decks into site
+        run: |
+          sudo chown -R "$(id -u):$(id -g)" _site
+          node lecture-outlines/publish.mjs _site
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

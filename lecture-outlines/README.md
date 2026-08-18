@@ -1,8 +1,10 @@
 # Lecture Outlines — Build and Authoring Notes
 
 This directory holds Marp slide decks for each class meeting (`dayN-topic/slides.md`)
-and week-level overview files (`weekN-*.md`). Decks are uploaded to Canvas before
-each class. They are not linked from the public website.
+and week-level overview files (`weekN-*.md`). CI builds each deck and publishes
+it to `https://ufdatastudio.com/cop5725fa26/lecture-outlines/dayN-topic/slides.html`
+(and `slides.pdf`); see the Publishing section. The URLs are not linked from the
+site navigation or schedule, and Canvas remains a distribution channel.
 
 It is also a Node project: a custom Marp engine and a shared theme add the
 runnable-SQL and incremental-reveal syntax described below.
@@ -39,7 +41,7 @@ Each deck compiles to two different artifacts:
 
 | | HTML build | PDF build |
 | --- | --- | --- |
-| Audience | Instructor, presenting in class | Students, via Canvas |
+| Audience | Instructor, presenting in class | Students, via published URL / Canvas |
 | `sql run` block | Live DuckDB widget | Static highlighted query |
 | `::: appear` block | Click-through reveal | One page per reveal step |
 | JavaScript | Runtime inlined | None |
@@ -47,6 +49,20 @@ Each deck compiles to two different artifacts:
 The HTML deck must be served over http (`npm run watch`), not opened as a
 `file://` URL: the SQL runner uses a Web Worker, which browsers block on
 `file://`.
+
+## Publishing
+
+`.github/workflows/pages.yml` deploys the site. On every push to `main` it
+builds all decks (`node build.mjs`), builds the Jekyll site, overlays the deck
+outputs into `_site` with `node publish.mjs _site`, and deploys via GitHub
+Pages. `_config.yml` excludes `lecture-outlines/` from Jekyll, so the deck URLs
+exist only through this overlay and never appear in the sitemap.
+
+`publish.mjs` holds the publish policy. `PUBLISH_CLICKER` toggles the clicker
+decks, and the `PUBLISH_DATES` map holds back a deck until a given date (pair
+it with the workflow's commented `schedule:` trigger). A deck that fails to
+build fails the workflow before deploy, so the previously deployed site stays
+live until the deck is fixed.
 
 ## Shared theme
 

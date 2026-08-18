@@ -2,7 +2,7 @@ node_modules/
 _verify/
 spike/_shots/
 
-# Build outputs (decks are uploaded to Canvas, not committed)
+# Build outputs (built in CI and published by the Pages workflow, not committed)
 day*/slides.html
 day*/slides.pdf
 day*/clicker.html
