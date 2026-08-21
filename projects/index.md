@@ -6,7 +6,7 @@ layout: default
 
 Projects in COP 5725 mirror the work a junior data engineer does in industry:
 
-- **Pick a real dataset.** No two students pick the same slice.
+- **Pick a real dataset.** A letter rule assigns your dataset family; you choose the slice within it.
 - **Build it up over the semester.** Each project iterates on the same data.
 - **Ship to a GitHub repo.** Submissions are git tags on a personal repository.
 - **Document like onboarding.** Each repo's README should let a new engineer load and run your work.
@@ -24,7 +24,7 @@ Project weights grow with scope; each builds on the same dataset.
 
 | Project | Weight | Released | Due | Topic |
 |---------|--------|----------|-----|-------|
-| [Project 0](project0) | P/F | Fri, Aug 21 | Fri, Sep 4 | Setup + dataset claim + initial load |
+| [Project 0](project0) | P/F | Fri, Aug 21 | Fri, Sep 4 | Setup + dataset selection + initial load |
 | Project 1 | 4% | Wed, Sep 2 | Fri, Sep 25 | Schema design + SQL ETL + basic queries |
 | Project 2 | 6% | Mon, Sep 21 | Fri, Oct 23 | Advanced SQL analytics on your dataset |
 | Project 3 | 10% | Mon, Oct 19 | Fri, Nov 13 | Indexing and query optimization investigation |
@@ -34,20 +34,20 @@ The full specification for each project is posted here when it is released.
 
 ---
 
-## Project 0: Setup and Dataset Claim (P/F)
+## Project 0: Setup and Dataset Selection (P/F)
 
-**Goal:** Establish your repo, install your tools, claim your dataset.
+**Goal:** Establish your repo, install your tools, select your dataset.
 
 **Deliverables in your repo:**
 
 - `README.md` — your name, dataset choice, why you picked it
-- `setup/verify.py` — runs the three-check script (`uv` on PATH, packages import, DuckDB queries your sample), plus an optional PostgreSQL check via `DATABASE_URL`
+- `setup/verify.py` — runs the four-check script (`uv` on PATH, packages import, SQLite round-trip, DuckDB queries your sample), plus an optional PostgreSQL check via `DATABASE_URL`
 - `data/source.md` — pointer to where the raw data lives, including licence
 - `data/sample.csv` (or `.parquet`) — first 1000 rows you can already query
 
 **Submission:** Tag the commit `v0` and push.
 
-**How to claim a dataset:** Open a PR against the shared roster at [`datasets/student-roster.md`](../datasets/student-roster.md) adding your name beside the dataset slice. First PR merged wins.
+**How to select a dataset:** The first letter of your last name maps to a dataset family; you pick the slice within it. The table is in the [Project 0 spec](project0).
 
 **Repo setup checklist:**
 1. Create a new private repo on GitHub named `cop5725fa26-project`

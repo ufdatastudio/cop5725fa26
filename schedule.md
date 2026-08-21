@@ -74,14 +74,14 @@ See [Assignments and Quizzes](assignments) for details.
 ## Projects
 
 Projects mirror real industry tasks.
-Each student creates a **private** GitHub repo on their own account named `cop5725fa26-project` (adding `cegme` and `rkc8626` as Admins), and claims a **unique dataset** from the approved roster — no two students share the same slice.
+Each student creates a **private** GitHub repo on their own account named `cop5725fa26-project` (adding `cegme` and `rkc8626` as Admins), and selects a dataset family by the first letter of their last name, picking a slice within it.
 Projects build on the same dataset across the semester: Project 0 loads it; Project 1 normalizes and queries it; Project 2 runs advanced analytics; Project 3 tunes performance; the Final Project ships a complete artifact.
 Project weights increase progressively: Project 1 is smallest (4%), Project 3 the largest before the capstone (10%), and the Final Project the largest overall (15%).
 After each deadline, students present in small breakout groups; the highest-scored from each group presents to the full class.
 
 | Project | Weight | Released | Due | Presentations | Industry analog |
 |---------|--------|----------|-----|---------------|-----------------|
-| [Project 0](projects/project0) | P/F | Fri, Aug 21 | Fri, Sep 4 | none (setup only) | "Onboarding ticket": tools + claim your dataset |
+| [Project 0](projects/project0) | P/F | Fri, Aug 21 | Fri, Sep 4 | none (setup only) | "Onboarding ticket": tools + select your dataset |
 | Project 1 | 4% | Wed, Sep 2 | Fri, Sep 25 | Mon Sep 28 / Wed Sep 30 | "Load this new source": schema + ETL + business queries |
 | Project 2 | 6% | Mon, Sep 21 | Fri, Oct 23 | Mon Oct 26 / Wed Oct 28 | "Write the metrics": advanced SQL analytics |
 | Project 3 | 10% | Mon, Oct 19 | Fri, Nov 13 | Mon Nov 16 / Fri Nov 20 | "This dashboard is slow": indexing + tuning report |

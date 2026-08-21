@@ -18,8 +18,8 @@ layout: default
 
 Three things:
 
-1. Stand up your **local development environment**: DuckDB and Python with `uv`.
-2. **Claim a unique dataset** from the approved roster (see [datasets/student-roster.md](../datasets/student-roster.md)).
+1. Stand up your **local development environment**: SQLite, DuckDB, and Python with `uv`. SQLite ships inside Python's standard library, so it needs no install of its own.
+2. **Select your dataset** with the letter rule below. No sign-up or coordination is needed.
 3. Create your **personal project repository** on GitHub.
 
 PostgreSQL is optional in Project 0, and nothing here requires a running server. We will provide class PostgreSQL resources later in the semester. If you already run your own server, you can point the verify script at it with the `DATABASE_URL` environment variable and it will test the connection too.
@@ -39,14 +39,19 @@ The repo URL is your project handle for the entire semester. Use the same repo f
 
 ---
 
-## Dataset Claim
+## Dataset Selection
 
-1. Read [datasets/index.md](../datasets/index.md) for the available datasets.
-2. Pick a slice from [datasets/student-roster.md](../datasets/student-roster.md) — first PR merged wins.
-3. Open a pull request adding your name beside the slice.
-4. Once merged, the slice is yours for the rest of the semester.
+Browse the [datasets page](../datasets/) for descriptions of each dataset family, then select yours by the first letter of your last name:
 
-If none of the listed slices fit, propose your own dataset by PR. Approval is required before you commit your time.
+| Last name starts with | Dataset family | You pick the slice |
+|-----------------------|----------------|--------------------|
+| A–E | NYC Taxi (TLC Trip Records) | any 2024 month, yellow or green |
+| F–J | IMDb non-commercial | any genre |
+| K–O | Hacker News | any year, 2020–2025 |
+| P–T | OpenAlex | any field of study |
+| U–Z | US Census | any state or survey table |
+
+Classmates may land in the same family; the slice you pick keeps your work your own. If the assigned family genuinely doesn't fit your interests, propose an alternative dataset by email (subject line including `cop5725fa26`). Approval is required before you commit your time.
 
 ---
 
@@ -62,7 +67,7 @@ cop5725fa26-project/
 │   ├── source.md       # where the raw data lives + license
 │   └── sample.csv      # or sample.parquet — first 1000 rows
 ├── setup/
-│   └── verify.py       # runs the three-check script
+│   └── verify.py       # runs the four-check script
 ├── .env.example        # template env vars; copy to .env locally
 └── .gitignore          # must list .env and .venv/
 ```
@@ -72,8 +77,9 @@ cop5725fa26-project/
 At minimum:
 
 - Your name and program
-- Dataset you claimed and why it interests you
+- Dataset family and the slice you selected, and why it interests you
 - Local install commands you used
+- A short paragraph on the Parquet file format: what it is, how it differs from CSV, and when you would choose each
 - One-line summary of what you plan to do across the semester
 
 ### `data/source.md`
@@ -120,7 +126,7 @@ Run `cp .env.example .env`, edit the values, and confirm `.env` appears in `.git
 
 ### `setup/verify.py`
 
-Runs three required checks, plus an optional PostgreSQL check that only runs when `DATABASE_URL` is set. Exits with code 0 if all pass. Run it from the repo root, since the DuckDB check reads your sample file.
+Runs four required checks, plus an optional PostgreSQL check that only runs when `DATABASE_URL` is set. Exits with code 0 if all pass. Run it from the repo root, since the DuckDB check reads your sample file.
 
 Run the required checks with `uv run setup/verify.py`. To opt in to the PostgreSQL check, put your connection string in `.env` and run `uv run --env-file .env --extra postgres setup/verify.py`. The extra pulls in `psycopg[binary]`, so the base environment never needs psycopg or a local libpq.
 
@@ -137,6 +143,16 @@ def check_uv():
 def check_python_packages():
     import duckdb, pandas
     print("duckdb, pandas: OK")
+
+def check_sqlite():
+    import sqlite3
+    conn = sqlite3.connect(":memory:")
+    conn.execute("CREATE TABLE t (x INTEGER)")
+    conn.executemany("INSERT INTO t VALUES (?)", [(1,), (2,), (3,)])
+    n = conn.execute("SELECT count(*) FROM t").fetchone()[0]
+    conn.close()
+    assert n == 3, n
+    print(f"SQLite: OK (version {sqlite3.sqlite_version})")
 
 def check_duckdb():
     import duckdb
@@ -164,6 +180,7 @@ if __name__ == "__main__":
     try:
         check_uv()
         check_python_packages()
+        check_sqlite()
         check_duckdb()
         check_postgres_optional()
     except Exception as e:
@@ -197,7 +214,7 @@ Pass if **all** of the following are true:
 - [ ] `data/sample.csv` (or `.parquet`) exists with ≥ 100 rows
 - [ ] `setup/verify.py` runs to completion with exit code 0 on the TA's machine
 - [ ] `.env.example` is committed and no `.env` appears anywhere in the repo history
-- [ ] Your name appears on a merged PR to `datasets/student-roster.md`
+- [ ] Your dataset family matches the letter rule, or you have written instructor approval for an alternative
 
 Pass = no grade impact.
 Fail = one full letter grade reduction at end of semester.
@@ -212,8 +229,8 @@ A: That's expected. Project 1 will guide you through partial loading. For Projec
 **Q: My dataset requires authentication.**
 A: That counts as "not freely accessible" — pick a different one or propose with the instructor's approval. The course's pedagogical model assumes all artifacts can be reproduced by anyone.
 
-**Q: I missed the claim deadline. What happens?**
-A: You can still claim, but you start Project 1 behind. Be quick.
+**Q: Can I pick the same slice as a classmate?**
+A: Yes. The letter rule spreads the class across sources for variety, but your schema, queries, and writeups must be your own work either way.
 
 ---
 
