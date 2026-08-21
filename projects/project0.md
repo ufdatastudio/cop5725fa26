@@ -3,6 +3,7 @@ layout: default
 ---
 
 # Project 0: Environment Setup and Dataset Selection
+{: .no_toc}
 
 | | |
 |---|---|
@@ -12,17 +13,23 @@ layout: default
 
 ---
 
-## Goal
+Project 0 sets up everything the semester-long project sequence depends on. You will stand up a local development environment with SQLite, DuckDB, and Python managed by `uv`, select the dataset you will work with through the Final Project, and create the private GitHub repository that carries every submission. SQLite ships inside Python's standard library and needs no separate install.
 
-Three things:
+PostgreSQL is optional in Project 0, and nothing here requires you to install a database server. If you want to opt in now, use the department's CISE PostgreSQL service described in [Optional: CISE PostgreSQL](#optional-cise-postgresql) below. More class PostgreSQL resources come later in the semester.
 
-1. Stand up your **local development environment**: SQLite, DuckDB, and Python with `uv`. SQLite ships inside Python's standard library, so it needs no install of its own.
-2. **Select your dataset** with the letter rule below. No sign-up or coordination is needed.
-3. Create your **personal project repository** on GitHub.
+This project is the lightest of the semester by design. Use the time to read the syllabus, work the first few practice problems, and avoid a frantic week-2 catch-up.
 
-PostgreSQL is optional in Project 0, and nothing here requires you to install a server. If you want to opt in now, use the department's CISE PostgreSQL service described in [Optional: CISE PostgreSQL](#optional-cise-postgresql) below. More class PostgreSQL resources come later in the semester.
+## Contents
+{: .no_toc}
 
-Bookmark the official documentation now; you will live in these all semester:
+* TOC
+{:toc}
+
+---
+
+## Documentation
+
+Bookmark the official documentation now. You will live in these pages all semester.
 
 - [DuckDB documentation](https://duckdb.org/docs/)
 - [Python `sqlite3` module](https://docs.python.org/3/library/sqlite3.html), which wraps the [SQLite documentation](https://sqlite.org/docs.html)
@@ -30,8 +37,6 @@ Bookmark the official documentation now; you will live in these all semester:
 - [Apache Parquet documentation](https://parquet.apache.org/docs/), background for the README's format writeup
 - [uv documentation](https://docs.astral.sh/uv/)
 - [python-dotenv documentation](https://github.com/theskumar/python-dotenv#readme) for the `.env` convention; in this project `uv run --env-file .env` does the loading, so the package itself is not a dependency
-
-This project is the lightest of the semester by design. Use the time to read the syllabus, work the first few practice problems, and avoid a frantic week-2 catch-up.
 
 ---
 
