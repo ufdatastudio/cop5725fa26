@@ -22,7 +22,7 @@ Three things:
 2. **Claim a unique dataset** from the approved roster (see [datasets/student-roster.md](../datasets/student-roster.md)).
 3. Create your **personal project repository** on GitHub.
 
-PostgreSQL is not part of Project 0. It enters with a later project, along with an agreed-upon connection setup, so nothing here requires a running server.
+PostgreSQL is optional in Project 0, and nothing here requires a running server. We will provide class PostgreSQL resources later in the semester. If you already run your own server, you can point the verify script at it with the `DATABASE_URL` environment variable and it will test the connection too.
 
 This project is the lightest of the semester by design. Use the time to read the syllabus, work the first few practice problems, and avoid a frantic week-2 catch-up.
 
@@ -87,7 +87,9 @@ The first 1000 rows of your dataset. This must be reproducible — anyone with `
 
 ### `setup/verify.py`
 
-Runs three checks. Exits with code 0 if all pass. Run it from the repo root, since the DuckDB check reads your sample file.
+Runs three required checks, plus an optional PostgreSQL check that only runs when `DATABASE_URL` is set. Exits with code 0 if all pass. Run it from the repo root, since the DuckDB check reads your sample file.
+
+Opting in to the PostgreSQL check requires the binary driver: `uv add "psycopg[binary]"`. The plain `psycopg` package needs a local libpq and fails to import on machines without PostgreSQL installed.
 
 ```python
 # setup/verify.py
@@ -114,15 +116,27 @@ def check_duckdb():
     assert rows >= 100, f"expected at least 100 rows in {sample}, found {rows}"
     print(f"DuckDB: OK ({rows} rows in {sample})")
 
+def check_postgres_optional():
+    import os
+    url = os.environ.get("DATABASE_URL")
+    if not url:
+        print("PostgreSQL: skipped (optional; class resources come later)")
+        return
+    import psycopg
+    with psycopg.connect(url) as conn:
+        v = conn.execute("SELECT version()").fetchone()[0]
+    print(f"PostgreSQL: OK ({v.split(',')[0]})")
+
 if __name__ == "__main__":
     try:
         check_uv()
         check_python_packages()
         check_duckdb()
+        check_postgres_optional()
     except Exception as e:
         print(f"FAIL: {e}", file=sys.stderr)
         sys.exit(1)
-    print("All three checks passed.")
+    print("All checks passed.")
 ```
 
 ---

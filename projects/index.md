@@ -41,7 +41,7 @@ The full specification for each project is posted here when it is released.
 **Deliverables in your repo:**
 
 - `README.md` — your name, dataset choice, why you picked it
-- `setup/verify.py` — runs the three-check script (`uv` on PATH, packages import, DuckDB queries your sample)
+- `setup/verify.py` — runs the three-check script (`uv` on PATH, packages import, DuckDB queries your sample), plus an optional PostgreSQL check via `DATABASE_URL`
 - `data/source.md` — pointer to where the raw data lives, including licence
 - `data/sample.csv` (or `.parquet`) — first 1000 rows you can already query
 
