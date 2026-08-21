@@ -29,6 +29,8 @@ Bookmark the official documentation now; you will live in these all semester:
 - [DuckDB documentation](https://duckdb.org/docs/)
 - [Python `sqlite3` module](https://docs.python.org/3/library/sqlite3.html), which wraps the [SQLite documentation](https://sqlite.org/docs.html)
 - [PostgreSQL documentation](https://www.postgresql.org/docs/current/)
+- [uv documentation](https://docs.astral.sh/uv/)
+- [python-dotenv documentation](https://github.com/theskumar/python-dotenv#readme) for the `.env` convention; in this project `uv run --env-file .env` does the loading, so the package itself is not a dependency
 
 This project is the lightest of the semester by design. Use the time to read the syllabus, work the first few practice problems, and avoid a frantic week-2 catch-up.
 
@@ -142,15 +144,18 @@ import sys
 from pathlib import Path
 
 def check_uv():
+    """Confirm the uv package manager is installed and on PATH."""
     import shutil
     assert shutil.which("uv"), "uv not on PATH"
     print("uv: OK")
 
 def check_python_packages():
+    """Confirm the base dependencies from pyproject.toml import cleanly."""
     import duckdb, pandas
     print("duckdb, pandas: OK")
 
 def check_sqlite():
+    """Round-trip a small table through Python's built-in SQLite."""
     import sqlite3
     conn = sqlite3.connect(":memory:")
     conn.execute("CREATE TABLE t (x INTEGER)")
@@ -161,6 +166,7 @@ def check_sqlite():
     print(f"SQLite: OK (version {sqlite3.sqlite_version})")
 
 def check_duckdb():
+    """Query the committed sample file with DuckDB and count its rows."""
     import duckdb
     sample = next(
         (p for p in ("data/sample.csv", "data/sample.parquet") if Path(p).exists()),
@@ -172,6 +178,7 @@ def check_duckdb():
     print(f"DuckDB: OK ({rows} rows in {sample})")
 
 def check_postgres_optional():
+    """Test the PostgreSQL connection in DATABASE_URL; skip when unset."""
     import os
     url = os.environ.get("DATABASE_URL")
     if not url:
