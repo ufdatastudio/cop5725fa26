@@ -18,9 +18,11 @@ layout: default
 
 Three things:
 
-1. Stand up your **local development environment**: PostgreSQL 16, DuckDB, Python with `uv`.
+1. Stand up your **local development environment**: DuckDB and Python with `uv`.
 2. **Claim a unique dataset** from the approved roster (see [datasets/student-roster.md](../datasets/student-roster.md)).
 3. Create your **personal project repository** on GitHub.
+
+PostgreSQL is not part of Project 0. It enters with a later project, along with an agreed-upon connection setup, so nothing here requires a running server.
 
 This project is the lightest of the semester by design. Use the time to read the syllabus, work the first few practice problems, and avoid a frantic week-2 catch-up.
 
@@ -59,7 +61,7 @@ cop5725fa26-project/
 │   ├── source.md       # where the raw data lives + license
 │   └── sample.csv      # or sample.parquet — first 1000 rows
 ├── setup/
-│   └── verify.py       # runs the four-check script
+│   └── verify.py       # runs the three-check script
 └── .gitignore
 ```
 
@@ -85,23 +87,12 @@ The first 1000 rows of your dataset. This must be reproducible — anyone with `
 
 ### `setup/verify.py`
 
-Runs four checks. Exits with code 0 if all pass.
+Runs three checks. Exits with code 0 if all pass. Run it from the repo root, since the DuckDB check reads your sample file.
 
 ```python
 # setup/verify.py
 import sys
-
-def check_postgres():
-    import psycopg
-    with psycopg.connect("postgresql://...") as conn:
-        v = conn.execute("SELECT version()").fetchone()
-        assert "PostgreSQL 16" in v[0] or "PostgreSQL 17" in v[0], v
-    print("PostgreSQL: OK")
-
-def check_duckdb():
-    import duckdb
-    assert duckdb.sql("SELECT 42").fetchone()[0] == 42
-    print("DuckDB: OK")
+from pathlib import Path
 
 def check_uv():
     import shutil
@@ -109,19 +100,29 @@ def check_uv():
     print("uv: OK")
 
 def check_python_packages():
-    import psycopg, duckdb, pandas
-    print("psycopg, duckdb, pandas: OK")
+    import duckdb, pandas
+    print("duckdb, pandas: OK")
+
+def check_duckdb():
+    import duckdb
+    sample = next(
+        (p for p in ("data/sample.csv", "data/sample.parquet") if Path(p).exists()),
+        None,
+    )
+    assert sample, "data/sample.csv or data/sample.parquet not found"
+    rows = duckdb.sql(f"SELECT count(*) FROM '{sample}'").fetchone()[0]
+    assert rows >= 100, f"expected at least 100 rows in {sample}, found {rows}"
+    print(f"DuckDB: OK ({rows} rows in {sample})")
 
 if __name__ == "__main__":
     try:
         check_uv()
         check_python_packages()
-        check_postgres()
         check_duckdb()
     except Exception as e:
         print(f"FAIL: {e}", file=sys.stderr)
         sys.exit(1)
-    print("All four checks passed.")
+    print("All three checks passed.")
 ```
 
 ---
