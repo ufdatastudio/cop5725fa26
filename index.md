@@ -13,6 +13,7 @@ layout: default
 ### Resources
 
 - [Syllabus](syllabus)
+- [Calendar](calendar)
 - [Cited Papers](papers/)
 
 {% comment %} Hidden until ready. Move a line above this block to publish its link.
