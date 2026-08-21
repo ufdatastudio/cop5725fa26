@@ -10,7 +10,6 @@ layout: default
 | **Released** | Monday, September 21, 2026 |
 | **Due** | Friday, October 23, 2026 at 11:59 PM |
 | **Type** | Individual |
-| **Industry analog** | "Write the metrics": analytics queries with CTEs, window functions, recursion |
 
 ---
 

@@ -65,8 +65,6 @@ The full specification for each project is posted here when it is released.
 
 **Goal:** Turn raw data into a queryable PostgreSQL schema, then answer 10-15 business-style questions.
 
-**Industry analog:** the "load the new data source" ticket you get in week one of a real data team.
-
 **Deliverables in your repo:**
 
 - `schema.sql` — `CREATE TABLE` statements, normalized to at least 3NF
@@ -84,8 +82,6 @@ The full specification for each project is posted here when it is released.
 
 **Goal:** Use the same dataset and answer 8-10 questions that *require* advanced SQL — CTEs, window functions, recursive queries.
 
-**Industry analog:** the "write the metrics" ticket. Mature data teams expect every analytics engineer to reach for windows and CTEs by reflex.
-
 **Deliverables:**
 
 - `analytics/` — one SQL file per question with a header comment naming the question and which advanced feature(s) it uses
@@ -100,8 +96,6 @@ The full specification for each project is posted here when it is released.
 ## Project 3: Indexing and Query Optimization (10%)
 
 **Goal:** Treat your database as a system that can be **measured and tuned**. Identify slow queries, add indexes, restructure where useful, prove it worked.
-
-**Industry analog:** the "this dashboard is slow, fix it" ticket. By Section 5 the class will have the language and tools to do this seriously.
 
 **Deliverables:**
 

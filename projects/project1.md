@@ -10,7 +10,6 @@ layout: default
 | **Released** | Wednesday, September 2, 2026 |
 | **Due** | Friday, September 25, 2026 at 11:59 PM |
 | **Type** | Individual |
-| **Industry analog** | "Load this new data source" — schema, ETL, business queries |
 
 ---
 

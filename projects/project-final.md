@@ -10,7 +10,6 @@ layout: default
 | **Released** | Monday, November 16, 2026 |
 | **Due** | Wednesday, December 9, 2026 at 11:59 PM |
 | **Type** | Individual |
-| **Industry analog** | "Ship the artifact" — a real, demonstrable deliverable |
 
 ---
 

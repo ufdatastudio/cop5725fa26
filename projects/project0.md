@@ -2,7 +2,7 @@
 layout: default
 ---
 
-# Project 0: Environment Setup and Dataset Claim
+# Project 0: Environment Setup and Dataset Selection
 
 | | |
 |---|---|
@@ -10,7 +10,6 @@ layout: default
 | **Released** | Friday, August 21, 2026 |
 | **Due** | Friday, September 4, 2026 at 11:59 PM |
 | **Type** | Individual |
-| **Industry analog** | The "onboarding ticket": install tools, pick the dataset you will own |
 
 ---
 

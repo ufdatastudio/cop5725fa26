@@ -10,7 +10,6 @@ layout: default
 | **Released** | Monday, October 19, 2026 |
 | **Due** | Friday, November 13, 2026 at 11:59 PM |
 | **Type** | Individual |
-| **Industry analog** | "This dashboard is slow, fix it" — identify, measure, tune, prove |
 
 ---
 
