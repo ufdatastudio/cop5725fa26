@@ -106,14 +106,4 @@ Project weights grow with scope; each builds on the same dataset.
 
 {% endcomment %}
 
-## Why Individual GitHub Repos
-
-Three reasons this model worked in [CIS 6930 Spring 2026](https://github.com/cegme/cis6930sp26):
-
-1. **Unique work by construction.** Different students pick different datasets → different schemas, queries, results.
-2. **Visible iteration.** Commit history tells the story; the TA sees how you arrived at the answer, not just the answer.
-3. **Portfolio value.** You leave the semester with a public repo demonstrating database engineering skill — useful for internships and interviews.
-
----
-
 [back](../index)
