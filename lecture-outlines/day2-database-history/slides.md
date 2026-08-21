@@ -82,6 +82,16 @@ The Bell Labs section is new; it explains where the operating environment that r
 # Sixty Years of Databases, On One Slide
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'cScale0':'#546e7a', 'cScaleLabel0':'#ffffff',
+  'cScale1':'#1565c0', 'cScaleLabel1':'#ffffff',
+  'cScale2':'#00838f', 'cScaleLabel2':'#ffffff',
+  'cScale3':'#2e7d32', 'cScaleLabel3':'#ffffff',
+  'cScale4':'#558b2f', 'cScaleLabel4':'#ffffff',
+  'cScale5':'#ef6c00', 'cScaleLabel5':'#ffffff',
+  'cScale6':'#d84315', 'cScaleLabel6':'#ffffff',
+  'cScale7':'#ad1457', 'cScaleLabel7':'#ffffff'
+}}}%%
 timeline
   title Key Dates We Will Revisit
   1960s : IMS, CODASYL navigational era

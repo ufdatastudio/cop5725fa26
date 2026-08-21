@@ -53,11 +53,12 @@ Repeat the "no graded work" point. Students arriving from heavy first-week cours
 <div>
 
 Dr. Christan Grant — Associate Professor, CISE
+Director of the [UF Data Studio](https://ufdatastudio.com)
 
 **Research interests:**
 - Data systems and information extraction
 - Data engineering for AI/ML
-- Crowdsourcing and human-in-the-loop systems
+- Applied AI and human-in-the-loop systems
 
 **Contact:** `christan@ufl.edu`
 Subject line **must** include `cop5725fa26`.
@@ -69,21 +70,19 @@ Subject line **must** include `cop5725fa26`.
 </div>
 <div>
 
-```mermaid
-graph TD
-  CG["Dr. Grant"] --> D["Data Systems"]
-  CG --> E["Engineering for ML"]
-  CG --> C["Crowdsourcing"]
-  D --> R["COP 5725 / CIS 4301"]
-  E --> R2["CIS 6930 Data Engineering"]
-  C --> R3["CAP 5771 Data Science"]
-```
+![w:260px](images/ufdatastudio-logo.png)
+
+<div class="caption">
+
+The [UF Data Studio](https://ufdatastudio.com) research lab
+
+</div>
 
 </div>
 </div>
 
 <!--
-Brief on past teaching: CIS 6930 last spring (data engineering with LLMs) is the most similar course. Mention research interests briefly — students who care about data systems should know my lab exists.
+Brief on past teaching: CIS 6930 last spring (data engineering with LLMs) is the most similar course. Mention research interests briefly and point at the UF Data Studio figure — students who care about data systems should know the lab exists and takes students.
 -->
 
 ---
@@ -104,13 +103,45 @@ Time this strictly: 90 seconds total. Walk the room while they talk. After 90 se
 
 ---
 
+# Help Us Pick Office Hours
+
+<div class="columns">
+<div>
+
+Instructor hours run by appointment for now, and the TA's weekly slot is not yet set.
+
+Before you leave, tell us what works:
+
+1. Which days? (MWF around lecture, or Tue/Thu)
+2. What time? (right after class, midday, late afternoon)
+3. What format? (in person, Zoom, or both)
+
+</div>
+<div>
+
+### How to answer
+
+- Show of hands in a moment
+- Canvas poll stays open through the weekend
+
+Winning slots are announced on Canvas and added to the syllabus next week.
+
+</div>
+</div>
+
+<!--
+Quick show of hands: days first, then time of day, then format. The Canvas poll catches anyone who stays quiet in a big room. Use the results to set the TA's weekly hours and at least one standing instructor slot, then announce both Monday. Remember to actually create the Canvas poll before class.
+-->
+
+---
+
 <!-- _class: lead -->
 
 # Part 2: Why a Database Course
 
 ---
 
-# The Quiet Backbone
+# Databases Everywhere All at Once
 
 <div class="columns">
 <div>
@@ -145,7 +176,7 @@ The diagram is the punchline: every modern system runs on at least two databases
 
 ---
 
-# Two Engines, One Semester
+# Our Favorite DBMSs
 
 We will use two open-source engines that bracket the design space.
 
@@ -172,7 +203,7 @@ We will use two open-source engines that bracket the design space.
 </div>
 </div>
 
-Both speak SQL. Both ship as easy local installs. The difference between them is most of what this course teaches.
+Both speak SQL. Both ship as easy local installs.
 
 <!--
 Stress that "speak the same language" is precisely Codd's separation of logical from physical. Same SQL surface, completely different machinery underneath.
@@ -206,9 +237,18 @@ Show a real EXPLAIN ANALYZE output on the projector if time. Three lines about S
 
 ---
 
-# Seven Sections, Five Quizzes, Three Exams
+# Our Course Timeline
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'cScale0':'#1976d2', 'cScaleLabel0':'#ffffff',
+  'cScale1':'#388e3c', 'cScaleLabel1':'#ffffff',
+  'cScale2':'#0097a7', 'cScaleLabel2':'#ffffff',
+  'cScale3':'#e65100', 'cScaleLabel3':'#ffffff',
+  'cScale4':'#c2185b', 'cScaleLabel4':'#ffffff',
+  'cScale5':'#5e35b2', 'cScaleLabel5':'#ffffff',
+  'cScale6':'#6d4c41', 'cScaleLabel6':'#ffffff'
+}}}%%
 timeline
   §1 Foundations : Weeks 1-4 : Quiz 1 (Sep 11)
   §2 SQL Mastery : Weeks 5-7 : Quiz 2 (Oct 2)
@@ -232,7 +272,7 @@ Walk the timeline left to right once. The key idea: every quiz closes a section 
 
 **Class days you should not miss:**
 - Today (Fri Aug 21)
-- Quiz Fridays: Sep 11, Oct 2, Oct 30, Nov 13
+- Quiz days: Sep 11, Oct 2, Oct 30, Nov 13, Dec 2 (Wed)
 - Exam Wednesdays: Oct 14, Nov 18
 - Final: Fri Dec 11, 10:00 AM-12:00 PM, MALA 1000
 
@@ -251,42 +291,11 @@ Walk the timeline left to right once. The key idea: every quiz closes a section 
 
 A complete day-by-day schedule lives at [ufdatastudio.com/cop5725fa26/schedule](https://ufdatastudio.com/cop5725fa26/schedule).
 
+> I have several conference and research trips this fall. When a trip lands on a class day, I will likely prerecord the lecture for that class period.
+
 <!--
 Point out that the Homecoming closure (Oct 9-10) sometimes catches students off guard. Friday classes that week do not meet.
--->
-
----
-
-# Rhythms You Will Feel
-
-<div class="columns">
-<div>
-
-**Friday is quiz day** at the end of each section.
-
-**Friday is also project due day.**
-
-**Monday after a project deadline:** small-group presentations.
-
-**Wednesday after presentations:** each group's winner presents to the whole class.
-
-One paper reading sits between projects, anchored to the section it closes.
-
-</div>
-<div>
-
-```mermaid
-graph LR
-  P["Project<br/>due Fri"] --> G["Mon<br/>Group breakouts"]
-  G --> W["Wed<br/>Winners to class"]
-  W --> N["Next section<br/>begins"]
-```
-
-</div>
-</div>
-
-<!--
-The 30-min group breakout slot eats into Monday's lecture. Plan to compress Monday content slightly during project weeks. Wednesday is shorter — 15 min for winners + Q&A, then normal lecture.
+Travel: say it plainly and without apology — several conference and research trips this fall. Affected class periods get a prerecorded lecture posted before class; specific dates will be announced as each trip firms up.
 -->
 
 ---
@@ -328,7 +337,7 @@ The progressive weighting is deliberate: Project 1 is low-stakes so a student st
 
 | Component | Weight |
 |-----------|--------|
-| Quizzes (5, drop lowest) | 15% |
+| Quizzes (drop lowest) | 15% |
 | Project 1 | 4% |
 | Project 2 | 6% |
 | Project 3 | 10% |
@@ -358,6 +367,7 @@ The progressive weighting is deliberate: Project 1 is low-stakes so a student st
 
 <!--
 Highlight: half your grade is exams. That's a contrast with last spring's data engineering course where the project was 70%. Different course, different goals — here we are anchored in well-defined material and exams test it cleanly.
+Quizzes: five short in-class quizzes, each with questions about the section just completed. The lowest score is dropped, so there are no makeup quizzes — the drop absorbs an absence or illness.
 -->
 
 ---
@@ -392,7 +402,7 @@ The "unannounced grading start" is intentional. It makes the late submission win
 
 ---
 
-# Academic Integrity (Quick Pass)
+# Academic Integrity
 
 <div class="columns">
 <div>
@@ -535,6 +545,16 @@ Do this live if the projector cooperates. The DuckDB one-liner over an HTTP CSV 
 # Monday: Database History
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'cScale0':'#546e7a', 'cScaleLabel0':'#ffffff',
+  'cScale1':'#1565c0', 'cScaleLabel1':'#ffffff',
+  'cScale2':'#00838f', 'cScaleLabel2':'#ffffff',
+  'cScale3':'#2e7d32', 'cScaleLabel3':'#ffffff',
+  'cScale4':'#558b2f', 'cScaleLabel4':'#ffffff',
+  'cScale5':'#ef6c00', 'cScaleLabel5':'#ffffff',
+  'cScale6':'#d84315', 'cScaleLabel6':'#ffffff',
+  'cScale7':'#ad1457', 'cScaleLabel7':'#ffffff'
+}}}%%
 timeline
   title 60 Years of Databases
   1960s : Punched cards, file systems, IMS, CODASYL

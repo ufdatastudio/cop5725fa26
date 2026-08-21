@@ -25,7 +25,7 @@ Interleave these question/answer pairs into the lecture at the indicated points.
 
 Which grade component is the **single largest**?
 
-A. Quizzes (clicker checks)
+A. Quizzes
 B. Projects 1-3 combined
 C. The Final Project (capstone)
 D. The Final Exam
@@ -44,7 +44,7 @@ Answer: D. Final Exam at 20% is the largest single line. Projects 1-3 together a
 - Exam 1: 15%
 - Exam 2: 15%
 - Final Project: 15%
-- Quizzes (clicker participation): 15%
+- Quizzes (drop lowest): 15%
 - Projects 1-3: 4% + 6% + 10% = 20% total
 
-The Final Exam is cumulative and is the single most important assessment. Practice for it accumulates across the whole semester via the clicker checks, project work, and weekly readings.
+The Final Exam is cumulative and is the single most important assessment. Practice for it accumulates across the whole semester via the quizzes, project work, and weekly readings.

@@ -16,6 +16,13 @@ const SRC = fileURLToPath(new URL('.', import.meta.url));
 // One-line toggle for the instructor clicker decks.
 const PUBLISH_CLICKER = true;
 
+// Allowlist gate: while non-empty, only these decks publish. Clear it to
+// publish everything (PUBLISH_DATES below then takes over for date-gating).
+const PUBLISH_ONLY = new Set([
+  'day1-introduction',
+  'day2-database-history',
+]);
+
 // Date-gating hook (inert while empty: everything publishes). To gate a deck,
 // add its directory name with the first date it may appear, e.g.
 // ['day2-database-history', '2026-08-24']. Dates are in schedule.md. Pair with
@@ -41,6 +48,10 @@ const decks = readdirSync(SRC, { withFileTypes: true })
   .sort();
 
 for (const deck of decks) {
+  if (PUBLISH_ONLY.size && !PUBLISH_ONLY.has(deck)) {
+    console.log(`  hold ${deck} (not in PUBLISH_ONLY)`);
+    continue;
+  }
   const gate = PUBLISH_DATES.get(deck);
   if (gate && today < gate) {
     console.log(`  hold ${deck} (publishes ${gate})`);
