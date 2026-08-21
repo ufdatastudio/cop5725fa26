@@ -22,7 +22,7 @@ Three things:
 2. **Select your dataset** with the letter rule below. No sign-up or coordination is needed.
 3. Create your **personal project repository** on GitHub.
 
-PostgreSQL is optional in Project 0, and nothing here requires a running server. We will provide class PostgreSQL resources later in the semester. If you already run your own server, you can point the verify script at it with the `DATABASE_URL` environment variable and it will test the connection too.
+PostgreSQL is optional in Project 0, and nothing here requires you to install a server. If you want to opt in now, use the department's CISE PostgreSQL service described in [Optional: CISE PostgreSQL](#optional-cise-postgresql) below. More class PostgreSQL resources come later in the semester.
 
 Bookmark the official documentation now; you will live in these all semester:
 
@@ -202,6 +202,20 @@ if __name__ == "__main__":
         sys.exit(1)
     print("All checks passed.")
 ```
+
+---
+
+## Optional: CISE PostgreSQL
+
+The opt-in PostgreSQL check should run against the department's hosted service, not a server on your laptop.
+
+1. Sign in with your GatorLink at [register.cise.ufl.edu/databases](https://register.cise.ufl.edu/databases/).
+2. Choose **Postgres** and create a database.
+3. Put the connection details in your `.env` as `DATABASE_URL`, then run `uv run --env-file .env --extra postgres setup/verify.py`.
+
+![The CISE Database Management portal, with MySQL, Postgres, and Oracle providers](../assets/img/cise-databases.jpg)
+
+The [CISE IT support documentation](https://it.cise.ufl.edu/support/) (GatorLink login required) covers the database services. Parts of it are out of date, so where the docs and the registration portal disagree, trust the portal.
 
 ---
 
