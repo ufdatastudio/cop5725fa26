@@ -63,7 +63,8 @@ cop5725fa26-project/
 │   └── sample.csv      # or sample.parquet — first 1000 rows
 ├── setup/
 │   └── verify.py       # runs the three-check script
-└── .gitignore
+├── .env.example        # template env vars; copy to .env locally
+└── .gitignore          # must list .env and .venv/
 ```
 
 ### `README.md`
@@ -106,11 +107,22 @@ postgres = ["psycopg[binary]"]
 
 `uv add duckdb pandas` followed by `uv add --optional postgres "psycopg[binary]"` produces this layout. `uv init` also adds fields like `authors`, `readme`, and a build system; keep them.
 
+### `.env.example`
+
+Machine-specific or secret configuration belongs in environment variables rather than in code. The convention you will use all semester is a committed template named `.env.example`, with your real values in a local `.env` that git never sees.
+
+```
+# Copy to .env and fill in real values. Never commit .env.
+DATABASE_URL=postgresql://user:password@localhost:5432/cop5725fa26
+```
+
+Run `cp .env.example .env`, edit the values, and confirm `.env` appears in `.gitignore`. Load it for any command with `uv run --env-file .env ...`.
+
 ### `setup/verify.py`
 
 Runs three required checks, plus an optional PostgreSQL check that only runs when `DATABASE_URL` is set. Exits with code 0 if all pass. Run it from the repo root, since the DuckDB check reads your sample file.
 
-Run the required checks with `uv run setup/verify.py`. To opt in to the PostgreSQL check, set `DATABASE_URL` and run `uv run --extra postgres setup/verify.py`. The extra pulls in `psycopg[binary]`, so the base environment never needs psycopg or a local libpq.
+Run the required checks with `uv run setup/verify.py`. To opt in to the PostgreSQL check, put your connection string in `.env` and run `uv run --env-file .env --extra postgres setup/verify.py`. The extra pulls in `psycopg[binary]`, so the base environment never needs psycopg or a local libpq.
 
 ```python
 # setup/verify.py
@@ -164,7 +176,7 @@ if __name__ == "__main__":
 
 ## Submission
 
-1. Make sure all five files (README, pyproject.toml, source.md, sample.csv, verify.py) are committed and pushed.
+1. Make sure all six files (README, pyproject.toml, source.md, sample.csv, verify.py, .env.example) are committed and pushed.
 2. Tag the commit:
    ```bash
    git tag v0
@@ -184,6 +196,7 @@ Pass if **all** of the following are true:
 - [ ] `data/source.md` cites the dataset source and license
 - [ ] `data/sample.csv` (or `.parquet`) exists with ≥ 100 rows
 - [ ] `setup/verify.py` runs to completion with exit code 0 on the TA's machine
+- [ ] `.env.example` is committed and no `.env` appears anywhere in the repo history
 - [ ] Your name appears on a merged PR to `datasets/student-roster.md`
 
 Pass = no grade impact.
