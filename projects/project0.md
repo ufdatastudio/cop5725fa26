@@ -57,6 +57,7 @@ By the deadline, your repo's `main` branch must contain:
 ```
 cop5725fa26-project/
 ├── README.md
+├── pyproject.toml
 ├── data/
 │   ├── source.md       # where the raw data lives + license
 │   └── sample.csv      # or sample.parquet — first 1000 rows
@@ -85,11 +86,31 @@ At minimum:
 
 The first 1000 rows of your dataset. This must be reproducible — anyone with `data/source.md` and `setup/verify.py` should be able to regenerate it.
 
+### `pyproject.toml`
+
+Created by `uv init`. The base dependencies are `duckdb` and `pandas`; `psycopg` lives behind an optional extra so the verify script runs without it:
+
+```toml
+[project]
+name = "cop5725fa26-project"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "duckdb",
+    "pandas",
+]
+
+[project.optional-dependencies]
+postgres = ["psycopg[binary]"]
+```
+
+`uv add duckdb pandas` followed by `uv add --optional postgres "psycopg[binary]"` produces this layout. `uv init` also adds fields like `authors`, `readme`, and a build system; keep them.
+
 ### `setup/verify.py`
 
 Runs three required checks, plus an optional PostgreSQL check that only runs when `DATABASE_URL` is set. Exits with code 0 if all pass. Run it from the repo root, since the DuckDB check reads your sample file.
 
-Opting in to the PostgreSQL check requires the binary driver: `uv add "psycopg[binary]"`. The plain `psycopg` package needs a local libpq and fails to import on machines without PostgreSQL installed.
+Run the required checks with `uv run setup/verify.py`. To opt in to the PostgreSQL check, set `DATABASE_URL` and run `uv run --extra postgres setup/verify.py`. The extra pulls in `psycopg[binary]`, so the base environment never needs psycopg or a local libpq.
 
 ```python
 # setup/verify.py
@@ -143,7 +164,7 @@ if __name__ == "__main__":
 
 ## Submission
 
-1. Make sure all four files (README, source.md, sample.csv, verify.py) are committed and pushed.
+1. Make sure all five files (README, pyproject.toml, source.md, sample.csv, verify.py) are committed and pushed.
 2. Tag the commit:
    ```bash
    git tag v0
