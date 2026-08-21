@@ -161,7 +161,7 @@ Three reasons this model worked in [CIS 6930 Spring 2026](https://github.com/ceg
 
 ## Rubrics
 
-Each project rubric is published in [`rubrics/`](../rubrics/) at the time the project is released.
+Each project rubric is published in `rubrics/` at the time the project is released.
 Every rubric has two sections: the full instructor rubric and a peer-grading subset (3-5 dimensions).
 
 ---

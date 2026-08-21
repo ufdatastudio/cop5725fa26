@@ -29,6 +29,7 @@ Bookmark the official documentation now; you will live in these all semester:
 - [DuckDB documentation](https://duckdb.org/docs/)
 - [Python `sqlite3` module](https://docs.python.org/3/library/sqlite3.html), which wraps the [SQLite documentation](https://sqlite.org/docs.html)
 - [PostgreSQL documentation](https://www.postgresql.org/docs/current/)
+- [Apache Parquet documentation](https://parquet.apache.org/docs/), background for the README's format writeup
 - [uv documentation](https://docs.astral.sh/uv/)
 - [python-dotenv documentation](https://github.com/theskumar/python-dotenv#readme) for the `.env` convention; in this project `uv run --env-file .env` does the loading, so the package itself is not a dependency
 

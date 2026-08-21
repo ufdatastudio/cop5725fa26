@@ -14,12 +14,12 @@ layout: default
 
 - [Syllabus](syllabus)
 - [Calendar](calendar)
+- [Projects](projects/)
 - [Cited Papers](papers/)
 
 {% comment %} Hidden until ready. Move a line above this block to publish its link.
 - [Schedule](schedule)
 - [Assignments and Quizzes](assignments)
-- [Projects](projects)
 - [Lecture Readings](LECTURE_READINGS)
 - [Real-World Datasets](datasets/)
 - [Documents](documents)
