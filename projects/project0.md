@@ -24,6 +24,12 @@ Three things:
 
 PostgreSQL is optional in Project 0, and nothing here requires a running server. We will provide class PostgreSQL resources later in the semester. If you already run your own server, you can point the verify script at it with the `DATABASE_URL` environment variable and it will test the connection too.
 
+Bookmark the official documentation now; you will live in these all semester:
+
+- [DuckDB documentation](https://duckdb.org/docs/)
+- [Python `sqlite3` module](https://docs.python.org/3/library/sqlite3.html), which wraps the [SQLite documentation](https://sqlite.org/docs.html)
+- [PostgreSQL documentation](https://www.postgresql.org/docs/current/)
+
 This project is the lightest of the semester by design. Use the time to read the syllabus, work the first few practice problems, and avoid a frantic week-2 catch-up.
 
 ---
