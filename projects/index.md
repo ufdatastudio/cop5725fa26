@@ -135,20 +135,6 @@ The full specification for each project is posted here when it is released.
 
 {% endcomment %}
 
-## Peer Grading and Presentations
-
-Each project gets three peer reviews from anonymized classmates using the published rubric.
-Peer scores are 30% of the project grade; instructor/TA grade is 70%.
-
-After each deadline (except Project 0 and Final):
-
-- **Monday after deadline:** small breakout groups (4-5 students) — each student demos for 3-4 minutes; group votes for the strongest presentation.
-- **Wednesday:** the highest-voted student from each group presents to the full class.
-
-For the Final Project, presentations happen during the final exam block on Fri Dec 11, 10:00 AM-12:00 PM in MALA 1000.
-
----
-
 ## Why Individual GitHub Repos
 
 Three reasons this model worked in [CIS 6930 Spring 2026](https://github.com/cegme/cis6930sp26):
@@ -162,7 +148,6 @@ Three reasons this model worked in [CIS 6930 Spring 2026](https://github.com/ceg
 ## Rubrics
 
 Each project rubric is published in `rubrics/` at the time the project is released.
-Every rubric has two sections: the full instructor rubric and a peer-grading subset (3-5 dimensions).
 
 ---
 
