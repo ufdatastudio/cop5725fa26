@@ -9,7 +9,6 @@ layout: default
 | **Weight** | 15% of course grade |
 | **Released** | Monday, November 16, 2026 |
 | **Due** | Wednesday, December 9, 2026 at 11:59 PM |
-| **Type** | Individual |
 
 ---
 

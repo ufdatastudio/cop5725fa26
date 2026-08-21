@@ -9,7 +9,6 @@ layout: default
 | **Weight** | Pass / Fail (not weighted in grade table; failure to submit = one letter penalty) |
 | **Released** | Friday, August 21, 2026 |
 | **Due** | Friday, September 4, 2026 at 11:59 PM |
-| **Type** | Individual |
 
 ---
 

@@ -32,31 +32,6 @@ Project weights grow with scope; each builds on the same dataset.
 | Project 3 | 10% | Mon, Oct 19 | Fri, Nov 13 | Indexing and query optimization investigation |
 | Final Project | 15% | Mon, Nov 16 | Wed, Dec 9 | Capstone — full database-backed solution |
 
-The full specification for each project is posted here when it is released.
-
----
-
-## Project 0: Setup and Dataset Selection (P/F)
-
-**Goal:** Establish your repo, install your tools, select your dataset.
-
-**Deliverables in your repo:**
-
-- `README.md` — your name, dataset choice, why you picked it
-- `setup/verify.py` — runs the four-check script (`uv` on PATH, packages import, SQLite round-trip, DuckDB queries your sample), plus an optional PostgreSQL check via `DATABASE_URL`
-- `data/source.md` — pointer to where the raw data lives, including licence
-- `data/sample.csv` (or `.parquet`) — first 1000 rows you can already query
-
-**Submission:** Tag the commit `v0` and push.
-
-**How to select a dataset:** The first letter of your last name maps to a dataset family; you pick the slice within it. The table is in the [Project 0 spec](project0).
-
-**Repo setup checklist:**
-1. Create a new private repo on GitHub named `cop5725fa26-project`
-2. Add `cegme` and [`rkc8626`](https://github.com/rkc8626) as Admins under Settings → Collaborators
-3. Push your Project 0 work
-4. Register the repo URL via the Canvas Project 0 submission
-
 ---
 
 {% comment %} Hidden until each project is released. Move a section above this block to publish it.
