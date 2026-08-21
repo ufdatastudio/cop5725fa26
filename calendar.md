@@ -526,15 +526,15 @@ For full topic details, readings, and rubrics see the [Schedule](schedule) and [
   <div class="cal-day">
     <span class="cal-day-num">9</span>
     <span class="cal-event cal-due">Final Project due 11:59 PM</span>
-    <span class="cal-event cal-pres">Final presentations</span>
   </div>
   <div class="cal-day cal-day-holiday">
     <span class="cal-day-num">10</span>
     <span class="cal-event cal-noclass">Finals week</span>
   </div>
-  <div class="cal-day cal-day-holiday">
+  <div class="cal-day">
     <span class="cal-day-num">11</span>
-    <span class="cal-event cal-noclass">Finals week ends</span>
+    <span class="cal-event cal-exam">Final Exam (Exam 3) <small>10:00 AM-12:00 PM, MALA 1000</small></span>
+    <span class="cal-event cal-pres">Final Project presentations</span>
   </div>
   <div class="cal-day"><span class="cal-day-num">12</span></div>
 

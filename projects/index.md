@@ -12,7 +12,7 @@ Projects in COP 5725 mirror the work a junior data engineer does in industry:
 - **Document like onboarding.** Each repo's README should let a new engineer load and run your work.
 
 Projects are **individual**.
-Each student creates a **private** GitHub repository on their own account named exactly `cop5725fa26-project`, and adds `cegme` as Admin so the TA and instructor can review.
+Each student creates a **private** GitHub repository on their own account named exactly `cop5725fa26-project`, and adds `cegme` (instructor) and [`rkc8626`](https://github.com/rkc8626) (TA, Ray Chen) as Admins so the TA and instructor can review.
 
 The repo URL becomes your project handle; you register it once in Project 0 (P/F) and use the same repo through the Final Project.
 
@@ -25,10 +25,12 @@ Project weights grow with scope; each builds on the same dataset.
 | Project | Weight | Released | Due | Topic |
 |---------|--------|----------|-----|-------|
 | [Project 0](project0) | P/F | Fri, Aug 21 | Fri, Sep 4 | Setup + dataset claim + initial load |
-| [Project 1](project1) | 4% | Wed, Sep 2 | Fri, Sep 25 | Schema design + SQL ETL + basic queries |
-| [Project 2](project2) | 6% | Mon, Sep 21 | Fri, Oct 23 | Advanced SQL analytics on your dataset |
-| [Project 3](project3) | 10% | Mon, Oct 19 | Fri, Nov 13 | Indexing and query optimization investigation |
-| [Final Project](project-final) | 15% | Mon, Nov 16 | Wed, Dec 9 | Capstone — full database-backed solution |
+| Project 1 | 4% | Wed, Sep 2 | Fri, Sep 25 | Schema design + SQL ETL + basic queries |
+| Project 2 | 6% | Mon, Sep 21 | Fri, Oct 23 | Advanced SQL analytics on your dataset |
+| Project 3 | 10% | Mon, Oct 19 | Fri, Nov 13 | Indexing and query optimization investigation |
+| Final Project | 15% | Mon, Nov 16 | Wed, Dec 9 | Capstone — full database-backed solution |
+
+The full specification for each project is posted here when it is released.
 
 ---
 
@@ -49,11 +51,13 @@ Project weights grow with scope; each builds on the same dataset.
 
 **Repo setup checklist:**
 1. Create a new private repo on GitHub named `cop5725fa26-project`
-2. Add `cegme` as Admin under Settings → Collaborators
+2. Add `cegme` and [`rkc8626`](https://github.com/rkc8626) as Admins under Settings → Collaborators
 3. Push your Project 0 work
 4. Register the repo URL via the Canvas Project 0 submission
 
 ---
+
+{% comment %} Hidden until each project is released. Move a section above this block to publish it.
 
 ## Project 1: Schema Design + SQL ETL (4%)
 
@@ -128,6 +132,8 @@ Project weights grow with scope; each builds on the same dataset.
 - Tagged release `final` and pushed before the deadline
 
 ---
+
+{% endcomment %}
 
 ## Peer Grading and Presentations
 

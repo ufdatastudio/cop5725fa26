@@ -29,7 +29,7 @@ This project is the lightest of the semester by design. Use the time to read the
 ## Repository Setup
 
 1. Create a new **private** GitHub repository on your own account named exactly `cop5725fa26-project`.
-2. Under Settings → Collaborators, add `cegme` as **Admin**. (The TA will be added similarly once announced.)
+2. Under Settings → Collaborators, add `cegme` (instructor) and [`rkc8626`](https://github.com/rkc8626) (TA, Ray Chen) as **Admins**.
 3. Push your initial commit.
 4. Register the repo URL via the Canvas Project 0 assignment.
 
@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
 Pass if **all** of the following are true:
 
-- [ ] Repo exists at `https://github.com/<your_username>/cop5725fa26-project` (private, with `cegme` as Admin)
+- [ ] Repo exists at `https://github.com/<your_username>/cop5725fa26-project` (private, with `cegme` and `rkc8626` as Admins)
 - [ ] Tag `v0` exists on the main branch
 - [ ] `README.md` has your name, dataset choice, and one-paragraph summary
 - [ ] `data/source.md` cites the dataset source and license

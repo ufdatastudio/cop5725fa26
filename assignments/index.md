@@ -2,23 +2,30 @@
 layout: default
 ---
 
-# Assignments, Clicker Checks, and Exams
+# Assignments, Quizzes, and Exams
 
-Detailed project specifications, clicker conventions, and exam logistics are linked here as the semester progresses.
+Detailed project specifications, quiz dates, and exam logistics are linked here as the semester progresses.
 See the [Schedule](../schedule) for the full timeline and the [Projects](../projects) page for project specifications.
 
-## In-Class Clicker Checks
+## Quizzes
 
-Each lecture embeds 2-4 short comprehension questions delivered through the UF-supported clicker system.
-Students respond in real time; the instructor reveals the right answer on the next slide and discusses common wrong choices.
+We will have short in-class quizzes that discuss important concepts from the lectures.
+Each quiz asks questions about the section just completed, so you always know what material it draws from.
 
 | Property | Detail |
 |----------|--------|
-| Format | Single multiple-choice question with 3-5 options |
-| Frequency | 2-4 per lecture |
-| Grading | Participation, not correctness — answering registers as credit |
-| Drop policy | Lowest 3-5 class days dropped at end of semester |
+| Format | Short in-class quiz at the close of a content section |
+| Count | 5 across the semester (Sections 3 and 7 close with exams instead) |
+| Drop policy | Lowest quiz score dropped; best 4 count |
 | Total weight | 15% |
+
+| Quiz | Date | Covers |
+|------|------|--------|
+| Quiz 1 | Fri, Sep 11 | §1 Foundations |
+| Quiz 2 | Fri, Oct 2 | §2 SQL Mastery |
+| Quiz 3 | Fri, Oct 30 | §4 Storage and Indexing |
+| Quiz 4 | Fri, Nov 13 | §5 Query Processing |
+| Quiz 5 | Wed, Dec 2 | §6 Transactions |
 
 ## Exams
 

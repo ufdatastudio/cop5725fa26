@@ -13,13 +13,16 @@ layout: default
 ### Resources
 
 - [Syllabus](syllabus)
+- [Cited Papers](papers/)
+
+{% comment %} Hidden until ready. Move a line above this block to publish its link.
 - [Schedule](schedule)
 - [Assignments and Quizzes](assignments)
 - [Projects](projects)
 - [Lecture Readings](LECTURE_READINGS)
-- [Cited Papers](papers/)
 - [Real-World Datasets](datasets/)
 - [Documents](documents)
+{% endcomment %}
 
 ---
 

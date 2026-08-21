@@ -17,6 +17,10 @@ github: [metadata]
 
 exclude:
   - simple-syllabus.md
+  - projects/project1.md
+  - projects/project2.md
+  - projects/project3.md
+  - projects/project-final.md
   - papers/README.md
   - papers/pdfs/MANUAL.md
   - documents/audit-cross-references.md

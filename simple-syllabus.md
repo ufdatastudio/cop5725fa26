@@ -106,7 +106,7 @@ Participation is required to get the most out of the class, and many graded clas
 
 | Component | Percentage |
 | --- | --- |
-| In-class clicker checks (participation) | 15% |
+| Quizzes (drop lowest) | 15% |
 | Project 1 (Schema and SQL) | 4% |
 | Project 2 (Advanced SQL) | 6% |
 | Project 3 (Indexing and Query Plans) | 10% |
@@ -116,12 +116,12 @@ Participation is required to get the most out of the class, and many graded clas
 | Final Exam (Exam 3, finals week) | 20% |
 | Total | 100% |
 
-In-class clicker checks are short comprehension questions delivered through the UF-supported clicker system several times per lecture.
-They verify that students are following along, and grading is on participation rather than correctness.
-The lowest 3 to 5 class days are dropped from the participation total to absorb absences and technical issues.
+Quizzes are short in-class quizzes that discuss important concepts from the lectures.
+Each quiz asks questions about the section just completed.
+There are five quizzes across the semester; the lowest score is dropped and the best four count toward the quiz weight.
 
 Projects are individual and modeled on real industry tasks.
-Each student creates a private GitHub repository on their own account named `cop5725fa26-project` and adds `cegme` as Admin so the TA and instructor can review.
+Each student creates a private GitHub repository on their own account named `cop5725fa26-project` and adds `cegme` (instructor) and `rkc8626` (TA) as Admins so the TA and instructor can review.
 Each student claims a unique dataset from the approved roster, and successive projects build on the same dataset.
 Project 0 is setup and dataset claim, graded pass or fail and not weighted above; failure to submit reduces the final grade by one full letter.
 Project 1 is schema design and SQL ETL ("load this new source").

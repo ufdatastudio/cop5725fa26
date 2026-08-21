@@ -147,7 +147,7 @@ The grade breakdown will be as follows:
 
 | |Percentage|
 | --- |--- |
-| In-class clicker checks (participation) | 15%|
+| Quizzes (drop lowest) | 15%|
 | Project 1 (Schema + SQL) | 4%|
 | Project 2 (Advanced SQL) | 6%|
 | Project 3 (Indexing + Query Plans) | 10%|
@@ -160,13 +160,13 @@ The grade breakdown will be as follows:
 Projects increase in weight as the semester progresses, reflecting growing scope and difficulty.
 Project 0 is a pass/fail setup check; failure to submit reduces the final grade by one full letter.
 
-**In-class clicker checks** are short comprehension questions delivered through the UF-supported clicker system multiple times per lecture.
-They verify that students are following along; grading is on participation, not correctness.
-The lowest 3-5 class days are dropped from the participation total to absorb absences and tech issues.
-Project 0 is a pass/fail setup check and is not weighted in the table above; failure to submit reduces the final grade by one full letter.
+**Quizzes** are short in-class quizzes that discuss important concepts from the lectures.
+Each quiz asks questions about the section just completed.
+There are five quizzes across the semester; the lowest score is dropped and the best four count toward the quiz weight.
+Quiz dates are listed on the [Schedule](schedule) page.
 
 **Projects** are individual and modeled on real industry tasks.
-Each student creates a private GitHub repository on their own account named `cop5725fa26-project` and adds `cegme` as Admin so the TA and instructor can review.
+Each student creates a private GitHub repository on their own account named `cop5725fa26-project` and adds `cegme` (instructor) and [`rkc8626`](https://github.com/rkc8626) (TA) as Admins so the TA and instructor can review.
 Each student claims a unique dataset from the approved roster, and successive projects build on the same dataset.
 Project 0 is setup and dataset claim (P/F).
 Project 1 is schema design and SQL ETL ("load this new source").

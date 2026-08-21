@@ -25,7 +25,8 @@ A total of **39 class meetings** for the semester.
 ## Course Structure
 
 The course is divided into seven content sections.
-Each section closes with an in-class quiz on a Friday.
+Five sections close with a short in-class quiz; Sections 3 and 7 close with Exam 1 and the Final Exam instead.
+Each quiz asks questions about the section just completed, and the lowest quiz score is dropped.
 Two midterm exams and one final exam mark major checkpoints.
 There are no in-class review periods; a practice exam with worked solutions is published one week before each exam.
 Four individual projects plus a final capstone are spaced two to three weeks apart, each peer-graded with small-group presentations.
@@ -52,20 +53,28 @@ Four individual projects plus a final capstone are spaced two to three weeks apa
 
 ---
 
-## In-Class Clicker Checks
+## Quizzes
 
-Each lecture embeds 2-4 short multiple-choice comprehension questions delivered through the UF-supported clicker system.
-Grading is on participation, not correctness; the lowest 3-5 class days are dropped at end of semester.
-Total weight: 15%.
+Five short in-class quizzes discuss important concepts from the lectures.
+Each quiz asks questions about the section just completed.
+The lowest quiz score is dropped; the best four count toward the 15% quiz weight.
 
-See [Assignments and Clicker Checks](assignments) for details.
+| Quiz | Date | Covers |
+|------|------|--------|
+| Quiz 1 | Fri, Sep 11 | §1 Foundations |
+| Quiz 2 | Fri, Oct 2 | §2 SQL Mastery |
+| Quiz 3 | Fri, Oct 30 | §4 Storage and Indexing |
+| Quiz 4 | Fri, Nov 13 | §5 Query Processing |
+| Quiz 5 | Wed, Dec 2 | §6 Transactions |
+
+See [Assignments and Quizzes](assignments) for details.
 
 ---
 
 ## Projects
 
 Projects mirror real industry tasks.
-Each student creates a **private** GitHub repo on their own account named `cop5725fa26-project` (adding `cegme` as Admin), and claims a **unique dataset** from the approved roster — no two students share the same slice.
+Each student creates a **private** GitHub repo on their own account named `cop5725fa26-project` (adding `cegme` and `rkc8626` as Admins), and claims a **unique dataset** from the approved roster — no two students share the same slice.
 Projects build on the same dataset across the semester: Project 0 loads it; Project 1 normalizes and queries it; Project 2 runs advanced analytics; Project 3 tunes performance; the Final Project ships a complete artifact.
 Project weights increase progressively: Project 1 is smallest (4%), Project 3 the largest before the capstone (10%), and the Final Project the largest overall (15%).
 After each deadline, students present in small breakout groups; the highest-scored from each group presents to the full class.
@@ -73,12 +82,12 @@ After each deadline, students present in small breakout groups; the highest-scor
 | Project | Weight | Released | Due | Presentations | Industry analog |
 |---------|--------|----------|-----|---------------|-----------------|
 | [Project 0](projects/project0) | P/F | Fri, Aug 21 | Fri, Sep 4 | none (setup only) | "Onboarding ticket": tools + claim your dataset |
-| [Project 1](projects/project1) | 4% | Wed, Sep 2 | Fri, Sep 25 | Mon Sep 28 / Wed Sep 30 | "Load this new source": schema + ETL + business queries |
-| [Project 2](projects/project2) | 6% | Mon, Sep 21 | Fri, Oct 23 | Mon Oct 26 / Wed Oct 28 | "Write the metrics": advanced SQL analytics |
-| [Project 3](projects/project3) | 10% | Mon, Oct 19 | Fri, Nov 13 | Mon Nov 16 / Fri Nov 20 | "This dashboard is slow": indexing + tuning report |
-| [Final Project](projects/project-final) | 15% | Mon, Nov 16 | Wed, Dec 9 | Fri Dec 11 (final exam block) | Ship a real artifact (report / API / dashboard / pipeline) |
+| Project 1 | 4% | Wed, Sep 2 | Fri, Sep 25 | Mon Sep 28 / Wed Sep 30 | "Load this new source": schema + ETL + business queries |
+| Project 2 | 6% | Mon, Sep 21 | Fri, Oct 23 | Mon Oct 26 / Wed Oct 28 | "Write the metrics": advanced SQL analytics |
+| Project 3 | 10% | Mon, Oct 19 | Fri, Nov 13 | Mon Nov 16 / Fri Nov 20 | "This dashboard is slow": indexing + tuning report |
+| Final Project | 15% | Mon, Nov 16 | Wed, Dec 9 | Fri Dec 11 (final exam block) | Ship a real artifact (report / API / dashboard / pipeline) |
 
-See [Projects](projects) for the full specification and deliverables for each milestone.
+See [Projects](projects) for deliverables; the full specification for each project is posted when it is released.
 
 ---
 
