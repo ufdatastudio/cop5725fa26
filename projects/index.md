@@ -16,6 +16,8 @@ Each student creates a **private** GitHub repository on their own account named 
 
 The repo URL becomes your project handle; you register it once in Project 0 (P/F) and use the same repo through the Final Project.
 
+Projects may include a peer grading aspect; details arrive with each project's release.
+
 ---
 
 ## Project Schedule
@@ -142,12 +144,6 @@ Three reasons this model worked in [CIS 6930 Spring 2026](https://github.com/ceg
 1. **Unique work by construction.** Different students pick different datasets → different schemas, queries, results.
 2. **Visible iteration.** Commit history tells the story; the TA sees how you arrived at the answer, not just the answer.
 3. **Portfolio value.** You leave the semester with a public repo demonstrating database engineering skill — useful for internships and interviews.
-
----
-
-## Rubrics
-
-Each project rubric is published in `rubrics/` at the time the project is released.
 
 ---
 
