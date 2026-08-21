@@ -238,7 +238,7 @@ Exceptions can be made for significant hardships as dictated by university polic
 ### Integrity Examples
 
 Below is a selection of example situations on the border of being or not being an academic integrity violation.
-Note that this is not an exhaustive list, and the instructors will report any potential integrity violations <https://teach.ufl.edu/resource-library/academic-integrity-at-uf/>.
+Note that this is not an exhaustive list, and the instructors will report any potential integrity violations <https://sccr.dso.ufl.edu/process/student-honor-code/>.
 
 
 **Use of CoPilot, ChatGPT, and other generative AI systems should be clearly declared.
@@ -396,7 +396,7 @@ Located in 302 Tigert Hall, 846-1138. Help brainstorming, formatting, and writin
 <https://writing.ufl.edu/writing-studio/>.
 
 ##### Student Complaints Campus
-Visit <https://sccr.dso.ufl.edu/policies/student-honor-code-studentconduct-code/>; <https://care.dso.ufl.edu>.
+Visit <https://policy.ufl.edu/regulation/4-040/>; <https://care.dso.ufl.edu>.
 
 ##### On-Line Student Complaints
 <https://distance.ufl.edu/getting-help/>; <https://distance.ufl.edu/state-authorization-status/#studentcomplaint>.

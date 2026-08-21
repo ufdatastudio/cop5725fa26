@@ -224,7 +224,7 @@ Failure to do so is an academic integrity violation.
 ## 13. Component: Academic Integrity Examples
 
 Below is a selection of example situations on the border of being or not being an academic integrity violation.
-This is not an exhaustive list, and the instructors will report any potential violations, <https://teach.ufl.edu/resource-library/academic-integrity-at-uf/>.
+This is not an exhaustive list, and the instructors will report any potential violations, <https://sccr.dso.ufl.edu/process/student-honor-code/>.
 
 | Situation | Integrity Violation? |
 | --- | --- |
