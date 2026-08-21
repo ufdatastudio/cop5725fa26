@@ -13,7 +13,7 @@ Each paper links to a PDF copy hosted with the course site.
 
 ---
 
-## Featured (Required Reading)
+## Featured
 
 | Week | Citation | Venue | PDF |
 |------|----------|-------|-----|
@@ -26,7 +26,7 @@ Each paper links to a PDF copy hosted with the course site.
 
 ---
 
-## Foundational (Cited in Slides)
+## Foundational
 
 | Citation | Venue | Year | PDF |
 |----------|-------|------|-----|
