@@ -24,35 +24,13 @@ Pace: 50 min. Aim for ~5 min per era. Lean into the human stories — the oral h
 
 ---
 
-# Why This Lecture Exists
-
-<div class="columns">
-<div>
+# Why Database History
 
 Three reasons to know the history:
 
-1. **Pattern recognition.** The NoSQL/NewSQL fight is the 1970s navigational/relational fight in new clothes.
-2. **Vocabulary.** Words like *page*, *log*, *catalog*, *tuple* carry baggage from a specific decade.
-3. **Humility.** Most "new" database ideas were tried before. Some lost. Some lost twice.
-
-</div>
-<div>
-
-```mermaid
-graph TB
-  P["Pattern<br/>recognition"]
-  V["Vocabulary"]
-  H["Humility"]
-  P --> WHY["Why<br/>history?"]
-  V --> WHY
-  H --> WHY
-  WHY --> NOW["Today's<br/>systems"]
-```
-
-</div>
-</div>
-
-By the end of the hour you will place Codd, System R, Stonebraker, Bell Labs, and the cloud era on one timeline.
+1. **Pattern recognition.** Old fights and technologies repeat. The NoSQL/NewSQL fight is the 1970s navigational/relational fight all over again.
+2. **Vocabulary.** Words like *page*, *log*, *catalog*, *tuple* are rooted in historical systems from a specific decade.
+3. **Depth.** The database community expects you to know the past. Most "new" database ideas were tried before. Some lost. Some lost twice.
 
 <!--
 The Stonebraker + Pavlo paper "What Goes Around Comes Around... And Around" (SIGMOD Record, June 2024) is the source text for this lecture. It is the sequel to Stonebraker's 2005 "What Goes Around Comes Around" — both argue that data model fights repeat. Worth namedropping at the start.
@@ -79,7 +57,7 @@ The Bell Labs section is new; it explains where the operating environment that r
 
 ---
 
-# Sixty Years of Databases, On One Slide
+# Sixty Years of Databases
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {
@@ -93,7 +71,7 @@ The Bell Labs section is new; it explains where the operating environment that r
   'cScale7':'#ad1457', 'cScaleLabel7':'#ffffff'
 }}}%%
 timeline
-  title Key Dates We Will Revisit
+  title Key Dates We Will Visit
   1960s : IMS, CODASYL navigational era
         : UNIX (1969) and C (1972) at Bell Labs
   1970 : Codd publishes A Relational Model... in CACM
@@ -223,9 +201,9 @@ IBM San Jose Research Laboratory
 - British-American mathematician
 - Joined IBM in 1949
 - 1965: started thinking about relational model
-- 1970: the paper
+- 1970: published *A Relational Model of Data for Large Shared Data Banks* in CACM
 - 1981: Turing Award for the relational model
-- 1985: published the famous "Twelve Rules" for relational DBMSes
+- 1985: published [Codd's 12 Rules](https://en.wikipedia.org/wiki/Codd%27s_twelve_rules) for relational DBMSes
 
 </div>
 </div>
@@ -256,7 +234,7 @@ Internal IBM resistance was substantial — IMS was the cash cow. The Wisconsin 
 
 ---
 
-# What Codd Took Away
+# Before and After Codd
 
 <div class="columns">
 <div>
@@ -411,8 +389,7 @@ Lead author of the 1979 paper that defined cost-based query optimization:
 
 Selinger's optimizer is the architectural blueprint inside PostgreSQL, DB2, Oracle, and almost every other relational engine today.
 
-[PDF in papers/](https://ufdatastudio.com/cop5725fa26/papers/pdfs/selinger1979.pdf)
-Interview: *Pat Selinger Speaks Out* — Winslett, SIGMOD Record
+[Interview: *Pat Selinger Speaks Out* — Winslett, SIGMOD Record](https://sigmodrecord.org/2003/12/11/interview-with-pat-selinger/)
 
 </div>
 </div>
@@ -452,7 +429,7 @@ The conceptual architect of transactions:
 
 Lost at sea January 28, 2007 while sailing solo off the California coast.
 
-Interview: *Jim Gray Speaks Out* — Winslett, SIGMOD Record (his last published interview)
+[Interview: *Jim Gray Speaks Out* — Winslett, SIGMOD Record](https://sigmodrecord.org/2003/03/15/interview-with-jim-gray/) (his last published interview)
 
 The database community mourns him every year.
 
@@ -493,16 +470,16 @@ Two outcomes:
 - INGRES the company (1980), surviving today as Actian X
 - **Postgres** (1986), Stonebraker's follow-up
 
-</div>
-</div>
-
 ```mermaid
-graph TD
-  I["INGRES<br/>Berkeley 1973"] --> IC["INGRES Corp. 1980"]
-  I --> PG["Postgres 1986"]
-  PG --> PGSQL["PostgreSQL 1996-today"]
-  IC --> AX["Actian X today"]
+graph LR
+  I["INGRES<br/>Berkeley<br/>1973"] --> IC["INGRES<br/>Corp<br/>1980"]
+  I --> PG["Postgres<br/>1986"]
+  PG --> PGSQL["PostgreSQL<br/>1996-today"]
+  IC --> AX["Actian<br/>X<br/>today"]
 ```
+
+</div>
+</div>
 
 <!--
 The Berkeley/IBM rivalry shaped a generation of database engineers. Stonebraker frequently tells the story of being told by IBM lawyers to stop using "INGRES" because IBM had trademarked the term — except IBM hadn't, and the lawyers were bluffing. Berkeley kept the name.
@@ -514,7 +491,9 @@ The Berkeley/IBM rivalry shaped a generation of database engineers. Stonebraker 
 
 QUEL was arguably the cleaner language. SQL won.
 
-Why? IBM shipped SQL/DS in 1981 and DB2 in 1983.
+QUEL was more compact and used operators like `retrieve` instead of `select`, making it feel more mathematical. SQL was more English-like and explicit, which made it more approachable for business users.
+
+Why did SQL win? IBM shipped SQL/DS in 1981 and DB2 in 1983.
 Oracle shipped a SQL implementation in 1979 — before IBM did.
 
 By 1986 ANSI ratified SQL-86. The language that came out of System R became *the* language for relational systems.
@@ -527,24 +506,9 @@ We write SQL exclusively. But QUEL is worth a Wikipedia tab in your spare time.
 
 ---
 
-# IBM DB2: System R Becomes a Product
+# From System R to IBM DB2
 
-<div class="columns">
-<div>
-
-DB2 carries System R from research prototype into IBM's mainframe customer base. By 1990 it runs the back office of most major banks, insurers, airlines, and clearing houses, and a large fraction of those workloads still run on it today.
-
-- **1981** SQL/DS ships on VM/CMS, IBM's first SQL product
-- **1983** DB2 V1 on MVS mainframes
-- **1988** DB2 for AS/400 (now IBM i)
-- **1993** DB2 LUW reaches Linux, UNIX, Windows
-- **1996** DB2 UDB adds object-relational types
-- **2009** pureScale brings shared-disk clustering
-- **2013** BLU Acceleration adds in-memory columnar
-- **2017** Renamed Db2
-
-</div>
-<div>
+DB2 was the commercial version of System R, moving it from research prototype into IBM's mainframe customer base. By 1990 it runs the back office of most major banks, insurers, airlines, and clearing houses, and a large fraction of those workloads still run on it today.
 
 ```mermaid
 graph TD
@@ -558,16 +522,13 @@ graph TD
 
 Three IBM platforms each shipped their own DB2 lineage; they converged gradually after 1996.
 
-</div>
-</div>
-
 <!--
 DB2 is often invisible to students because it lives behind ATMs, ticketing systems, and clearing houses rather than consumer web apps. The IBM mainframe still processes a large share of the world's financial transactions, and DB2 sits at the center of that workload. Three pieces of this course came directly out of DB2 development at IBM Almaden: Mohan's ARIES recovery (Week 14), Selinger-style cost-based optimization (Week 13), and most of the SQL surface that later became the ANSI standard.
 -->
 
 ---
 
-# SQL Standards: Forty Years of Additions
+# SQL Standards over the Years
 
 ```mermaid
 timeline
@@ -614,11 +575,11 @@ The standard moves slowly and vendors ship ahead of it, but the standard's vocab
 
 <!-- _class: lead -->
 
-# Part 4: Bell Labs — The Quiet Foundation
+# Part 4: Bell Labs
 
 ---
 
-# Why Bell Labs Belongs in This Lecture
+# Bell Labs Innovation Hub
 
 <div class="columns">
 <div>
@@ -632,7 +593,7 @@ The standard moves slowly and vendors ship ahead of it, but the standard's vocab
 <div class="caption">
 
 Bell Labs Murray Hill, NJ
-The "transistor through Unix" campus
+The birthplace of the transistor, UNIX, and C
 
 </div>
 
@@ -827,6 +788,38 @@ Microsoft SQL Server's lineage runs through Sybase, then Microsoft. Some institu
 
 ---
 
+# Oracle: The First Commercial SQL Database
+
+<div class="columns">
+<div>
+
+**Larry Ellison**, Ed Oates, and Bob Miner founded **Relational Software Inc.** in 1977 to commercialize a prototype SQL database.
+
+- **1979:** Oracle V2 ships (first commercial SQL product, beating IBM's DB2 by 4 years)
+- **1982:** Renamed Oracle Corporation
+- **1983:** Oracle V3 with distributed query processing
+- **1985:** Oracle becomes the top commercial DBMS by revenue
+- **1989:** Oracle 7 introduces triggers and stored procedures
+- **1999:** Oracle 8i adds Java VM and XML support
+
+Oracle's early SQL implementation and aggressive sales strategy captured significant market share in the 1980s.
+
+</div>
+<div>
+
+```mermaid
+graph LR
+  RSI["Relational<br/>Software<br/>1977"] --> OV2["Oracle V2<br/>1979<br/>First SQL"]
+  OV2 --> OC["Oracle Corp<br/>1982"]
+  OC --> OV3["Oracle V3<br/>1983"]
+  OV3 --> Lead["Market<br/>Leader<br/>1985"]
+```
+
+</div>
+</div>
+
+---
+
 # What 1980s DBs Got Right
 
 <div class="columns">
@@ -874,7 +867,7 @@ Microsoft SQL Server's lineage runs through Sybase, then Microsoft. Some institu
 
 Michael Stonebraker
 2014 Turing Award
-80 years old in October 2023, still publishing
+Still active and publishing
 
 </div>
 
@@ -891,7 +884,7 @@ Five commercial DBMSes he co-founded:
 
 Plus SciDB, Tamr, and others.
 
-Interview: *Mike Stonebraker Speaks Out* — Winslett, SIGMOD Record
+[Interview: *Mike Stonebraker Speaks Out* — Winslett, SIGMOD Record](https://sigmodrecord.org/2003/06/15/interview-with-michael-stonebraker/)
 
 </div>
 </div>
@@ -907,7 +900,7 @@ Stonebraker famously argues that academic research without commercial follow-thr
 <div class="columns">
 <div>
 
-Three papers, one argument:
+Three critique papers:
 
 - **2005** *"One Size Fits All": An Idea Whose Time Has Come and Gone* (CIDR)
 - **2005** *What Goes Around Comes Around* (in *Readings in Database Systems*)
@@ -1067,6 +1060,38 @@ graph TD
 | **Redis** | 2009 | Persistence-first | Data structures, latency |
 
 Each kept what it needed. Each gave back something that turned out to matter.
+
+---
+
+# MongoDB: The Document Database
+
+<div class="columns">
+<div>
+
+**MongoDB** (2009) emerged as the most commercially successful NoSQL database for web applications.
+
+- **Core idea:** Store JSON-like documents instead of relational tuples
+- **Schema-on-read:** Fields can vary within a collection
+- **Built for:** Web apps with evolving schemas and semi-structured data
+- **Trade-off:** Lost SQL querying but gained horizontal scalability and flexible data models
+
+MongoDB's ease of use and driver libraries in every programming language made it the first NoSQL database most developers learned.
+
+</div>
+<div>
+
+```mermaid
+graph TD
+  WEB["Web apps<br/>need speed"] --> SCHEMA["Schema<br/>churn"]
+  WEB --> SCALE["Horizontal<br/>scale"]
+  SCHEMA --> MONGO["MongoDB<br/>documents"]
+  SCALE --> MONGO
+  MONGO --> JSON["JSON-like<br/>storage"]
+  MONGO --> FLEX["Flexible<br/>schemas"]
+```
+
+</div>
+</div>
 
 ---
 
@@ -1509,8 +1534,6 @@ Local copy: [ufdatastudio.com/cop5725fa26/papers/pdfs/codd1970.pdf](https://ufda
 Full paper index: [ufdatastudio.com/cop5725fa26/papers](https://ufdatastudio.com/cop5725fa26/papers)
 
 Read pages 1-4 carefully. The rest is rewarding but not required.
-
-A one-page response is due **next Wednesday, Aug 26**, embedded in the Project 1 release.
 
 ---
 
