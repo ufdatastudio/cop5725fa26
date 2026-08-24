@@ -74,32 +74,27 @@ timeline
   title Key Dates We Will Visit
   1960s : IMS, CODASYL navigational era
         : UNIX (1969) and C (1972) at Bell Labs
-  1970 : Codd publishes A Relational Model... in CACM
+  1970 : Codd's relational model paper (CACM)
   1973-79 : INGRES at Berkeley
           : System R at IBM San Jose
           : Selinger optimizer paper (1979)
-  1980s : Oracle ships
-        : DB2 ships (1983)
+  1980s : Oracle (1979) and DB2 (1983) ship
         : Codd wins Turing Award (1981)
         : SQL standardized (SQL-86)
   1990s : Postgres → PostgreSQL (1996)
         : MySQL (1995), the LAMP era
-        : ARIES recovery (Mohan 1992)
+        : ARIES recovery (1992)
         : Gray wins Turing Award (1998)
-  2000s : Parallel OLAP wave — Netezza (2003), Greenplum (2003), Vertica (2005), Aster (2005), ParAccel (2007)
-        : C-Store (Stonebraker et al., 2005)
-        : MapReduce (Dean & Ghemawat, OSDI 2004)
-        : Hadoop (Cutting + Cafarella, 2006)
-        : NoSQL — BigTable (2006), Dynamo (2007), MongoDB (2009)
-        : Stonebraker & DeWitt "MapReduce: A Step Backwards" (2008)
-  2010s : Spanner (Corbett et al., OSDI 2012)
-        : Spark (Zaharia et al., NSDI 2012)
-        : Pavlo et al. "MapReduce vs Parallel DBs" (CACM 2010)
-        : Snowflake (2014), Photon (2022)
+  2000s : Parallel OLAP wave (2003-07)
+        : C-Store (2005)
+        : MapReduce (2004), Hadoop (2006)
+        : NoSQL wave — BigTable, Dynamo, MongoDB
+  2010s : Spanner and Spark (2012)
+        : Snowflake (2014)
         : Stonebraker wins Turing Award (2014)
-        : DuckDB (Raasveldt & Mühleisen, 2019)
+        : DuckDB (2019)
   2020s : Vector DBs, lakehouses
-        : Stonebraker + Pavlo, What Goes Around...And Around (2024)
+        : What Goes Around... And Around (2024)
 ```
 
 <!--
@@ -460,6 +455,14 @@ Stonebraker / Wong / Held team
 
 </div>
 
+```mermaid
+graph LR
+  I["INGRES<br/>Berkeley<br/>1973"] --> IC["INGRES<br/>Corp<br/>1980"]
+  I --> PG["Postgres<br/>1986"]
+  PG --> PGSQL["PostgreSQL<br/>1996-today"]
+  IC --> AX["Actian<br/>X<br/>today"]
+```
+
 </div>
 <div>
 
@@ -469,14 +472,6 @@ Two outcomes:
 
 - INGRES the company (1980), surviving today as Actian X
 - **Postgres** (1986), Stonebraker's follow-up
-
-```mermaid
-graph LR
-  I["INGRES<br/>Berkeley<br/>1973"] --> IC["INGRES<br/>Corp<br/>1980"]
-  I --> PG["Postgres<br/>1986"]
-  PG --> PGSQL["PostgreSQL<br/>1996-today"]
-  IC --> AX["Actian<br/>X<br/>today"]
-```
 
 </div>
 </div>
@@ -531,6 +526,19 @@ DB2 is often invisible to students because it lives behind ATMs, ticketing syste
 # SQL Standards over the Years
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'cScale0':'#546e7a', 'cScaleLabel0':'#ffffff',
+  'cScale1':'#1565c0', 'cScaleLabel1':'#ffffff',
+  'cScale2':'#0277bd', 'cScaleLabel2':'#ffffff',
+  'cScale3':'#00838f', 'cScaleLabel3':'#ffffff',
+  'cScale4':'#2e7d32', 'cScaleLabel4':'#ffffff',
+  'cScale5':'#558b2f', 'cScaleLabel5':'#ffffff',
+  'cScale6':'#827717', 'cScaleLabel6':'#ffffff',
+  'cScale7':'#ef6c00', 'cScaleLabel7':'#ffffff',
+  'cScale8':'#d84315', 'cScaleLabel8':'#ffffff',
+  'cScale9':'#ad1457', 'cScaleLabel9':'#ffffff',
+  'cScale10':'#6a1b9a', 'cScaleLabel10':'#ffffff'
+}}}%%
 timeline
   title Revisions of the SQL Standard (ISO/IEC 9075)
   1986 : SQL-86, first ANSI then ISO standard
@@ -584,16 +592,11 @@ The standard moves slowly and vendors ship ahead of it, but the standard's vocab
 <div class="columns">
 <div>
 
-<div class="portrait">
-
-![w:280px](images/bell-labs-campus.png)
-
-</div>
+![w:460px](images/bell-labs-campus.png)
 
 <div class="caption">
 
-Bell Labs Murray Hill Campus
-Aerial view of the iconic research facility
+Bell Labs campus, Murray Hill, New Jersey
 
 </div>
 
@@ -793,30 +796,30 @@ Microsoft SQL Server's lineage runs through Sybase, then Microsoft. Some institu
 <div class="columns">
 <div>
 
-**Larry Ellison**, Ed Oates, and Bob Miner founded **Relational Software Inc.** in 1977 to commercialize a prototype SQL database.
+**Larry Ellison**, Bob Miner, and Ed Oates met at Ampex, where they built a database for the CIA under the project code name **Oracle**.
 
-- **1979:** Oracle V2 ships (first commercial SQL product, beating IBM's DB2 by 4 years)
-- **1982:** Renamed Oracle Corporation
-- **1983:** Oracle V3 with distributed query processing
-- **1985:** Oracle becomes the top commercial DBMS by revenue
-- **1989:** Oracle 7 introduces triggers and stored procedures
-- **1999:** Oracle 8i adds Java VM and XML support
-
-Oracle's early SQL implementation and aggressive sales strategy captured significant market share in the 1980s.
+- **1977:** Founded Software Development Laboratories, working from Codd's paper and IBM's published System R work
+- **1979:** Oracle V2 ships, the first commercial SQL RDBMS. There was never a V1
+- **1982:** Renamed Oracle, after the product
+- **1985:** The largest DBMS vendor by revenue
 
 </div>
 <div>
 
 ```mermaid
-graph LR
-  RSI["Relational<br/>Software<br/>1977"] --> OV2["Oracle V2<br/>1979<br/>First SQL"]
-  OV2 --> OC["Oracle Corp<br/>1982"]
-  OC --> OV3["Oracle V3<br/>1983"]
-  OV3 --> Lead["Market<br/>Leader<br/>1985"]
+graph TD
+  CIA["Ampex project 'Oracle'<br/>built for the CIA"] --> SDL["Software Development<br/>Laboratories, 1977"]
+  SDL --> OV2["Oracle V2, 1979<br/>first commercial SQL"]
+  OV2 --> OC["Renamed Oracle<br/>1982"]
+  OC --> Lead["Largest DBMS vendor<br/>by revenue, 1985"]
 ```
 
 </div>
 </div>
+
+<!--
+The version-numbering story lands well: there was never an Oracle V1 because Ellison labeled the first release "2" so customers would not think they were buying a first release. IBM published the System R papers, including the SQL language description, which is how a four-person startup implemented SQL before IBM shipped it; IBM's first SQL product (SQL/DS) arrived in 1981. The Ampex/CIA project is also why government agencies were Oracle's earliest customers.
+-->
 
 ---
 
@@ -929,33 +932,38 @@ Recommended reading after the course: the 2024 Pavlo & Stonebraker paper is the 
 
 Stonebraker started Postgres at Berkeley in 1986 to extend the relational model with user-defined types and rules.
 
-In 1996 the project added SQL and renamed itself **PostgreSQL**.
-
-The repository moved from Berkeley to the volunteer community that still runs it today.
+In 1996 the project added SQL, renamed itself **PostgreSQL**, and moved from Berkeley to the volunteer community that still runs it today.
 
 By the time you graduate, PostgreSQL will be the second-most-deployed RDBMS in the world.
 
 </div>
 <div>
 
-<div class="portrait">
-
-![w:160px](images/postgresql-logo.png)
+![w:170px](images/postgresql-logo.png)
 
 </div>
+</div>
+
+<div class="diagram-narrow">
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'cScale0':'#546e7a', 'cScaleLabel0':'#ffffff',
+  'cScale1':'#1565c0', 'cScaleLabel1':'#ffffff',
+  'cScale2':'#00838f', 'cScaleLabel2':'#ffffff',
+  'cScale3':'#2e7d32', 'cScaleLabel3':'#ffffff',
+  'cScale4':'#ef6c00', 'cScaleLabel4':'#ffffff',
+  'cScale5':'#ad1457', 'cScaleLabel5':'#ffffff'
+}}}%%
 timeline
-  title PostgreSQL
-  1986 : Berkeley
+  1986 : Berkeley Postgres
   1994 : Postgres95
   1996 : PostgreSQL 6.0
   2010 : Hot standby
   2016 : Parallel queries
-  2024 : 16.x
+  2025 : PostgreSQL 18
 ```
 
-</div>
 </div>
 
 ---
@@ -1379,22 +1387,9 @@ Stonebraker's "one size does not fit all" argument from 2005 is now the consensu
 </div>
 <div>
 
-<div class="portrait">
+![w:190px](images/postgresql-logo.png)
 
-![w:120px](images/postgresql-logo.png)
-![w:120px](images/duckdb-logo.png)
-
-</div>
-
-```mermaid
-graph TD
-  C["Course"] --> PG["PostgreSQL"]
-  C --> DD["DuckDB"]
-  PG --> R["Row store<br/>OLTP<br/>Server"]
-  DD --> CO["Column store<br/>OLAP<br/>Embedded"]
-  R --> Both["Both speak<br/>SQL"]
-  CO --> Both
-```
+![w:280px](images/duckdb-logo.png)
 
 </div>
 </div>
