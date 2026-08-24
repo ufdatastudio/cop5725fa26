@@ -586,14 +586,14 @@ The standard moves slowly and vendors ship ahead of it, but the standard's vocab
 
 <div class="portrait">
 
-![w:240px](images/bell-labs-murray-hill.jpg)
+![w:280px](images/bell-labs-campus.png)
 
 </div>
 
 <div class="caption">
 
-Bell Labs Murray Hill, NJ
-The birthplace of the transistor, UNIX, and C
+Bell Labs Murray Hill Campus
+Aerial view of the iconic research facility
 
 </div>
 
