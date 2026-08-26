@@ -7,22 +7,22 @@
  * <site-dir>/lecture-outlines/dayN-topic/, plus images/ where present.
  * Decks are URL-only: nothing on the site links to them.
  */
-import { cpSync, existsSync, mkdirSync, readdirSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const SRC = fileURLToPath(new URL('.', import.meta.url));
+const yaml = createRequire(import.meta.url)('js-yaml');
 
 // One-line toggle for the instructor clicker decks.
 const PUBLISH_CLICKER = true;
 
-// Allowlist gate: while non-empty, only these decks publish. Clear it to
+// Allowlist gate, read from the site's _config.yml (published_lectures).
+// While non-empty, only the listed decks publish. Clear the list there to
 // publish everything (PUBLISH_DATES below then takes over for date-gating).
-const PUBLISH_ONLY = new Set([
-  'day1-introduction',
-  'day2-database-history',
-  'day3-relational-model',
-]);
+const siteConfig = yaml.load(readFileSync(join(SRC, '..', '_config.yml'), 'utf8'));
+const PUBLISH_ONLY = new Set(siteConfig.published_lectures ?? []);
 
 // Date-gating hook (inert while empty: everything publishes). To gate a deck,
 // add its directory name with the first date it may appear, e.g.

@@ -15,6 +15,15 @@ kramdown:
   html_to_native: true
 github: [metadata]
 
+# Lecture decks published onto the site (URL-only) by
+# lecture-outlines/publish.mjs during the Pages deploy. Add a deck's
+# directory name here to make it available; clear the list to publish
+# every built deck.
+published_lectures:
+  - day1-introduction
+  - day2-database-history
+  - day3-relational-model
+
 exclude:
   - simple-syllabus.md
   - projects/project1.md
