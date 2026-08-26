@@ -28,14 +28,14 @@ Joins II. Pace 50 min. Sort-merge first (it builds on Day 29 external sort direc
 <div class="columns-left-wide">
 <div>
 
-Monday: the nested loop family. Three algorithms, each better than the last under specific conditions.
+Monday covered the nested loop family: three algorithms, each better than the last under specific conditions.
 
-Today: the algorithms that exploit **ordering** and **hashing** to beat block nested loop on most workloads.
+Today covers the algorithms that exploit **ordering** and **hashing** to beat block nested loop on most workloads.
 
-By the end of the hour you can:
-- Pick the right join algorithm for a query
-- Predict what PostgreSQL's planner will choose
-- Reason about why a query gets slower as data grows
+These algorithms explain:
+- Which join algorithm suits a query
+- What PostgreSQL's planner will choose
+- Why a query gets slower as data grows
 
 </div>
 <div>
@@ -74,7 +74,7 @@ graph LR
   class S,H,G,Hy,C step
 ```
 
-Reference: GMW Ch. 15.4-15.5; PostgreSQL docs [Ch. 14.2 Statistics Used by the Planner](https://www.postgresql.org/docs/current/planner-stats.html).
+Reference: Textbook §§15.4-15.5, pp. 723-738; PostgreSQL docs [Statistics Used by the Planner](https://www.postgresql.org/docs/current/planner-stats.html).
 
 ---
 
@@ -84,9 +84,9 @@ Reference: GMW Ch. 15.4-15.5; PostgreSQL docs [Ch. 14.2 Statistics Used by the P
 
 ---
 
-# The Idea
+# The Sort-Merge Idea
 
-If both relations were **sorted on the join key**, we could merge them in one pass — like merging two sorted runs from external sort (Day 29).
+If both relations were **sorted on the join key**, we could merge them in one pass, just as external sort merges sorted runs (Day 29).
 
 ```python
 sort R on join key
@@ -94,7 +94,7 @@ sort S on join key
 i, j = 0, 0
 while i < |R| and j < |S|:
     if R[i].x == S[j].y:
-        # emit matches (carefully — repeated keys)
+        # emit matches (careful with repeated keys)
         yield (R[i], S[j])
         i, j advance
     elif R[i].x < S[j].y:
@@ -160,11 +160,11 @@ Imagine R has `[5, 5, 5]` and S has `[5, 5]`:
 The output should be **6 pairs** (every R-5 paired with every S-5).
 
 The algorithm:
-1. When we see equal keys, save a pointer to the start of S's run
-2. Emit all R × S pairs in this key group
-3. After R advances past the key, reset to the saved S pointer if R re-enters the key... (it won't for sorted R; this matters for hash and other variants)
+1. When we see equal keys, save a pointer to the start of S's duplicate run
+2. Emit all pairs of the current R tuple with that S run
+3. When R advances to another tuple with the same key, reset S to the saved pointer and emit the run again
 
-For sort-merge specifically, we scan the S-block of duplicates for every R-tuple with that key.
+The S-block of duplicates is scanned once for every R-tuple with that key.
 
 <!--
 Repeated keys make sort-merge's cost slightly worse than the formula suggests; in the worst case (all keys equal) it degenerates to cross product. Real workloads almost always have well-distributed join keys.
@@ -215,9 +215,9 @@ graph LR
 
 ---
 
-# Hash Join Wins Almost Everything
+# Hash Join Compared
 
-When the smaller relation fits in memory, hash join is **the fastest general-purpose join**.
+When the smaller relation fits in memory, hash join is the fastest general-purpose join.
 
 For $B_R = 1000$, $B_S = 5000$, smaller side fits:
 
@@ -270,7 +270,7 @@ A 100 GB build relation against 16 GB of memory:
 
 Grace hash makes the hash join work even when the build doesn't fit, with cost similar to sort-merge.
 
-The trick: **partition both relations** into hash-bucket-shaped pieces, then run hash join per-partition.
+Grace hash **partitions both relations** into hash-bucket-shaped pieces, then runs a hash join per partition.
 
 ---
 
@@ -290,7 +290,7 @@ for i in range(k):
         probe hash table for matches
 ```
 
-The key insight: tuples with the same join key always end up in the same partition pair. So joining partition pairs covers all matches.
+Tuples with the same join key always end up in the same partition pair, so joining partition pairs covers all matches.
 
 ---
 
@@ -336,12 +336,12 @@ Phase 2: partition S    → 2 B_S
 Phase 3: per-partition  → B_R + B_S (one more read of each)
 ```
 
-**Total:** $3(B_R + B_S)$ — same as sort-merge.
+**Total:** $3(B_R + B_S)$, the same as sort-merge.
 
 For $B_R = 1000$, $B_S = 5000$:
 $$3 \cdot 6000 = 18{,}000 \text{ page reads}$$
 
-Same as sort-merge but **no need to maintain sort order** at the end. Often faster in practice because hashing is cheaper than comparison-based sort.
+The cost matches sort-merge with **no need to maintain sort order** at the end. Grace hash is often faster in practice because hashing is cheaper than comparison-based sorting.
 
 ---
 
@@ -351,7 +351,7 @@ Same as sort-merge but **no need to maintain sort order** at the end. Often fast
 
 ---
 
-# An Optimization: Keep One Partition in Memory
+# Keeping One Partition in Memory
 
 In grace hash, **every** partition gets written to disk. But the first partition could just stay in memory while we partition.
 
@@ -368,7 +368,7 @@ for s in S:
         disk_partitions[bucket - 1].append(s)
 ```
 
-When we probe R, partition 0 is already there — no disk write or re-read.
+When we probe R, partition 0 is already in memory, so it needs no disk write or re-read.
 
 **Savings:** roughly $1/k$ of the total I/O. For 10 partitions, that's a 10% win.
 
@@ -400,7 +400,7 @@ Hash Join  (cost=...) (actual time=...)
 - **Batches**: 1 means everything fit; > 1 means we spilled to disk
 - **Memory Usage**: how much was used (related to `work_mem`)
 
-`Batches: 1` is the goal — no disk involvement.
+`Batches: 1` is the goal, meaning no disk involvement.
 
 ---
 
@@ -480,7 +480,7 @@ Look for:
 - **Batches** (hash join): 1 = in-memory, > 1 = spilled
 - **actual rows** vs **estimated rows**: if these are wildly off, the planner picked badly
 
-The `actual rows` mismatch is the #1 source of bad join plans. Run `ANALYZE` to refresh stats.
+A large `actual rows` mismatch is the most common source of bad join plans. Run `ANALYZE` to refresh stats.
 
 ---
 
@@ -500,7 +500,7 @@ EXPLAIN ANALYZE <your query>;
 RESET ALL;
 ```
 
-This is **debugging only** — never set in production code. The default planner is usually right; when it isn't, the answer is to fix statistics (`ANALYZE`) or add an index.
+This is for **debugging only**. Never set these in production code. The default planner is usually right; when it isn't, the answer is to fix statistics (`ANALYZE`) or add an index.
 
 For Project 3, this is exactly the kind of comparison you should capture.
 
@@ -508,36 +508,24 @@ For Project 3, this is exactly the kind of comparison you should capture.
 
 # Wrap-up
 
-You now have:
+- Sort-merge join sorts both sides with Day 29's external sort, then merges at cost $3(B_R + B_S)$.
+- Hash join builds on the smaller side and costs $B_R + B_S$ when the build fits in memory.
+- Grace hash join partitions both relations first and joins partition pairs at cost $3(B_R + B_S)$.
+- Hybrid hash join keeps one partition in memory; PostgreSQL implements this variant.
+- The comparison table covers all seven algorithms with their costs and winning conditions.
+- `EXPLAIN ANALYZE` names the join algorithm, and the `enable_*` flags let you compare alternatives.
 
-<div class="columns">
-<div>
-
-- Sort-merge join (uses Day 29's external sort)
-- Hash join (the modern default)
-- Grace hash join (when nothing fits)
-- Hybrid hash join (PostgreSQL's variant)
-
-</div>
-<div>
-
-- The full join algorithm comparison
-- How PostgreSQL picks
-- Reading `EXPLAIN ANALYZE` for join algorithm
-- The `enable_*` flags for diagnosis
-
-</div>
-</div>
+<!--
+One bullet per part. The Batches field in EXPLAIN output is the practical hook: Batches > 1 means grace-style partitioning happened.
+-->
 
 ---
 
 # Friday: The Iterator Model
 
-The framework that makes all six join algorithms composable.
+Friday covers the iterator model, the framework that makes join algorithms composable.
 
-By the end of Friday you understand the `open / next / close` interface, the difference between pipelined and blocking operators, and why `LIMIT` can short-circuit some plans entirely.
-
-Read Graefe, [*Volcano*](https://ufdatastudio.com/cop5725fa26/papers/pdfs/graefe1994.pdf), IEEE TKDE 6(1), 1994.
+Reading: Graefe, [*Volcano*](https://ufdatastudio.com/cop5725fa26/papers/pdfs/graefe1994.pdf), IEEE TKDE 6(1), 1994.
 
 ---
 

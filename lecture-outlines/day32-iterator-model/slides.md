@@ -28,11 +28,11 @@ Closes Week 12. Pace 50 min, with the worked plan-tree trace taking real time. T
 <div class="columns-left-wide">
 <div>
 
-You've seen six join algorithms. You've seen sorts. You've seen filters and projections from the algebra.
+Monday and Wednesday covered six join algorithms. Sorts, filters, and projections came earlier.
 
-Today: the framework that **wires them together** into a query plan and **drives** that plan to produce results.
+Today covers the framework that **wires them together** into a query plan and **drives** that plan to produce results.
 
-The answer is the **iterator model**, also called the **Volcano model** after the seminal 1994 paper. It is the execution architecture inside almost every database engine for the last 30 years.
+That framework is the **iterator model**, also called the **Volcano model** after Graefe's 1994 paper. It has been the execution architecture inside most database engines for the last 30 years.
 
 </div>
 <div>
@@ -98,7 +98,7 @@ The Volcano model solves all of these with a single uniform interface.
 
 ---
 
-# The Idea: Operators Are Iterators
+# Operators Are Iterators
 
 Every operator implements three methods:
 
@@ -114,7 +114,7 @@ class Operator:
         """Release resources."""
 ```
 
-This is the **Volcano interface**. Three methods. That's it.
+This is the **Volcano interface**: three methods in total.
 
 Operators are composed by **child pointers** in the tree. When an operator needs more input, it calls `next()` on its child.
 
@@ -146,7 +146,7 @@ class TableScan(Operator):
 
 The leaf of every plan tree. Reads from the heap file one tuple at a time.
 
-Real implementations read a **page** at a time and serve tuples from the page — but the interface stays "one tuple per `next()`."
+Real implementations read a **page** at a time and serve tuples from the page, but the interface stays "one tuple per `next()`."
 
 ---
 
@@ -293,7 +293,7 @@ plan.close()
 
 The same recursive `next()` pattern produces complex pipelines.
 
-This is the architecture inside PostgreSQL's executor — see [src/backend/executor/](https://github.com/postgres/postgres/tree/master/src/backend/executor) for the real source.
+This is the architecture inside PostgreSQL's executor. See [src/backend/executor/](https://github.com/postgres/postgres/tree/master/src/backend/executor) for the real source.
 
 ---
 
@@ -407,7 +407,7 @@ The `Sort` is blocking. It must consume the entire filtered output to sort it. O
 
 The early-stop benefit of `LIMIT` **disappears** above a blocking operator.
 
-> When you `ORDER BY ... LIMIT` and want it to be cheap, add an index on the order-by column — the planner can replace `Sort + Limit` with `Index Scan + Limit`, restoring pipelining.
+> To make `ORDER BY ... LIMIT` cheap, add an index on the order-by column. The planner can then replace `Sort + Limit` with `Index Scan + Limit`, restoring pipelining.
 
 ---
 
@@ -425,7 +425,7 @@ Volcano processes **one tuple per `next()` call**. Modern hardware:
 - Each `next()` call: virtual function dispatch, register pressure, no SIMD
 - Per-tuple overhead: 50-200 nanoseconds
 
-For a query over **1 billion tuples**, that's **50-200 seconds of pure interpretation overhead** — before any actual work.
+For a query over **1 billion tuples**, that's **50-200 seconds of pure interpretation overhead** before any actual work.
 
 ```mermaid
 graph LR
@@ -443,7 +443,7 @@ For OLAP workloads, this overhead is the bottleneck.
 
 ---
 
-# The Modern Answer: Vectorized Execution
+# Vectorized Execution
 
 Process tuples in **batches** (vectors of 1024 or 4096 at a time).
 
@@ -472,7 +472,7 @@ Volcano is for OLTP and broad compatibility; vectorized is for OLAP throughput. 
 
 PostgreSQL stays Volcano-style for good reasons:
 
-- OLTP workloads return 1-100 tuples — overhead doesn't matter
+- OLTP workloads return 1-100 tuples, so per-tuple overhead doesn't matter
 - Implementation simplicity makes the planner easier
 - Adding new operators is straightforward
 - Concurrency model fits well
@@ -485,36 +485,24 @@ PostgreSQL has added JIT compilation since version 11 to reduce per-tuple overhe
 
 # Wrap-up
 
-You now have:
+- Every operator implements the three-method Volcano interface: open, next, close.
+- Execution is pull-based, with each operator calling `next()` on its children.
+- The uniform interface lets operators compose into arbitrary plan trees.
+- Pipelined operators stream tuples; blocking operators drain their input first.
+- LIMIT short-circuits fully pipelined plans and loses that benefit above a blocking operator.
+- Per-tuple `next()` overhead motivates vectorized execution for OLAP workloads.
 
-<div class="columns">
-<div>
-
-- The three-method Volcano interface: open / next / close
-- The pull-based execution model
-- How operators compose into plan trees
-
-</div>
-<div>
-
-- Pipelining vs blocking operators
-- Why LIMIT short-circuits some plans and not others
-- The per-tuple overhead problem and the vectorized response
-
-</div>
-</div>
+<!--
+One bullet per part. The LIMIT bullet connects directly to the practice exercise; the last bullet sets up Monday.
+-->
 
 ---
 
-# Monday: Vectorized Execution + Optimization I
+# Monday: Vectorized Execution and Optimization I
 
-We pick up where today ends:
+Monday covers vectorized execution and the relational algebra equivalences that begin query optimization.
 
-- **Vectorized execution** — the batch-based answer to Volcano's overhead
-- **Optimization I** — relational algebra equivalences that drive plan choice
-- The plan tree as a tree of choices
-
-Read PostgreSQL docs [Ch. 16 Performance Tips](https://www.postgresql.org/docs/current/performance-tips.html) for the high-level view.
+Reading: PostgreSQL docs [Performance Tips](https://www.postgresql.org/docs/current/performance-tips.html).
 
 ---
 

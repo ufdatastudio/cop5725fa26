@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Wednesday, September 16, 2026
 
-Inner, outer, semi, anti, cross, self, lateral — and when each is the right call
+Inner, outer, semi, anti, cross, self, and lateral joins, and when each is the right call
 
 <!--
 Joins are the most-asked-about SQL feature in interviews and the second-most-misused (after NULLs). Spend the time. Pace: 50 min, with 10 min reserved for the common-errors and interactive section at the end.
@@ -25,9 +25,9 @@ Joins are the most-asked-about SQL feature in interviews and the second-most-mis
 
 # Where We Are
 
-Monday: one table.
-Today: two or more tables.
-Friday: many rows grouped to fewer.
+Monday covered single-table queries.
+Today covers queries over two or more tables.
+Friday covers aggregation.
 
 Reference for everything in this lecture: PostgreSQL docs [Ch. 7.2 Table Expressions](https://www.postgresql.org/docs/current/queries-table-expressions.html).
 
@@ -140,7 +140,7 @@ The query now only matches rows with identical `created_at` values too.
 
 </div>
 
-PostgreSQL supports `NATURAL JOIN`. The course position: never use it.
+PostgreSQL supports `NATURAL JOIN`. Do not use it in this course.
 
 <!--
 This is the "natural join footgun" we promised on Day 5. Worth emphasizing because a few real production outages have come from a column rename or addition that broke a natural join.
@@ -212,7 +212,7 @@ When a row from the kept side has no match, missing columns become NULL.
 
 ---
 
-# LEFT JOIN: Find Students Who Have Not Enrolled
+# Finding Missing Rows with LEFT JOIN
 
 ```sql run
 CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, dname TEXT);
@@ -242,9 +242,9 @@ Students sometimes write this as NOT EXISTS instead, which is equivalent and oft
 
 ---
 
-# FULL OUTER JOIN: Set Comparison
+# FULL OUTER JOIN for Set Comparison
 
-> "Compare two enrollment snapshots — find rows that differ."
+> "Compare two enrollment snapshots and find rows that differ."
 
 ```sql
 SELECT
@@ -320,9 +320,9 @@ WHERE  EXISTS (
 );
 ```
 
-A **semi-join** returns rows from one side that have a match on the other — without duplicating across matches.
+A **semi-join** returns rows from one side that have a match on the other, without duplicating across matches.
 
-The pattern: `WHERE EXISTS (correlated subquery)`.
+The pattern is `WHERE EXISTS (correlated subquery)`.
 
 ---
 
@@ -372,7 +372,7 @@ Equivalent to the `LEFT JOIN ... WHERE IS NULL` pattern from earlier, often clea
 # Why NOT EXISTS Beats NOT IN
 
 ```sql
--- NOT EXISTS: returns Bob as expected
+-- NOT EXISTS: returns unenrolled students as expected
 SELECT name FROM student
 WHERE NOT EXISTS (
   SELECT 1 FROM enrollment e WHERE e.sid = student.sid
@@ -404,7 +404,7 @@ This is a real, frequent production bug. Especially common when the subquery com
 
 ---
 
-# CROSS JOIN: Deliberate Cartesian Product
+# Deliberate Cartesian Products with CROSS JOIN
 
 ```sql
 -- Generate a calendar of section × month combinations
@@ -440,13 +440,13 @@ JOIN   student s2
       AND s1.sid < s2.sid;
 ```
 
-`s1.sid < s2.sid` filters out same-row pairs and avoids the (Ada, Bob) / (Bob, Ada) duplication.
+`s1.sid < s2.sid` filters out same-row pairs and avoids the (Ada, Chen) / (Chen, Ada) duplication.
 
 The aliasing is SQL's version of the algebra's ρ rename operator (Day 4).
 
 ---
 
-# LATERAL: Correlated Derived Tables
+# LATERAL Subqueries
 
 ```sql
 -- For each department, the 3 highest-paid faculty
@@ -463,7 +463,7 @@ CROSS JOIN LATERAL (
 
 `LATERAL` lets the subquery refer to columns from earlier `FROM` items.
 
-This is a **PostgreSQL feature** (also in SQL:1999, but few engines implement it well). Reference: [PostgreSQL Ch. 7.2.1.5 LATERAL Subqueries](https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-LATERAL).
+LATERAL is standard SQL (SQL:1999), but few engines implement it well. PostgreSQL does. Reference: [PostgreSQL Ch. 7.2.1.5 LATERAL Subqueries](https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-LATERAL).
 
 <!--
 LATERAL is the "for each X, do Y" loop in SQL. Once students see it, they'll find a dozen places to use it. Common applications: top-N per group, expand a JSONB array, join against a table-valued function.
@@ -471,7 +471,7 @@ LATERAL is the "for each X, do Y" loop in SQL. Once students see it, they'll fin
 
 ---
 
-# Top-3 Per Group: LATERAL vs Window
+# Top-3 Per Group
 
 ```sql
 -- LATERAL version (above)
@@ -514,7 +514,7 @@ GROUP BY s.sid, s.name;
 
 When you join 1-to-many and aggregate, your counts are multiplied.
 
-The rule: aggregate **before** joining, or `COUNT(DISTINCT)` after.
+The rule is to aggregate before joining, or use `COUNT(DISTINCT)` after.
 
 <!--
 This is one of the most common bugs in dashboard SQL. A "total revenue" that doubles when you add a join is almost always this. The pre-aggregate pattern is essential vocabulary.
@@ -539,7 +539,7 @@ The `JOIN ON` syntax exists in part to prevent this exact mistake.
 
 ---
 
-# Wrap-up: Choosing a Join
+# Choosing a Join
 
 | Question | Use |
 |----------|-----|
@@ -554,11 +554,9 @@ The `JOIN ON` syntax exists in part to prevent this exact mistake.
 
 ---
 
-# Friday: Aggregation, GROUP BY, HAVING
+# Next Lecture
 
-We turn many rows into few.
-
-By the end of Friday you will write `GROUP BY ... HAVING`, use `FILTER` for per-aggregate filters, and explain why `WHERE` runs before `GROUP BY`.
+Friday covers aggregation with `GROUP BY` and `HAVING`.
 
 Read PostgreSQL docs Ch. 7.2.3 and Ch. 9.21 before class.
 

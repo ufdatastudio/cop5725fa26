@@ -23,18 +23,14 @@ Day after Exam 2. Acknowledge it briefly; grades back next Monday. Last 10 min r
 
 ---
 
-# Where We Are
+# Recap
 
 <div class="columns-left-wide">
 <div>
 
-Monday: ACID. The **contract** between the database and the application.
+Monday covered ACID, the contract between the database and the application. Today covers how the database keeps that contract.
 
-Today: how the database actually keeps that contract.
-
-The classical answer is **two-phase locking** (Eswaran et al., 1976). PostgreSQL uses a variant of it; MVCC (Monday) builds on the same foundations.
-
-By the end of the hour: you can predict when two transactions block each other, why deadlocks happen, and how PostgreSQL detects and resolves them.
+The classical answer is **two-phase locking** (Eswaran et al., 1976). PostgreSQL uses a variant of it, and MVCC (Monday) builds on the same foundations.
 
 </div>
 <div>
@@ -72,7 +68,7 @@ graph LR
   class P milestone
 ```
 
-Reference: GMW Ch. 18.4-18.5; PostgreSQL docs [Ch. 13.3 Explicit Locking](https://www.postgresql.org/docs/current/explicit-locking.html).
+Reference: Textbook §18.3, p. 897 (2PL), §18.4, p. 905 (lock modes), §18.6.3, p. 926 (phantoms), §19.2, p. 966 (deadlocks); PostgreSQL docs [Ch. 13.3 Explicit Locking](https://www.postgresql.org/docs/current/explicit-locking.html).
 
 ---
 
@@ -82,7 +78,7 @@ Reference: GMW Ch. 18.4-18.5; PostgreSQL docs [Ch. 13.3 Explicit Locking](https:
 
 ---
 
-# Hand the Resource Out, One at a Time
+# A Simple Locking Protocol
 
 The simplest concurrency-control protocol:
 
@@ -91,7 +87,7 @@ The simplest concurrency-control protocol:
 3. Other transactions trying to lock the same item **wait**.
 4. When the transaction commits or rolls back, the lock is released.
 
-This is **strict serial execution**, just enforced lazily — only transactions that actually conflict wait.
+Only transactions that actually conflict wait. Non-conflicting transactions run in parallel.
 
 ---
 
@@ -120,22 +116,22 @@ The compatibility matrix. Two readers don't block each other. A writer blocks ev
 
 ---
 
-# Why Acquire-and-Hold Is Not Enough
+# Why Early Release Fails
 
-Consider:
+Suppose T1 releases its lock on A as soon as it finishes reading, and T2 writes both A and B in the gap:
 
 ```
-T1: lock-S(A), r(A), unlock(A), lock-X(B), w(B)
-T2:                  lock-X(A), w(A),     unlock(A)
+T1: lock-S(A), r(A), unlock(A)                                lock-X(B), w(B)
+T2:                    lock-X(A), w(A), lock-X(B), w(B), commit, unlock
 ```
 
-T1 releases A, then T2 writes A. Now T1 still has B to lock.
+The conflict graph has an edge T1 → T2 on A (T1 read before T2 wrote) and an edge T2 → T1 on B (T2 wrote before T1 wrote). That cycle means the schedule matches **no** serial order.
 
-But this schedule is **not** equivalent to T1 then T2 nor to T2 then T1. T1 read the old A; T2 wrote a new A; T1 then writes B. A third transaction observing B and A together sees inconsistent state.
+The fix is to finish all acquiring before the first release. That rule is **two-phase locking**.
 
-The fix: **don't release locks until after you've finished acquiring everything**.
-
-That's two-phase locking.
+<!--
+This is the classic motivation for the two-phase rule. Point back to Monday's conflict-graph test: locking alone did not prevent the cycle because T1 released A too early.
+-->
 
 ---
 
@@ -166,6 +162,8 @@ graph LR
 Once you've released your first lock, you can no longer acquire any. The transaction has crossed into the shrinking phase.
 
 **Theorem:** any schedule produced by 2PL transactions is conflict serializable.
+
+Textbook §18.3.3, p. 900; the argument for why 2PL works is §18.3.4, p. 901.
 
 ---
 
@@ -215,7 +213,7 @@ T2:                                  lock-X(A), r(A), w(A), COMMIT, release
 
 T2 was blocked until T1 finished. The final result is equivalent to running T1, then T2.
 
-This is exactly what `BEGIN ... COMMIT;` blocks of yours have been doing in PostgreSQL all semester.
+PostgreSQL enforces this pattern for row writes. Monday's MVCC lecture covers how reads avoid taking these locks.
 
 <!--
 Strict 2PL is what students experience whenever a query hangs waiting for another query's transaction to finish. The "lock waits" they will see in pg_stat_activity are this protocol in action.
@@ -246,6 +244,8 @@ graph LR
 T1 waits on T2; T2 waits on T1. Neither can proceed.
 
 This is a **deadlock**. Without intervention, both transactions block forever.
+
+Textbook §19.2.2, p. 967 develops the waits-for graph.
 
 ---
 
@@ -319,11 +319,11 @@ UPDATE account SET balance = balance + 100 WHERE id = GREATEST(:from_id, :to_id)
 COMMIT;
 ```
 
-The trick: every transaction acquires locks in **the same global order** (here, by `id` ascending).
+Every transaction acquires locks in **the same global order**, here by `id` ascending.
 
 If T1 transfers $100 from Ada (id=1) to Bob (id=5), and T2 transfers $50 from Bob (id=5) to Ada (id=1), both lock account 1 first, then account 5. No cycle.
 
-In practice, hot-spot tables (queues, counters, sequences) are the deadlock breeders. Ordering plus retrying covers most cases.
+In practice, most deadlocks arise on hot-spot tables (queues, counters, sequences). Ordering plus retrying covers most cases.
 
 ---
 
@@ -333,7 +333,7 @@ In practice, hot-spot tables (queues, counters, sequences) are the deadlock bree
 
 ---
 
-# What Should We Lock?
+# Lock Granularity
 
 ```mermaid
 graph TB
@@ -348,10 +348,12 @@ graph TB
   class Table,Page,Row,Pred opt
 ```
 
-**Coarse** locks (table) → low overhead per lock, high contention.
-**Fine** locks (row) → high overhead per lock, low contention.
+**Coarse** locks (table-level) cost little bookkeeping and cause high contention.
+**Fine** locks (row-level) cost more bookkeeping and cause low contention.
 
-PostgreSQL uses **row-level** locks by default plus **table-level** locks for DDL. It does *not* use page-level locks like SQL Server does for some operations.
+PostgreSQL uses **row-level** locks by default plus **table-level** locks for DDL. It does *not* use page-level locks the way SQL Server does for some operations.
+
+Textbook §18.6, p. 921 covers lock hierarchies.
 
 ---
 
@@ -365,9 +367,11 @@ T1: SELECT count(*) FROM order WHERE customer = 'Ada';  -- gets different count
 
 T2's new row never existed when T1 took its locks. Row locks **cannot lock rows that don't exist**.
 
-The fix: **predicate locks** — lock the *predicate* itself, so T2's insert that matches the predicate must wait.
+**Predicate locks** fix this by locking the *predicate* itself, so an insert matching the predicate must wait.
 
-This is expensive. Most engines don't fully implement predicate locking. PostgreSQL's `SERIALIZABLE` level uses **Serializable Snapshot Isolation** (SSI) to detect this case after the fact.
+Predicate locking is expensive and few engines implement it fully. PostgreSQL's `SERIALIZABLE` level uses **Serializable Snapshot Isolation** (SSI) to detect this case after the fact.
+
+Textbook §18.6.3, p. 926 treats phantoms and insertions.
 
 ---
 
@@ -375,7 +379,7 @@ This is expensive. Most engines don't fully implement predicate locking. Postgre
 
 PostgreSQL's `SERIALIZABLE` isolation level is based on Snapshot Isolation plus **conflict tracking**.
 
-Rather than block transactions to prevent phantoms, SSI lets them proceed and **aborts one** when an unsafe serialization would result.
+SSI lets transactions proceed and **aborts one** when an unsafe serialization would result, instead of blocking to prevent phantoms up front.
 
 ```sql
 ERROR:  could not serialize access due to read/write dependencies among transactions
@@ -418,11 +422,15 @@ SELECT
   blocked.query AS blocked_query,
   blocking.query AS blocking_query
 FROM pg_stat_activity blocked
-JOIN pg_stat_activity blocking ON blocked.wait_event_type = 'Lock'
-WHERE blocked.wait_event = 'transactionid';
+JOIN pg_stat_activity blocking
+  ON blocking.pid = ANY(pg_blocking_pids(blocked.pid));
 ```
 
-This is one of the most useful queries in a DBA's pocket.
+These two queries are the starting point for lock diagnosis on a live system.
+
+<!--
+pg_blocking_pids(pid) returns the set of backends blocking the given pid; joining it back to pg_stat_activity pairs each blocked query with its blocker. Demo live if two psql sessions are already open from the earlier example.
+-->
 
 ---
 
@@ -471,26 +479,17 @@ Final Project releases Monday Nov 30. Capstone is graded heavily; start thinking
 
 # Wrap-up
 
-You now have:
+- Shared locks allow parallel readers; exclusive locks admit one writer
+- Two-phase locking separates a growing phase from a shrinking phase and guarantees conflict serializability (Textbook §18.3, p. 897)
+- Strict 2PL holds every lock until commit, which adds recoverability and cascadeless aborts
+- Deadlocks appear as cycles in the waits-for graph; PostgreSQL detects them and aborts a victim
+- Acquiring locks in a global order prevents deadlocks in application code
+- Row locks cannot cover phantoms; PostgreSQL's SERIALIZABLE uses SSI instead of predicate locks
+- `pg_locks` and `pg_blocking_pids` diagnose lock waits on a live system
 
-<div class="columns">
-<div>
-
-- Shared and exclusive locks
-- Strict 2PL: hold all locks until commit
-- Deadlocks via wait-for graphs
-- PostgreSQL's deadlock detection and victim selection
-
-</div>
-<div>
-
-- Lock granularity tradeoffs
-- The phantom problem and predicate locks
-- PostgreSQL's SERIALIZABLE = SSI
-- `pg_locks` for production diagnosis
-
-</div>
-</div>
+<!--
+Single flat takeaway list, one line per part. The 2PL theorem and the waits-for cycle are the exam anchors.
+-->
 
 ---
 
@@ -512,16 +511,16 @@ graph LR
   class F milestone
 ```
 
-Two more lectures. One final exam.
+Monday covers MVCC and snapshot isolation. Reading: PostgreSQL docs [Ch. 13 Concurrency Control](https://www.postgresql.org/docs/current/mvcc.html).
 
 ---
 
 # Practice Over Thanksgiving
 
-Two exercises in your project repo (light, you've earned a break):
+Two light exercises in your project repo:
 
-1. Open two psql sessions. In one: `BEGIN; UPDATE student SET gpa = gpa + 0.01 WHERE sid = 1;`. In the other: `UPDATE student SET gpa = gpa + 0.02 WHERE sid = 1;`. Observe the second blocks. Commit the first. Observe the second proceeds.
-2. While the lock waits, run the `pg_locks` query and capture the output.
+- Open two psql sessions. In one, run `BEGIN; UPDATE student SET gpa = gpa + 0.01 WHERE sid = 1;`. In the other, run `UPDATE student SET gpa = gpa + 0.02 WHERE sid = 1;`. Observe the second blocks. Commit the first. Observe the second proceeds.
+- While the lock waits, run the `pg_locks` query and capture the output.
 
 Push to your `cop5725fa26-project` repo before 8:30 AM Mon Nov 30.
 

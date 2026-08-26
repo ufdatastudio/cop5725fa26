@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Monday, August 31, 2026
 
-Joins, division, and the operators every real query uses
+Joins, division, and the extended operators
 
 <!--
 Open by recapping Friday: six operators (σ, π, ∪, ∩, −, ×) plus ρ.
@@ -30,14 +30,12 @@ Budget ~50 min total. Joins are 20 min; the rest is paced to leave 3-5 min at th
 <div class="columns-left-wide">
 <div>
 
-Friday gave you the building blocks.
-Today extends them so a single expression can answer the kind of question you would type into a search box.
+Friday covered the core operators σ, π, ∪, ∩, −, ×, and ρ.
+Today adds three groups on top of them.
 
-Three additions:
-
-1. **Joins** — combine relations by matching values
-2. **Division** — find "all of" relationships
-3. **Extended operators** — aggregation, sort, computed projection
+1. Joins combine relations by matching values
+2. Division finds "all of" relationships
+3. Extended operators add aggregation, sort, and computed projection
 
 </div>
 <div>
@@ -81,14 +79,14 @@ This is the densest algebra day. Pace check at slide 12 (after outer joins). If 
 
 ---
 
-# Joins Are σ Around ×
+# Joins as Cross Product plus Selection
 
-Every join is a cross product followed by a selection on matching attributes.
+Every join is a cross product followed by a selection on matching attributes (Textbook §2.4.9, p. 45).
 
 $$R \bowtie_\theta S \;=\; \sigma_\theta(R \times S)$$
 
 The optimizer treats this as a single operator because it can execute the combined form in one pass through memory.
-For the algebra we treat it as one operator because it shows up everywhere.
+The algebra treats it as one operator because it shows up everywhere.
 
 <!--
 Stress that the optimizer's distinction here is not pedantic. A naive cross product blows up to |R| * |S| tuples. A join algorithm (hash, sort-merge, nested loop with predicate pushdown) avoids materializing that intermediate. We will see those algorithms in Section 5, Week 12.
@@ -96,7 +94,7 @@ Stress that the optimizer's distinction here is not pedantic. A naive cross prod
 
 ---
 
-# Three Joins, One Pattern
+# Theta, Equi, and Natural Joins
 
 <div class="columns-3">
 <div>
@@ -134,20 +132,22 @@ Convenient. Dangerous if a column name overlaps by accident.
 </div>
 </div>
 
+Textbook §2.4.8 (natural joins, p. 43) and §2.4.9 (theta-joins, p. 45).
+
 <!--
 Natural join is elegant on paper but a footgun in production: rename one column and your join silently changes. I recommend students write explicit equi-joins in SQL even when the natural form is shorter.
 -->
 
 ---
 
-# Natural Join: Worked Example
+# Natural Join Example
 
 <div class="columns">
 <div>
 
 **student**
 
-| sid | name | major |
+| student_id | name | major |
 |-----|------|-------|
 | 1 | Ada | CS |
 | 2 | Bob | EE |
@@ -155,7 +155,7 @@ Natural join is elegant on paper but a footgun in production: rename one column 
 
 **enrollment**
 
-| sid | course |
+| student_id | course_id |
 |-----|--------|
 | 1 | COP5725 |
 | 1 | COT5405 |
@@ -166,9 +166,9 @@ Natural join is elegant on paper but a footgun in production: rename one column 
 
 **student ⋈ enrollment**
 
-(joins on `sid`)
+(joins on `student_id`)
 
-| sid | name | major | course |
+| student_id | name | major | course_id |
 |-----|------|-------|--------|
 | 1 | Ada | CS | COP5725 |
 | 1 | Ada | CS | COT5405 |
@@ -191,10 +191,10 @@ Walk row-by-row through the join for Ada to make the matching concrete. The fact
 
 ---
 
-# The Three Outer Joins
+# Outer Joins
 
-When a row from one side has no match on the other, an inner join drops it.
-An outer join keeps it, filling the missing attributes with NULL.
+An inner join drops any row that has no match on the other side.
+An outer join keeps it, filling the missing attributes with NULL (Textbook §5.2.7, p. 219).
 
 ```mermaid
 graph LR
@@ -205,19 +205,19 @@ graph LR
 ```
 
 <!--
-Outer joins are how you find what is missing. The classic interview question "find students who have never enrolled" is just student ⟕ enrollment with WHERE enrollment.sid IS NULL. The NULL filter on the right side is the giveaway.
+Outer joins are how you find what is missing. The classic interview question "find students who have never enrolled" is just student ⟕ enrollment with WHERE enrollment.student_id IS NULL. The NULL filter on the right side is the giveaway.
 -->
 
 ---
 
-# Left Outer Join: Worked Example
+# Left Outer Join Example
 
 <div class="columns">
 <div>
 
 **student ⟕ enrollment**
 
-| sid | name | major | course |
+| student_id | name | major | course_id |
 |-----|------|-------|--------|
 | 1 | Ada | CS | COP5725 |
 | 1 | Ada | CS | COT5405 |
@@ -229,7 +229,7 @@ Outer joins are how you find what is missing. The classic interview question "fi
 
 Bob comes back because he is in the left relation.
 
-His `course` is NULL because there is no enrollment row for him.
+His `course_id` is NULL because there is no enrollment row for him.
 
 </div>
 </div>
@@ -237,8 +237,8 @@ His `course` is NULL because there is no enrollment row for him.
 The SQL equivalent:
 
 ```sql
-SELECT s.*, e.course
-FROM student s LEFT OUTER JOIN enrollment e USING (sid);
+SELECT s.*, e.course_id
+FROM student s LEFT OUTER JOIN enrollment e USING (student_id);
 ```
 
 <!--
@@ -256,7 +256,7 @@ LEFT vs LEFT OUTER are interchangeable in SQL; the OUTER keyword is optional but
 
 **With difference**
 
-$$\pi_{sid}(student) - \pi_{sid}(enrollment)$$
+$$\pi_{student\_id}(student) - \pi_{student\_id}(enrollment)$$
 
 Then join back to student to recover names.
 
@@ -265,9 +265,9 @@ Then join back to student to recover names.
 
 **With outer join**
 
-$$\pi_{name}(\sigma_{course\,IS\,NULL}(student \;⟕\; enrollment))$$
+$$\pi_{name}(\sigma_{course\_id\,IS\,NULL}(student \;⟕\; enrollment))$$
 
-Often faster: one scan, one merge, no second pass.
+Often faster because one scan and one merge replace the second pass.
 
 </div>
 </div>
@@ -306,7 +306,7 @@ The English giveaway: **"all"**, **"every"**, **"each"**.
 </div>
 </div>
 
-Division is the algebra operator for these. SQL has no `DIVIDE` keyword — you spell it out with `NOT EXISTS` or `GROUP BY ... HAVING count(*) = ...`.
+Division is the algebra operator for these. SQL has no `DIVIDE` keyword, so you spell it out with `NOT EXISTS` or `GROUP BY ... HAVING count(*) = ...`.
 
 ---
 
@@ -324,14 +324,14 @@ The formal definition is the hardest one of the day. Encourage students to trans
 
 ---
 
-# Division: Worked Example
+# Division Example
 
 <div class="columns-3">
 <div>
 
 **enrollment** (R)
 
-| sid | course |
+| student_id | course_id |
 |-----|--------|
 | 1 | COP5725 |
 | 1 | COT5405 |
@@ -345,7 +345,7 @@ The formal definition is the hardest one of the day. Encourage students to trans
 
 **required** (S)
 
-| course |
+| course_id |
 |--------|
 | COP5725 |
 | COT5405 |
@@ -355,7 +355,7 @@ The formal definition is the hardest one of the day. Encourage students to trans
 
 **enrollment ÷ required**
 
-| sid |
+| student_id |
 |-----|
 | 1 |
 | 3 |
@@ -375,28 +375,28 @@ Take 2 minutes here. Have students explain in their own words why student 2 was 
 
 ```sql
 -- Students who took every required course
-SELECT e.sid
+SELECT e.student_id
 FROM enrollment e, required r
-WHERE e.course = r.course
-GROUP BY e.sid
-HAVING count(DISTINCT e.course) = (SELECT count(*) FROM required);
+WHERE e.course_id = r.course_id
+GROUP BY e.student_id
+HAVING count(DISTINCT e.course_id) = (SELECT count(*) FROM required);
 ```
 
 Or with `NOT EXISTS`:
 
 ```sql
-SELECT DISTINCT e.sid FROM enrollment e
+SELECT DISTINCT e.student_id FROM enrollment e
 WHERE NOT EXISTS (
   SELECT 1 FROM required r
   WHERE NOT EXISTS (
     SELECT 1 FROM enrollment e2
-    WHERE e2.sid = e.sid AND e2.course = r.course
+    WHERE e2.student_id = e.student_id AND e2.course_id = r.course_id
   )
 );
 ```
 
 <!--
-The double-NOT-EXISTS form is the textbook translation but very hard to read. In practice the GROUP BY ... HAVING count form is preferred. Both produce the same plan in PostgreSQL after rewrite.
+The double-NOT-EXISTS form is the classic relational-calculus translation but very hard to read. In practice the GROUP BY ... HAVING count form is preferred. Both produce the same plan in PostgreSQL after rewrite.
 -->
 
 ---
@@ -407,7 +407,7 @@ The double-NOT-EXISTS form is the textbook translation but very hard to read. In
 
 ---
 
-# Why "Extended"
+# Limits of the Pure Algebra
 
 The pure algebra (σ, π, ∪, ∩, −, ×, ρ, ⋈, ÷) cannot express:
 
@@ -416,7 +416,7 @@ The pure algebra (σ, π, ∪, ∩, −, ×, ρ, ⋈, ÷) cannot express:
 - "All distinct majors"
 - "name as `Last, First`"
 
-We extend the algebra with three operators plus a generalized projection.
+We extend the algebra with three operators plus a generalized projection (Textbook §5.2, p. 213).
 
 ```mermaid
 graph LR
@@ -440,7 +440,7 @@ $$\gamma_{G, A_1, A_2, ...; F_1(B_1), F_2(B_2), ...}(R)$$
 - $G, A_1, ...$ are grouping attributes
 - $F_i(B_i)$ are aggregate functions over attribute $B_i$
 
-Aggregate functions: `count`, `sum`, `avg`, `min`, `max`.
+Aggregate functions: `count`, `sum`, `avg`, `min`, `max` (Textbook §5.2.4, p. 216).
 
 <div class="columns">
 <div>
@@ -469,9 +469,9 @@ GROUP BY major;
 
 $$\tau_{A_1, A_2, ...}(R)$$
 
-Returns the tuples of $R$ in the order given by the listed attributes.
+Returns the tuples of $R$ in the order given by the listed attributes (Textbook §5.2.6, p. 219).
 
-Sort breaks set semantics — the result is technically a *list*, not a relation. This is why SQL allows `ORDER BY` only on the **outermost** query.
+Sort breaks set semantics because the result is a *list*, not a relation. This is why SQL allows `ORDER BY` only on the **outermost** query.
 
 <div class="columns">
 <div>
@@ -503,7 +503,7 @@ Brief note: subqueries cannot have ORDER BY in standard SQL (PostgreSQL allows i
 
 $$\delta(R)$$
 
-Returns $R$ with duplicate tuples removed. Turns a bag back into a set.
+Returns $R$ with duplicate tuples removed. Turns a bag back into a set (Textbook §5.2.1, p. 214).
 
 Algebra operators preserve set semantics by default, so δ rarely appears explicitly in algebra expressions. It is essential when reasoning about the bag-semantics of real SQL.
 
@@ -531,7 +531,7 @@ SELECT DISTINCT major FROM student;
 # Generalized Projection $\tilde{\pi}$
 
 Standard projection picks attributes by name.
-Generalized projection allows computed expressions.
+Generalized projection allows computed expressions (Textbook §5.2.5, p. 217).
 
 <div class="columns">
 <div>
@@ -554,7 +554,7 @@ FROM student;
 </div>
 </div>
 
-Most algebra texts fold this into π and call it a day. We will keep the tilde when we want to emphasize that the column came from a computation.
+Many texts write this as plain π. We keep the tilde when we want to emphasize that the column came from a computation.
 
 ---
 
@@ -564,7 +564,7 @@ Most algebra texts fold this into π and call it a day. We will keep the tilde w
 
 ---
 
-# A Real Query, Translated
+# Translating a Complete Query
 
 > Average GPA per major, only majors with at least 5 students, sorted by average descending.
 
@@ -603,7 +603,7 @@ The mapping is consistent: WHERE → σ before γ, HAVING → σ after γ, GROUP
 
 ---
 
-# A Plan Tree, Sketched
+# A Plan Tree
 
 ```mermaid
 graph BT
@@ -624,41 +624,23 @@ Foreshadow Week 9: Storage and Indexing. When we read execution plans there, stu
 
 # Wrap-up
 
-You now have the full algebra:
+- Every join is a cross product followed by a selection; theta, equi, and natural joins differ only in the predicate.
+- Outer joins keep unmatched rows and fill the missing attributes with NULL.
+- Division answers "all of" questions; SQL expresses it with GROUP BY/HAVING or double NOT EXISTS.
+- The extended operators γ, τ, δ, and $\tilde{\pi}$ give the algebra the expressiveness of SQL.
+- WHERE maps to σ before γ, HAVING maps to σ after γ, GROUP BY maps to γ, and ORDER BY maps to τ.
 
-<div class="columns">
-<div>
-
-**Core (Friday)**
-σ, π, ∪, ∩, −, ×, ρ
-
-**Joins (today)**
-⋈_θ, ⋈, ⟕, ⟖, ⟗
-
-</div>
-<div>
-
-**Division (today)**
-÷
-
-**Extended (today)**
-γ, τ, δ, $\tilde{\pi}$
-
-</div>
-</div>
-
-SQL compiles down to this small set of operators. Optimizers rewrite trees of these operators. Quizzes and exams will ask you to translate in both directions.
+<!--
+The full operator inventory is now on the table: core seven from Friday, joins, division, and the extended operators today. Remind students that the SQL-to-algebra mapping in the last bullet is the shape of every EXPLAIN plan they will read later in the term.
+-->
 
 ---
 
-# Wednesday: ER Modeling
+# Wednesday
 
-We step away from "what is computable" and ask "what is the right schema in the first place."
+Topic: ER modeling. Designing a schema with entities and relationships before committing to tables.
 
-ER lets us design with concepts (entities and relationships) before committing to tables.
-By Friday we will turn an ER diagram into the SQL DDL we have been writing all along.
-
-Read GMW Ch. 4.1-4.5 before class.
+Reading: Textbook §4.1-4.5, pp. 125-163.
 
 ---
 

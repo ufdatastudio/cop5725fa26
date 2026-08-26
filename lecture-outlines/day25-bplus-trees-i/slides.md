@@ -28,11 +28,13 @@ First B+ tree day. Heavy mermaid use for tree visualizations. Pace 50 min, with 
 <div class="columns-left-wide">
 <div>
 
-We have heap files. Without an index, a point lookup is O(B) — scan every page.
+Monday covered row and column layouts.
+Today covers indexing.
 
-Today: the data structure that turns that O(B) into O(log_F N) — and does it on disk, with pages, with the storage costs we covered last week.
+Without an index, a point lookup on a heap file scans every page at O(B) cost.
+The B+ tree turns that O(B) into O(log_F N), on disk, with the page and buffer-pool costs from last week.
 
-The B+ tree is **the** universal database index. PostgreSQL's `CREATE INDEX` defaults to it. SQL Server, Oracle, DB2, MySQL, SQLite — all use B+ trees.
+The B+ tree is the universal database index. PostgreSQL's `CREATE INDEX` defaults to it, and SQL Server, Oracle, DB2, MySQL, and SQLite all use B+ trees.
 
 </div>
 <div>
@@ -64,7 +66,7 @@ graph LR
   class W,S,Sr,B step
 ```
 
-Reference: GMW Ch. 14.1-14.2; PostgreSQL docs [Ch. 67 B-tree Indexes](https://www.postgresql.org/docs/current/btree.html).
+Reference: Textbook §14.1-14.2, pp. 620-646; PostgreSQL docs [Ch. 67 B-tree Indexes](https://www.postgresql.org/docs/current/btree.html).
 
 ---
 
@@ -84,7 +86,7 @@ Reference: GMW Ch. 14.1-14.2; PostgreSQL docs [Ch. 67 B-tree Indexes](https://ww
 | **B+ tree** | Disk + range queries | O(log_F N) + leaf scan |
 | LSM tree | Write-heavy | O(log N) batched |
 
-The "+" in B+ tree refers to **all data living at the leaf level** — internal nodes contain only routing keys.
+The "+" in B+ tree refers to all data living at the leaf level; internal nodes contain only routing keys.
 
 ---
 
@@ -107,10 +109,10 @@ graph LR
 ```
 
 For 1 billion rows:
-- Binary tree height: ~30 → **30 disk reads**
-- B+ tree with fan-out 100: ~5 → **5 disk reads**
+- A binary tree has height ~30, so a lookup costs 30 disk reads.
+- A B+ tree with fan-out 100 has height ~5, so a lookup costs 5 disk reads.
 
-That is the entire game.
+That factor of six is the argument for high fan-out on disk.
 
 <!--
 Fan-out is the single most important number in a B+ tree. Doubling fan-out cuts log_F N by some amount; going from F=2 to F=100 reduces height by a factor of ~7. Real B+ trees use page-sized nodes that hold hundreds of keys.
@@ -124,7 +126,7 @@ Fan-out is the single most important number in a B+ tree. Doubling fan-out cuts 
 
 ---
 
-# A B+ Tree, Shaped
+# A B+ Tree
 
 ```mermaid
 graph TB
@@ -199,7 +201,7 @@ The leaf-level linked list is what makes B+ trees the right choice over plain B-
 
 ---
 
-# Fan-Out: The Key Number
+# Fan-Out
 
 A B+ tree node fits in **one page** (8 KB in PostgreSQL).
 
@@ -217,7 +219,7 @@ In practice, F ≈ 100-300 once you account for metadata, slot pointers, and var
 </div>
 <div>
 
-### Tree height for N records, fan-out F:
+### Tree height for N records, fan-out F
 $$h = \lceil \log_F N \rceil$$
 
 For F = 100, N = 1B:
@@ -257,7 +259,7 @@ Each step descends one level. Total cost: tree height.
 
 ---
 
-# Search Walkthrough: Find 30
+# Finding 30
 
 ```mermaid
 graph TB
@@ -357,7 +359,7 @@ For a 5-level tree with 1 B records:
 - Levels 0-2: ~10,101 pages → ~80 MB → fits in `shared_buffers`
 - Leaves: ~1 M pages → 8 GB → mostly on disk
 
-The practical cost is often **1 disk I/O** to read the leaf page — the rest is cached.
+The practical cost is often one disk I/O to read the leaf page; the rest is cached.
 
 ---
 
@@ -367,7 +369,7 @@ The practical cost is often **1 disk I/O** to read the leaf page — the rest is
 
 ---
 
-# Why Sequential Insert Is Slow
+# Why One-at-a-Time Insertion Is Slow
 
 If you `CREATE INDEX` on an existing 100 GB table by inserting rows one at a time:
 
@@ -380,7 +382,7 @@ Slow. For a 1-billion-row table, this can take days.
 
 ---
 
-# Bulk Load: Build Bottom-Up
+# Bottom-Up Bulk Loading
 
 ```
 1. Sort all the rows by key (external merge sort).
@@ -428,47 +430,28 @@ For a large table, even `CONCURRENTLY` benefits from the bottom-up bulk-load app
 
 # Wrap-up
 
-You now have:
+- High fan-out makes B+ tree height logarithmic in N with a base of hundreds, which is why every major engine defaults to it.
+- Internal nodes route with separator keys, leaves hold all the data, and the leaf-level linked list serves range queries.
+- Search descends one page per level, and the top levels stay cached in the buffer pool.
+- Bulk loading builds the tree bottom-up from sorted data, and `CREATE INDEX CONCURRENTLY` is the production-safe form.
 
-<div class="columns">
-<div>
-
-- The B+ tree as the disk-friendly balanced tree
-- Internal vs leaf nodes; the leaf-level linked list
-- Fan-out and why height is logarithmic in N
-
-</div>
-<div>
-
-- Search algorithm and range-query traversal
-- Buffer pool effects (top levels always cached)
-- Bulk loading bottom-up
-- `CREATE INDEX CONCURRENTLY` for production
-
-</div>
-</div>
+<!--
+One line per part of the lecture. The hand-drawing exercise below previews Friday's insertion algorithm.
+-->
 
 ---
 
-# Friday: B+ Trees II
+# Friday
 
-We add the operations that maintain the structure:
-
-- **Insert** — with splits propagating up
-- **Delete** — with underflow handling
-- **Cost analysis** — concrete page-access numbers
-
-Plus the PostgreSQL `pg_stat_user_indexes` view and a real-data demo.
+Friday covers B+ tree maintenance: insertion with splits, deletion with underflow handling, and cost analysis.
 
 Project 2 is due Friday at 11:59 PM.
 
-Read GMW Ch. 14.2-14.3 before class.
+Read Textbook §14.2.5-14.2.7, pp. 640-646 before class.
 
 ---
 
 # Practice Before Friday
-
-Two exercises:
 
 1. Hand-draw the B+ tree (order 4) that results from inserting `[10, 20, 30, 40, 50, 60, 70, 80]` in order. Show each step.
 2. On your project's database, run `EXPLAIN ANALYZE` for a query that uses an index. Capture the plan and the elapsed time, with and without the index.

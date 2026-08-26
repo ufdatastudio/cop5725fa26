@@ -15,10 +15,10 @@ html: true
 **COP 5725 - Database Management Systems**
 Wednesday, October 7, 2026
 
-The embedded analytical engine — and how it lets one line read 3 million rows from anywhere
+An embedded analytical engine for files, notebooks, and remote data
 
 <!--
-Section 3 closes today. Practice exam packet for Exam 1 distributed in the last 5 minutes. Pace: 50 min, with the NYC Taxi demo (Part 3) taking 15 min — it's the moment most students never forget.
+Section 3 closes today. Practice exam packet for Exam 1 distributed in the last 5 minutes. Pace: 50 min, with the NYC Taxi demo (Part 3) taking 15 min; run it live.
 -->
 
 ---
@@ -28,14 +28,13 @@ Section 3 closes today. Practice exam packet for Exam 1 distributed in the last 
 <div class="columns-left-wide">
 <div>
 
-Monday: PostgreSQL through Python.
-Today: DuckDB — same SQL skills, completely different engine.
+Monday covered PostgreSQL through Python. Today covers DuckDB, a different engine behind the same SQL.
 
-Where PostgreSQL is a server you connect to, DuckDB is a **library you import**.
+PostgreSQL is a server you connect to; DuckDB is a **library you import**.
 
-Where PostgreSQL stores rows, DuckDB stores **columns**.
+PostgreSQL stores rows; DuckDB stores **columns**.
 
-Where PostgreSQL is built for concurrent writes, DuckDB is built for **analytical scans over local or remote files** — CSV, Parquet, JSON, anywhere.
+PostgreSQL is built for concurrent writes; DuckDB is built for **analytical scans** over local or remote files (CSV, Parquet, JSON).
 
 </div>
 <div>
@@ -91,13 +90,13 @@ Reference: [DuckDB documentation](https://duckdb.org/docs/).
 <div class="columns">
 <div>
 
-DuckDB is **the analytical SQLite**.
+DuckDB plays the role of SQLite for analytics.
 
 - One library, one binary
 - No server, no daemon
 - Reads/writes a single `.duckdb` file or runs in memory
 - Started at CWI Amsterdam, 2019
-- Used by Hugging Face, Mode, DBT, and Tableau internals
+- Runs the dataset viewer at Hugging Face
 - Featured paper in Week 16: Raasveldt & Mühleisen, SIGMOD 2019
 
 </div>
@@ -141,7 +140,7 @@ graph TB
   class Pd,Ar,Po,Vis out
 ```
 
-DuckDB sits in the middle: any source, any sink.
+DuckDB sits in the middle, reading any source and writing any sink.
 
 <!--
 The "any source any sink" promise is what makes DuckDB compelling. SQLite reads its own format only. DuckDB reads the formats the modern data stack actually uses.
@@ -167,9 +166,7 @@ winget install duckdb.duckdb     # Windows
 # or grab a binary from duckdb.org/docs/installation
 ```
 
-Two interfaces:
-- The **`duckdb` CLI** for ad-hoc SQL exploration
-- The **`duckdb` Python library** for scripts and notebooks
+The **`duckdb` CLI** serves ad-hoc SQL exploration, and the **`duckdb` Python library** serves scripts and notebooks.
 
 They share an on-disk format. A `.duckdb` file written by one is read by the other.
 
@@ -214,14 +211,14 @@ result.show()
 # Pandas DataFrame
 df = result.df()
 
-# Arrow Table — zero copy, great for sharing with Polars
+# Arrow Table, shares memory with Polars
 arr = result.arrow()
 
 # Python list of tuples
 rows = result.fetchall()
 ```
 
-`.df()` returns the result as a pandas DataFrame **with zero copies** when the DataFrame is wide enough.
+`.df()` materializes a pandas DataFrame. `.arrow()` shares memory with Arrow-based tools such as Polars.
 
 ---
 
@@ -247,7 +244,7 @@ Reference: [Data Import — CSV](https://duckdb.org/docs/data/csv/overview).
 
 ---
 
-# Parquet — the Format the World Has Adopted
+# Parquet
 
 ```python
 # NYC Yellow Taxi, January 2024 — about 3 million rows
@@ -265,7 +262,7 @@ duckdb.sql("""
 ```
 
 Parquet is **columnar on disk**. DuckDB reads only the columns the query needs.
-Three million rows. One URL. One query. Real answers in seconds.
+One query aggregates three million rows from a single URL in seconds.
 
 <!--
 This is the demo students remember from Section 3. Run it live. The HTTP request resolves in under 5 seconds; the query answers in another 5. Watching a single Python line query a 3-million-row remote file is the most concrete demonstration of why columnar Parquet won.
@@ -273,7 +270,7 @@ This is the demo students remember from Section 3. Run it live. The HTTP request
 
 ---
 
-# Multiple Files — Glob Patterns
+# Glob Patterns
 
 ```python
 duckdb.sql("""
@@ -289,7 +286,7 @@ duckdb.sql("""
 The glob expands to every monthly file for 2024.
 ~40 million rows aggregated in one query.
 
-DuckDB pushes the filter and projection down — it never materializes the full result in memory.
+DuckDB pushes filters and projections down to the files and never materializes the full file set in memory.
 
 ---
 
@@ -314,7 +311,7 @@ Reference: [Data Import — JSON](https://duckdb.org/docs/data/json/overview).
 
 <!-- _class: lead -->
 
-# Part 4: SQL Dialect — DuckDB vs PostgreSQL
+# Part 4: DuckDB vs PostgreSQL
 
 ---
 
@@ -374,7 +371,7 @@ Reference: [DuckDB SQL Features](https://duckdb.org/docs/sql/introduction).
 | GIST / GIN indexes | (DuckDB uses different physical structures) |
 | Multi-user concurrent writes | (DuckDB is single-writer) |
 
-DuckDB intentionally drops the OLTP machinery. The reward is that scan-heavy analytics are 10-100× faster on the same hardware.
+DuckDB intentionally drops the OLTP machinery in exchange for much faster scan-heavy analytics on the same hardware.
 
 ---
 
@@ -410,7 +407,7 @@ trips = duckdb.sql("""
 trips.plot.line(x="day", y="trips", figsize=(10, 4))
 ```
 
-Three cells. One dataset. SQL does the aggregation; pandas paints.
+SQL does the aggregation and pandas paints, all against one dataset.
 
 ---
 
@@ -421,11 +418,11 @@ import pandas as pd
 import duckdb
 
 df = pd.DataFrame({
-  "sid": [1, 2, 3],
+  "student_id": [1, 2, 3],
   "major": ["CS", "EE", "CS"]
 })
 
-# Reference a DataFrame as if it were a table — zero copy
+# Query a DataFrame as if it were a table
 duckdb.sql("""
   SELECT major, count(*)
   FROM df
@@ -439,7 +436,7 @@ Same trick works with Polars and Arrow tables.
 This makes DuckDB the natural glue between Python's data ecosystem and SQL.
 
 <!--
-The "DataFrames as tables" feature is unique to DuckDB among free engines. It's the reason DuckDB has spread rapidly through the data-science world; reaching for SQL no longer requires leaving Python.
+The "DataFrames as tables" feature is a large part of why DuckDB spread through the data-science world; reaching for SQL no longer requires leaving Python.
 -->
 
 ---
@@ -458,7 +455,7 @@ duckdb.sql("""
 duckdb.sql("""
   SELECT s.name, count(*) AS enrollments
   FROM pg.student s
-  JOIN pg.enrollment e USING (sid)
+  JOIN pg.enrollment e USING (student_id)
   GROUP BY s.name
 """).df()
 ```
@@ -476,24 +473,10 @@ Run analytical queries against your OLTP store without disturbing it.
 
 # Section 3 Wrap
 
-<div class="columns">
-<div>
-
-You have, in two lectures:
-
-- `psycopg` for transactional Postgres work from Python
-- Parameterized queries and transaction management
-- `pandas.read_sql_query` and `DataFrame.to_sql`
-
-</div>
-<div>
-
-- DuckDB as the analytical engine — CSV, Parquet, HTTPS, S3 in one line
-- DuckDB ↔ pandas ↔ Arrow ↔ Polars interop
-- DuckDB as a query engine over PostgreSQL
-
-</div>
-</div>
+- `psycopg` connects Python to PostgreSQL, with parameterized queries and transaction management.
+- `pandas.read_sql_query` and `DataFrame.to_sql` bridge query results and DataFrames.
+- DuckDB reads CSV, Parquet, and JSON from disk, HTTPS, or S3 in one statement.
+- DuckDB interoperates with pandas, Arrow, and Polars, and queries PostgreSQL through the `postgres` extension.
 
 Section 4 (Storage and Indexing) opens Monday after Homecoming.
 
@@ -551,7 +534,7 @@ graph LR
   class X milestone
 ```
 
-Section 4 begins Monday Oct 12 — the physical-layer side of databases.
+Section 4, the physical layer of databases, begins Monday Oct 12.
 
 ---
 
@@ -575,5 +558,5 @@ What is on your mind?
 Project 2 due Oct 23. Exam 1 in one week.
 
 <!--
-Common Day 20 questions: "Can I do my project in DuckDB instead of PostgreSQL?" (Project 1 must include a PostgreSQL schema; Project 2-onwards can use DuckDB freely.) "Does DuckDB support all the window function frames we learned?" (Yes — same syntax.) "Does DuckDB support recursive CTEs?" (Yes — standard SQL.) "Should I use polars or pandas?" (Either — DuckDB returns to both with zero copy.)
+Common Day 20 questions: "Can I do my project in DuckDB instead of PostgreSQL?" (Project 1 must include a PostgreSQL schema; Project 2-onwards can use DuckDB freely.) "Does DuckDB support all the window function frames we learned?" (Yes — same syntax.) "Does DuckDB support recursive CTEs?" (Yes — standard SQL.) "Should I use polars or pandas?" (Either; DuckDB converts results to both.)
 -->

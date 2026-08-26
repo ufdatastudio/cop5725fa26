@@ -23,18 +23,16 @@ First class after Thanksgiving. Energy is mixed; some students are present-mode,
 
 ---
 
-# Where We Are
+# Recap
 
 <div class="columns-left-wide">
 <div>
 
-Friday's two-phase locking gives the **correct** answer to concurrency. It also gives the **slow** answer for read-heavy workloads.
+Friday covered two-phase locking, which enforces serializability correctly. It is also slow for read-heavy workloads.
 
 In a system where 1000 readers and 10 writers all hit the same hot rows, strict 2PL turns the readers into a long blocking queue.
 
-PostgreSQL (and most modern engines) solve this with **multi-version concurrency control** — MVCC.
-
-The promise: **readers never block writers, writers never block readers**.
+PostgreSQL and most modern engines solve this with **multi-version concurrency control** (MVCC). Under MVCC, readers never block writers and writers never block readers.
 
 </div>
 <div>
@@ -69,6 +67,8 @@ graph LR
 
 Reference: PostgreSQL docs [Ch. 13.1 Introduction (MVCC)](https://www.postgresql.org/docs/current/mvcc-intro.html), [Ch. 25.1 Routine Vacuuming](https://www.postgresql.org/docs/current/routine-vacuuming.html).
 
+The textbook covers multiversion timestamps briefly in §18.8.5, p. 939. MVCC as PostgreSQL practices it is thin there, so today leans on the PostgreSQL documentation.
+
 ---
 
 <!-- _class: lead -->
@@ -91,11 +91,11 @@ In a high-concurrency workload, this means:
 - Long-running readers (analytical queries) block all writes
 - Throughput collapses under load
 
-MVCC's bet: keep **multiple versions** of each row, so a reader can always find a usable version without waiting for a writer.
+MVCC keeps **multiple versions** of each row, so a reader can always find a usable version without waiting for a writer.
 
 ---
 
-# The Big Idea: Versions
+# Row Versions
 
 ```mermaid
 graph TB
@@ -230,7 +230,11 @@ Time   Tx 1 (snapshot at T=100)       Tx 2 (start at T=110)
 
 Tx1 keeps seeing 3.95 even after Tx2 commits. Tx1's snapshot was at xid=100; the new row's xmin is 110, which is **>=** Tx1's snapshot. Invisible.
 
-This is the **repeatable read** behavior, achieved without locking.
+This is `REPEATABLE READ` behavior, achieved without locking. That level fixes the snapshot at the transaction's first statement. Under the default `READ COMMITTED`, each statement takes a fresh snapshot, so Tx1's second SELECT would see 3.96.
+
+<!--
+The isolation-level caveat matters: students who try this in psql under the default READ COMMITTED will see the new value and think the slide is wrong. Have them run BEGIN ISOLATION LEVEL REPEATABLE READ to reproduce the trace.
+-->
 
 ---
 
@@ -259,7 +263,7 @@ graph LR
 
 After a month of updates, a table can have **20× more dead tuples than live ones**. Sequential scans pay for them. Indexes point to them.
 
-This is **bloat**. The classic PostgreSQL operational problem.
+This is **bloat**, the classic PostgreSQL operational problem.
 
 ---
 
@@ -281,7 +285,7 @@ VACUUM ANALYZE student;  -- vacuum + refresh stats
 `VACUUM FULL`:
 - Rewrites the entire table to a new file
 - Reclaims disk space (returns it to the OS)
-- Takes an `ACCESS EXCLUSIVE` lock — blocks everything
+- Takes an `ACCESS EXCLUSIVE` lock, which blocks everything
 
 Normal `VACUUM` is online; `VACUUM FULL` is downtime.
 
@@ -331,9 +335,9 @@ LIMIT 10;
 ```
 
 Tables with `pct_dead > 50%` are at risk.
-Tables with `last_autovacuum` more than a day stale on a busy table indicate autovacuum is not keeping up.
+A `last_autovacuum` more than a day stale on a busy table indicates autovacuum is not keeping up.
 
-This query is in every PostgreSQL DBA's toolkit.
+Run this query first when a PostgreSQL instance slows down after weeks of updates.
 
 ---
 
@@ -351,7 +355,7 @@ PostgreSQL's MVCC implements **snapshot isolation**:
 - Reads never see partial transactions
 - Reads never block writes
 - Writers never block readers
-- Two transactions trying to modify the same row: one waits or aborts
+- When two transactions modify the same row, one waits or aborts
 
 Snapshot isolation **defeats** dirty reads, lost updates, non-repeatable reads, and (in PostgreSQL specifically) phantoms.
 
@@ -399,7 +403,7 @@ These bugs are subtle. They appear under load. They are hard to reproduce.
 
 ---
 
-# PostgreSQL's Answer: SSI
+# SSI in PostgreSQL
 
 PostgreSQL's `SERIALIZABLE` isolation level uses **Serializable Snapshot Isolation** (Cahill et al., SIGMOD 2008).
 
@@ -428,49 +432,32 @@ PostgreSQL is one of the few open-source databases with a real SERIALIZABLE leve
 
 # Wrap-up
 
-You now have:
+- MVCC stores multiple physical versions per logical row
+- `xmin`, `xmax`, and the visibility rule decide which version a snapshot sees
+- UPDATE writes a new tuple and marks the old one dead
+- VACUUM reclaims dead tuples; unmanaged bloat degrades scans and indexes
+- Snapshot isolation blocks the four classic anomalies without read locks
+- Write skew slips past snapshot isolation because the transactions write disjoint rows
+- PostgreSQL's SERIALIZABLE level (SSI) detects and aborts write-skew patterns
 
-<div class="columns">
-<div>
-
-- MVCC: multiple physical versions per logical row
-- `xmin`, `xmax`, and the visibility rule
-- Why UPDATE creates a new tuple
-- VACUUM and bloat management
-
-</div>
-<div>
-
-- Snapshot isolation as PostgreSQL's default-with-REPEATABLE-READ
-- The write skew anomaly
-- PostgreSQL's SSI for true serializability
-- When to use SERIALIZABLE vs SELECT FOR UPDATE vs EXCLUDE constraints
-
-</div>
-</div>
+<!--
+Single flat takeaway list, one line per part. Write skew is the concept most likely to appear on the final; the doctor example is the one to re-tell if time allows.
+-->
 
 ---
 
-# Wednesday: Recovery, Distributed, Modern
+# Next Class
 
-Three topics in one class:
+Wednesday covers recovery (WAL and ARIES), distributed transactions (Spanner, CockroachDB), and a survey of modern systems (DuckDB, lakehouses, vector databases), plus course wrap and Final Exam prep.
 
-- **Recovery**: how the WAL keeps committed transactions durable through crashes (ARIES, Mohan 1992)
-- **Distributed**: Spanner, CockroachDB — how transactions go across machines
-- **Modern**: DuckDB, lakehouses, vector DBs — where the field is in 2026
-
-Plus course wrap and Final Exam prep.
-
-Read [Mohan ARIES](https://ufdatastudio.com/cop5725fa26/papers/pdfs/mohan1992.pdf) and [DuckDB](https://ufdatastudio.com/cop5725fa26/papers/pdfs/raasveldt2019.pdf) before class.
+Reading: [Mohan ARIES](https://ufdatastudio.com/cop5725fa26/papers/pdfs/mohan1992.pdf) and [DuckDB](https://ufdatastudio.com/cop5725fa26/papers/pdfs/raasveldt2019.pdf) before class; Textbook §17.1-17.2, p. 843-862 for logging background.
 
 ---
 
 # Practice Before Wednesday
 
-Two exercises:
-
-1. Run `SELECT xmin, xmax, * FROM your_table LIMIT 5;` against your project's database. Update a row in another psql session, then re-run. Capture the output.
-2. Try the doctor-on-call scenario in psql using two transactions. Observe the write skew. Then try the same with `BEGIN ISOLATION LEVEL SERIALIZABLE;` and see the SSI error.
+- Run `SELECT xmin, xmax, * FROM your_table LIMIT 5;` against your project's database. Update a row in another psql session, then re-run. Capture the output.
+- Try the doctor-on-call scenario in psql using two transactions. Observe the write skew. Then try the same with `BEGIN ISOLATION LEVEL SERIALIZABLE;` and see the SSI error.
 
 Push to your `cop5725fa26-project` repo before 8:30 AM Wed Dec 2.
 

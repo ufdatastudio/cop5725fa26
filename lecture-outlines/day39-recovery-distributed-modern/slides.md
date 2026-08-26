@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Wednesday, December 2, 2026
 
-The last lecture. Three topics. The arc closes.
+The last lecture: recovery, distributed transactions, and modern systems
 
 <!--
 Final regular lecture. Acknowledge the milestone briefly at the start. The lecture is intentionally broad — recovery (textbook closer), distributed (one-slide-per-system survey), modern (where the field stands in 2026). Last 10 minutes: course wrap and Final Exam reminders.
@@ -23,20 +23,18 @@ Final regular lecture. Acknowledge the milestone briefly at the start. The lectu
 
 ---
 
-# Where We Are
+# Recap
 
 <div class="columns-left-wide">
 <div>
 
-This is the last lecture.
+This is the last lecture. The previous 15 weeks built up the database engine layer by layer; today closes three threads.
 
-For 15 weeks we have built up the database engine layer by layer. Today we close three threads at once:
+- **Recovery** explains how committed transactions survive crashes (the D in ACID)
+- **Distributed** covers what changes when one machine is not enough
+- **Modern** surveys where the field stands as you leave this class
 
-- **Recovery** — how transactions survive crashes (the durability of ACID)
-- **Distributed** — what changes when one machine isn't enough
-- **Modern** — where the field stands as you leave this class
-
-Plus course wrap and Final Exam prep.
+The last section covers the course wrap and Final Exam prep.
 
 </div>
 <div>
@@ -78,6 +76,8 @@ Anchor papers today:
 - Mohan et al. [*ARIES*](https://ufdatastudio.com/cop5725fa26/papers/pdfs/mohan1992.pdf) (ACM TODS 1992)
 - Raasveldt & Mühleisen [*DuckDB*](https://ufdatastudio.com/cop5725fa26/papers/pdfs/raasveldt2019.pdf) (SIGMOD 2019)
 
+Textbook background: logging and recovery are Ch. 17, p. 843; distributed commit is §20.5, p. 1008.
+
 ---
 
 <!-- _class: lead -->
@@ -88,7 +88,7 @@ Anchor papers today:
 
 # The Crash Problem
 
-The buffer pool (Day 23) caches **dirty pages** in memory. A `COMMIT` doesn't immediately flush every changed page to disk — that would be too slow.
+The buffer pool (Day 23) caches **dirty pages** in memory. A `COMMIT` doesn't immediately flush every changed page to disk, because that would be too slow.
 
 But what if the server crashes between commit and flush?
 
@@ -132,7 +132,9 @@ This is the **WAL invariant**, sometimes stated as:
 
 > Log the intent before performing the action.
 
-If the system crashes after the log record but before the page change, recovery can **redo** the change. If it crashes before the log record, the transaction effectively didn't happen — fine.
+If the system crashes after the log record but before the page change, recovery can **redo** the change. If it crashes before the log record, the transaction never committed and nothing is lost.
+
+The textbook states the logging rules in §17.2.2, p. 853 (undo logging) and §17.3.1, p. 863 (redo logging).
 
 ---
 
@@ -150,7 +152,7 @@ before: (name='Ada', gpa=3.95)
 after:  (name='Ada', gpa=3.96)
 ```
 
-**LSN** is the *log sequence number* — a monotonically increasing position in the log.
+**LSN** is the *log sequence number*, a monotonically increasing position in the log.
 
 On `COMMIT`, the WAL buffer up to and including the commit record is **fsync'd to disk**.
 
@@ -207,7 +209,7 @@ PostgreSQL runs checkpoints periodically (every ~5 minutes by default, or when W
 
 ---
 
-# ARIES — Mohan 1992
+# The Paper
 
 > Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., Schwarz, P.
 > *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.*
@@ -217,11 +219,11 @@ PostgreSQL runs checkpoints periodically (every ~5 minutes by default, or when W
 
 The recovery algorithm in IBM DB2, with variants in PostgreSQL, MySQL, SQL Server, and most other systems.
 
-Three phases. We see all three.
+The algorithm runs in three phases.
 
 ---
 
-# ARIES, Three Phases
+# The Three Phases of ARIES
 
 ```mermaid
 graph LR
@@ -317,7 +319,7 @@ The 1992 paper proposed:
 
 Every one of these ideas is in PostgreSQL, MySQL InnoDB, SQL Server, and DB2 today.
 
-> 32 years later, ARIES is still the recovery algorithm.
+> 34 years later, ARIES is still the standard recovery algorithm.
 
 <!--
 The Mohan paper is dense but worth the read. It's one of the most-cited papers in the field. The key insight: by tagging pages with their LSN, recovery can be idempotent — running it twice gives the same result.
@@ -368,7 +370,7 @@ graph TB
 
 Queries that touch a single shard are fast. Queries that touch all shards (joins, GROUP BY across keys) require coordination.
 
-PostgreSQL: `Citus` extension. Other engines: built-in (CockroachDB, Vitess).
+PostgreSQL shards through the `Citus` extension. CockroachDB and Vitess build sharding in.
 
 ---
 
@@ -400,7 +402,7 @@ graph TB
 
 Read replicas scale **read** capacity. Write throughput is still primary-bound.
 
-PostgreSQL: streaming replication, logical replication. Multi-primary is hard.
+PostgreSQL offers streaming replication and logical replication. Multi-primary is hard.
 
 ---
 
@@ -429,10 +431,12 @@ graph LR
   class S1,S2,S3 shard
 ```
 
-Phase 1: PREPARE — every shard logs the transaction durably and votes yes/no.
-Phase 2: COMMIT — if all yes, the coordinator tells everyone to commit.
+In phase 1 (PREPARE), every shard logs the transaction durably and votes yes or no.
+In phase 2 (COMMIT), if all vote yes, the coordinator tells everyone to commit.
 
 2PC is slow (multiple round trips) and blocks if the coordinator dies. Modern systems use **Paxos** or **Raft** for coordinator failure tolerance.
+
+Textbook §20.5.2, p. 1009 works through the protocol.
 
 ---
 
@@ -444,7 +448,7 @@ Google's globally-distributed database. Provides:
 
 - **External consistency** across continents
 - ACID transactions over data on dozens of servers
-- The **TrueTime API** — a clock interval, not a single timestamp
+- The **TrueTime API**, which returns a clock interval instead of a single timestamp
 
 Spanner uses GPS receivers and atomic clocks to bound clock uncertainty (~5 ms). Transactions wait out the uncertainty before committing.
 
@@ -481,7 +485,7 @@ Each category solves a different problem. There is no "one engine" anymore.
 
 ---
 
-# DuckDB: Where We Started
+# DuckDB
 
 > Raasveldt, M. and Mühleisen, H.
 > *DuckDB: An Embeddable Analytical Database.*
@@ -497,9 +501,7 @@ The closing paper of the course. DuckDB:
 - Reads Parquet, CSV, JSON directly
 - Single binary, no server
 
-In 2026, the analytics tool of choice for laptops. The fastest path from a Parquet file to a SQL answer.
-
-You used it for half the projects this semester.
+DuckDB is the shortest path from a Parquet file on a laptop to a SQL answer, which is why you used it for half the projects this semester.
 
 ---
 
@@ -563,7 +565,7 @@ graph TB
   class DD,SP,TR,SF engine
 ```
 
-The data lives once, queryable by many engines. The next big wave in data infrastructure.
+The data lives once, and many engines query it in place.
 
 <!--
 Lakehouses are the synthesis of the data warehouse and the data lake. Data warehouses had structure but were expensive. Data lakes were cheap but unstructured. Iceberg and friends give you both.
@@ -577,7 +579,7 @@ Lakehouses are the synthesis of the data warehouse and the data lake. Data wareh
 
 ---
 
-# What You Can Now Do
+# The Course Toolkit
 
 <div class="columns-3">
 <div>
@@ -609,7 +611,7 @@ Lakehouses are the synthesis of the data warehouse and the data lake. Data wareh
 </div>
 </div>
 
-This is the working database engineer's toolkit. Most people you meet in industry have only some of it.
+This is the working database engineer's toolkit.
 
 ---
 
@@ -624,7 +626,7 @@ There is always more. We didn't go deeply into:
 - **Caching layers** (Redis, Memcached)
 - **Wide-column stores** (Cassandra, ScyllaDB)
 
-The systems above use ideas you now have — they're not new sciences, just different applications.
+The systems above apply ideas from this course to different workloads.
 
 The Section 7 lecture didn't happen because it merged with today's modern systems coverage. The schedule reflects this.
 
@@ -634,7 +636,7 @@ The Section 7 lecture didn't happen because it merged with today's modern system
 
 Released today: `practice-exams/exam3-final.md`.
 
-The final exam is **cumulative** — every section is in scope. The emphasis is on Sections 6-7 (most recent material) but you should be ready for any topic.
+The final exam is **cumulative**; every section is in scope. The emphasis is on Sections 6-7 (most recent material) but you should be ready for any topic.
 
 Format: 90 minutes, closed notes, in the assigned final exam slot during Dec 5-11.
 
@@ -689,7 +691,7 @@ graph LR
   class Now now
 ```
 
-The relational model is 56 years old. The B+ tree is 53. ARIES is 33.
+The relational model is 56 years old. The B+ tree is 53. ARIES is 34.
 
 These ideas have outlasted dozens of programming languages, three or four "industries," and a generation of engineers.
 

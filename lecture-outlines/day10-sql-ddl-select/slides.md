@@ -15,11 +15,11 @@ html: true
 **COP 5725 - Database Management Systems**
 Monday, September 14, 2026
 
-Section 2 opens — the working SQL surface
+Section 2 opens with the working SQL surface
 
 <!--
-First class of Section 2. Section 1 is graded, Quiz 1 results are back. Open by acknowledging the transition and previewing the section's payoff: by the end of three weeks, students will write SQL most working engineers cannot match.
-Pace: 50 min. Spend the first 8 minutes on the doc-reading section even though it feels like overhead — it pays off through the whole semester.
+First class of Section 2. Section 1 is graded, Quiz 1 results are back. Open by acknowledging the transition into SQL.
+Pace: 50 min. Spend the first 8 minutes on the doc-reading section even though it feels like overhead. It pays off through the whole semester.
 -->
 
 ---
@@ -29,14 +29,12 @@ Pace: 50 min. Spend the first 8 minutes on the doc-reading section even though i
 <div class="columns-left-wide">
 <div>
 
-Section 1 gave you the **why** of relational systems.
-Section 2 gives you the **how**.
+Section 1 covered why relational systems work the way they do.
+Section 2 covers how to use them, and the vehicle is SQL.
 
-The vehicle is SQL.
-Three weeks, nine meetings, one quiz.
-By Friday Oct 2 you will write window functions, CTEs, and recursive queries that take other engineers a year to learn.
+The section runs three weeks and nine meetings, ending with Quiz 2 on Oct 2.
 
-Today: the surface area every working SQL user has — DDL, single-table SELECT, predicates, ordering.
+Today covers DDL, single-table SELECT, predicates, and ordering.
 
 </div>
 <div>
@@ -65,6 +63,10 @@ graph TB
 </div>
 </div>
 
+<!--
+Keep this transition short. Section 1 material is graded and closed; today starts the SQL section. The diagram carries the three-week arc, so the prose only needs the schedule facts.
+-->
+
 ---
 
 # Today's Roadmap
@@ -79,7 +81,7 @@ graph LR
   class D,DDL,S,P,W step
 ```
 
-The first stop is the documentation itself. Doc literacy compounds.
+The first stop is the documentation itself. Reading the docs well is a skill we use all semester.
 
 ---
 
@@ -213,10 +215,7 @@ This BNF-like notation is universal in DB documentation. Once you can read it, e
 
 </div>
 
-You now know:
-- LIMIT is optional (brackets)
-- It takes either a count or the word ALL
-- The semantics are described below
+The synopsis shows that LIMIT is optional and that it takes either a count or the word ALL. The prose below it gives the semantics.
 
 The whole exercise takes 90 seconds. Treat it as the first reflex when you forget syntax.
 
@@ -228,7 +227,7 @@ Do this live on the projector. The "I'll grep the SQL command page" reflex is th
 
 <!-- _class: lead -->
 
-# Part 2: DDL — CREATE, ALTER, DROP
+# Part 2: DDL
 
 ---
 
@@ -247,10 +246,10 @@ We met this on Day 7. The PostgreSQL reference for the full syntax is at [postgr
 
 A few features the synopsis surfaces:
 
-- `IF NOT EXISTS` — idempotent creation
-- `TEMPORARY` and `UNLOGGED` — non-durable variants
-- `PARTITION OF` — declarative partitioning (Section 4 preview)
-- `INHERITS` — PostgreSQL extension for table inheritance
+- `IF NOT EXISTS` makes creation idempotent
+- `TEMPORARY` and `UNLOGGED` create non-durable variants
+- `PARTITION OF` declares partitioning (we return to this in Section 4)
+- `INHERITS` is a PostgreSQL extension for table inheritance
 
 ---
 
@@ -293,11 +292,11 @@ Reference: [postgresql.org/docs/current/ddl-constraints.html](https://www.postgr
 
 ---
 
-# ALTER TABLE: Schema Evolution
+# Schema Evolution with ALTER TABLE
 
 ```sql
 ALTER TABLE student ADD COLUMN graduation_year int;
-ALTER TABLE student DROP COLUMN gpa;
+ALTER TABLE student DROP COLUMN dname;
 ALTER TABLE student ALTER COLUMN name SET NOT NULL;
 ALTER TABLE student RENAME COLUMN name TO full_name;
 ALTER TABLE student ADD CONSTRAINT gpa_valid CHECK (gpa BETWEEN 0 AND 4.0);
@@ -363,7 +362,7 @@ DELETE FROM table can take an hour on a billion-row table; TRUNCATE on the same 
 
 ---
 
-# The Six Clauses You Use Every Day
+# The Six Clauses of SELECT
 
 ```sql
 SELECT  column_or_expression, ...
@@ -374,7 +373,7 @@ LIMIT   count
 OFFSET  count;
 ```
 
-Order of writing ≠ order of evaluation. (We see the difference on Day 12.)
+The order you write the clauses differs from the order the engine evaluates them. We see the difference on Day 12.
 
 Reference: [postgresql.org/docs/current/sql-select.html](https://www.postgresql.org/docs/current/sql-select.html).
 
@@ -400,7 +399,7 @@ SELECT name, gpa * 25 AS percent FROM student;
 SELECT name AS full_name FROM student;
 ```
 
-`SELECT *` is convenient for exploration but discouraged in production code — column order changes silently when the schema evolves.
+`SELECT *` is convenient for exploration but discouraged in production code, because column order changes silently when the schema evolves.
 
 ---
 
@@ -425,10 +424,10 @@ WHERE gpa IS NOT NULL AND gpa < 2.0
 
 ### PostgreSQL specifics
 
-- `ILIKE` — case-insensitive `LIKE`
-- `SIMILAR TO` — POSIX-style regex (rarely used)
-- `~` and `~*` — full regex match
-- `IS DISTINCT FROM` — NULL-safe comparison
+- `ILIKE` is case-insensitive `LIKE`
+- `SIMILAR TO` mixes LIKE and regex syntax (rarely used)
+- `~` and `~*` match POSIX regular expressions
+- `IS DISTINCT FROM` compares NULL-safely
 
 Reference: [postgresql.org/docs/current/functions-matching.html](https://www.postgresql.org/docs/current/functions-matching.html).
 
@@ -437,7 +436,7 @@ Reference: [postgresql.org/docs/current/functions-matching.html](https://www.pos
 
 ---
 
-# NULL in WHERE: The Trap, Again
+# NULL in WHERE
 
 ```sql
 SELECT count(*) FROM enrollment;                       -- 100
@@ -530,7 +529,7 @@ ORDER BY gpa DESC
 LIMIT  3;
 ```
 
-Mechanical mapping from English to SQL. Run it — edit the data and re-run.
+The mapping from English to SQL is mechanical. Run it, then edit the data and re-run.
 
 ---
 
@@ -633,32 +632,18 @@ SELECT name, gpa * 25 AS percent FROM student WHERE percent > 75;
 
 # Wrap-up
 
-You now have:
-
-<div class="columns">
-<div>
-
-- The PostgreSQL docs as a working reference (Ch. 5, Ch. 7, SQL Commands)
-- DDL: CREATE, ALTER, DROP, TRUNCATE
-- The six clauses of single-table SELECT
-
-</div>
-<div>
-
-- Predicate building blocks: comparison, LIKE, IN, IS NULL, IS DISTINCT FROM
-- DISTINCT, ORDER BY, LIMIT, OFFSET
-- The NULL trap one more time
-
-</div>
-</div>
+- The PostgreSQL docs (Ch. 5, Ch. 7, SQL Commands) are the course's SQL reference
+- DDL covers CREATE, ALTER, DROP, and TRUNCATE
+- Single-table SELECT has six clauses
+- Predicates build from comparison, LIKE, IN, IS NULL, and IS DISTINCT FROM
+- DISTINCT, ORDER BY, LIMIT, and OFFSET shape the result
+- NULL matches neither `= 'A'` nor `<> 'A'`
 
 ---
 
-# Wednesday: Joins
+# Next Lecture
 
-We connect tables.
-
-By the end of Wednesday you will pick the right join kind (inner, outer, semi, anti, cross, self, lateral) for any stated question.
+Wednesday covers joins.
 
 Read PostgreSQL docs Ch. 7.2 before class.
 
@@ -669,7 +654,7 @@ Read PostgreSQL docs Ch. 7.2 before class.
 Five queries to run against the university schema in your repo:
 
 1. Find all departments whose name contains 'Computer'.
-2. Find the most expensive faculty member.
+2. Find the highest-paid faculty member.
 3. Count distinct majors.
 4. List students with GPA strictly between 3.0 and 3.9, sorted by name.
 5. Page 3 of student names alphabetically, 10 per page.

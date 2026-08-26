@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Wednesday, September 9, 2026
 
-The math that finds redundancy ER hides
+Definitions, closures, Armstrong's axioms, and keys
 
 <!--
 First class back after Labor Day. Some students will have lost their week-1 momentum; the FD material is dense, so open with motivation rather than definitions. Pace 50 min total. The closure algorithm (Part 3) is the central skill — budget 12 min for it and walk two worked examples on the board.
@@ -30,13 +30,13 @@ First class back after Labor Day. Some students will have lost their week-1 mome
 
 Last Friday we translated an ER diagram into a SQL schema.
 
-The translation worked — but it left three questions unanswered:
+The translation worked, but it left three questions unanswered.
 
 - Is the schema redundant?
 - Is the decomposition lossless?
 - Are dependencies preserved?
 
-Today's tool — **functional dependencies** — gives us the language to ask these questions precisely. Friday's tool — **normalization** — answers them.
+Functional dependencies give us the language to ask these questions precisely. Normalization, on Friday, answers them.
 
 </div>
 <div>
@@ -89,14 +89,14 @@ The closure algorithm in step 3 is the central skill. Everything afterward uses 
 
 ```sql
 CREATE TABLE enrollment_denormalized (
-  sid          bigint,
+  student_id   bigint,
   student_name text,
-  cid          text,
+  course_id    text,
   course_title text,
   instructor   text,
   department   text,
   grade        char(2),
-  PRIMARY KEY (sid, cid)
+  PRIMARY KEY (student_id, course_id)
 );
 ```
 
@@ -112,7 +112,7 @@ Set up the example. The denormalized enrollment table is the canonical teaching 
 
 # The Data It Generates
 
-| sid | student_name | cid     | course_title | instructor | dept | grade |
+| student_id | student_name | course_id | course_title | instructor | dept | grade |
 |-----|--------------|---------|--------------|------------|------|-------|
 | 1 | Ada | COP5725 | Database Management Systems | Grant | CS | A |
 | 1 | Ada | COT5405 | Algorithms | Sahni | CS | B+ |
@@ -123,9 +123,9 @@ Set up the example. The denormalized enrollment table is the canonical teaching 
 
 **Problems visible by inspection:**
 
-- "Database Management Systems" appears 3 times — what if it changes name?
-- "Grant" appears 3 times — what if I switch institutions?
-- "Ada" appears in 2 rows — what if she changes her name?
+- "Database Management Systems" appears 3 times. What if the course is renamed?
+- "Grant" appears 3 times. What if I switch institutions?
+- "Ada" appears in 2 rows. What if she changes her name?
 
 </div>
 
@@ -141,10 +141,10 @@ ER thinking caught some redundancies (we put `grade` on the relationship, not th
 
 But ER did not catch:
 
-- `cid` determines `course_title`
-- `cid` determines `instructor`
-- `cid` determines `dept`
-- `sid` determines `student_name`
+- `course_id` determines `course_title`
+- `course_id` determines `instructor`
+- `course_id` determines `dept`
+- `student_id` determines `student_name`
 
 These are **functional dependencies**.
 They are facts about the world that the schema does not enforce.
@@ -166,7 +166,7 @@ The phrase "facts about the world that the schema does not enforce" is the key i
 <div class="columns">
 <div>
 
-Given a relation $R$ with attributes, an **FD** $X \rightarrow Y$ holds if:
+Given a relation $R$ with attributes, an **FD** $X \rightarrow Y$ holds if (Textbook §3.1.1, p. 68):
 
 For every pair of tuples $t_1, t_2 \in R$:
 $$t_1[X] = t_2[X] \Rightarrow t_1[Y] = t_2[Y]$$
@@ -191,7 +191,7 @@ graph LR
 </div>
 
 <!--
-Stress: the FD is a statement *about the meaning of the data*, not about a particular table. Whether `cid → course_title` holds depends on the real world (one title per course id), not on which rows happen to be loaded.
+Stress: the FD is a statement *about the meaning of the data*, not about a particular table. Whether `course_id → course_title` holds depends on the real world (one title per course id), not on which rows happen to be loaded.
 -->
 
 ---
@@ -200,11 +200,11 @@ Stress: the FD is a statement *about the meaning of the data*, not about a parti
 
 ```mermaid
 graph LR
-  CID["cid"] --> CT["course_title"]
+  CID["course_id"] --> CT["course_title"]
   CID --> I["instructor"]
   CID --> D["dept"]
-  SID["sid"] --> SN["student_name"]
-  SIDCID["{sid, cid}"] --> G["grade"]
+  SID["student_id"] --> SN["student_name"]
+  SIDCID["{student_id, course_id}"] --> G["grade"]
   classDef src fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#0d47a1
   classDef dep fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
   class CID,SID,SIDCID src
@@ -216,7 +216,7 @@ The grade is the only attribute that depends on *both* student and course. Every
 That asymmetry is what the schema fails to capture.
 
 <!--
-Walk these FDs out loud. The class should agree that each holds in the real world. The FD `{sid, cid} → grade` is the only one whose determinant is composite — and it's the only FD whose dependent is the table's "real" payload.
+Walk these FDs out loud. The class should agree that each holds in the real world. The FD `{student_id, course_id} → grade` is the only one whose determinant is composite — and it's the only FD whose dependent is the table's "real" payload.
 -->
 
 ---
@@ -228,13 +228,13 @@ Walk these FDs out loud. The class should agree that each holds in the real worl
 
 ### Trivial
 
-$X \rightarrow Y$ is **trivial** if $Y \subseteq X$.
+$X \rightarrow Y$ is **trivial** if $Y \subseteq X$ (Textbook §3.2.3, p. 74).
 
 Always holds. Useless on its own.
 
 Examples:
-- $\{sid, cid\} \rightarrow sid$
-- $cid \rightarrow cid$
+- $\{student\_id, course\_id\} \rightarrow student\_id$
+- $course\_id \rightarrow course\_id$
 
 </div>
 <div>
@@ -246,8 +246,8 @@ $X \rightarrow Y$ is **non-trivial** if $Y \not\subseteq X$.
 These are the FDs that matter.
 
 Examples:
-- $cid \rightarrow course\_title$
-- $sid \rightarrow student\_name$
+- $course\_id \rightarrow course\_title$
+- $student\_id \rightarrow student\_name$
 
 </div>
 </div>
@@ -264,16 +264,13 @@ Most discussion of FDs is implicitly about non-trivial ones. Trivial FDs are a c
 
 # What Closure Means
 
-Given a set of FDs $F$ and an attribute set $X$, the **closure** $X^+$ is every attribute that $X$ functionally determines, directly or transitively.
+Given a set of FDs $F$ and an attribute set $X$, the **closure** $X^+$ is every attribute that $X$ functionally determines, directly or transitively (Textbook §3.2.4, p. 75).
 
 $$X^+ = \{\, A : F \models X \rightarrow A \,\}$$
 
 This is the workhorse of FD reasoning.
 
-Two questions closure answers:
-
-1. Does $X \rightarrow Y$ follow from $F$? — Check whether $Y \subseteq X^+$.
-2. Is $X$ a superkey? — Check whether $X^+$ equals all attributes.
+Closure answers whether $X \rightarrow Y$ follows from $F$ (check $Y \subseteq X^+$) and whether $X$ is a superkey (check that $X^+$ contains every attribute).
 
 ---
 
@@ -324,7 +321,7 @@ The loop terminates because `result` can grow at most to all attributes.
 
 ---
 
-# Worked Example: Closure Step by Step
+# Closure Worked Example
 
 Given:
 
@@ -339,9 +336,9 @@ Compute $\{A, D\}^+$:
 | 2 | $\{A, B, C, D\}$ | $B \rightarrow C$ | $C$ |
 | 3 | $\{A, B, C, D, E\}$ | $CD \rightarrow E$ | $E$ |
 | 4 | $\{A, B, C, D, E, G, H\}$ | $CE \rightarrow GH$ | $G, H$ |
-| 5 | $\{A, B, C, D, E, G, H\}$ | $G \rightarrow A$ — already in | none |
+| 5 | $\{A, B, C, D, E, G, H\}$ | $G \rightarrow A$ (already in) | none |
 
-$\{A, D\}^+ = \{A, B, C, D, E, G, H\}$ — the entire attribute set. So $\{A, D\}$ is a **superkey**.
+$\{A, D\}^+ = \{A, B, C, D, E, G, H\}$ is the entire attribute set, so $\{A, D\}$ is a **superkey**.
 
 <!--
 Walk this on the board. The tricky moment is pass 4 — students sometimes try to apply CE → GH before they have both C and E in the result. The algorithm forces honesty: check the *full* left side before applying.
@@ -349,7 +346,7 @@ Walk this on the board. The tricky moment is pass 4 — students sometimes try t
 
 ---
 
-# Closure: Your Turn
+# Closure Practice
 
 Given:
 
@@ -429,7 +426,7 @@ Chains compose.
 </div>
 
 These three rules are **sound** (everything they derive is true) and **complete** (everything true is derivable).
-Armstrong proved completeness in 1974.
+Armstrong proved completeness in 1974 (Textbook §3.2.1, p. 72).
 
 <!--
 Sound + complete is a strong claim — we can use *only* these three rules and recover every valid FD that follows from a given set. The closure algorithm is one efficient way to apply them.
@@ -482,7 +479,7 @@ Two FD sets $F$ and $G$ are **equivalent** if they derive the same conclusions.
 
 $$F \equiv G \iff F^+ = G^+$$
 
-where $F^+$ is the set of all FDs derivable from $F$ — the **closure of the FD set itself**.
+where $F^+$, the **closure of the FD set itself**, is the set of all FDs derivable from $F$ (Textbook §3.2.7, p. 80).
 
 How to check $F \equiv G$ without computing $F^+$ directly:
 
@@ -497,7 +494,7 @@ The two-sided check is fast. For each FD X → Y in G, compute X+ under F. If Y 
 
 # Minimal Cover
 
-A **minimal cover** (or canonical cover) is an equivalent FD set with three properties:
+A **minimal cover** (or canonical cover; the textbook says minimal basis, §3.5.2, p. 103) is an equivalent FD set with three properties:
 
 <div class="columns-3">
 <div>
@@ -534,24 +531,24 @@ Minimal covers are not unique, but every minimal cover has the same number of FD
 
 ---
 
-# Worked Example: Minimal Cover
+# Minimal Cover Worked Example
 
 Given $F = \{\, A \rightarrow BC,\;\; B \rightarrow C,\;\; A \rightarrow B,\;\; AB \rightarrow C \,\}$:
 
-**Step 1 — single right sides:**
+**Step 1.** Make right sides single.
 
 $F' = \{\, A \rightarrow B,\;\; A \rightarrow C,\;\; B \rightarrow C,\;\; A \rightarrow B,\;\; AB \rightarrow C \,\}$
 
 Remove the duplicate $A \rightarrow B$.
 
-**Step 2 — remove extraneous LHS attributes:**
+**Step 2.** Remove extraneous LHS attributes.
 
-For $AB \rightarrow C$: is $A$ alone enough? $\{A\}^+ = \{A, B, C\}$ — yes, $C$ is in the closure. So $AB \rightarrow C$ becomes $A \rightarrow C$.
+For $AB \rightarrow C$: is $A$ alone enough? $\{A\}^+ = \{A, B, C\}$ contains $C$, so $AB \rightarrow C$ becomes $A \rightarrow C$.
 
-**Step 3 — remove redundant FDs:**
+**Step 3.** Remove redundant FDs.
 
 We now have $\{\, A \rightarrow B,\;\; A \rightarrow C,\;\; B \rightarrow C \,\}$.
-Is $A \rightarrow C$ redundant? Without it, $\{A\}^+ = \{A, B, C\}$ via $A \rightarrow B$ then $B \rightarrow C$. Yes — drop it.
+Is $A \rightarrow C$ redundant? Without it, $\{A\}^+ = \{A, B, C\}$ via $A \rightarrow B$ then $B \rightarrow C$. Yes, so drop it.
 
 **Minimal cover:** $\{\, A \rightarrow B,\;\; B \rightarrow C \,\}$
 
@@ -561,9 +558,9 @@ Walk this on the board. The order of operations matters: do single-RHS first, th
 
 ---
 
-# Candidate Keys, Redefined
+# Candidate Keys
 
-In Day 3 we defined keys intuitively. With FDs we get a precise definition.
+In Day 3 we defined keys intuitively. With FDs we get a precise definition (Textbook §3.1.2-3.1.3, pp. 70-71).
 
 <div class="columns">
 <div>
@@ -598,21 +595,21 @@ To find candidate keys: compute closures of candidate attribute sets and look fo
 
 ---
 
-# Finding Keys: Worked Example
+# Finding Candidate Keys
 
 Schema $R(A, B, C, D, E)$ with $F = \{\, A \rightarrow B,\;\; BC \rightarrow D,\;\; D \rightarrow E,\;\; CE \rightarrow A \,\}$.
 
-Try $\{A, C\}$:
-$\{A, C\}^+ = \{A, B, C, D, E\}$ — superkey.
+Try $\{A, C\}$.
+$\{A, C\}^+ = \{A, B, C, D, E\}$, a superkey.
 
-Is $\{A\}$ alone a superkey? $\{A\}^+ = \{A, B\}$ — no.
+Is $\{A\}$ alone a superkey? $\{A\}^+ = \{A, B\}$, so no.
 
-Is $\{C\}$ alone a superkey? $\{C\}^+ = \{C\}$ — no.
+Is $\{C\}$ alone a superkey? $\{C\}^+ = \{C\}$, so no.
 
 So $\{A, C\}$ is a candidate key.
 
-Try $\{C, D\}$:
-$\{C, D\}^+ = \{C, D, E, A, B\}$ — also superkey.
+Try $\{C, D\}$.
+$\{C, D\}^+ = \{C, D, E, A, B\}$, also a superkey.
 Is $\{C\}$ or $\{D\}$ alone a superkey? No.
 
 So $\{C, D\}$ is also a candidate key.
@@ -627,39 +624,27 @@ Most students assume there's one "the key." A schema can have two or three candi
 
 # Wrap-up
 
-You now have:
-
-<div class="columns">
-<div>
-
-- A precise definition of when one attribute set determines another
-- The closure algorithm to compute all consequences of a set of FDs
-- Armstrong's axioms — sound and complete inference rules
-
-</div>
-<div>
-
-- Minimal cover construction — the smallest equivalent FD set
-- A way to find candidate keys mechanically
-- A language for the redundancy ER cannot see
-
-</div>
-</div>
+- An FD $X \rightarrow Y$ holds when any two tuples that agree on $X$ agree on $Y$.
+- The closure algorithm computes every attribute a given set determines.
+- Armstrong's axioms are sound and complete inference rules for FDs.
+- A minimal cover is the smallest FD set equivalent to a given one.
+- Superkeys and candidate keys reduce to closure computations.
 
 Friday turns this language into normal forms.
 
+<!--
+One flat recap; each bullet maps to a part of the lecture. If time remains, re-run the closure example from Part 3 orally as a spot check. The skill to certify before the quiz is closure computation; everything else layers on it.
+-->
+
 ---
 
-# Friday: Normal Forms + Quiz 1
+# Friday
 
-The normal forms (1NF, 2NF, 3NF, BCNF) are decision procedures built on FD reasoning.
+Topic: normal forms (1NF, 2NF, 3NF, BCNF) and decomposition.
 
-We will:
-- See the anomalies that motivate each form
-- Decompose schemas to reach each form
-- Take Quiz 1 in the last 10 minutes — Section 1 cumulative
+Reading: Textbook §3.3-3.5, pp. 85-105.
 
-Read GMW Ch. 3.4-3.7 before class.
+Quiz 1 runs in the last 10 minutes and covers all of Section 1.
 
 ---
 

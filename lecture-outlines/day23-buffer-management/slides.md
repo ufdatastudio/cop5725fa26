@@ -28,11 +28,11 @@ Day after Exam 1. Acknowledge the exam briefly (graded results next Monday). The
 <div class="columns-left-wide">
 <div>
 
-Monday: the storage hierarchy.
-Wednesday: Exam 1.
-Today: buffer management — the cache the database manages for itself.
+Monday covered the storage hierarchy.
+Wednesday was Exam 1.
+Today covers buffer management, the cache the database manages for itself.
 
-By the end of the hour you can answer:
+Today answers three questions.
 
 - Why does PostgreSQL have `shared_buffers`?
 - What is `pg_buffercache` showing?
@@ -71,7 +71,7 @@ graph LR
   class W,M,R,P step
 ```
 
-Reference: [PostgreSQL Ch. 19.4.1 Memory](https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS), GMW Ch. 13.5.
+Reference: [PostgreSQL Ch. 19.4.1 Memory](https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS); Textbook §15.7, pp. 746-751.
 
 ---
 
@@ -90,7 +90,7 @@ Working set is bigger than memory.
 
 A 100 GB table on a 16 GB machine cannot all fit in RAM.
 
-But a query that reads "every page" hits each page **once**. Re-running the same query reads them **all over again** from disk — wasteful.
+But a query that reads "every page" hits each page **once**. Re-running the same query reads them all from disk again.
 
 Re-using pages between queries needs a cache.
 
@@ -113,11 +113,11 @@ graph TB
 </div>
 </div>
 
-The buffer pool answers: cache the pages a query reads, hand them out free to the next query.
+The buffer pool caches the pages a query reads and hands them to the next query without touching disk.
 
 ---
 
-# Buffer Pool = Manage-It-Yourself Memory
+# The Buffer Pool and the OS Cache
 
 <div class="columns">
 <div>
@@ -224,13 +224,13 @@ Real databases use **write-back with a write-ahead log** (Section 6). The log ma
 
 ---
 
-# The Question
+# Choosing a Page to Evict
 
 When a new page needs a frame and the pool is full, **which frame is evicted**?
 
-A bad answer ruins performance: evicting a page that gets re-used next is the buffer pool's worst nightmare.
+A bad choice evicts a page that is about to be re-used, forcing an immediate disk read.
 
-Five common strategies — three classic, two modern:
+Five common strategies:
 
 - LRU
 - Clock (approximate LRU)
@@ -240,7 +240,7 @@ Five common strategies — three classic, two modern:
 
 ---
 
-# LRU — Least Recently Used
+# Least Recently Used (LRU)
 
 <div class="columns">
 <div>
@@ -252,7 +252,7 @@ Evict the frame that has been **unused longest**.
 Recent past predicts near future for most workloads.
 
 ### Cost
-Maintaining a strict order needs a linked list and constant time update on every access — expensive in concurrent code.
+Maintaining a strict order needs a linked list and an update on every access, which is expensive in concurrent code.
 
 </div>
 <div>
@@ -276,7 +276,7 @@ graph LR
 
 ---
 
-# Clock — Approximate LRU at Constant Cost
+# Clock
 
 <div class="columns">
 <div>
@@ -285,7 +285,7 @@ graph LR
 Arrange frames in a ring with a "reference bit" per frame.
 
 On access, set the reference bit.
-When evicting, advance a "clock hand" — if the current frame's bit is 1, clear it and advance; if 0, evict it.
+When evicting, advance a clock hand. If the current frame's bit is 1, clear it and advance; if 0, evict it.
 
 ### Why it works
 Approximates LRU without the linked-list maintenance.
@@ -315,7 +315,7 @@ graph TB
 
 ---
 
-# MRU — When the Workload Inverts
+# Most Recently Used (MRU)
 
 ```sql
 -- A full scan over a 100 GB table
@@ -334,7 +334,7 @@ The "sequential scan blowing away the buffer pool" problem is real. PostgreSQL f
 
 ---
 
-# LRU-K and ARC (Brief)
+# LRU-K and ARC
 
 <div class="columns">
 <div>
@@ -393,7 +393,7 @@ The size of PostgreSQL's main buffer pool. The most-tuned parameter on every Pos
 
 - Default 128 MB is too small for any real workload
 - For a 32 GB server, try 8-12 GB
-- Measure before and after — use `pg_stat_database` to track cache hit ratios
+- Measure before and after using `pg_stat_database` cache hit ratios
 
 </div>
 </div>
@@ -412,8 +412,8 @@ A **hint to the optimizer**, not actual memory allocation.
 
 It tells the planner how much of the data is *likely* cached (in `shared_buffers` plus OS page cache).
 
-Higher value → optimizer is more willing to use index scans.
-Lower value → optimizer favors sequential scans.
+A higher value makes the optimizer more willing to use index scans.
+A lower value makes it favor sequential scans.
 
 Set to about 50-75% of physical RAM. Reference: [PostgreSQL Ch. 19.7.2 Planner Cost Constants](https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-EFFECTIVE-CACHE-SIZE).
 
@@ -423,7 +423,7 @@ This is the parameter people most often forget. shared_buffers gets tuned; effec
 
 ---
 
-# pg_buffercache — Observe What Is Cached
+# pg_buffercache
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS pg_buffercache;
@@ -473,38 +473,26 @@ Below 95% is a sign that `shared_buffers` is undersized for the working set.
 
 # Wrap-up
 
-You now have:
+- The buffer pool caches pages so repeated reads stay in memory instead of returning to disk.
+- Frames, the page table, pin counts, and dirty bits are the mechanics behind every page read.
+- Replacement policies (LRU, Clock, MRU, LRU-K, ARC) decide which page leaves a full pool, and each wins on a different workload.
+- PostgreSQL uses clock-sweep with a sequential-scan ring buffer, sized by `shared_buffers` and observed through `pg_buffercache` and cache hit ratios.
 
-<div class="columns">
-<div>
-
-- The frame / page table / pin / dirty mechanics
-- The lifecycle of a page read (cached vs miss)
-- LRU, Clock, MRU, LRU-K, ARC — and where each wins
-
-</div>
-<div>
-
-- PostgreSQL's clock-sweep + sequential-scan ring buffer
-- `shared_buffers`, `effective_cache_size`, `pg_buffercache`
-- The cache-hit-ratio diagnostic
-
-</div>
-</div>
+<!--
+One line per part of the lecture. The pg_buffercache exercise below reinforces the last two lines.
+-->
 
 ---
 
-# Monday: Row Stores vs Column Stores
+# Monday
 
-We compare the layout of PostgreSQL's tuples to DuckDB's columnar pages, and walk through the C-Store paper (Stonebraker et al., VLDB 2005).
+Monday covers row stores versus column stores, comparing PostgreSQL's tuple layout to DuckDB's columnar pages through the C-Store paper (Stonebraker et al., VLDB 2005).
 
 Read the C-Store paper before Monday: [stonebraker2005.pdf](https://ufdatastudio.com/cop5725fa26/papers/pdfs/stonebraker2005.pdf).
 
 ---
 
 # Practice Before Monday
-
-Two exercises in your project repo:
 
 1. Run the `pg_buffercache` query above against your project's database and capture the output.
 2. Compute the cache hit ratio for your database. If it's below 95%, hypothesize why.

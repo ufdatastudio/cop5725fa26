@@ -10,7 +10,7 @@ html: true
 
 <!-- _class: lead -->
 
-# Day 28: PostgreSQL's Index Zoo
+# Day 28: PostgreSQL Index Types
 
 **COP 5725 - Database Management Systems**
 Wednesday, October 28, 2026
@@ -28,11 +28,11 @@ Most content-rich day in Section 4. Project 2 winners present in the last 10-15 
 <div class="columns-left-wide">
 <div>
 
-For two weeks you have had two index types: **btree** and **hash**.
+The past two weeks covered two index types, btree and hash.
 
-Today: the rest of PostgreSQL's index zoo. Each one solves a problem that btree and hash cannot.
+Today covers the rest of PostgreSQL's index types. Each one solves a problem that btree and hash cannot.
 
-By the end of the hour you can pick the right index for:
+Workloads these types serve:
 - Full-text search
 - JSONB queries
 - Spatial / geometric data
@@ -58,6 +58,10 @@ graph TB
 
 </div>
 </div>
+
+<!--
+Quick recap: btree (Day 25-26) and hash (Day 27) are done. Frame today as filling out the rest of the CREATE INDEX USING options.
+-->
 
 ---
 
@@ -94,8 +98,8 @@ Reference: PostgreSQL docs [Ch. 11.2 Index Types](https://www.postgresql.org/doc
 | **hash** | Scalar equality only | Slightly faster than btree on `=` |
 | **GiST** | Geometric, range types, full-text, custom operators | Generalized search tree framework |
 | **SP-GiST** | Non-balanced data structures (quadtree, k-d tree) | Niche, rarely used |
-| **GIN** | "Set inside a value" — arrays, JSONB, FTS tokens | Large but fast for contains queries |
-| **BRIN** | Append-mostly, naturally ordered, huge tables | Tiny — 1/1000 the size of btree |
+| **GIN** | Set-shaped values (arrays, JSONB, FTS tokens) | Large but fast for contains queries |
+| **BRIN** | Append-mostly, naturally ordered, huge tables | Tiny, about 1/1000 the size of btree |
 
 Reference: [Ch. 11.2 Index Types](https://www.postgresql.org/docs/current/indexes-types.html).
 
@@ -130,19 +134,19 @@ graph TB
   class BTH,GIN,GST,BRN opt
 ```
 
-Two questions: **what shape is the column** and **how does the workload query it?**
+The choice depends on the shape of the column and how the workload queries it.
 
 ---
 
 <!-- _class: lead -->
 
-# Part 2: GiST — Generalized Search Tree
+# Part 2: GiST
 
 ---
 
-# GiST in One Slide
+# The GiST Framework
 
-GiST is a **framework** for building tree-shaped indexes, not a single algorithm.
+GiST (Generalized Search Tree) is a **framework** for building tree-shaped indexes, not a single algorithm.
 
 You define:
 - A type
@@ -169,7 +173,7 @@ The biggest GiST users: PostGIS, range types, fuzzy text search.
 
 ---
 
-# A Real GiST Example: Room Bookings
+# Room Bookings with GiST
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS btree_gist;
@@ -199,15 +203,15 @@ The booking system example is the canonical "GiST in production" pattern. The bt
 
 <!-- _class: lead -->
 
-# Part 3: GIN — Inverted Index
+# Part 3: GIN
 
 ---
 
-# GIN in One Sentence
+# The GIN Inverted Index
 
 > A **G**eneralized **IN**verted index maps **elements inside a value** to the rows that contain them.
 
-If your column is "set-shaped" — an array, a JSONB document, a full-text vector — GIN indexes the contents, not the value as a whole.
+A set-shaped column, such as an array, a JSONB document, or a full-text vector, holds many elements inside one value. GIN indexes the contents, not the value as a whole.
 
 ```mermaid
 graph TB
@@ -325,13 +329,13 @@ CREATE INDEX ... USING GIN (col) WITH (fastupdate = off);
 
 <!-- _class: lead -->
 
-# Part 4: BRIN — Block Range Index
+# Part 4: BRIN
 
 ---
 
-# BRIN: Tiny Indexes for Big Tables
+# How BRIN Works
 
-A BRIN index stores, for each **block range** (a contiguous set of pages), just the min and max values.
+A BRIN (Block Range Index) stores, for each **block range** (a contiguous set of pages), just the min and max values.
 
 ```
 Block 1-128: min=2024-01-01, max=2024-01-08
@@ -351,8 +355,8 @@ The index is **1/1000th the size of a btree**.
 ```mermaid
 graph TB
   Cond["Column naturally ordered by physical position?"]
-  Cond -->|"yes"| BRIN["BRIN — perfect"]
-  Cond -->|"no"| Btree["btree — still right"]
+  Cond -->|"yes"| BRIN["BRIN works well"]
+  Cond -->|"no"| Btree["btree still right"]
   classDef q fill:#fff3e0,stroke:#e65100,stroke-width:2px
   classDef good fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
   classDef ok fill:#e3f2fd,stroke:#1976d2
@@ -366,8 +370,8 @@ BRIN works when **physical position correlates with the indexed value**:
 - Partitioned tables sorted by partition key
 - Tables that have been `CLUSTER`ed on the column
 
-A column like `email` has no correlation with physical position — BRIN is useless.
-A column like `created_at` in an event log has perfect correlation — BRIN crushes it.
+A column like `email` has no correlation with physical position, so BRIN does not help.
+A column like `created_at` in an event log has near-perfect correlation, so BRIN works well.
 
 ---
 
@@ -393,7 +397,7 @@ WITH (pages_per_range = 128);  -- granularity tuning
 
 A BRIN index on a 1B-row time-series column is **3 MB**. It loads in microseconds. It costs nothing to maintain. It accelerates time-range queries that scan only the relevant blocks.
 
-For any time-series, log, or append-only table — BRIN should be the first thing you consider.
+BRIN should be the first index you consider for any time-series, log, or append-only table.
 
 <!--
 BRIN was added in PostgreSQL 9.5 (2016). It's underused. The size and maintenance cost are so low that adding one to every append-only table is almost free.
@@ -482,7 +486,7 @@ graph LR
 
 ---
 
-# A Real Multi-Column Pattern
+# A Multi-Column Pattern
 
 ```sql
 -- Query pattern: filter by tenant, then time-range
@@ -534,7 +538,7 @@ Total: ~25 minutes.
 - A surprising or beautiful result
 - Honest tradeoffs
 
-The class votes for the overall winner — small recognition, no grade impact.
+The class votes for the overall winner. The recognition is small and has no grade impact.
 
 </div>
 </div>
@@ -574,35 +578,25 @@ Reference: full spec in `projects/project3.md` (to be added).
 
 # Wrap-up
 
-You now have:
+- PostgreSQL ships six index types: btree, hash, GiST, SP-GiST, GIN, BRIN.
+- The column shape and the workload drive the choice among scalar, set, range, and append-only cases.
+- GiST supports range types and `EXCLUDE` constraints.
+- GIN serves arrays, JSONB, and full-text search.
+- BRIN suits huge append-only tables at about 1/1000 the size of btree.
+- Partial, expression, and multi-column indexes narrow an index to the queries that need it.
+- The leftmost-prefix rule governs which queries a multi-column index can serve.
 
-<div class="columns">
-<div>
-
-- The full PostgreSQL index landscape: btree, hash, GiST, GIN, BRIN
-- A decision flow: scalar / set / range / append-only
-- GiST for ranges and `EXCLUDE` constraints
-
-</div>
-<div>
-
-- GIN for arrays, JSONB, full-text
-- BRIN for huge append-only tables (1000× smaller than btree)
-- Partial, expression, and multi-column indexes
-- The leftmost-prefix rule
-
-</div>
-</div>
+<!--
+Flat recap of the six parts. If time is short after the Project 2 presentations, read the GIN and BRIN bullets aloud and skip the rest.
+-->
 
 ---
 
 # Friday: External Sorting
 
-We tackle the algorithm behind every `ORDER BY`, `GROUP BY`, and sort-merge join that doesn't fit in memory.
+Friday covers external sorting, the algorithm behind `ORDER BY`, `GROUP BY`, and sort-merge joins that do not fit in memory.
 
-By the end of Friday you can reason about why `work_mem` matters, when PostgreSQL spills to disk, and how a 1 TB sort runs on 16 GB of RAM.
-
-Read GMW Ch. 15.4 before class.
+Reading: Textbook §15.4, p. 723.
 
 ---
 
@@ -610,7 +604,7 @@ Read GMW Ch. 15.4 before class.
 
 Three exercises in your project repo:
 
-1. Pick one slow query from Project 2. Add an appropriate index (btree, GIN, or BRIN — your choice based on the column shape). Capture EXPLAIN ANALYZE before and after.
+1. Pick one slow query from Project 2. Add an appropriate index (btree, GIN, or BRIN, based on the column shape). Capture EXPLAIN ANALYZE before and after.
 2. Create a partial index on a frequently-filtered slice. Verify the optimizer uses it.
 3. Create an expression index for a `lower()` or `payload ->>` query. Verify with EXPLAIN.
 

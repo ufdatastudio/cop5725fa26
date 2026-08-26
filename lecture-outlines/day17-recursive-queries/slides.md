@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Wednesday, September 30, 2026
 
-`WITH RECURSIVE` — SQL meets the fixed-point operator
+`WITH RECURSIVE` and fixed-point iteration
 
 <!--
 This is the day SQL becomes Turing-complete (or close to it). Most students have never seen recursive CTEs even after multiple database courses. Today's job is making the shape concrete (base + recursive case + UNION ALL) and showing three different problem shapes that benefit.
@@ -30,11 +30,11 @@ The Hirn-Grust 2023 paper is the anchor — students should have read it Tuesday
 <div>
 
 Day 14 introduced CTEs.
-Day 15-16 introduced window functions.
+Days 15-16 covered window functions.
 
-Today we discover that a CTE can reference *itself* — and that small change makes SQL handle hierarchies, graph traversal, and iterative computation.
+Today covers recursive CTEs, where a CTE references itself. That change lets SQL handle hierarchies, graph traversal, and iterative computation.
 
-The PostgreSQL syntax is `WITH RECURSIVE`. The semantics are a fixed-point iteration that we will walk step by step.
+The PostgreSQL syntax is `WITH RECURSIVE`. The semantics are a fixed-point iteration that we walk through step by step.
 
 </div>
 <div>
@@ -72,7 +72,7 @@ graph LR
   class S,O,G,Seq,H step
 ```
 
-Reference: PostgreSQL docs [Ch. 7.8.2 Recursive Queries](https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-RECURSIVE).
+Reference: PostgreSQL docs [Ch. 7.8.2 Recursive Queries](https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-RECURSIVE). The Textbook treats recursion briefly in §10.2, p. 437; the PostgreSQL docs are the working reference.
 
 ---
 
@@ -140,7 +140,7 @@ graph TB
   class End done
 ```
 
-PostgreSQL calls the working set the *recursive term's input*. Each iteration replaces it with the rows produced in the previous iteration — not the cumulative result.
+PostgreSQL calls the working set the *recursive term's input*. Each iteration replaces it with the rows produced in the previous iteration, not the cumulative result.
 
 <!--
 The "working set replaces, doesn't accumulate" semantic is the source of subtle bugs. The recursive case sees only the *new* rows from the previous iteration. Reference cumulative results via a separate column (depth, path, etc.).
@@ -158,9 +158,9 @@ The "working set replaces, doesn't accumulate" semantic is the source of subtle 
 
 ```sql
 CREATE TABLE faculty_supervision (
-  fid           bigint PRIMARY KEY,
+  faculty_id           bigint PRIMARY KEY,
   name          text NOT NULL,
-  supervisor_id bigint REFERENCES faculty_supervision(fid)
+  supervisor_id bigint REFERENCES faculty_supervision(faculty_id)
 );
 
 INSERT INTO faculty_supervision VALUES
@@ -180,23 +180,23 @@ The org structure is a tree, encoded in the column.
 # The Recursive Query
 
 ```sql run
-CREATE OR REPLACE TABLE faculty_supervision(fid INT, name TEXT, supervisor_id INT);
+CREATE OR REPLACE TABLE faculty_supervision(faculty_id INT, name TEXT, supervisor_id INT);
 INSERT INTO faculty_supervision VALUES
   (1,'Dr. Provost',NULL), (2,'Dr. Dean',1), (3,'Dr. Chair',2),
   (4,'Dr. Grant',3), (5,'Dr. Sahni',3), (6,'Dr. Lee',2);
 -- @query
 WITH RECURSIVE chart AS (
   -- Base: roots (no supervisor)
-  SELECT fid, name, supervisor_id, 1 AS depth, name AS path
+  SELECT faculty_id, name, supervisor_id, 1 AS depth, name AS path
   FROM   faculty_supervision
   WHERE  supervisor_id IS NULL
 
   UNION ALL
 
   -- Recursive: direct reports of the previous level
-  SELECT f.fid, f.name, f.supervisor_id, c.depth + 1, c.path || ' > ' || f.name
+  SELECT f.faculty_id, f.name, f.supervisor_id, c.depth + 1, c.path || ' > ' || f.name
   FROM   faculty_supervision f
-  JOIN   chart c ON f.supervisor_id = c.fid
+  JOIN   chart c ON f.supervisor_id = c.faculty_id
 )
 SELECT depth, repeat('  ', depth - 1) || name AS indented, path
 FROM   chart
@@ -207,23 +207,23 @@ ORDER BY path;
 
 ---
 
-# Walk Through, Iteration by Iteration
+# Iteration by Iteration
 
 <div class="columns">
 <div>
 
 ### Iteration 0 (base)
-| fid | name | depth |
+| faculty_id | name | depth |
 |-----|------|-------|
 | 1 | Dr. Provost | 1 |
 
 ### Iteration 1
-| fid | name | depth |
+| faculty_id | name | depth |
 |-----|------|-------|
 | 2 | Dr. Dean | 2 |
 
 ### Iteration 2
-| fid | name | depth |
+| faculty_id | name | depth |
 |-----|------|-------|
 | 3 | Dr. Chair | 3 |
 | 6 | Dr. Lee | 3 |
@@ -232,7 +232,7 @@ ORDER BY path;
 <div>
 
 ### Iteration 3
-| fid | name | depth |
+| faculty_id | name | depth |
 |-----|------|-------|
 | 4 | Dr. Grant | 4 |
 | 5 | Dr. Sahni | 4 |
@@ -257,12 +257,12 @@ Walk this on the board. Students often try to compute the cumulative set in thei
 
 ---
 
-# Schema: Undirected Friendship
+# Undirected Friendship Schema
 
 ```sql
 CREATE TABLE friend (
-  sid_a bigint REFERENCES student(sid),
-  sid_b bigint REFERENCES student(sid),
+  sid_a bigint REFERENCES student(student_id),
+  sid_b bigint REFERENCES student(student_id),
   PRIMARY KEY (sid_a, sid_b),
   CHECK  (sid_a < sid_b)
 );
@@ -334,7 +334,7 @@ Cycle detection via path arrays is the standard pattern. Without it, friend-of-f
 </div>
 </div>
 
-PostgreSQL has graph-flavored extensions (`pg_graph`, `Apache AGE`) for the cases where recursive CTEs hit limits.
+Graph extensions such as [Apache AGE](https://age.apache.org/) cover the cases where recursive CTEs hit limits.
 
 ---
 
@@ -344,7 +344,7 @@ PostgreSQL has graph-flavored extensions (`pg_graph`, `Apache AGE`) for the case
 
 ---
 
-# generate_series: The Easy Way
+# generate_series
 
 ```sql
 SELECT generate_series(1, 10) AS n;
@@ -362,7 +362,7 @@ Reach for it before recursion. Most sequence problems do not need iteration.
 
 ---
 
-# Recursive Sequence: Fibonacci
+# Fibonacci
 
 ```sql run
 WITH RECURSIVE fib(n, a, b) AS (
@@ -377,7 +377,7 @@ The base case seeds `(n=1, a=0, b=1)`.
 The recursive case advances the pair, incrementing `n`.
 The loop stops when `n = 20`.
 
-This is the textbook example. Real data work rarely uses recursion for sequences — but the structure is the cleanest demo.
+Real data work rarely uses recursion for sequences. Fibonacci is the simplest demonstration of the loop structure.
 
 <!--
 Fibonacci is a tutorial example. The interesting recursive queries in production are graph and tree traversal, not arithmetic sequences. But the Fibonacci form is the simplest "show me the loop" demo.
@@ -403,34 +403,36 @@ Fibonacci is a tutorial example. The interesting recursive queries in production
 
 The paper's argument:
 
-- Standard SQL recursive CTEs are restricted to **linear recursion** (one self-reference per query)
-- This restriction was a 1990s decision to make compilation easier
-- Modern recursive workloads need **non-linear** recursion (multiple self-references)
+- `WITH RECURSIVE` computes a fixpoint. The result is the union of every iteration's output, and the recursive term sees only the previous iteration's rows.
+- Many iterative algorithms need only the final state, and accumulating every intermediate row costs time and space.
+- The authors propose an iteration form that replaces the working table each round instead of accumulating it.
 
 </div>
 <div>
 
-### What PostgreSQL adds
+### Restrictions in PostgreSQL
 
-PostgreSQL's `WITH RECURSIVE` is fully standard. The paper proposes extensions that PostgreSQL could add to handle:
+The recursive term of `WITH RECURSIVE` ([Ch. 7.8](https://www.postgresql.org/docs/current/queries-with.html)):
 
-- Mutual recursion (two CTEs referencing each other)
-- Recursion with `UNION` (deduplicating) rather than `UNION ALL`
-- Negation in the recursive case
+- may reference the CTE only once (linear recursion),
+- may not apply aggregates or `GROUP BY` to that reference,
+- does not support mutual recursion between CTEs.
 
 </div>
 </div>
+
+<!--
+Keep the summary honest to the paper: the critique is aimed at the accumulate-everything fixpoint semantics, not at UNION vs UNION ALL (PostgreSQL supports both in recursive CTEs). Students should have read the paper before class.
+-->
 
 ---
 
 # What the Paper Means for Us
 
+`WITH RECURSIVE` covers the recursive queries in this course and most production schemas.
+
 <div class="columns">
 <div>
-
-### Today
-
-For most real database work, `WITH RECURSIVE` as-is handles 95% of cases — trees, simple graph traversal, sequences.
 
 ### When the standard form is enough
 
@@ -441,57 +443,40 @@ For most real database work, `WITH RECURSIVE` as-is handles 95% of cases — tre
 </div>
 <div>
 
-### When you hit walls
+### When you hit limits
 
-- Knowledge-graph queries with negation
-- Inferring transitive properties beyond simple reachability
+- Algorithms that update state each round (PageRank, weighted shortest paths)
 - Mutual recursion (A depends on B, B depends on A)
+- Aggregation inside the loop
 
-The paper offers a research agenda; for now, you fall back to materializing intermediates or moving the computation out of SQL.
+The workaround today is materializing intermediates or moving the computation out of SQL.
 
 </div>
 </div>
 
 <!--
-Take 10 minutes on this slide. The paper is the most accessible CIDR paper of 2023. Students who understand its argument leave with a deeper grasp of what SQL is — and isn't — built for.
+Take 10 minutes on this slide and the previous one; the paper is short and readable. The discussion goal is for students to articulate what the fixpoint semantics can and cannot express.
 -->
 
 ---
 
 # Wrap-up
 
-You now have:
-
-<div class="columns">
-<div>
-
-- The shape of `WITH RECURSIVE`: base case + recursive case + UNION ALL
-- Three problem shapes: hierarchies, graphs, sequences
-- Path arrays for cycle detection
-
-</div>
-<div>
-
-- The PostgreSQL-vs-standard view on linear recursion
-- The Hirn-Grust 2023 critique of standard SQL's recursive restrictions
-- A working tool for the recursive shape of real data
-
-</div>
-</div>
+- `WITH RECURSIVE` combines a base case, a recursive case, and `UNION ALL`; iteration stops when no new rows appear.
+- The recursive case sees only the previous iteration's rows, not the cumulative result.
+- Hierarchies, graph traversal, and sequence generation are the three problem shapes; path arrays prevent cycles.
+- `generate_series` handles most sequence needs without recursion.
+- Hirn and Grust critique the accumulate-everything fixpoint semantics and the restrictions on the recursive term.
 
 ---
 
 # Friday: Views, Constraints, Triggers + Quiz 2
 
-We close Section 2 with three production features:
+Topic: views and materialized views, EXCLUDE and DEFERRABLE constraints, and triggers. Section 2 closes Friday.
 
-- `CREATE VIEW` (and the materialized form)
-- `EXCLUDE` constraints, `DEFERRABLE` foreign keys
-- Triggers — and when they are the wrong answer
+Quiz 2 runs in the last 10 minutes.
 
-Quiz 2 in the last 10 minutes closes Section 2.
-
-Read PostgreSQL docs Ch. 5.4, Ch. 38, Ch. 40 before class.
+Reading: Textbook §8.1-8.2, p. 341 and §7.1-7.2, §7.5, p. 311, plus PostgreSQL docs on [CREATE VIEW](https://www.postgresql.org/docs/current/sql-createview.html), [Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html), and [Triggers](https://www.postgresql.org/docs/current/triggers.html).
 
 ---
 

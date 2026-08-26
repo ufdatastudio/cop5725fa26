@@ -1516,7 +1516,7 @@ The 2024 Stonebraker & Pavlo paper is the single best optional read for the cour
 - How non-atomic types stress (and refine) the relational model
 - First look at SQL DDL
 
-Read: GMW Ch. 2.1-2.3 before class.
+Read: Textbook §2.1-2.3 (pp. 17-37) before class.
 
 ---
 

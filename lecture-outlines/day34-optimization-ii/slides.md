@@ -23,16 +23,16 @@ Closes Section 5. Last class before Exam 2 next Wednesday. Pace 50 min, with the
 
 ---
 
-# Where We Are
+# Recap
 
 <div class="columns-left-wide">
 <div>
 
-Monday's lecture ended on a question: the optimizer **must pick** among many plans, but how does it know which one is cheap?
+Monday covered algebraic equivalences and the plan space. The optimizer must pick among many plans without running them.
 
-Today: statistics, cost estimation, and the algorithm Pat Selinger wrote in 1979 that still runs inside PostgreSQL today.
+Today covers statistics, cost estimation, and the algorithm Pat Selinger published in 1979, which still runs inside PostgreSQL.
 
-Then a sobering modern paper: **Leis 2015** — query optimizers' cost models are surprisingly fragile, and 30+ years of improvement has not fixed the core problem.
+We then read Leis et al. 2015, which measured how fragile optimizer cost models remain after 30+ years of improvement.
 
 </div>
 <div>
@@ -51,6 +51,10 @@ graph TB
 </div>
 </div>
 
+<!--
+Two-sentence recap. Monday established the plan space; today supplies the cost side. Frame Leis as the empirical check on everything in Parts 1-3.
+-->
+
 ---
 
 # Today's Roadmap
@@ -66,8 +70,10 @@ graph LR
 ```
 
 Two anchor papers today:
-- Selinger et al. *Access Path Selection* — [Local PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/selinger1979.pdf)
-- Leis et al. *How Good Are Query Optimizers, Really?* — [Local PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/leis2015.pdf)
+- Selinger et al. *Access Path Selection* ([Local PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/selinger1979.pdf))
+- Leis et al. *How Good Are Query Optimizers, Really?* ([Local PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/leis2015.pdf))
+
+Textbook background: cost estimation is §16.4, p. 792; cost-based plan selection is §16.5, p. 803; join ordering is §16.6, p. 814.
 
 ---
 
@@ -97,7 +103,7 @@ PostgreSQL also runs `autovacuum` in the background, which calls `ANALYZE` autom
 
 ---
 
-# pg_stats — The Per-Column Picture
+# Per-Column Statistics in pg_stats
 
 ```sql
 SELECT
@@ -139,17 +145,17 @@ For a query `WHERE gpa > 3.5`:
 - Find which bucket(s) overlap (3.4-3.6, 3.6-3.8, 3.8-4.0)
 - Estimate the fraction of rows above 3.5
 
-This is **equi-depth histograms**. Cheap to compute, surprisingly accurate.
+These are **equi-depth histograms**. They are cheap to compute and accurate for most range predicates.
 
 <!--
-Equi-depth is the default histogram strategy. Other engines support multi-dimensional, equi-width, or sample-based histograms. PostgreSQL's choice is a pragmatic compromise — accurate for most queries, cheap to maintain.
+Equi-depth is the default histogram strategy. Other engines support multi-dimensional, equi-width, or sample-based histograms. PostgreSQL's choice is a pragmatic compromise: accurate for most queries and cheap to maintain.
 -->
 
 ---
 
 # Most Common Values
 
-For columns with a few **very** frequent values, the histogram is supplemented by an MCV list:
+For columns with a few very frequent values, the histogram is supplemented by an MCV list:
 
 ```
 most_common_vals  = {'CS', 'EE', 'Math'}
@@ -219,9 +225,11 @@ For `WHERE x > c`:
 - Interpolate within the bucket
 
 For `WHERE x AND y` (multiple predicates):
-- Multiply selectivities (assumes **independence** — wrong but pragmatic)
+- Multiply selectivities, which assumes **independence** (wrong but pragmatic)
 
-The independence assumption is where most cost errors creep in. We see how badly in Part 4.
+The independence assumption is where most cost errors creep in. Part 4 measures how badly.
+
+The textbook derives these estimates in §16.4.3, p. 794 (selections) and §16.4.4, p. 797 (joins).
 
 ---
 
@@ -237,7 +245,7 @@ Filter cid = 'COP5725'  → 50,000 × 0.005 = 250 rows
 ```
 
 Four operators, four selectivity estimates. Each one might be off by 2-3×.
-Compounded: the final estimate can be **off by 1000×**.
+After compounding, the final estimate can be **off by 1000×**.
 
 This is the **cardinality-estimation problem**. It is the central failing of every modern query optimizer.
 
@@ -329,11 +337,13 @@ For each subset, the cheapest plan is kept **per interesting order**.
 
 The whole thing runs in O(3^n) time with O(2^n) memory. Manageable for joins up to 12-15 relations.
 
+The textbook presents this dynamic program in §16.6.4, p. 819.
+
 ---
 
 <!-- _class: lead -->
 
-# Part 4: Leis 2015 — When Optimizers Fail
+# Part 4: Leis 2015
 
 ---
 
@@ -345,7 +355,7 @@ The whole thing runs in O(3^n) time with O(2^n) memory. Manageable for joins up 
 
 [Local PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/leis2015.pdf)
 
-A systematic, brutally honest study of cardinality estimation in PostgreSQL, MySQL, SQL Server, and several other engines.
+A systematic study of cardinality estimation in PostgreSQL, MySQL, SQL Server, and several other engines.
 
 The IMDb-based **Join Order Benchmark (JOB)** they introduced is now the standard for evaluating optimizers.
 
@@ -370,8 +380,6 @@ graph LR
 ```
 
 For each operator in each plan, they compared the optimizer's estimated cardinality to the actual cardinality.
-
-The findings were sobering.
 
 ---
 
@@ -433,20 +441,20 @@ The optimizer needs to estimate:
 
 The independence assumption: $0.2 \times 0.6 \times \frac{1}{\text{distinct keys}}$.
 
-In reality: customers in Europe often have **different shipping patterns**. The two predicates correlate. Estimate off by 10×; plan suboptimal.
+In reality, customers in Europe often have different shipping patterns. The two predicates correlate, the estimate lands off by 10×, and the plan is suboptimal.
 
 ---
 
 # Modern Responses
 
-The Leis paper is gloomy but has spawned modern responses:
+Several research lines respond to the Leis findings:
 
 - **Sketches** for join cardinality (Cai et al. 2018, OmniSketch SIGMOD 2024)
 - **Learned cardinality estimation** (NeuroCard 2020, FLAT 2021, Deep Bayesian methods)
-- **Adaptive query processing** — re-plan after seeing partial results
-- **Pessimistic cardinality** (Cai 2024 — assume worst case among plausible distributions)
+- **Adaptive query processing**, which re-plans after seeing partial results
+- **Pessimistic cardinality** (Cai 2024), which assumes the worst case among plausible distributions
 
-> The 2024-2025 SIGMOD papers continue this thread. Cardinality is the largest open problem in databases.
+> The 2024-2025 SIGMOD papers continue this thread. Cardinality estimation remains open.
 
 <!--
 Mention the Stonebraker + Pavlo 2024 paper "What Goes Around Comes Around... And Around" — they highlight cardinality estimation as one of the field's enduring open problems. Modern ML approaches haven't fully fixed it; the engineering community is still iterating.
@@ -462,28 +470,16 @@ Mention the Stonebraker + Pavlo 2024 paper "What Goes Around Comes Around... And
 
 # Section 5 Wrap
 
-You can now:
-
-<div class="columns">
-<div>
-
 - Pick the right join algorithm (Week 12)
 - Read a Volcano-style plan tree
 - Distinguish pipelined and blocking operators
 - Understand vectorized execution
-
-</div>
-<div>
-
 - State the RA equivalence rules the optimizer uses
 - Reason about plan space and DP-based search
 - Read pg_stats and predict optimizer behavior
 - Diagnose when the planner picked poorly
 
-</div>
-</div>
-
-This is the analytical-engineering toolkit. Section 6 next week opens transactions.
+Section 6 opens transactions on Monday.
 
 ---
 
@@ -508,7 +504,7 @@ Tag and push to your `cop5725fa26-project` repo.
 
 - **Mon Nov 16:** small-group breakouts
 - **Fri Nov 20:** winners to class
-- (Exam 2 on Wed Nov 18 — practice packet released today)
+- (Exam 2 on Wed Nov 18; practice packet released today)
 
 </div>
 </div>
@@ -517,7 +513,7 @@ This is the largest project before the capstone. The optimization material today
 
 ---
 
-# Exam 2 — One Week Out
+# Exam 2 Next Wednesday
 
 <div class="columns">
 <div>
@@ -574,34 +570,24 @@ Section 6 (Transactions / Concurrency / Recovery) opens Monday.
 
 # Wrap-up
 
-You now have:
+- PostgreSQL keeps per-column statistics in pg_stats, including histograms and MCVs
+- The cost model is a weighted sum of I/O and CPU coefficients
+- Selectivity estimation multiplies per-predicate fractions and assumes independence
+- Selinger's dynamic program picks join orders subset by subset (Textbook §16.6.4, p. 819)
+- Leis 2015 measured large join-cardinality errors in every engine tested
+- Join order matters more than cost-model tuning
+- Cardinality estimation remains the central open problem in optimization
 
-<div class="columns">
-<div>
-
-- PostgreSQL statistics: pg_stats, histograms, MCVs
-- The cost model coefficients
-- Selectivity estimation and the independence assumption
-
-</div>
-<div>
-
-- Selinger's DP optimizer
-- Leis 2015's findings on cardinality errors
-- Why join order matters more than cost-model tuning
-- The cardinality estimation problem as the central open issue
-
-</div>
-</div>
+<!--
+Single flat takeaway list, one line per part of the lecture. Hit the Selinger and Leis lines hardest; they anchor the exam questions on this material.
+-->
 
 ---
 
 # Practice This Weekend
 
-Two exercises:
-
-1. Work through the Exam 2 practice packet without notes. Check yourself against the solutions.
-2. For your project: pick one query whose plan you can't explain. Run `EXPLAIN (ANALYZE, BUFFERS)`. Run `ANALYZE` on the tables. Run the query again. Did the plan change? Capture both.
+- Work through the Exam 2 practice packet without notes. Check yourself against the solutions.
+- For your project, pick one query whose plan you can't explain. Run `EXPLAIN (ANALYZE, BUFFERS)`. Run `ANALYZE` on the tables. Run the query again. Did the plan change? Capture both.
 
 Push to your `cop5725fa26-project` repo before 8:30 AM Mon Nov 16.
 

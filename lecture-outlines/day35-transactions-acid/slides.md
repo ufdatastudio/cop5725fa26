@@ -23,20 +23,16 @@ Section 6 opens. Today is the conceptual introduction; Friday is the algorithmic
 
 ---
 
-# Where We Are
+# Recap
 
 <div class="columns-left-wide">
 <div>
 
-For five sections you have written queries assuming **you are alone** with the database.
+Sections 1-5 treated queries as if each ran alone against the database. Real systems run hundreds or thousands of transactions against the same tables at once.
 
-You are not. Real systems have hundreds or thousands of concurrent users hammering the same tables.
+Day 3 introduced transactions and ACID at the definition level. Section 6 develops the theory and the enforcement machinery.
 
-Section 6 is about how databases keep that chaos coherent.
-
-Today: the contract (ACID).
-Friday: the algorithm (2PL).
-Week 16: the cleanup (MVCC + Recovery).
+Today covers the contract (ACID) and serializability. Friday covers the enforcement algorithm (2PL). Week 16 covers MVCC and recovery.
 
 </div>
 <div>
@@ -80,7 +76,7 @@ graph LR
   class P milestone
 ```
 
-Reference: GMW Ch. 18.1-18.3; PostgreSQL docs [Ch. 13 Concurrency Control](https://www.postgresql.org/docs/current/mvcc.html).
+Reference: Textbook §18.1-18.2, p. 884-895 (schedules and conflict-serializability) and §1.2.4, p. 8-9 (ACID); PostgreSQL docs [Ch. 13 Concurrency Control](https://www.postgresql.org/docs/current/mvcc.html).
 
 ---
 
@@ -140,7 +136,7 @@ graph LR
 
 `COMMIT` makes changes permanent.
 `ROLLBACK` (or any error) undoes everything.
-Until commit, **no other transaction sees the changes** (with caveats — see Wednesday for isolation levels).
+Until commit, **no other transaction sees the changes**, with caveats that the isolation levels in Part 4 make precise.
 
 ---
 
@@ -154,8 +150,6 @@ Without transactions, programmers would have to write:
 - Their own consistency-checking code
 
 The transaction abstraction **moves all of that into the database**. Application code declares the boundaries (BEGIN, COMMIT); the database handles the rest.
-
-This is the single most useful abstraction databases provide.
 
 <!--
 The "without transactions you'd have to write it all yourself" framing is the right way to motivate why this section matters. Modern frameworks (Django ORM, ActiveRecord, etc.) hide transactions but still rely on them.
@@ -190,7 +184,7 @@ graph TB
 
 Coined by Theo Härder and Andreas Reuter (1983), based on Jim Gray's earlier transaction-concept work.
 
-Four properties every transaction must guarantee.
+Four properties every transaction must guarantee. The course's working definitions are Textbook §1.2.4, p. 8-9, first seen on Day 3.
 
 ---
 
@@ -254,7 +248,7 @@ There are several **isolation levels** trading safety for performance:
 | Read Uncommitted | dirty reads (rare in practice) |
 | Read Committed (PG default) | non-repeatable reads + phantoms |
 | Repeatable Read | phantoms |
-| Serializable | nothing — the gold standard |
+| Serializable | nothing |
 
 Reference: [PostgreSQL Ch. 13.2 Transaction Isolation](https://www.postgresql.org/docs/current/transaction-iso.html).
 
@@ -262,7 +256,7 @@ Reference: [PostgreSQL Ch. 13.2 Transaction Isolation](https://www.postgresql.or
 
 # Durability
 
-> Once a transaction commits, its changes survive crashes — power loss, kernel panic, hardware failure.
+> Once a transaction commits, its changes survive crashes (power loss, kernel panic, hardware failure).
 
 The database achieves durability with:
 - **WAL** (write-ahead log): committed changes are recorded to disk **before** COMMIT returns
@@ -377,6 +371,7 @@ Edges = directed, from T_i to T_j if some operation of T_i conflicts with (and p
 ```
 
 A schedule is **conflict serializable iff its conflict graph is acyclic**.
+The textbook calls this the precedence graph (§18.2.2, p. 892).
 
 ```mermaid
 graph LR
@@ -397,13 +392,13 @@ The dashed edge (T3 → T1) creates a cycle. The schedule is **not** conflict se
 # Build a Conflict Graph
 
 ```
-T1: r(A)     w(B)
-T2:      w(A) r(B)
+T1: r(A)        w(B)
+T2:       w(A)        r(B)
 ```
 
 Conflicts:
-- T1's `r(A)` conflicts with T2's `w(A)` → edge T1 → T2 (T1 read first)
-- T2's `r(B)` conflicts with T1's `w(B)` → edge T2 → T1? Let me check order: T1 wrote B, T2 reads B. T1 wrote first → edge T1 → T2
+- T1's `r(A)` precedes T2's `w(A)`, so add edge T1 → T2
+- T1's `w(B)` precedes T2's `r(B)`, so add edge T1 → T2 again
 
 ```mermaid
 graph LR
@@ -412,28 +407,24 @@ graph LR
   class T1,T2 tx
 ```
 
-Single edge, no cycle. **Conflict serializable** — equivalent to running T1 then T2.
+Single edge, no cycle. The schedule is **conflict serializable**, equivalent to running T1 then T2.
+
+<!--
+Walk both conflict pairs slowly. Both point the same direction (T1 before T2), so the graph has one edge and the serial order is T1, T2.
+-->
 
 ---
 
-# Build a Conflict Graph: Cycle
-
-```
-T1: r(A)     w(B)
-T2:      w(A)
-T2:                   r(B)
-```
-
-Hmm let me make a clearer cycle:
+# A Conflict Graph with a Cycle
 
 ```
 T1: r(A)              w(B)
-T2:      w(A)  r(B)
+T2:       w(A)  r(B)
 ```
 
 Conflicts:
-- T1's `r(A)` vs T2's `w(A)` → T1 → T2
-- T2's `r(B)` vs T1's `w(B)`: T2 reads before T1 writes → T2 → T1
+- T1's `r(A)` precedes T2's `w(A)`, so add edge T1 → T2
+- T2's `r(B)` precedes T1's `w(B)`, so add edge T2 → T1
 
 ```mermaid
 graph LR
@@ -444,7 +435,11 @@ graph LR
   class T1,T2 bad
 ```
 
-Cycle → **not** conflict serializable. The schedule is incorrect.
+The two edges form a cycle, so the schedule is **not** conflict serializable. No serial order of T1 and T2 produces the same result.
+
+<!--
+Same shape as the previous slide but the B conflict now points the other way. This is the minimal two-transaction cycle; a scheduler must prevent one of the two edges.
+-->
 
 ---
 
@@ -454,7 +449,7 @@ Cycle → **not** conflict serializable. The schedule is incorrect.
 
 ---
 
-# Four Anomalies, Briefly
+# Four Anomalies
 
 ```mermaid
 graph TB
@@ -500,7 +495,7 @@ Both read 100. Both compute new values. T1 writes 200; T2 overwrites with 150.
 
 **T1's update is lost.** The 100→200 step never persists.
 
-**Blocked by:** all isolation levels in PostgreSQL via MVCC + retry, or by explicit `SELECT ... FOR UPDATE`.
+A single-statement `UPDATE ... SET balance = balance + 100` avoids this under any PostgreSQL level, because the second writer waits and re-reads the row. A read-modify-write split across statements needs `SELECT ... FOR UPDATE`, or `REPEATABLE READ` (where the second writer aborts with a serialization error).
 
 ---
 
@@ -538,13 +533,17 @@ T1 saw a different set of rows the second time, despite the same query.
 | Level | Dirty Read | Lost Update | Non-Repeatable | Phantom |
 |-------|-----------|-------------|----------------|---------|
 | Read Uncommitted | yes | yes | yes | yes |
-| Read Committed | no | no | yes | yes |
+| Read Committed | no | yes (across statements) | yes | yes |
 | Repeatable Read | no | no | no | (yes in std SQL; **no** in PG) |
 | Serializable | no | no | no | no |
 
-PostgreSQL's `REPEATABLE READ` is **stronger than standard SQL** — it uses snapshot isolation, which incidentally blocks phantoms too.
+PostgreSQL's `REPEATABLE READ` is **stronger than standard SQL**. It uses snapshot isolation, which incidentally blocks phantoms too.
 
-PostgreSQL's `SERIALIZABLE` is the strictest: it's SSI (Serializable Snapshot Isolation), which catches the few anomalies snapshot isolation alone allows.
+PostgreSQL's `SERIALIZABLE` is the strictest. It implements SSI (Serializable Snapshot Isolation), which catches the few anomalies snapshot isolation alone allows.
+
+<!--
+The Read Committed lost-update cell is the subtle one. A single UPDATE statement re-reads the row after the blocking writer commits, so the increment survives; a SELECT-then-UPDATE across statements can still lose the update. That distinction came up on the previous slide.
+-->
 
 ---
 
@@ -578,7 +577,7 @@ PostgreSQL's `SERIALIZABLE` is the strictest: it's SSI (Serializable Snapshot Is
 ### Reminders
 
 - Exam 2 Wednesday Nov 18
-- Final Project released soon — Mon Nov 30
+- Final Project released Mon Nov 30
 - Thanksgiving break Nov 23-28
 
 </div>
@@ -588,30 +587,22 @@ PostgreSQL's `SERIALIZABLE` is the strictest: it's SSI (Serializable Snapshot Is
 
 # Wrap-up
 
-You now have:
+- A transaction packages operations between BEGIN and COMMIT or ROLLBACK
+- ACID names the four guarantees: atomicity, consistency, isolation, durability (Textbook §1.2.4, p. 8-9)
+- A schedule interleaves operations; conflict serializability makes it equivalent to some serial order
+- An acyclic conflict graph proves a schedule conflict serializable (Textbook §18.2.2, p. 892)
+- Dirty reads, lost updates, non-repeatable reads, and phantoms are the four anomaly types
+- PostgreSQL's isolation levels decide which anomalies a transaction can observe
 
-<div class="columns">
-<div>
+Friday covers enforcement by locking (2PL). Reading: Textbook §18.3, p. 897.
 
-- The transaction concept: BEGIN, COMMIT, ROLLBACK
-- ACID: atomicity, consistency, isolation, durability
-- Schedules and conflict serializability
-
-</div>
-<div>
-
-- The four anomaly types
-- The PostgreSQL isolation level hierarchy
-- How a conflict graph proves a schedule's safety
-
-</div>
-</div>
-
-Friday: how PostgreSQL actually enforces serializability. The answer is locks.
+<!--
+Single flat takeaway list. The conflict-graph line and the isolation-level table are the two exam-relevant pieces.
+-->
 
 ---
 
-# Wednesday: Exam 2
+# Exam 2 Wednesday
 
 <div class="columns">
 <div>
@@ -639,10 +630,8 @@ Bring caffeine. Be on time. The exam starts at 8:30 sharp.
 
 # Practice Before Wednesday
 
-Two exercises:
-
-1. Take a simple transaction in your project (e.g., insert a row, update a related row). Try running it with `BEGIN; ... ROLLBACK;`. Verify nothing persists.
-2. Work the Exam 2 practice packet, especially problems on cost estimation and join algorithms.
+- Take a simple transaction in your project (e.g., insert a row, update a related row). Run it with `BEGIN; ... ROLLBACK;`. Verify nothing persists.
+- Work the Exam 2 practice packet, especially problems on cost estimation and join algorithms.
 
 Push to your `cop5725fa26-project` repo before 8:30 AM Wed Nov 18.
 

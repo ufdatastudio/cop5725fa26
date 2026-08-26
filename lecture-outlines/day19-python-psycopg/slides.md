@@ -18,7 +18,7 @@ Monday, October 5, 2026
 The bridge between SQL and your application
 
 <!--
-First class of Section 3. Many students arrive familiar with psycopg2 from internships; today centers on psycopg3 (the modern version). Pace 50 min, with parameterized queries getting real time because the SQL-injection demo lands the lesson permanently.
+First class of Section 3. Many students arrive familiar with psycopg2 from internships; today centers on psycopg 3. Pace 50 min, and give parameterized queries real time; the SQL-injection demo is the part students remember.
 -->
 
 ---
@@ -28,14 +28,11 @@ First class of Section 3. Many students arrive familiar with psycopg2 from inter
 <div class="columns-left-wide">
 <div>
 
-Three weeks of SQL. You write queries fluently.
+Sections 1-2 covered three weeks of SQL, run in `psql` and DuckDB shells.
 
-But you've been running them in `psql` and DuckDB shells.
-Real systems live behind application code.
-The application is usually written in Python (or Java, or Go, or…).
+Real systems run SQL from application code, and the application is usually written in Python (or Java, or Go).
 
-Today: the bridge.
-Wednesday: a different bridge — DuckDB for analytical work.
+Today covers connecting Python to PostgreSQL with psycopg. Wednesday covers DuckDB for analytical work.
 
 </div>
 <div>
@@ -132,14 +129,14 @@ The "SQL is faster than your for-loop" principle. The database engine, the optim
 
 ### Calling external services
 
-Hitting an API, scraping HTML, running a model — the database can't do these.
+APIs, HTML scraping, and model inference live outside the database.
 
 </div>
 <div>
 
 ### Orchestrating pipelines
 
-Reading a CSV, transforming, writing to multiple tables — Python is the glue.
+Python glues together CSV reads, transformations, and multi-table writes.
 
 </div>
 <div>
@@ -151,7 +148,7 @@ Anything that needs branching, loops, or libraries the database lacks.
 </div>
 </div>
 
-The rest of the lecture is about the seam — moving SQL results into Python cleanly and pushing Python results back without losing safety.
+The rest of the lecture covers moving SQL results into Python cleanly and pushing Python results back safely.
 
 ---
 
@@ -172,7 +169,7 @@ pip install psycopg2-binary
 ```
 
 We use **psycopg 3** (`import psycopg`).
-The API is similar to psycopg2 but cleaner and faster.
+The API resembles psycopg2; the speaker notes list the differences.
 
 Reference: [Installation](https://www.psycopg.org/psycopg3/docs/basic/install.html).
 
@@ -199,7 +196,7 @@ Three context managers:
 2. The cursor
 3. (The iteration, automatically)
 
-Connections and cursors are closed deterministically — no leaked resources.
+Connections and cursors close deterministically, so no resources leak.
 
 ---
 
@@ -207,14 +204,14 @@ Connections and cursors are closed deterministically — no leaked resources.
 
 ```python
 # Default: tuples
-cur.execute("SELECT sid, name FROM student LIMIT 3")
+cur.execute("SELECT student_id, name FROM student LIMIT 3")
 cur.fetchone()                # (1, 'Ada')
 
 # Dict rows
 from psycopg.rows import dict_row
 cur = conn.cursor(row_factory=dict_row)
-cur.execute("SELECT sid, name FROM student LIMIT 3")
-cur.fetchone()                # {'sid': 1, 'name': 'Ada'}
+cur.execute("SELECT student_id, name FROM student LIMIT 3")
+cur.fetchone()                # {'student_id': 1, 'name': 'Ada'}
 
 # Class rows
 from dataclasses import dataclass
@@ -222,12 +219,12 @@ from psycopg.rows import class_row
 
 @dataclass
 class Student:
-    sid: int
+    student_id: int
     name: str
 
 cur = conn.cursor(row_factory=class_row(Student))
-cur.execute("SELECT sid, name FROM student LIMIT 3")
-cur.fetchone()                # Student(sid=1, name='Ada')
+cur.execute("SELECT student_id, name FROM student LIMIT 3")
+cur.fetchone()                # Student(student_id=1, name='Ada')
 ```
 
 Reference: [Row factories](https://www.psycopg.org/psycopg3/docs/api/rows.html).
@@ -275,14 +272,14 @@ The credentials-in-code anti-pattern is the most common SQL-related security inc
 ```python
 # DANGER: string concatenation
 sid_input = input("Student ID: ")
-query = f"SELECT name FROM student WHERE sid = {sid_input}"
+query = f"SELECT name FROM student WHERE student_id = {sid_input}"
 cur.execute(query)
 ```
 
 If the input is `1`, this works.
-If the input is `1; DROP TABLE student; --`, this also works — and the table is gone.
+If the input is `1; DROP TABLE student; --`, this also works, and the table is gone.
 
-This is **SQL injection**. The original 2002 [Bobby Tables xkcd](https://xkcd.com/327/) still happens every week somewhere on the internet.
+This is **SQL injection**. The [Bobby Tables xkcd](https://xkcd.com/327/) scenario remains a live attack against production systems.
 
 ---
 
@@ -290,22 +287,20 @@ This is **SQL injection**. The original 2002 [Bobby Tables xkcd](https://xkcd.co
 
 ```python
 cur.execute(
-    "SELECT name FROM student WHERE sid = %s",
+    "SELECT name FROM student WHERE student_id = %s",
     (sid_input,)
 )
 ```
 
-Two changes:
-- `%s` is a **placeholder**, not a Python format string
-- The values are passed as a separate tuple
+`%s` is a **placeholder**, not a Python format string, and the values pass as a separate tuple.
 
 psycopg sends the SQL and the parameters separately to PostgreSQL, which never sees the value as code.
 
-This is called a **parameterized** or **prepared** query.
+This is called a **parameterized** query.
 Reference: [Passing parameters to SQL queries](https://www.psycopg.org/psycopg3/docs/basic/params.html).
 
 <!--
-The %s in psycopg is NOT the Python % operator. It's a placeholder in the SQL string that psycopg fills server-side. Even %s for strings — the database engine inserts proper quotes, escapes, and quoting. You can't be in danger if you can't accidentally interpolate.
+The %s in psycopg is NOT the Python % operator. It is a placeholder in the SQL string, and %s is used for every type, including strings. psycopg sends values out-of-band, so the server never parses them as SQL.
 -->
 
 ---
@@ -325,7 +320,7 @@ For dynamic identifiers, use `psycopg.sql`:
 from psycopg import sql
 
 cur.execute(
-    sql.SQL("SELECT * FROM {table} WHERE sid = %s")
+    sql.SQL("SELECT * FROM {table} WHERE student_id = %s")
        .format(table=sql.Identifier("student")),
     (1,)
 )
@@ -347,14 +342,14 @@ cur.execute(
 with psycopg.connect("...") as conn:
     with conn.cursor() as cur:
         cur.execute("UPDATE faculty SET salary = salary * 1.05 WHERE dname = 'CS'")
-        # No commit yet — changes are visible only inside this transaction
+        # No commit yet; changes are visible only inside this transaction
     # cursor closed
-# connection closed — commit happens automatically on clean exit
+# clean exit: commit, then close the connection
 ```
 
-By default, **psycopg 3 opens a transaction on the first statement**. The context manager commits on success, rolls back on exception.
+By default, **psycopg 3 opens a transaction on the first statement**. The context manager commits on success and rolls back on exception.
 
-This differs from psycopg2's `autocommit=True` default behavior. Read the [Transaction docs](https://www.psycopg.org/psycopg3/docs/basic/transactions.html).
+psycopg2 handled `with conn:` differently: it committed but left the connection open. Read the [Transaction docs](https://www.psycopg.org/psycopg3/docs/basic/transactions.html).
 
 ---
 
@@ -372,9 +367,7 @@ with psycopg.connect("...") as conn:
         raise
 ```
 
-Use explicit `commit()` / `rollback()` when:
-- You need to commit a partial batch
-- You want to handle exceptions yourself
+Use explicit `commit()` and `rollback()` to commit partial batches or to handle exceptions yourself.
 
 ```python
 # Or, finer-grained: nested transactions via SAVEPOINT
@@ -422,7 +415,7 @@ One function call turns a query result into a DataFrame.
 
 ```python
 new_records = pd.DataFrame({
-    "sid": [101, 102],
+    "student_id": [101, 102],
     "name": ["Test1", "Test2"],
     "gpa": [3.5, 3.7]
 })
@@ -476,12 +469,12 @@ plt.savefig("major-gpa.png", dpi=150)
 The SQL does the aggregation. Python does the plot. The split is on purpose.
 
 <!--
-The 80/20 rule of database work: the database aggregates, the client paints. Modern visualization libraries (matplotlib, seaborn, plotly) consume DataFrames as their natural input.
+The database aggregates, the client paints. Modern visualization libraries (matplotlib, seaborn, plotly) consume DataFrames as their natural input.
 -->
 
 ---
 
-# Real Dataset Demo: Pagila
+# Pagila Demo
 
 ```python
 import pandas as pd
@@ -504,42 +497,26 @@ with psycopg.connect("postgresql://student:student@localhost/pagila") as conn:
 top_actors.plot.barh(x="name", y="films", legend=False)
 ```
 
-Pagila is the canonical PostgreSQL sample database (DVD rental).
+Pagila is a widely used PostgreSQL sample database (DVD rental), a real schema with non-trivial joins.
 Install: [github.com/devrimgunduz/pagila](https://github.com/devrimgunduz/pagila).
-Used here as a real schema with non-trivial joins.
 
 ---
 
 # Wrap-up
 
-You now have:
-
-<div class="columns">
-<div>
-
-- The three-line psycopg pattern (connection / cursor / iterate)
-- Cursor row factories: tuple, dict, dataclass
-- Parameterized queries and the `psycopg.sql` module for identifiers
-
-</div>
-<div>
-
-- Transactions via context managers (auto-rollback on exception)
-- `pandas.read_sql_query` and `DataFrame.to_sql`
-- The "aggregate server-side, plot client-side" rule
-
-</div>
-</div>
+- Push work to the server when SQL can express it; Python handles external services, orchestration, and custom logic.
+- The psycopg pattern is connection, cursor, iterate, each in a context manager; row factories return tuples, dicts, or dataclasses.
+- Parameterized queries with `%s` prevent SQL injection, and `psycopg.sql` handles dynamic identifiers.
+- psycopg 3 opens a transaction on the first statement; the context manager commits on success and rolls back on exception.
+- `pandas.read_sql_query` and `DataFrame.to_sql` bridge query results and DataFrames; aggregate server-side, plot client-side.
 
 ---
 
 # Wednesday: DuckDB
 
-We swap the server for an embedded engine that reads CSV and Parquet from anywhere.
+Topic: DuckDB, an embedded analytical engine that reads CSV and Parquet directly, in notebooks.
 
-By the end of Wednesday you query a 3 M-row NYC Taxi dataset directly from CloudFront in one line.
-
-Read [duckdb.org/why_duckdb](https://duckdb.org/why_duckdb) and [duckdb.org/docs/data/overview](https://duckdb.org/docs/data/overview) before class.
+Reading: [duckdb.org/why_duckdb](https://duckdb.org/why_duckdb) and [duckdb.org/docs/data/overview](https://duckdb.org/docs/data/overview).
 
 ---
 
@@ -559,7 +536,7 @@ Commit and push to your `cop5725fa26-project` repo.
 
 What is on your mind?
 
-Project 2 due Oct 23 — heavy use of advanced SQL through Python.
+Project 2 is due Oct 23 and uses advanced SQL through Python.
 
 <!--
 Common Day 19 questions: "Can I just use SQLAlchemy?" (Yes — SQLAlchemy adds ORM and DB-agnostic features; psycopg is the underlying driver. For raw queries against Postgres, psycopg is cleaner; for object mapping, reach for SQLAlchemy.) "Why is psycopg2 still around if psycopg3 exists?" (Massive deployed base; many libraries still pin to psycopg2.) "Should I use asyncpg instead?" (For async-only codebases, yes. For sync code, psycopg is the right call.)

@@ -10,12 +10,12 @@ html: true
 
 <!-- _class: lead -->
 
-# Day 9: Normal Forms — Section 1 Closes
+# Day 9: Normal Forms
 
 **COP 5725 - Database Management Systems**
 Friday, September 11, 2026
 
-Anomaly → decomposition → normal form
+Anomalies, decompositions, and normal forms close Section 1
 
 <!--
 Closes Section 1. Full 50 min of lecture: 5 min anomalies, 12 min for the 1NF→BCNF ladder, 8 min decomposition properties, 3 min synthesis algorithm and denormalization caveat. Use clicker checks at the end of each normal form to gauge comprehension before moving on.
@@ -28,16 +28,16 @@ Closes Section 1. Full 50 min of lecture: 5 min anomalies, 12 min for the 1NF→
 <div class="columns-left-wide">
 <div>
 
-Wednesday gave us functional dependencies — the language for talking about data constraints beyond what the schema declares.
+Wednesday covered functional dependencies, the language for data constraints beyond what the schema declares.
 
-Today we use FDs to **detect** problems and **fix** them.
+Today we use FDs to detect problems and fix them (Textbook §3.3, p. 85).
 
-By the end of the hour you will:
+Today covers:
 
-- Spot four kinds of anomaly
-- Recognize 1NF, 2NF, 3NF, BCNF on sight
-- Decompose a schema to reach any normal form
-- Know when *not* to normalize
+- The anomalies redundancy produces
+- The normal forms 1NF, 2NF, 3NF, and BCNF
+- Decomposition and its two correctness tests
+- When *not* to normalize
 
 Section 1 closes with this lecture.
 
@@ -92,9 +92,9 @@ graph LR
 
 ---
 
-# The Denormalized Table, Again
+# The Denormalized Table
 
-| sid | student_name | cid | course_title | instructor | dept | grade |
+| student_id | student_name | course_id | course_title | instructor | dept | grade |
 |-----|--------------|-----|--------------|------------|------|-------|
 | 1 | Ada | COP5725 | Database Management Systems | Grant | CS | A |
 | 1 | Ada | COT5405 | Algorithms | Sahni | CS | B+ |
@@ -103,11 +103,11 @@ graph LR
 
 FDs at work:
 
-- $sid \rightarrow student\_name$
-- $cid \rightarrow course\_title,\, instructor,\, dept$
-- $\{sid, cid\} \rightarrow grade$
+- $student\_id \rightarrow student\_name$
+- $course\_id \rightarrow course\_title,\, instructor,\, dept$
+- $\{student\_id, course\_id\} \rightarrow grade$
 
-The redundancy is visible. The anomalies it produces are not — until they bite.
+The redundancy is visible. The anomalies it produces stay hidden until they bite.
 
 ---
 
@@ -122,7 +122,7 @@ The redundancy is visible. The anomalies it produces are not — until they bite
 
 To change "Grant" to "Christan Grant", I must update **every row** with COP5725.
 
-Forget one → inconsistency.
+Forgetting one creates an inconsistency.
 
 </div>
 
@@ -135,7 +135,7 @@ Forget one → inconsistency.
 
 To add a new course **without any enrolled students**, I have no row to insert.
 
-The schema requires `sid`.
+The schema requires `student_id`.
 
 </div>
 
@@ -146,7 +146,7 @@ The schema requires `sid`.
 
 ### Deletion
 
-If Chia drops her only course, I lose the row — and with it, *Chia's name and major*.
+If Chia drops her only course, I lose the row and with it *Chia's name*.
 
 Student data tied to enrollment data.
 
@@ -155,7 +155,7 @@ Student data tied to enrollment data.
 </div>
 </div>
 
-A fourth kind — *redundancy* — is the unifying cause. Anomalies are symptoms; redundancy is the disease.
+The unifying cause is redundancy (Textbook §3.3.1, p. 86). Anomalies are the symptoms; redundancy is the disease.
 
 <!--
 The three anomalies are the empirical motivation for normalization. Students who haven't seen them in a real system sometimes find normalization abstract. Walk one concrete failure for each.
@@ -169,11 +169,11 @@ The three anomalies are the empirical motivation for normalization. Students who
 
 ---
 
-# 1NF: Atomic Values
+# 1NF Requires Atomic Values
 
 <div class="nf">
 
-**Rule:** Every attribute is atomic — single-valued, no sets, no nested structure.
+**Rule:** Every attribute is atomic: single-valued, no sets, no nested structure.
 
 </div>
 
@@ -182,7 +182,7 @@ The three anomalies are the empirical motivation for normalization. Students who
 
 ### Violation
 
-| sid | name | phones |
+| student_id | name | phones |
 |-----|------|--------|
 | 1 | Ada | {555-1234, 555-9999} |
 | 2 | Bob | {555-2222} |
@@ -192,7 +192,7 @@ The three anomalies are the empirical motivation for normalization. Students who
 
 ### 1NF
 
-| sid | name | phone |
+| student_id | name | phone |
 |-----|------|-------|
 | 1 | Ada | 555-1234 |
 | 1 | Ada | 555-9999 |
@@ -201,16 +201,16 @@ The three anomalies are the empirical motivation for normalization. Students who
 </div>
 </div>
 
-Arrays, JSON, composites — all three are technically 1NF violations under the textbook rule. We unpack each below.
+Arrays, JSON, and composite types are all technically 1NF violations under the classical rule. We examine each below.
 
 ---
 
 # Arrays Violate 1NF
 
 ```sql
--- This violates textbook 1NF
+-- This violates 1NF
 CREATE TABLE student (
-  sid bigint PRIMARY KEY,
+  student_id bigint PRIMARY KEY,
   name text,
   phones text[]      -- multi-valued attribute
 );
@@ -231,12 +231,12 @@ SELECT unnest(phones) AS phone FROM student;
 The "1NF-compliant" form puts each phone on its own row in a side table. We saw this rule in Day 7.
 
 <!--
-The trap here: PostgreSQL's arrays are a real feature, used in production. Calling them a "1NF violation" feels pedantic. The point is to recognize *why* the textbook rule exists — arrays force you out of pure relational algebra into array-specific operators.
+The trap here: PostgreSQL's arrays are a real feature, used in production. Calling them a "1NF violation" feels pedantic. The point is to recognize *why* the rule exists — arrays force you out of pure relational algebra into array-specific operators.
 -->
 
 ---
 
-# JSON / JSONB Violates 1NF (More Egregiously)
+# JSONB Violates 1NF
 
 ```sql
 -- A JSONB column hides arbitrary nested structure
@@ -260,7 +260,7 @@ A single JSONB value contains:
 - A nested array of items (multi-valued)
 - A nested object for customer (composite)
 
-**Every layer of nesting is another 1NF violation.** The value is neither atomic nor single-valued by the textbook definition.
+**Every layer of nesting is another 1NF violation.** The value is neither atomic nor single-valued by the classical definition.
 
 ---
 
@@ -269,7 +269,7 @@ A single JSONB value contains:
 <div class="columns">
 <div>
 
-### The textbook view
+### The purist view
 
 JSON is **always** wrong. The columns should be normalized to side tables:
 
@@ -292,7 +292,7 @@ JSON is OK **when**:
 
 JSON is **bad** when:
 
-- You query into specific fields (`payload ->> 'event_type'`) — those fields should be columns
+- You query into specific fields (`payload ->> 'event_type'`); those fields should be columns
 - You join on values inside the JSON
 - Aggregates over JSON fields dominate your workload
 
@@ -307,7 +307,7 @@ The "JSON as 1NF escape hatch" framing is the modern compromise. PostgreSQL's JS
 
 ---
 
-# Composite Types: The Rarest Violation
+# Composite Types
 
 ```sql
 -- A composite (record) type packs multiple values into one column
@@ -319,7 +319,7 @@ CREATE TYPE address AS (
 );
 
 CREATE TABLE customer (
-  cid bigint PRIMARY KEY,
+  customer_id bigint PRIMARY KEY,
   name text,
   mailing address      -- composite column
 );
@@ -340,7 +340,7 @@ graph TB
   Col["Column in your schema"]
   Q1{"Does the value<br/>contain a set,<br/>array, or list?"}
   Q2{"Does the value<br/>contain key-value pairs<br/>(JSON / record)?"}
-  Q3["Atomic — 1NF OK"]
+  Q3["Atomic, 1NF OK"]
   V1["1NF violation:<br/>multi-valued"]
   V2["1NF violation:<br/>nested structure"]
   Col --> Q1
@@ -358,11 +358,11 @@ graph TB
   class Q3 good
 ```
 
-Use the decision flow to audit your project's schema. Arrays, JSON, and composites should each be a deliberate choice — never accidental.
+Use the decision flow to audit your project's schema. Arrays, JSON, and composites should each be a deliberate choice, never accidental.
 
 ---
 
-# 2NF: No Partial Dependencies
+# 2NF Forbids Partial Dependencies
 
 <div class="nf">
 
@@ -375,13 +375,13 @@ Use the decision flow to audit your project's schema. Arrays, JSON, and composit
 
 ### Violation
 
-PK = $\{sid, cid\}$.
+PK = $\{student\_id, course\_id\}$.
 
-| sid | cid | grade | student_name |
+| student_id | course_id | grade | student_name |
 |-----|-----|-------|--------------|
 | 1 | COP5725 | A | Ada |
 
-$sid \rightarrow student\_name$ is a partial dependency — `student_name` depends on only part of the key.
+$student\_id \rightarrow student\_name$ is a partial dependency: `student_name` depends on only part of the key.
 
 </div>
 <div>
@@ -390,11 +390,11 @@ $sid \rightarrow student\_name$ is a partial dependency — `student_name` depen
 
 Split into two tables:
 
-| sid | name |
+| student_id | name |
 |-----|------|
 | 1 | Ada |
 
-| sid | cid | grade |
+| student_id | course_id | grade |
 |-----|-----|-------|
 | 1 | COP5725 | A |
 
@@ -409,7 +409,7 @@ Split into two tables:
 
 ---
 
-# 3NF: No Transitive Dependencies
+# 3NF Forbids Transitive Dependencies
 
 <div class="nf">
 
@@ -424,18 +424,18 @@ Equivalently: no non-key attribute determines another non-key attribute.
 
 ### Violation
 
-| cid | course_title | instructor | dept |
+| course_id | course_title | instructor | dept |
 |-----|--------------|------------|------|
 | COP5725 | Database | Grant | CS |
 
-Key: `cid`. But `instructor → dept` — a transitive dependency.
+The key is `course_id`, but `instructor → dept` is a transitive dependency.
 
 </div>
 <div>
 
 ### 3NF
 
-| cid | course_title | instructor |
+| course_id | course_title | instructor |
 |-----|--------------|------------|
 | COP5725 | Database | Grant |
 
@@ -450,16 +450,16 @@ Most well-designed schemas in production aim for 3NF.
 
 ---
 
-# 3NF, More Precisely
+# 3NF Defined
 
-Formal definition: for every non-trivial FD $X \rightarrow A$ in the relation,
+Formal definition (Textbook §3.5.1, p. 102): for every non-trivial FD $X \rightarrow A$ in the relation,
 
 at least one of the following must hold:
 
 - $X$ is a superkey
 - $A$ is part of a candidate key
 
-The second clause is the wiggle room that distinguishes 3NF from BCNF — discussed next.
+The second clause is the wiggle room that distinguishes 3NF from BCNF, discussed next.
 
 <!--
 The "A is part of a candidate key" allowance is what saves 3NF in cases where strict BCNF would force a dependency-breaking decomposition. It's the formal reason 3NF synthesis always succeeds while BCNF decomposition sometimes can't.
@@ -473,11 +473,11 @@ The "A is part of a candidate key" allowance is what saves 3NF in cases where st
 
 ---
 
-# BCNF: The Stronger Cousin
+# BCNF
 
 <div class="nf">
 
-**Rule:** For every non-trivial FD $X \rightarrow Y$, $X$ is a superkey.
+**Rule:** For every non-trivial FD $X \rightarrow Y$, $X$ is a superkey (Textbook §3.3.3, p. 88).
 
 (No exception for "A part of a candidate key.")
 
@@ -493,18 +493,18 @@ The "overlapping candidate keys" case is rare in practice but the textbook cover
 
 ---
 
-# 3NF vs BCNF: The Classic Example
+# 3NF vs BCNF Example
 
 Schema: $teach(student, instructor, subject)$
 
 FDs:
-- $\{student, subject\} \rightarrow instructor$ — a student studies a subject with one instructor
-- $instructor \rightarrow subject$ — an instructor teaches one subject
+- $\{student, subject\} \rightarrow instructor$ (a student studies a subject with one instructor)
+- $instructor \rightarrow subject$ (an instructor teaches one subject)
 
 Candidate keys: $\{student, subject\}$ and $\{student, instructor\}$.
 
-Is it 3NF? Yes — `subject` in the second FD's RHS is part of a candidate key.
-Is it BCNF? No — `instructor` is not a superkey.
+Is it 3NF? Yes, because `subject` in the second FD's RHS is part of a candidate key.
+Is it BCNF? No, because `instructor` is not a superkey.
 
 <div class="columns">
 <div>
@@ -517,7 +517,7 @@ $expertise(instructor, subject)$
 </div>
 <div>
 
-The decomposition is BCNF — but it loses the FD $\{student, subject\} \rightarrow instructor$.
+The decomposition is BCNF, but it loses the FD $\{student, subject\} \rightarrow instructor$.
 
 The FD can no longer be enforced by either single table.
 
@@ -536,14 +536,14 @@ This is the classic illustration of the BCNF / 3NF / dependency-preservation ten
 
 ---
 
-# Two Tests Every Decomposition Must Pass (or Should)
+# Decomposition Tests
 
 <div class="columns">
 <div>
 
 ### Lossless Join (required)
 
-The natural join of the decomposed tables must reproduce the original.
+The natural join of the decomposed tables must reproduce the original (Textbook §3.4.1, p. 94).
 
 Formal test: for $R \rightarrow R_1, R_2$, the decomposition is lossless if
 $$R_1 \cap R_2 \rightarrow R_1\;\;\text{or}\;\;R_1 \cap R_2 \rightarrow R_2$$
@@ -555,7 +555,7 @@ $$R_1 \cap R_2 \rightarrow R_1\;\;\text{or}\;\;R_1 \cap R_2 \rightarrow R_2$$
 
 ### Dependency Preservation (preferred)
 
-Every FD in the original schema can still be enforced after decomposition — either inside a single decomposed table, or as a constraint that doesn't require a join.
+Every FD in the original schema can still be enforced after decomposition, either inside a single decomposed table or as a constraint that doesn't require a join (Textbook §3.4.4, p. 100).
 
 Some BCNF decompositions cannot preserve dependencies. 3NF synthesis can always preserve them.
 
@@ -568,23 +568,27 @@ Lossless join is non-negotiable. Dependency preservation is a soft requirement �
 
 ---
 
-# Lossless Join: Worked Example
+# Lossless Join Example
 
 Original $R(A, B, C)$ with $F = \{A \rightarrow B,\, B \rightarrow C\}$.
 
 Decompose to $R_1(A, B)$ and $R_2(B, C)$.
 
-Intersection: $\{B\}$.
+The intersection is $\{B\}$.
 Does $B$ determine all of $R_1$ or $R_2$?
-- $B^+ = \{B, C\}$ — yes, $B$ is a key of $R_2$.
+$B^+ = \{B, C\}$, so $B$ is a key of $R_2$.
 
 Lossless. The natural join $R_1 \bowtie R_2$ recovers every original tuple.
 
 <div class="interactive">
 
-**Counter-example to remember:** decomposing into $R_1(A, B)$ and $R_2(A, C)$. Intersection is $\{A\}$. $A^+ = \{A, B, C\}$, so $A$ is a superkey of both — also lossless. But decomposing into $R_1(A, B)$ and $R_2(C, A)$ where intersection is $\{A\}$... still lossless. The bad decomposition is one where the intersection determines *neither* side.
+**Counter-example:** decompose the same $R$ into $R_1(A, C)$ and $R_2(B, C)$. The intersection is $\{C\}$, and $C^+ = \{C\}$ determines neither side, so the natural join can invent tuples that were never in $R$.
 
 </div>
+
+<!--
+Run the counter-example with two concrete rows, e.g. (a1, b1, c1) and (a2, b2, c1): joining R1 and R2 on C produces the spurious tuples (a1, b2, c1) and (a2, b1, c1). Students believe losslessness only after seeing an invented row.
+-->
 
 ---
 
@@ -596,10 +600,7 @@ Lossless. The natural join $R_1 \bowtie R_2$ recovers every original tuple.
 
 # The Synthesis Algorithm
 
-3NF synthesis is the constructive proof that **every relation has a 3NF decomposition** that:
-
-- is lossless join
-- preserves all dependencies
+3NF synthesis is the constructive proof that **every relation has a 3NF decomposition** that has a lossless join and preserves all dependencies (Textbook §3.5.2, p. 103).
 
 ```
 Algorithm: SynthesizeTo3NF(R, F)
@@ -613,7 +614,7 @@ Output: a set of 3NF relations whose union recovers $R$ and whose constraints re
 
 ---
 
-# Synthesis: Worked Example
+# Synthesis Worked Example
 
 Schema $R(A, B, C, D, E)$ with $F = \{\, AB \rightarrow C,\;\; D \rightarrow E,\;\; AB \rightarrow D,\;\; C \rightarrow B \,\}$.
 
@@ -626,7 +627,7 @@ Schema $R(A, B, C, D, E)$ with $F = \{\, AB \rightarrow C,\;\; D \rightarrow E,\
 
 **Step 3.** Create relations:
 - $R_1(A, B, C, D)$
-- $R_2(C, B)$ — already covered by $R_1$, drop
+- $R_2(C, B)$, already covered by $R_1$, so drop it
 - $R_3(D, E)$
 
 **Step 4.** $R_1$ contains a candidate key ($\{A, B\}$). Done.
@@ -675,7 +676,7 @@ Common in:
 </div>
 </div>
 
-The textbook position: design to BCNF, denormalize where measured query patterns demand it. Never denormalize first.
+Design to BCNF, then denormalize where measured query patterns demand it. Never denormalize first.
 
 <!--
 The "never denormalize first" rule is the practical version of the academic position. Materialized views and indexed derived columns (PostgreSQL's GENERATED ALWAYS AS) give us most denormalization benefits without losing the normalized source of truth.
@@ -714,39 +715,19 @@ This is the decision procedure for quiz/exam questions: given a schema and FDs, 
 
 # Section 1 Wrap-up
 
-<div class="columns-3">
-<div>
+- Update, insertion, and deletion anomalies are symptoms of redundancy.
+- 1NF requires atomic values; arrays, JSONB, and composite types break it.
+- 2NF removes partial dependencies and 3NF removes transitive ones.
+- BCNF requires every determinant to be a superkey.
+- Every decomposition must have a lossless join; dependency preservation is preferred.
+- 3NF synthesis always achieves both properties; BCNF sometimes cannot preserve dependencies.
+- Design to BCNF and denormalize only against measured query patterns.
 
-### What you can do
+Project 0 was due last Friday. Project 1 is due Sep 25 (schema design and SQL on your dataset) and embeds the Codd reading response.
 
-- Read and write relational algebra
-- Translate to/from SQL
-- Draw and translate ER diagrams
-- Reason about FDs and normal forms
-
-</div>
-<div>
-
-### Next: Section 2
-
-SQL Mastery (Weeks 5-7):
-- DDL, joins, aggregation
-- Subqueries
-- CTEs
-- Window functions
-- Recursive queries
-
-</div>
-<div>
-
-### Section 1 milestones
-
-- Project 0: due last Friday
-- Project 1: due Sep 25 — schema design + SQL on your dataset
-- Codd reading response embedded in Project 1
-
-</div>
-</div>
+<!--
+One flat recap, one bullet per part of the lecture. The last two bullets carry the design advice students should take into Project 1. Leave the Section 2 preview for the next slide.
+-->
 
 ---
 
@@ -760,10 +741,12 @@ Project 1 is the focus of next week:
 
 Section 2 opens Monday with SQL DDL and single-table SELECT. The university schema we have used in lectures will give way to your real dataset for project work.
 
+Reading for Monday: Textbook §2.3, p. 29 and §6.1, p. 244.
+
 Have a good weekend.
 
 <!--
-End on the project, not on testing. Section 1 ends with material absorbed; assessment of that absorption comes via the cumulative Exam 1 in five weeks, not via a separate paper quiz today.
+End on the project. Quiz 1 papers are collected before the Questions slide; graded quizzes come back Monday with solutions.
 -->
 
 ---

@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Friday, October 23, 2026
 
-Insert. Delete. Cost. Project 2 due tonight.
+Insertion, deletion, and cost analysis. Project 2 due tonight.
 
 <!--
 Closes the B+ tree pair. Heavy on progressive build-outs — show insert step by step. Project 2 due tonight; spend last 5 minutes on it.
@@ -28,9 +28,10 @@ Closes the B+ tree pair. Heavy on progressive build-outs — show insert step by
 <div class="columns-left-wide">
 <div>
 
-Wednesday: structure and search. You can find any key in a B+ tree.
+Wednesday covered structure and search.
+Today covers the operations that build and maintain the tree: insertion with splits, deletion with underflow handling, and cost analysis.
 
-Today: the operations that **build** and **maintain** the tree. By the end of the hour you can hand-trace an insert sequence that triggers splits, and explain why most production engines hardly bother with deletes.
+Production engines implement deletion loosely, and today explains why.
 
 Project 2 is due tonight at 11:59 PM.
 
@@ -78,7 +79,7 @@ graph LR
 
 ---
 
-# The Easy Case: Leaf Has Space
+# Insert When the Leaf Has Space
 
 ```mermaid
 graph TB
@@ -116,7 +117,7 @@ Find the right leaf, slot the value in sorted order. Done.
 
 ---
 
-# The Hard Case: Leaf Is Full — Step 1
+# Insert When the Leaf Is Full
 
 Order-4 tree (max 3 keys per leaf). Insert 35.
 
@@ -136,11 +137,11 @@ graph TB
 
 35 belongs in the left leaf. But the leaf already has 3 keys (10, 20, 30) and cannot fit another.
 
-Time to **split**.
+The leaf must split.
 
 ---
 
-# Insert Step 2 — Split the Leaf
+# Split the Leaf
 
 ```mermaid
 graph TB
@@ -166,7 +167,7 @@ The smallest key of the **right** leaf (30) is propagated up to the parent as a 
 
 ---
 
-# Insert Step 3 — Update Parent
+# Update the Parent
 
 ```mermaid
 graph TB
@@ -185,7 +186,7 @@ graph TB
 ```
 
 The parent now has 2 separators (30, 40) and 3 children.
-That fit. We're done.
+The parent has room, so the insert is complete.
 
 If the parent had also been full, we'd split it next. Splits can cascade up.
 
@@ -213,7 +214,7 @@ graph TB
   class R1,R2 leaf
 ```
 
-In practice: a 5-level B+ tree growing to 6 levels is rare and slow — billions of inserts.
+In practice, a 5-level B+ tree grows to 6 levels only after billions of inserts.
 
 <!--
 Cascading splits are why bulk-load is so much faster than insert-by-insert. Bulk load packs leaves at 80% full and never splits during construction.
@@ -245,7 +246,7 @@ Amortized cost: **O(log_F N) per insert** with a small constant.
 
 ---
 
-# The Easy Case: Leaf Stays Half-Full
+# Delete When the Leaf Stays Half-Full
 
 ```mermaid
 graph TB
@@ -283,7 +284,7 @@ Find, remove, done. The leaf remains at least half full.
 
 ---
 
-# The Hard Case: Underflow
+# Underflow
 
 Imagine the rule: every leaf must have **at least 2 keys**. Now delete 50:
 
@@ -303,14 +304,11 @@ graph TB
   class L2 under
 ```
 
-The right leaf has only 1 key. Two options:
-
-- **Redistribute** a key from the sibling
-- **Merge** with the sibling
+The right leaf has only 1 key. The tree can redistribute a key from the sibling or merge with the sibling.
 
 ---
 
-# Option A: Redistribute
+# Redistribute
 
 ```mermaid
 graph TB
@@ -333,7 +331,7 @@ Now both leaves have ≥ minimum keys.
 
 ---
 
-# Option B: Merge
+# Merge
 
 ```mermaid
 graph TB
@@ -348,16 +346,16 @@ graph TB
 
 Combine the two leaves into one. The parent loses a separator.
 
-If the parent now has too few separators, the underflow propagates up — possibly all the way to the root, **shrinking the tree by a level**.
+If the parent now has too few separators, the underflow propagates up, possibly all the way to the root, shrinking the tree by a level.
 
 ---
 
-# Why Real Databases Often Skip Most of This
+# Deletion in Production Engines
 
 <div class="columns">
 <div>
 
-The textbook delete algorithm is full of redistribute/merge bookkeeping. **Most production engines do not implement it strictly.**
+The textbook delete algorithm is full of redistribute/merge bookkeeping. Most production engines do not implement it strictly.
 
 PostgreSQL's btree:
 - Marks dead tuples in leaves (does not rebalance)
@@ -416,7 +414,7 @@ graph LR
 Doubling the fan-out reduces height by 1 step at this scale.
 Multiplying the row count by 1000 adds 1-2 steps.
 
-The tree's height is **remarkably stable** across realistic dataset sizes.
+The tree's height stays stable across realistic dataset sizes.
 
 ---
 
@@ -492,7 +490,7 @@ ORDER BY idx_scan DESC;
 
 This view tells you **which indexes earn their keep**.
 
-An index with `idx_scan = 0` after weeks of traffic is dead weight — drop it.
+An index with `idx_scan = 0` after weeks of traffic is dead weight; drop it.
 Reference: [PostgreSQL Ch. 28.2.11 pg_stat_user_indexes](https://www.postgresql.org/docs/current/monitoring-stats.html#MONITORING-PG-STAT-USER-INDEXES-VIEW).
 
 ---
@@ -515,7 +513,7 @@ Reference: [PostgreSQL Ch. 28.2.11 pg_stat_user_indexes](https://www.postgresql.
 ### Anti-patterns
 
 - Indexes on every column "just in case"
-- Indexes on low-cardinality columns (e.g., `is_active BOOLEAN`) — usually useless
+- Indexes on low-cardinality columns (e.g., `is_active BOOLEAN`), which are usually useless
 - Indexes the optimizer never picks (check `pg_stat_user_indexes`)
 
 </div>
@@ -557,7 +555,7 @@ Tag the commit `v2` and push to your `cop5725fa26-project` repo.
 - **Mon Oct 26:** small-group breakouts during class
 - **Wed Oct 28:** winners present to the full class
 
-Project 3 (Indexing + Query Plans) released Monday — that one builds on what you just learned today.
+Project 3 (Indexing + Query Plans) is released Monday and builds on today's material.
 
 </div>
 </div>
@@ -566,46 +564,26 @@ Project 3 (Indexing + Query Plans) released Monday — that one builds on what y
 
 # Wrap-up
 
-You now have:
+- Insertion finds the leaf and splits on overflow, and splits can cascade up to the root, growing the tree by a level.
+- Deletion handles underflow by redistribution or merging, and production engines instead mark dead entries and let VACUUM reclaim space.
+- Every operation costs about the tree height in page reads, and height stays at 3-5 for realistic tables.
+- `pg_stat_user_indexes` shows which indexes get used, and unused indexes cost disk space and write time.
 
-<div class="columns">
-<div>
-
-- Insert with cascading splits
-- Delete with redistribute/merge (and why production is lax)
-- Cost: O(log_F N) per operation, h = 3-5 in practice
-
-</div>
-<div>
-
-- `pg_stat_user_indexes` for index hygiene
-- When the optimizer ignores an index
-- Partial indexes for low-selectivity boolean columns
-
-</div>
-</div>
-
-The B+ tree is the universal database index. You can hand-trace one, predict its cost, and reason about whether one belongs in your schema.
+<!--
+One line per part of the lecture (Project 2 logistics excluded). The hand-trace exercise below is the direct follow-up to the insert walkthrough.
+-->
 
 ---
 
-# Monday: Hash Indexes
+# Monday
 
-The other major index family.
+Monday covers hash indexes: static, extendible, and linear hashing, and PostgreSQL's hash access method.
 
-By the end of Monday you know:
-- Static hashing and why nobody uses it
-- Extendible hashing
-- Linear hashing
-- When PostgreSQL's hash index beats its btree
-
-Read GMW Ch. 14.4 before class.
+Read Textbook §14.3, pp. 648-659 before class.
 
 ---
 
 # Practice Before Monday
-
-Two exercises:
 
 1. Hand-trace the insert sequence `[10, 20, 30, 40, 50, 60, 70, 80, 90]` into an empty order-4 B+ tree. Show splits.
 2. Add a btree index to one of your project's tables. Run `EXPLAIN ANALYZE` on a query that uses it; capture the plan. Then `DROP INDEX` and rerun; compare.

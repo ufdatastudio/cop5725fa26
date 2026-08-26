@@ -28,13 +28,13 @@ Closes Section 4. Pace 50 min. The two-phase algorithm and the multi-way merge t
 <div class="columns-left-wide">
 <div>
 
-Every `ORDER BY`. Every `GROUP BY`. Every sort-merge join. Every `CREATE INDEX`.
+Wednesday covered PostgreSQL's index types. Today covers sorting.
 
-All of them sort.
+`ORDER BY`, `GROUP BY`, sort-merge joins, and `CREATE INDEX` all sort.
 
-When the data is bigger than memory, the database does **external sorting** — a 2-phase algorithm that runs on machines built decades ago and still runs every day at every database company.
+When the data is bigger than memory, the database uses **external sorting**, a two-phase algorithm that dates to the earliest database systems and still runs every day in production.
 
-Today: how it works, and why PostgreSQL's `work_mem` matters for it.
+Today covers how the algorithm works and why PostgreSQL's `work_mem` matters for it.
 
 </div>
 <div>
@@ -73,7 +73,7 @@ graph LR
   class W,P,M,R,Pg,Wr step
 ```
 
-Reference: GMW Ch. 15.4; PostgreSQL docs [Ch. 19.4.1 Memory](https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-WORK-MEM).
+Reference: Textbook §15.4, p. 723; PostgreSQL docs [Resource Consumption, work_mem](https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-WORK-MEM).
 
 ---
 
@@ -83,17 +83,17 @@ Reference: GMW Ch. 15.4; PostgreSQL docs [Ch. 19.4.1 Memory](https://www.postgre
 
 ---
 
-# When You Cannot Just qsort()
+# Why In-Memory Sorting Fails
 
-`Python's sorted()`, `C's qsort()`, and friends assume all data fits in RAM.
+Python's `sorted()`, C's `qsort()`, and their relatives assume all data fits in RAM.
 
-A database sort doesn't have that luxury:
+A database sort cannot make that assumption:
 
 - Tables can be 100s of GB to PBs
 - Memory is GBs at most
 - A naive in-memory sort would crash or swap to disk uncontrollably
 
-**External sorting** is the deterministic, performant alternative: sort using only `M` pages of memory at a time, with the rest of the data staying on disk.
+**External sorting** sorts using only `M` pages of memory at a time, with the rest of the data staying on disk.
 
 ---
 
@@ -194,18 +194,18 @@ We need:
 
 So with M pages of memory, we can merge **M - 1 runs** simultaneously.
 
-With M = 100 pages and 1000 runs after Phase 1, one merge pass handles 99 runs — we'd need more passes.
+With M = 100 pages and 1000 runs after Phase 1, one merge pass handles only 99 runs, so more passes are needed.
 
 But if M is large enough to merge all runs at once, **two passes is enough**.
 
 ---
 
-# When Two Passes Suffices
+# When Two Passes Suffice
 
-After Phase 1: $\lceil B / M \rceil$ runs.
+Phase 1 produces $\lceil B / M \rceil$ runs.
 We can merge $M - 1$ runs in one pass.
 
-Two passes suffices when:
+Two passes suffice when:
 $$\frac{B}{M} \leq M - 1$$
 $$B \leq M(M - 1) \approx M^2$$
 
@@ -228,7 +228,7 @@ The "M-squared rule" is the key insight. As long as your memory budget squared i
 
 # Visualizing the Merge
 
-For data that needs multiple merge passes (very rare in modern hardware):
+For data that needs multiple merge passes (rare on modern hardware):
 
 ```mermaid
 graph TB
@@ -305,7 +305,7 @@ Pop the top. Output it. Read the next value from that run. Insert into heap. Rep
 
 The basic algorithm makes runs of exactly **M** pages.
 
-**Replacement selection** (a.k.a. Knuth's algorithm) can make runs of **~2M** pages on average.
+**Replacement selection**, analyzed in Knuth's *The Art of Computer Programming* Vol. 3, can make runs of **~2M** pages on average.
 
 ```
 Maintain a heap of M pages worth of records.
@@ -349,7 +349,13 @@ Fewer runs means:
 </div>
 </div>
 
-> Most production engines use replacement selection. PostgreSQL's tuplesort.c implements a variant.
+> PostgreSQL used replacement selection in `tuplesort.c` through version 10. Version 11 removed it: quicksorted runs are faster on modern hardware because they keep the CPU cache warm, and large `work_mem` makes extra merge passes uncommon anyway.
+
+<!--
+Replacement selection is worth teaching for the classic 2M-run analysis, but be clear that PostgreSQL dropped it in v11. The cache-locality argument won: a heap of tuples scattered in memory loses to quicksort on a contiguous array.
+-->
+
+
 
 ---
 
@@ -377,7 +383,7 @@ SELECT * FROM huge_table ORDER BY col;
 A query with three sorts and one hash join could consume **4× work_mem**.
 A server with 100 active connections could consume **100× work_mem × operations**.
 
-Reference: [PostgreSQL Ch. 19.4.1 Memory — work_mem](https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-WORK-MEM).
+Reference: [PostgreSQL docs, Resource Consumption, work_mem](https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-WORK-MEM).
 
 ---
 
@@ -404,7 +410,7 @@ Sort  (cost=...) (actual time=...)
 
 `external merge` is exactly the two-phase algorithm above, with run files in `pgsql_tmp/`.
 
-> Spilling is the single biggest reason "fast queries become slow under load."
+> Spilling is a common reason fast queries slow down under load.
 
 <!--
 The "external merge" line is one of the most actionable hints PostgreSQL gives. Doubling work_mem can turn a 30-second sort into a 1-second one if it lets the sort stay in memory.
@@ -451,7 +457,7 @@ For Project 3: measure both with default and with bumped `work_mem`.
 
 ---
 
-# What You Can Now Do
+# Section 4 Recap
 
 <div class="columns-3">
 <div>
@@ -467,7 +473,7 @@ For Project 3: measure both with default and with bumped `work_mem`.
 ### Indexes
 - B+ trees with insert/delete/cost
 - Hash indexes
-- PostgreSQL's full zoo: GiST, GIN, BRIN
+- PostgreSQL's GiST, GIN, BRIN
 - Partial, expression, multi-column
 
 </div>
@@ -481,7 +487,7 @@ For Project 3: measure both with default and with bumped `work_mem`.
 </div>
 </div>
 
-This is the **physical-layer toolkit** every database engineer needs.
+Section 5 builds query processing on top of these pieces.
 
 ---
 
@@ -504,32 +510,26 @@ graph LR
   class S5E milestone
 ```
 
-Query processing — joins, iterators, vectorized execution, and optimization. Then Exam 2 the week after.
+Section 5 covers query processing: joins, iterators, vectorized execution, and optimization. Exam 2 follows the week after.
+
+Reading for Monday: Textbook §15.3, p. 718.
 
 ---
 
 # Wrap-up
 
-You now have:
-
-<div class="columns">
-<div>
-
-- The two-phase external sort
-- Multi-way merge with heap-based priority queue
-- Replacement selection for longer runs
-
-</div>
-<div>
-
-- PostgreSQL's `work_mem` and the "external merge" plan
-- The 4B I/O rule for two-pass sort
-- A complete physical-layer toolkit
-
-</div>
-</div>
+- External sorting runs in two phases: sort runs in memory, then merge them.
+- A two-pass sort costs 4B page I/Os and handles inputs up to about M² pages.
+- Multi-way merge picks the next record with a heap-based priority queue.
+- Replacement selection doubles average run length; PostgreSQL dropped it in version 11 for cache-friendly quicksorted runs.
+- `work_mem` is the per-operation memory budget, and "external merge" in EXPLAIN ANALYZE means the sort spilled to disk.
 
 Section 4 closes. Section 5 opens Monday.
+
+<!--
+One bullet per part of the lecture. The work_mem bullet is the one students need for Project 3.
+-->
+
 
 ---
 

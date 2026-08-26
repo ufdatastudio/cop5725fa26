@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Monday, September 21, 2026
 
-Three kinds. Many traps.
+Scalar, table, and correlated subqueries, and their traps
 
 <!--
 Week 6 opens. Subqueries are the gateway drug to CTEs and window functions; today's job is making the three forms (scalar, table, correlated) explicit so Wednesday's CTE lecture lands cleanly. Pace 50 min, with the rewriting and error sections taking 20 of those minutes.
@@ -28,15 +28,12 @@ Week 6 opens. Subqueries are the gateway drug to CTEs and window functions; toda
 <div class="columns-left-wide">
 <div>
 
-Week 5 gave you single-query SQL — joins, aggregation, the logical pipeline.
+Week 5 covered joins, aggregation, and the logical pipeline.
+Week 6 covers queries where the answer to one query is the input to another.
 
-Week 6 asks: what if the *answer* to one query is the *input* to another?
-
-Today: subqueries.
-Wednesday: CTEs — a cleaner way to write big subquery chains.
-Friday: window functions — a different answer to "subquery per row" problems.
-
-By the end of the week you write queries most working engineers cannot read.
+Today covers subqueries.
+Wednesday covers CTEs, a cleaner way to write long subquery chains.
+Friday covers window functions, a different answer to "subquery per row" problems.
 
 </div>
 <div>
@@ -103,11 +100,11 @@ graph TB
   class SCEx,TEx,CEx ex
 ```
 
-Three forms, three locations, three sets of pitfalls.
+Each form appears in a different location and carries its own pitfalls.
 
 ---
 
-# Scalar Subqueries: One Value
+# Scalar Subqueries
 
 ```sql run
 CREATE OR REPLACE TABLE student(sid INT, name TEXT, dname TEXT, gpa DECIMAL(3,2));
@@ -138,7 +135,7 @@ The "exactly one row, one column" constraint is what makes the subquery *scalar*
 
 ---
 
-# Table Subqueries: Use Like a Table
+# Table Subqueries
 
 ```sql run
 CREATE OR REPLACE TABLE student(sid INT, name TEXT, dname TEXT, gpa DECIMAL(3,2));
@@ -166,7 +163,7 @@ The pre-aggregate-then-join pattern is one of the most useful shapes in SQL. It 
 
 ---
 
-# Correlated Subqueries: Refer to the Outer Row
+# Correlated Subqueries
 
 ```sql run
 CREATE OR REPLACE TABLE student(sid INT, name TEXT, dname TEXT, gpa DECIMAL(3,2));
@@ -234,7 +231,7 @@ Reference: [Ch. 9.24 Subquery Expressions](https://www.postgresql.org/docs/curre
 
 ---
 
-# ALL: Universal Quantification
+# Universal Quantification with ALL
 
 ```sql
 -- "Students with GPA above every honor-roll student"
@@ -244,7 +241,7 @@ WHERE gpa > ALL (SELECT gpa FROM honor_roll);
 
 `x op ALL (subquery)` is true when `op` holds for **every** returned value (and trivially true for empty subqueries).
 
-`x <> ALL (...)` is equivalent to `x NOT IN (...)` — with the same NULL gotchas.
+`x <> ALL (...)` is equivalent to `x NOT IN (...)`, with the same NULL gotchas.
 
 <div class="error">
 
@@ -307,7 +304,7 @@ The `SELECT`-list correlated subquery and the `FROM`-clause table subquery do si
 
 ---
 
-# Worked Example: Top-2 Per Group via Correlated Subquery
+# Top-2 Per Group via Correlated Subquery
 
 > "For each department, the two highest-paid faculty."
 
@@ -330,7 +327,7 @@ ORDER BY f.dname, f.salary DESC;
 
 For each row, count the faculty *in the same department with strictly higher salary*. If that count is < 2, this row is in the top 2.
 
-Slow on large tables — one inner query per row.
+This is slow on large tables because it runs one inner query per row.
 
 The same query is one line with a window function (Friday).
 
@@ -346,7 +343,7 @@ This is the classic "top-N per group via correlated subquery" form. Worth runnin
 
 ---
 
-# Subquery → JOIN
+# Rewriting a Subquery as a JOIN
 
 <div class="columns">
 <div>
@@ -383,11 +380,11 @@ WHERE  s.gpa > d.dept_avg;
 
 The JOIN form computes each department's average **once**. The correlated subquery computes it once per row.
 
-The PostgreSQL optimizer often rewrites the first form into the second — but not always. Verify with `EXPLAIN`.
+The PostgreSQL optimizer often rewrites the first form into the second, but not always. Verify with `EXPLAIN`.
 
 ---
 
-# Subquery → CTE (Preview)
+# Rewriting a Subquery as a CTE
 
 ```sql
 -- Subquery form
@@ -415,7 +412,7 @@ CTEs are mostly aesthetic — the PostgreSQL optimizer inlines them. But "mostly
 
 ---
 
-# Subquery → Window Function (Preview)
+# Rewriting a Subquery as a Window Function
 
 ```sql
 -- The correlated top-2-per-group from a few slides back
@@ -429,10 +426,9 @@ FROM (
 WHERE rk <= 2;
 ```
 
-Window functions evaluate per-partition without correlation overhead.
-The cleanest form, the fastest plan, the answer most working engineers do not know exists.
+Window functions evaluate per partition without the overhead of re-running a correlated subquery for each row.
 
-Friday.
+We cover them on Friday.
 
 ---
 
@@ -459,7 +455,7 @@ FROM   student s;
 
 </div>
 
-The fix: aggregate (`max`, `avg`, etc.) or LIMIT.
+The fix is to aggregate (`max`, `avg`, etc.) or add a LIMIT.
 
 ```sql
 SELECT name,
@@ -473,7 +469,7 @@ This bug appears the moment a previously-singleton row becomes multi-row. A scal
 
 ---
 
-# The NULL-in-NOT-IN Trap (One More Time)
+# The NULL in NOT IN Trap
 
 ```sql
 -- enrollment has 1 row with sid IS NULL
@@ -495,7 +491,7 @@ WHERE NOT EXISTS (
 WHERE sid NOT IN (SELECT sid FROM enrollment WHERE sid IS NOT NULL);
 ```
 
-This is the single most reliable interview gotcha. Memorize it.
+This trap is a common interview question. Memorize it.
 
 ---
 
@@ -516,37 +512,23 @@ JOIN   enrollment e ON e.sid = s.sid
 WHERE  e.grade IS NOT NULL;
 ```
 
-PostgreSQL's optimizer often rewrites correlated EXISTS into a semi-join. **Usually**. Check `EXPLAIN` when performance matters.
+PostgreSQL's optimizer often rewrites correlated EXISTS into a semi-join, but not always. Check `EXPLAIN` when performance matters.
 
 ---
 
 # Wrap-up
 
-You now have:
-
-<div class="columns">
-<div>
-
-- Three subquery kinds: scalar, table, correlated
-- The four set predicates: IN, ANY/SOME, ALL, EXISTS
-- The places subqueries can live (WHERE, HAVING, SELECT, FROM)
-
-</div>
-<div>
-
-- Rewriting between subquery, JOIN, CTE, and window forms
-- The three classic traps: more-than-one-row, NULL in NOT IN, correlated performance
-
-</div>
-</div>
+- Subqueries come in scalar, table, and correlated forms
+- IN, ANY/SOME, ALL, and EXISTS test values against subquery results
+- Subqueries can appear in WHERE, HAVING, SELECT, and FROM
+- Many subqueries rewrite as JOINs, CTEs, or window functions
+- The classic traps are multi-row scalars, NULL in NOT IN, and correlated performance
 
 ---
 
-# Wednesday: CTEs
+# Next Lecture
 
-We replace the nested SELECTs of today's slides with named blocks.
-
-By the end of Wednesday you write multi-step queries that read top-to-bottom like a script.
+Wednesday covers CTEs.
 
 Read PostgreSQL docs Ch. 7.8 before class.
 

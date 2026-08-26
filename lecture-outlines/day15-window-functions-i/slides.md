@@ -18,7 +18,7 @@ Friday, September 25, 2026
 Per-row results without losing the row
 
 <!--
-Closes Week 6. Project 1 is due tonight. Window functions are the course's biggest differentiator from other DB classes; budget the full 50 minutes and reserve only 90 seconds at the end for Project 1 reminders. Most students will not have seen window functions before. They are life-changing once internalized.
+Closes Week 6. Project 1 is due tonight. Budget the full 50 minutes and reserve only 90 seconds at the end for Project 1 reminders. Most students will not have seen window functions before.
 -->
 
 ---
@@ -28,15 +28,15 @@ Closes Week 6. Project 1 is due tonight. Window functions are the course's bigge
 <div class="columns-left-wide">
 <div>
 
-Two ways to compute "average GPA per major":
+Day 12 covered GROUP BY. Today covers window functions.
+
+Two ways to compute average GPA per major:
 
 **GROUP BY (Day 12)**
 Collapses rows. One row per major in the output.
 
 **Window function (today)**
-Keeps every row. Adds a "department avg" column alongside each student's row.
-
-The shift from group-by to window is the single most important SQL idea most engineers never learn.
+Keeps every row. Adds a major-average column alongside each student's row.
 
 </div>
 <div>
@@ -57,6 +57,10 @@ graph TB
 
 </div>
 </div>
+
+<!--
+The GROUP BY vs window contrast is the anchor for the whole lecture. Students who internalize "collapse vs annotate" can derive everything else.
+-->
 
 ---
 
@@ -82,7 +86,7 @@ Reference: PostgreSQL docs [Ch. 3.5 Window Functions](https://www.postgresql.org
 
 ---
 
-# Side-by-Side: GROUP BY vs OVER
+# GROUP BY vs OVER
 
 <div class="columns">
 <div>
@@ -99,8 +103,8 @@ Output:
 
 | major | mean_gpa |
 |-------|----------|
-| CS | 3.5 |
-| EE | 3.3 |
+| CS | 3.88 |
+| EE | 3.30 |
 
 </div>
 <div>
@@ -108,7 +112,7 @@ Output:
 ### OVER
 
 ```sql run
-CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+CREATE OR REPLACE TABLE student(student_id INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
 INSERT INTO student VALUES
   (1,'Ada','CS',3.95), (2,'Bob','EE',2.90), (3,'Chia','CS',3.85),
   (4,'Dev','CS',3.85), (5,'Eve','EE',3.70);
@@ -122,9 +126,11 @@ Output:
 
 | name | major | gpa | major_avg |
 |------|-------|-----|-----------|
-| Ada | CS | 3.95 | 3.5 |
-| Bob | EE | 2.90 | 3.3 |
-| Chia | CS | 3.70 | 3.5 |
+| Ada | CS | 3.95 | 3.88 |
+| Bob | EE | 2.90 | 3.30 |
+| Chia | CS | 3.85 | 3.88 |
+| Dev | CS | 3.85 | 3.88 |
+| Eve | EE | 3.70 | 3.30 |
 
 </div>
 </div>
@@ -132,12 +138,12 @@ Output:
 Same average, two presentations. The window form keeps each row alongside its group's value.
 
 <!--
-This single comparison is the entire lecture. If students leave understanding the GROUP BY → window mental shift, every other window concept follows.
+This single comparison is the entire lecture. If students leave understanding the GROUP BY to window mental shift, every other window concept follows. The averages are rounded to two decimals; DuckDB prints more digits.
 -->
 
 ---
 
-# The OVER Clause, Generally
+# The OVER Clause Syntax
 
 ```sql
 function_name(arg1, arg2, ...) OVER (
@@ -212,7 +218,7 @@ Each row's window is the partition it belongs to, optionally ordered, optionally
 # ROW_NUMBER
 
 ```sql run
-CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+CREATE OR REPLACE TABLE student(student_id INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
 INSERT INTO student VALUES
   (1,'Ada','CS',3.95), (2,'Bob','EE',2.90), (3,'Chia','CS',3.85),
   (4,'Dev','CS',3.85), (5,'Eve','EE',3.70);
@@ -225,20 +231,21 @@ FROM   student;
 | name | gpa | rk |
 |------|-----|----|
 | Ada | 3.95 | 1 |
-| Dev | 3.85 | 2 |
-| Chia | 3.70 | 3 |
-| Eve | 3.20 | 4 |
+| Chia | 3.85 | 2 |
+| Dev | 3.85 | 3 |
+| Eve | 3.70 | 4 |
+| Bob | 2.90 | 5 |
 
-`row_number()` assigns a unique sequence number per row in the window. Ties broken arbitrarily.
+`row_number()` assigns a unique sequence number per row in the window. Ties are broken arbitrarily, so Chia and Dev could swap places.
 
-The most common ranking function in practice. Used everywhere from leaderboards to top-N-per-group.
+It appears in leaderboards, top-N-per-group queries, and deduplication.
 
 ---
 
 # RANK and DENSE_RANK
 
 ```sql run
-CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+CREATE OR REPLACE TABLE student(student_id INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
 INSERT INTO student VALUES
   (1,'Ada','CS',3.95), (2,'Bob','EE',2.90), (3,'Chia','CS',3.85),
   (4,'Dev','CS',3.85), (5,'Eve','EE',3.70);
@@ -252,9 +259,10 @@ FROM   student;
 | name | gpa | r | dr |
 |------|-----|---|----|
 | Ada | 3.95 | 1 | 1 |
-| Dev | 3.85 | 2 | 2 |
 | Chia | 3.85 | 2 | 2 |
+| Dev | 3.85 | 2 | 2 |
 | Eve | 3.70 | 4 | 3 |
+| Bob | 2.90 | 5 | 4 |
 
 <div class="columns">
 <div>
@@ -279,10 +287,10 @@ Pick the ranking function based on the consumer of the data. Sports leagues use 
 
 ---
 
-# NTILE: Quantile Buckets
+# NTILE
 
 ```sql run
-CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+CREATE OR REPLACE TABLE student(student_id INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
 INSERT INTO student VALUES
   (1,'Ada','CS',3.95), (2,'Bob','EE',2.90), (3,'Chia','CS',3.85),
   (4,'Dev','CS',3.85), (5,'Eve','EE',3.70);
@@ -295,12 +303,12 @@ FROM   student;
 | name | gpa | quartile |
 |------|-----|----------|
 | Bob | 2.90 | 1 |
-| Eve | 3.20 | 1 |
-| Chia | 3.70 | 2 |
+| Eve | 3.70 | 1 |
+| Chia | 3.85 | 2 |
 | Dev | 3.85 | 3 |
 | Ada | 3.95 | 4 |
 
-`ntile(n)` divides the window into *n* approximately-equal buckets.
+`ntile(n)` divides the window into *n* approximately equal buckets.
 
 Useful for percentile reporting and decile cohorts. PostgreSQL also offers `percent_rank()` and `cume_dist()` for continuous percentile values.
 
@@ -315,7 +323,7 @@ Useful for percentile reporting and decile cohorts. PostgreSQL also offers `perc
 # Rank Within Group
 
 ```sql run
-CREATE OR REPLACE TABLE faculty(fid INT, name TEXT, dname TEXT, salary INT);
+CREATE OR REPLACE TABLE faculty(faculty_id INT, name TEXT, dname TEXT, salary INT);
 INSERT INTO faculty VALUES
   (1,'Grant','CS',95000), (2,'Sahni','CS',110000), (3,'Dobra','CS',102000),
   (4,'Lee','EE',88000), (5,'Rao','EE',99000);
@@ -328,19 +336,19 @@ FROM   faculty;
 | name | dname | salary | dept_rank |
 |------|-------|--------|-----------|
 | Sahni | CS | 110000 | 1 |
-| Grant | CS | 95000 | 2 |
-| Lee | EE | 88000 | 1 |
+| Dobra | CS | 102000 | 2 |
+| Grant | CS | 95000 | 3 |
+| Rao | EE | 99000 | 1 |
+| Lee | EE | 88000 | 2 |
 
-The rank resets at each partition boundary.
-
-This is the building block for "top N per group" — the canonical use of window functions.
+The rank resets at each partition boundary. This ranking is the building block for top-N-per-group queries.
 
 ---
 
-# Top-N Per Group (The Clean Form)
+# Top-N Per Group
 
 ```sql run
-CREATE OR REPLACE TABLE faculty(fid INT, name TEXT, dname TEXT, salary INT);
+CREATE OR REPLACE TABLE faculty(faculty_id INT, name TEXT, dname TEXT, salary INT);
 INSERT INTO faculty VALUES
   (1,'Grant','CS',95000), (2,'Sahni','CS',110000), (3,'Dobra','CS',102000),
   (4,'Lee','EE',88000), (5,'Rao','EE',99000);
@@ -355,9 +363,7 @@ FROM (
 WHERE rk <= 2;
 ```
 
-Compare to Monday's correlated-subquery form: 5 lines of nested logic became 5 lines of clean ranking.
-
-The window form runs in **one pass** over the faculty table.
+Monday's correlated-subquery version rescanned the table once per row. The window form ranks in one pass over the faculty table.
 
 <!--
 The correlated subquery version of this problem from Monday was 10 lines and ran O(N²). This is 5 lines and runs O(N log N) on a sorted access path. The performance jump is real.
@@ -376,7 +382,7 @@ The correlated subquery version of this problem from Monday was 10 lines and ran
 Any aggregate function (`count`, `sum`, `avg`, `min`, `max`, ...) can be used as a window function by adding `OVER (...)`.
 
 ```sql run
-CREATE OR REPLACE TABLE faculty(fid INT, name TEXT, dname TEXT, salary INT);
+CREATE OR REPLACE TABLE faculty(faculty_id INT, name TEXT, dname TEXT, salary INT);
 INSERT INTO faculty VALUES
   (1,'Grant','CS',95000), (2,'Sahni','CS',110000), (3,'Dobra','CS',102000),
   (4,'Lee','EE',88000), (5,'Rao','EE',99000);
@@ -396,7 +402,7 @@ Every row carries its own salary plus its department's stats. No GROUP BY, no ex
 # Running Totals
 
 ```sql run
-CREATE OR REPLACE TABLE faculty(fid INT, name TEXT, dname TEXT, salary INT);
+CREATE OR REPLACE TABLE faculty(faculty_id INT, name TEXT, dname TEXT, salary INT);
 INSERT INTO faculty VALUES
   (1,'Grant','CS',95000), (2,'Sahni','CS',110000), (3,'Dobra','CS',102000),
   (4,'Lee','EE',88000), (5,'Rao','EE',99000);
@@ -413,12 +419,14 @@ The combination of `PARTITION BY` and `ORDER BY` produces a **running total**: e
 
 | name | dname | salary | running_payroll |
 |------|-------|--------|-----------------|
-| Grant | CS | 95000 | 95000 |
-| Sahni | CS | 110000 | 205000 |
+| Dobra | CS | 102000 | 102000 |
+| Grant | CS | 95000 | 197000 |
+| Sahni | CS | 110000 | 307000 |
 | Lee | EE | 88000 | 88000 |
+| Rao | EE | 99000 | 187000 |
 
 <!--
-The "ORDER BY in OVER causes running aggregation" rule trips many students. We'll formalize this with frames on Day 16. For now: ORDER BY in OVER usually means "compute over preceding rows in this partition."
+The "ORDER BY in OVER causes running aggregation" rule trips many students. We formalize this with frames on Day 16. For now: ORDER BY in OVER usually means "compute over preceding rows in this partition."
 -->
 
 ---
@@ -432,31 +440,31 @@ SELECT
   s.name,
   c.title,
   e.grade,
-  avg(grade_value(e.grade)) OVER (PARTITION BY e.cid, e.section_num, e.term) AS section_avg,
+  avg(grade_value(e.grade)) OVER (PARTITION BY e.course_id, e.section_num, e.term) AS section_avg,
   grade_value(e.grade) - avg(grade_value(e.grade))
-    OVER (PARTITION BY e.cid, e.section_num, e.term) AS diff_from_section_avg
+    OVER (PARTITION BY e.course_id, e.section_num, e.term) AS diff_from_section_avg
 FROM   enrollment e
-JOIN   student s    ON s.sid = e.sid
-JOIN   course c     USING (cid)
+JOIN   student s    ON s.student_id = e.student_id
+JOIN   course c     USING (course_id)
 WHERE  e.grade IS NOT NULL
 ORDER BY c.title, e.grade DESC;
 ```
 
-Every student sees their own grade plus the section's. Zero correlated subqueries.
+Every row carries the student's grade and the section average, with no correlated subqueries.
 
 <!--
-This kind of query is what window functions are for. The same answer via correlated subqueries would be three nested scans of the enrollment table.
+This kind of query is what window functions are for. The same answer via correlated subqueries would be three nested scans of the enrollment table. grade_value() is a stand-in for a letter-grade-to-points mapping; the query is illustrative, not runnable here.
 -->
 
 ---
 
 <!-- _class: lead -->
 
-# Part 5: Three Patterns You Will Use Weekly
+# Part 5: Common Patterns
 
 ---
 
-# Pattern 1: Top-N Per Group
+# Top-N Per Group Template
 
 ```sql
 SELECT * FROM (
@@ -469,15 +477,15 @@ The "highest-paid faculty per department," "most recent enrollment per student,"
 
 ---
 
-# Pattern 2: Deduplication by Key, Keep Latest
+# Deduplication
 
 ```sql
--- Keep the most recent enrollment per (sid, cid)
+-- Keep the most recent enrollment per (student_id, course_id)
 DELETE FROM enrollment
-WHERE (sid, cid, term, section_num) IN (
-  SELECT sid, cid, term, section_num FROM (
-    SELECT sid, cid, term, section_num,
-           row_number() OVER (PARTITION BY sid, cid ORDER BY term DESC) AS rk
+WHERE (student_id, course_id, term, section_num) IN (
+  SELECT student_id, course_id, term, section_num FROM (
+    SELECT student_id, course_id, term, section_num,
+           row_number() OVER (PARTITION BY student_id, course_id ORDER BY term DESC) AS rk
     FROM   enrollment
   ) t WHERE rk > 1
 );
@@ -488,10 +496,10 @@ The rest are dropped.
 
 ---
 
-# Pattern 3: Compare Each Row to Group Stats
+# Compare Each Row to Group Stats
 
 ```sql run
-CREATE OR REPLACE TABLE student(sid INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
+CREATE OR REPLACE TABLE student(student_id INT, name TEXT, major TEXT, gpa DECIMAL(3,2));
 INSERT INTO student VALUES
   (1,'Ada','CS',3.95), (2,'Bob','EE',2.90), (3,'Chia','CS',3.85),
   (4,'Dev','CS',3.85), (5,'Eve','EE',3.70);
@@ -504,43 +512,25 @@ SELECT
 FROM   student s;
 ```
 
-Every student sees their absolute GPA, their distance from the major's average, and their rank within the major — in one query.
+One query gives each student their GPA, their distance from the major's average, and their rank within the major.
 
 ---
 
 # Wrap-up
 
-You now have:
-
-<div class="columns">
-<div>
-
-- The `OVER` clause: `PARTITION BY`, `ORDER BY`, frame (preview)
-- Four ranking functions: `row_number`, `rank`, `dense_rank`, `ntile`
-- Window aggregates: every aggregate function can be used over a window
-
-</div>
-<div>
-
-- Running totals via `PARTITION BY` + `ORDER BY`
-- Top-N-per-group, dedupe, and per-row-vs-group patterns
-- A cleaner, faster answer to last week's correlated subquery problems
-
-</div>
-</div>
+- The `OVER` clause turns an aggregate into a per-row window computation.
+- `row_number`, `rank`, `dense_rank`, and `ntile` rank rows within a window; they differ in how they treat ties.
+- `PARTITION BY` scopes the window, and rankings reset at partition boundaries.
+- `ORDER BY` inside `OVER` makes aggregates cumulative, which yields running totals.
+- Top-N-per-group, deduplication, and row-vs-group comparison all follow the rank-then-filter pattern.
 
 ---
 
 # Monday: Window Functions II
 
-We add:
+Topic: frame clauses, `LAG`/`LEAD`, and the value functions `first_value`, `last_value`, and `nth_value`.
 
-- **Frame clauses** — `ROWS BETWEEN` and `RANGE BETWEEN`
-- **LAG and LEAD** — peek at neighboring rows
-- **FIRST_VALUE, LAST_VALUE, NTH_VALUE** — refer to ends of the window
-- Moving averages, period-over-period comparisons, gap detection
-
-Read PostgreSQL docs Ch. 9.22 (Window Functions) before class.
+Reading: PostgreSQL docs [Ch. 9.22 Window Functions](https://www.postgresql.org/docs/current/functions-window.html).
 
 ---
 
@@ -562,7 +552,7 @@ Read PostgreSQL docs Ch. 9.22 (Window Functions) before class.
 
 - Mon Sep 28: small-group presentations during class
 - Wed Sep 30: winners present to the full class
-- Project 2 (Advanced SQL) releases Mon Sep 28 — due Oct 23
+- Project 2 (Advanced SQL) releases Mon Sep 28, due Oct 23
 
 </div>
 </div>
@@ -577,7 +567,7 @@ Five queries:
 2. For each enrollment, percentile rank within the section.
 3. Running total of payroll by hire date.
 4. List students whose GPA is above their department's average, including the difference.
-5. Find duplicate enrollments (same sid + cid across multiple terms), keep most recent.
+5. Find duplicate enrollments (same student_id + course_id across multiple terms), keep most recent.
 
 Answers due in your repo before 8:30 AM Mon Sep 28.
 

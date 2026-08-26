@@ -10,7 +10,7 @@ html: true
 
 <!-- _class: lead -->
 
-# Day 18: Views, Constraints, Triggers — Section 2 Closes
+# Day 18: Views, Constraints, and Triggers
 
 **COP 5725 - Database Management Systems**
 Friday, October 2, 2026
@@ -30,11 +30,11 @@ Full 50 min lecture: 12 min views, 12 min advanced constraints, 16 min triggers,
 
 Section 2 closes today.
 
-For three weeks we have written SQL that **reads** the database. The closing three features change how the database **stores, protects, and reacts** to data:
+Three weeks of SQL so far has read the database. Today's three features shape how the database stores, protects, and reacts to data.
 
-- **Views** — named queries the database treats like tables
-- **Advanced constraints** — invariants beyond column types
-- **Triggers** — automated reactions to data changes
+- Views are named queries the database treats like tables.
+- Advanced constraints encode invariants beyond column types.
+- Triggers run automatically when data changes.
 
 Exam 1 in two weeks covers everything in Sections 1-3.
 
@@ -77,6 +77,8 @@ graph LR
   class V,C,T,W,P step
 ```
 
+Reference: Textbook §8.1-8.2, p. 341 (views) and §7.1-7.2, §7.5, p. 311 (constraints and triggers). The PostgreSQL docs cover the PostgreSQL-specific features.
+
 ---
 
 <!-- _class: lead -->
@@ -89,35 +91,35 @@ graph LR
 
 ```sql
 CREATE VIEW active_enrollments AS
-SELECT e.sid, e.cid, e.section_num, e.term, s.name AS student, c.title
+SELECT e.student_id, e.course_id, e.section_num, e.term, s.name AS student, c.title
 FROM   enrollment e
-JOIN   student s USING (sid)
-JOIN   course  c USING (cid)
+JOIN   student s USING (student_id)
+JOIN   course  c USING (course_id)
 WHERE  e.grade IS NULL;
 ```
 
 A view is a **named SELECT**. The database treats it like a table; the SQL behind it runs each time the view is queried.
 
 ```sql run
-CREATE OR REPLACE TABLE student(sid INT, name TEXT);
+CREATE OR REPLACE TABLE student(student_id INT, name TEXT);
 INSERT INTO student VALUES (1,'Ada'),(2,'Bose'),(3,'Ana'),(4,'Devi');
-CREATE OR REPLACE TABLE course(cid TEXT, title TEXT);
+CREATE OR REPLACE TABLE course(course_id TEXT, title TEXT);
 INSERT INTO course VALUES ('COP5725','Database Management'),('COP5536','Data Structures');
-CREATE OR REPLACE TABLE enrollment(sid INT, cid TEXT, section_num INT, term TEXT, grade TEXT);
+CREATE OR REPLACE TABLE enrollment(student_id INT, course_id TEXT, section_num INT, term TEXT, grade TEXT);
 INSERT INTO enrollment VALUES
   (1,'COP5725',1,'Fall2026',NULL), (2,'COP5725',1,'Fall2026','A'),
   (3,'COP5536',1,'Fall2026',NULL), (4,'COP5725',1,'Fall2026',NULL);
 CREATE OR REPLACE VIEW active_enrollments AS
-SELECT e.sid, e.cid, e.section_num, e.term, s.name AS student, c.title
+SELECT e.student_id, e.course_id, e.section_num, e.term, s.name AS student, c.title
 FROM   enrollment e
-JOIN   student s USING (sid)
-JOIN   course  c USING (cid)
+JOIN   student s USING (student_id)
+JOIN   course  c USING (course_id)
 WHERE  e.grade IS NULL;
 -- @query
 SELECT * FROM active_enrollments WHERE student LIKE 'A%';
 ```
 
-The query is rewritten to use the view's underlying SELECT. Reference: [PostgreSQL docs Ch. 40 Views](https://www.postgresql.org/docs/current/sql-createview.html).
+The query is rewritten to use the view's underlying SELECT. Textbook §8.1, p. 341. Reference: [PostgreSQL docs CREATE VIEW](https://www.postgresql.org/docs/current/sql-createview.html).
 
 ---
 
@@ -128,7 +130,7 @@ The query is rewritten to use the view's underlying SELECT. Reference: [PostgreS
 
 ### Encapsulation
 
-A view hides join complexity. Code that consumes `active_enrollments` need not know about the four-way join.
+A view hides join complexity. Code that consumes `active_enrollments` need not know about the underlying three-table join.
 
 ### Naming
 
@@ -155,16 +157,16 @@ The view's column list survives schema changes that add columns to the underlyin
 ```sql
 -- Simple views are auto-updatable
 CREATE VIEW recent_students AS
-SELECT sid, name, gpa FROM student WHERE gpa > 3.0;
+SELECT student_id, name, gpa FROM student WHERE gpa > 3.0;
 
 INSERT INTO recent_students VALUES (100, 'Test', 3.5);  -- works
-UPDATE recent_students SET gpa = 3.6 WHERE sid = 100;   -- works
-DELETE FROM recent_students WHERE sid = 100;            -- works
+UPDATE recent_students SET gpa = 3.6 WHERE student_id = 100;   -- works
+DELETE FROM recent_students WHERE student_id = 100;            -- works
 ```
 
 PostgreSQL's "simple updatable view" rules cover views with a single base table, no aggregation, no DISTINCT, no GROUP BY, no UNION.
 
-For anything more complex, use an `INSTEAD OF` trigger (Part 3) to define your own update semantics. Reference: [PostgreSQL Ch. 40.2 Updatable Views](https://www.postgresql.org/docs/current/sql-createview.html#SQL-CREATEVIEW-UPDATABLE-VIEWS).
+For anything more complex, use an `INSTEAD OF` trigger (Part 3) to define your own update semantics. Textbook §8.2.2, p. 345. Reference: [PostgreSQL docs CREATE VIEW, Updatable Views](https://www.postgresql.org/docs/current/sql-createview.html#SQL-CREATEVIEW-UPDATABLE-VIEWS).
 
 ---
 
@@ -190,7 +192,7 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY dept_stats;
 
 A **materialized view** stores the query's result. Reads hit the cache, not the underlying tables.
 
-Tradeoff: fast reads, stale data unless refreshed.
+The tradeoff is fast reads against stale data until the next refresh.
 
 <!--
 Materialized views are the PostgreSQL answer to denormalization (Day 9 follow-up). They cache the result of an expensive query and refresh on demand. Used heavily in reporting workloads.
@@ -204,7 +206,7 @@ Materialized views are the PostgreSQL answer to denormalization (Day 9 follow-up
 
 ---
 
-# EXCLUDE: No-Overlap Constraints
+# EXCLUDE Constraints
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS btree_gist;
@@ -222,7 +224,7 @@ CREATE TABLE room_booking (
 
 `EXCLUDE` rejects rows that violate a relation (here, `&&` = "ranges overlap").
 
-In English: "no two bookings can share a room and an overlapping time."
+The constraint reads "no two bookings can share a room and an overlapping time."
 
 A PostgreSQL feature, not standard SQL. Reference: [Ch. 5.4 Constraints / EXCLUDE](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-EXCLUSION).
 
@@ -246,7 +248,7 @@ INSERT INTO node VALUES (2, 1);  -- circular
 COMMIT;                          -- both FKs check at commit time
 ```
 
-`DEFERRABLE INITIALLY DEFERRED` postpones FK checking until commit. Useful for circular references in a single transaction.
+`DEFERRABLE INITIALLY DEFERRED` postpones FK checking until commit. Textbook §7.1.3, p. 315.
 
 Useful for:
 - Circular references inserted in one transaction
@@ -272,7 +274,7 @@ CREATE TABLE invoice (
 
 `CHECK` constraints encode invariants the schema can prove without a subquery.
 
-PostgreSQL allows `CHECK` to reference only the row being inserted/updated. For cross-row invariants, use a trigger.
+PostgreSQL allows `CHECK` to reference only the row being inserted/updated. Cross-row invariants need a trigger. Textbook §7.2, p. 319.
 
 ---
 
@@ -282,14 +284,14 @@ PostgreSQL allows `CHECK` to reference only the row being inserted/updated. For 
 
 ---
 
-# CREATE TRIGGER, Sketched
+# CREATE TRIGGER
 
 ```sql
 CREATE TABLE student_audit (
   audit_id   bigserial PRIMARY KEY,
   changed_at timestamptz NOT NULL DEFAULT now(),
   changed_by text NOT NULL,
-  sid        bigint NOT NULL,
+  student_id        bigint NOT NULL,
   before_gpa numeric(3, 2),
   after_gpa  numeric(3, 2)
 );
@@ -298,8 +300,8 @@ CREATE OR REPLACE FUNCTION log_student_gpa_change()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.gpa IS DISTINCT FROM NEW.gpa THEN
-    INSERT INTO student_audit (changed_by, sid, before_gpa, after_gpa)
-    VALUES (current_user, OLD.sid, OLD.gpa, NEW.gpa);
+    INSERT INTO student_audit (changed_by, student_id, before_gpa, after_gpa)
+    VALUES (current_user, OLD.student_id, OLD.gpa, NEW.gpa);
   END IF;
   RETURN NEW;
 END;
@@ -310,7 +312,7 @@ AFTER UPDATE OF gpa ON student
 FOR EACH ROW EXECUTE FUNCTION log_student_gpa_change();
 ```
 
-References: [PostgreSQL Ch. 38 Triggers](https://www.postgresql.org/docs/current/triggers.html), [Ch. 41 PL/pgSQL](https://www.postgresql.org/docs/current/plpgsql.html).
+Textbook §7.5, p. 332. References: [PostgreSQL docs Triggers](https://www.postgresql.org/docs/current/triggers.html), [PL/pgSQL](https://www.postgresql.org/docs/current/plpgsql.html).
 
 ---
 
@@ -332,7 +334,7 @@ graph TB
   class B2 proc
 ```
 
-The four quadrants — BEFORE/AFTER × STATEMENT/ROW — cover every needed timing.
+The four combinations of BEFORE/AFTER and STATEMENT/ROW cover every needed timing.
 
 `BEFORE ROW` triggers can **modify** the new row before insertion; `AFTER ROW` triggers can only react.
 
@@ -377,12 +379,12 @@ Triggers are powerful and dangerous. Real production outages have come from trig
 
 ---
 
-# What You Can Now Do
+# Section 2 Summary
 
 <div class="columns-3">
 <div>
 
-### Read SQL
+### Core SQL
 
 - DDL, basic SELECT
 - Six join kinds + LATERAL
@@ -392,7 +394,7 @@ Triggers are powerful and dangerous. Real production outages have come from trig
 </div>
 <div>
 
-### Write Advanced SQL
+### Advanced SQL
 
 - Window functions with frames
 - Ranking and per-row group stats
@@ -402,7 +404,7 @@ Triggers are powerful and dangerous. Real production outages have come from trig
 </div>
 <div>
 
-### Engineer schemas
+### Schema features
 
 - Views and materialized views
 - EXCLUDE constraints
@@ -412,11 +414,13 @@ Triggers are powerful and dangerous. Real production outages have come from trig
 </div>
 </div>
 
-> You now write SQL most working engineers cannot read.
+<!--
+This is the exam-scope checklist for Section 2. Point students to the practice packet (Oct 7) for coverage of each column.
+-->
 
 ---
 
-# Section 3 Preview (Next Week)
+# Section 3 Preview
 
 ```mermaid
 graph LR
@@ -444,7 +448,7 @@ Exam 1 covers Sections 1-3. Practice exam packet released Wed Oct 7.
 ### This week
 
 - Section 3 (Programming) opens Monday
-- Project 2 due Oct 23 — heavy use of today's material
+- Project 2 due Oct 23; it uses today's material heavily
 
 </div>
 <div>
@@ -452,7 +456,7 @@ Exam 1 covers Sections 1-3. Practice exam packet released Wed Oct 7.
 ### Coming up
 
 - **Exam 1** on Wed Oct 14
-- Practice exam packet drops Wed Oct 7
+- Practice exam packet releases Wed Oct 7
 - No class Fri Oct 9 (Homecoming)
 
 </div>

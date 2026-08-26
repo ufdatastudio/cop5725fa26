@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Friday, September 18, 2026
 
-Many rows in. Few rows out.
+Many rows in, few rows out
 
 <!--
 Closes Week 5. Pace 50 min. Heavy interactive: most students arrive thinking they "know" GROUP BY. The Day 12 goal is to surface the underexplored parts — FILTER, GROUPING SETS, logical evaluation order, COUNT(*) vs COUNT(col) NULL behavior. References throughout to PostgreSQL Ch. 7.2.3 and Ch. 9.21.
@@ -25,9 +25,8 @@ Closes Week 5. Pace 50 min. Heavy interactive: most students arrive thinking the
 
 # Where We Are
 
-Monday: one table, one row at a time.
-Wednesday: multiple tables, one row at a time.
-Today: many rows collapsed to fewer rows.
+Monday covered single-table queries and Wednesday covered joins, both one row at a time.
+Today covers collapsing many rows into fewer rows.
 
 Reference for everything in this lecture: PostgreSQL docs [Ch. 7.2.3 GROUP BY and HAVING](https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-GROUP) and [Ch. 9.21 Aggregate Functions](https://www.postgresql.org/docs/current/functions-aggregate.html).
 
@@ -55,7 +54,7 @@ The logical-order section at the end ties everything together.
 
 ---
 
-# The Family
+# Common Aggregate Functions
 
 | Function | What it does | NULL handling |
 |----------|--------------|---------------|
@@ -147,10 +146,10 @@ ORDER BY n DESC;
 
 ```mermaid
 graph LR
-  R["100 student rows"] --> G["Group by major"]
-  G --> M["7 groups<br/>(one per major)"]
+  R["9 student rows"] --> G["Group by major"]
+  G --> M["2 groups<br/>(one per major)"]
   M --> A["Aggregate<br/>each group"]
-  A --> O["7 result rows"]
+  A --> O["2 result rows"]
   classDef rows fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef proc fill:#fff3e0,stroke:#e65100,stroke-width:2px
   class R,M,O rows
@@ -161,7 +160,7 @@ Each output row corresponds to one group.
 
 ---
 
-# The "Every Non-Aggregate Must Be in GROUP BY" Rule
+# Every Non-Aggregate Column Must Be Grouped
 
 ```sql
 -- Wrong in strict SQL: name is not in GROUP BY and not aggregated
@@ -248,7 +247,7 @@ HAVING count(*) >= 5;
 SELECT major, count(*) FROM student WHERE count(*) >= 5 GROUP BY major;
 ```
 
-`WHERE` runs **before** `GROUP BY`, so the rows haven't been grouped yet — there is no `count(*)` to filter on.
+`WHERE` runs **before** `GROUP BY`, so the rows have not been grouped yet and there is no `count(*)` to filter on.
 
 `HAVING` runs after grouping; the aggregates exist.
 
@@ -329,7 +328,7 @@ Reference: [PostgreSQL Ch. 7.2.4 GROUPING SETS, CUBE, and ROLLUP](https://www.po
 
 ---
 
-# ROLLUP Example: Subtotals
+# ROLLUP Subtotals
 
 ```sql
 SELECT
@@ -350,7 +349,7 @@ ORDER BY major NULLS LAST, year NULLS LAST;
 | EE | all years | 12 |
 | TOTAL | all years | 52 |
 
-The subtotal-and-grand-total form that reporting demands.
+This is the subtotal and grand total form that reporting queries use.
 
 <!--
 ROLLUP and CUBE are mostly used by analysts; OLTP workloads rarely reach for them. But knowing they exist lets you replace 10 separate queries with one — useful when building dashboards.
@@ -364,7 +363,7 @@ ROLLUP and CUBE are mostly used by analysts; OLTP workloads rarely reach for the
 
 ---
 
-# The Hidden Pipeline
+# The Logical Pipeline
 
 ```mermaid
 graph TB
@@ -474,34 +473,24 @@ Walk through this query out loud, naming each clause and its role. Students shou
 
 ---
 
-# Wrap-up — Week 5 Complete
+# Wrap-up
 
-You now have:
+- Aggregate functions skip NULLs, except `count(*)` and `array_agg`
+- `GROUP BY` collapses rows into one output row per group
+- `WHERE` filters rows before grouping and `HAVING` filters groups after
+- `FILTER` gives each aggregate its own predicate
+- `GROUPING SETS`, `ROLLUP`, and `CUBE` run several groupings in one query
+- The logical order is FROM, WHERE, GROUP BY, HAVING, SELECT, DISTINCT, ORDER BY, LIMIT
 
-<div class="columns">
-<div>
+This closes Week 5.
 
-- DDL: `CREATE`, `ALTER`, `DROP`, `TRUNCATE`
-- Single-table SELECT with WHERE, ORDER BY, LIMIT
-- Six join kinds, plus LATERAL
-- Aggregate functions and their NULL behavior
-
-</div>
-<div>
-
-- `GROUP BY` with multi-column groups
-- `HAVING` for group filters
-- `FILTER`, `GROUPING SETS`, `ROLLUP`, `CUBE`
-- The logical order of evaluation
-
-</div>
-</div>
-
-Most working SQL writers stop here. We do not.
+<!--
+One line per part of the lecture. If time is short, the logical-order line is the one to say out loud; the rest is on the earlier slides.
+-->
 
 ---
 
-# Next Week: Subqueries, CTEs, Window Functions
+# Next Week
 
 ```mermaid
 graph LR
@@ -510,10 +499,6 @@ graph LR
   classDef step fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   class M,W,F step
 ```
-
-Subqueries get the scalar, table, and correlated forms.
-CTEs replace deeply-nested queries with readable named blocks.
-Window functions answer "rank, running total, lag, lead" without giving up the rows.
 
 Read PostgreSQL docs Ch. 7.8 (WITH) and Ch. 3.5 (Window Functions) before Monday.
 

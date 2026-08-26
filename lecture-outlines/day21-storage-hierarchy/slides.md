@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Monday, October 12, 2026
 
-The physical reality every query plan answers to
+Disks, pages, and file organization
 
 <!--
 First day of Section 4. Section turns from "what to query" to "how the data sits on the machine." The cost model students learn here is what makes EXPLAIN ANALYZE output legible in Section 5.
@@ -29,12 +29,11 @@ Pace: 50 min. Last 5 min remind about Wednesday's exam.
 <div class="columns-left-wide">
 <div>
 
-For three sections you have written queries.
-For two of those sections you have moved data through Python.
+Sections 1 through 3 covered writing queries and moving data through Python.
+Today starts Section 4, which covers how data sits on the machine.
 
-Today we go under the floor.
-
-The storage hierarchy is the reason **every database makes the same architectural decisions**: B+ trees, buffer pools, write-ahead logs, vectorized scans. They are all responses to the same set of physical constraints.
+The storage hierarchy explains why every database engine converges on the same designs.
+B+ trees, buffer pools, write-ahead logs, and vectorized scans all respond to the same physical constraints.
 
 </div>
 <div>
@@ -56,6 +55,10 @@ graph TB
 </div>
 </div>
 
+<!--
+Frame the section change: Sections 1-3 were about expressing queries; Section 4 is about what those queries cost on real hardware. The four designs listed all come back later in the course.
+-->
+
 ---
 
 # Today's Roadmap
@@ -72,7 +75,7 @@ graph LR
   class E milestone
 ```
 
-Reference: GMW Ch. 13.1-13.4; PostgreSQL docs [Ch. 73 Database Physical Storage](https://www.postgresql.org/docs/current/storage.html).
+Reference: Textbook §13.1-13.3, pp. 557-575, and §13.5, pp. 590-593; PostgreSQL docs [Ch. 73 Database Physical Storage](https://www.postgresql.org/docs/current/storage.html).
 
 ---
 
@@ -155,7 +158,7 @@ Every major DB feature is a workaround for the latency gap.
 
 ---
 
-# HDD: Mechanical Reality
+# Hard Disk Drives
 
 <div class="columns-left-wide">
 <div>
@@ -192,14 +195,14 @@ The 100-1000× sequential-vs-random gap on HDDs is the original reason database 
 
 ---
 
-# SSD: Different Physics, Some Old Habits
+# Solid State Drives
 
 <div class="columns">
 <div>
 
 ### What changes
 
-- No moving parts → no seek time
+- No moving parts, so no seek time
 - Random reads ~ 100 µs (vs HDD's 10 ms)
 - Random/sequential gap narrows to ~3-10×
 
@@ -240,7 +243,7 @@ The random_page_cost tweak is the simplest PostgreSQL-on-SSD optimization. The d
 
 ---
 
-# The Page: The Unit of I/O
+# Pages
 
 ```mermaid
 graph TB
@@ -291,7 +294,7 @@ The slotted page is universal — PostgreSQL, SQL Server, Oracle, and most moder
 
 ---
 
-# Records — Tuple Header in PostgreSQL
+# PostgreSQL Tuple Header
 
 ```
 +----------------------+
@@ -377,7 +380,7 @@ Different organizations trade insert speed for query speed.
 
 ---
 
-# Heap Files: The PostgreSQL Default
+# Heap Files
 
 <div class="columns">
 <div>
@@ -401,7 +404,7 @@ Different organizations trade insert speed for query speed.
 
 - Fast inserts and updates
 - Acceptable scans (often beaten by indexes anyway)
-- Easy to maintain — no reorganization on insert
+- Easy to maintain, with no reorganization on insert
 - Works with MVCC: new versions just append
 
 </div>
@@ -427,7 +430,7 @@ Every PostgreSQL table is a heap file unless you explicitly cluster it.
 - Scan: O(B)
 - Equality: O(log B)
 - Range: O(log B + r) where r is the matching range size
-- **Insert: O(B)** — expensive
+- Insert: O(B), which is expensive
 
 </div>
 <div>
@@ -438,13 +441,13 @@ PostgreSQL's `CLUSTER` command produces a one-time sort by an index:
 CLUSTER student USING student_gpa_idx;
 ```
 
-After `CLUSTER`, rows are physically sorted by GPA — until the next insert/update breaks the order.
+After `CLUSTER`, rows are physically sorted by GPA until the next insert/update breaks the order.
 
 </div>
 </div>
 
-Sorted files are great for read-mostly tables.
-For write-heavy tables, B+ trees (Week 10) give us the best of both worlds.
+Sorted files suit read-mostly tables.
+B+ trees (Week 10) keep lookups fast while also keeping inserts cheap.
 
 ---
 
@@ -478,7 +481,7 @@ Sections 1-3 (all material up to and including last Wednesday's DuckDB lecture).
 
 ### Today
 - Storage Hierarchy (you can use this on a few problems)
-- Project 2 due Oct 23 — keep moving
+- Project 2 due Oct 23; keep moving
 
 </div>
 </div>
@@ -491,44 +494,28 @@ Practice packet questions tend to mirror what shows up — work it through. Offi
 
 # Wrap-up
 
-You now have:
+- The storage hierarchy spans registers to tape, and each layer is 10x to 1000x slower than the one above it.
+- HDDs pay seek and rotational latency on every random read; SSDs remove the mechanics but keep the memory-storage gap.
+- The page is the unit of I/O, and PostgreSQL uses 8 KB slotted pages with a per-tuple header.
+- Heap files are the PostgreSQL default, and sorted files trade insert cost for cheap range queries.
 
-<div class="columns">
-<div>
-
-- The storage hierarchy and order-of-magnitude latency
-- HDD vs SSD: where the assumptions differ
-- The page as the unit of I/O
-- PostgreSQL's slotted page layout and tuple header
-
-</div>
-<div>
-
-- Three file organizations: heap, sorted, hash
-- Why heap files are the default
-- The cost model that drives every database decision
-- Foreshadowing of buffer pools (Friday) and indexes (next week)
-
-</div>
-</div>
+<!--
+One line per part of the lecture. Ask students which layer of the hierarchy their Project 2 queries touch most.
+-->
 
 ---
 
-# Friday: Buffer Management and Memory
+# Friday
 
-We add the next layer of the hierarchy: a managed RAM cache that sits between the planner and the disk.
+Friday covers buffer management, the managed RAM cache between the planner and the disk.
 
-By the end of Friday you can explain why PostgreSQL has a `shared_buffers` setting, what `pg_buffercache` shows, and how LRU vs Clock differ.
-
-Read GMW Ch. 13.5-13.6 before class.
+Read Textbook §15.7, pp. 746-751 before class.
 
 ---
 
 # Practice Before Friday
 
-Two exercises:
-
-1. Practice exam packet — do at least three full problems before Tuesday office hours.
+1. Work at least three full problems from the practice exam packet before Tuesday office hours.
 2. In your project, run `pg_relation_size('your_table_name')` and `pg_indexes_size('your_table_name')`. Report sizes in your repo's `README.md`.
 
 Push to your `cop5725fa26-project` repo before 8:30 AM Fri Oct 16.

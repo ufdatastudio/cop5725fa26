@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Wednesday, September 2, 2026
 
-Design first. Tables later.
+Entities and relationships before tables
 
 <!--
 First non-algebra day in the section. Students will arrive expecting more math; instead we shift mode entirely into design thinking. The hour is heavily interactive — multiple "your turn" prompts. Pace: 50 min with the last 12 min on the full worked example.
@@ -28,11 +28,10 @@ First non-algebra day in the section. Students will arrive expecting more math; 
 <div class="columns-left-wide">
 <div>
 
-For five classes you have learned to **manipulate** relations.
+The first five classes covered manipulating relations with the algebra and SQL.
+Today covers designing them.
 
-Today you learn to **design** them.
-
-ER modeling sits between a domain expert and a SQL `CREATE TABLE` statement. It is the layer where you reason about the world before you commit to a schema.
+ER modeling sits between a domain expert and a SQL `CREATE TABLE` statement. It is the layer where you reason about the world before you commit to a schema (Textbook §4.1, p. 126).
 
 </div>
 <div>
@@ -111,9 +110,9 @@ Drill the color code now. By the end of the hour, students should see "blue mean
 
 ### Designing in tables forces premature decisions
 
-- "Should this be one table or two?" — you don't know yet
-- "Should this be a column or a separate row?" — depends on cardinality
-- "Where does the foreign key go?" — depends on the relationship type
+- "Should this be one table or two?" You don't know yet.
+- "Should this be a column or a separate row?" Depends on cardinality.
+- "Where does the foreign key go?" Depends on the relationship type.
 
 ### ER lets you reason in concepts
 
@@ -165,7 +164,7 @@ An **entity** is a distinguishable thing in the world.
 - The course COP 5725
 - The Computer Science department
 
-An **entity set** is a collection of entities of the same kind.
+An **entity set** is a collection of entities of the same kind (Textbook §4.1.1, p. 126).
 
 - All students
 - All courses
@@ -211,7 +210,7 @@ graph LR
   class C,D,M tricky
 ```
 
-The four flavors. The first is easy. The other three force design choices.
+Four kinds of attribute (Textbook §4.1.2, p. 126). The first is easy. The other three force design choices.
 
 <!--
 Composite attributes invite the question "should I split this in the schema?" Derived attributes invite "should I store this or compute it?" Multi-valued attributes invite "is this really one attribute, or a separate entity?"
@@ -219,7 +218,7 @@ Composite attributes invite the question "should I split this in the schema?" De
 
 ---
 
-# Build-Up: Student Entity, Step 1
+# Student Entity, Step 1
 
 Just the box.
 
@@ -238,14 +237,14 @@ Hold this slide briefly. The next slide adds attributes. The progressive build i
 
 ---
 
-# Build-Up: Student Entity, Step 2
+# Student Entity, Step 2
 
 Add the obvious simple attributes.
 
 ```mermaid
 graph TB
   S["Student"]
-  S --- SID(("sid"))
+  S --- SID(("student_id"))
   S --- Name(("name"))
   S --- Major(("major"))
   S --- GPA(("gpa"))
@@ -261,14 +260,14 @@ The green attribute is the **primary key**. By convention we underline it on pap
 
 ---
 
-# Build-Up: Student Entity, Step 3
+# Student Entity, Step 3
 
 Replace `name` with a composite. Add a derived attribute.
 
 ```mermaid
 graph TB
   S["Student"]
-  S --- SID(("sid"))
+  S --- SID(("student_id"))
   S --- N(("name"))
   N --- F(("first"))
   N --- L(("last"))
@@ -294,14 +293,14 @@ Derived attributes raise the storage-vs-compute question. We don't decide now; D
 
 ---
 
-# Build-Up: Student Entity, Step 4
+# Student Entity, Step 4
 
 Allow many phone numbers.
 
 ```mermaid
 graph TB
   S["Student"]
-  S --- SID(("sid"))
+  S --- SID(("student_id"))
   S --- N(("name"))
   S --- Phone(("{phone}"))
   S --- Major(("major"))
@@ -346,7 +345,7 @@ A **relationship** is an association between two or more entities.
 - A faculty member *teaches* a section
 - A course *belongs to* a department
 
-A **relationship set** is the collection of all such associations.
+A **relationship set** is the collection of all such associations (Textbook §4.1.3, p. 127).
 
 We draw relationship sets as <span class="relationship">yellow diamonds</span> between the entity boxes they connect.
 
@@ -371,7 +370,7 @@ Relationships are verbs. If students struggle to find them, prompt with "What ac
 
 ---
 
-# Cardinality: 1:1, 1:N, M:N
+# Cardinality Patterns
 
 ```mermaid
 graph TB
@@ -390,11 +389,11 @@ graph TB
   class R1,R2,R3 rel
 ```
 
-The three patterns that cover almost every real-world association.
+These three patterns cover almost every real-world association (Textbook §4.1.6, p. 129).
 
 ---
 
-# Cardinality, More Carefully
+# Cardinality Examples
 
 <div class="columns-3">
 <div>
@@ -437,7 +436,7 @@ Answers: 1) 1:N (one customer, many orders) 2) 1:1 (one profile per user) 3) M:N
 
 ---
 
-# Participation: Total vs Partial
+# Total and Partial Participation
 
 <div class="columns">
 <div>
@@ -483,7 +482,7 @@ The classroom mnemonic: total = "must," partial = "may." A double line says "mus
 
 ---
 
-# Build-Up: Student-Course, Step 1
+# Student-Course, Step 1
 
 Two entities, no relationship yet.
 
@@ -499,7 +498,7 @@ We know what they are. We have not yet named how they connect.
 
 ---
 
-# Build-Up: Student-Course, Step 2
+# Student-Course, Step 2
 
 Add the relationship.
 
@@ -516,7 +515,7 @@ A diamond labeled with a verb. The verb names what the diamond means.
 
 ---
 
-# Build-Up: Student-Course, Step 3
+# Student-Course, Step 3
 
 Mark the cardinality.
 
@@ -533,7 +532,7 @@ Many students enroll in many courses. M:N.
 
 ---
 
-# Build-Up: Student-Course, Step 4
+# Student-Course, Step 4
 
 The relationship has its own attribute.
 
@@ -551,7 +550,7 @@ graph TB
   class G,T attr
 ```
 
-`grade` and `term` are properties of *the enrollment*, not of the student or the course.
+`grade` and `term` are properties of *the enrollment*, not of the student or the course (Textbook §4.1.9, p. 134).
 
 <div class="error">
 
@@ -572,7 +571,7 @@ graph TB
 <div class="columns">
 <div>
 
-A **weak entity** is one whose identity depends on another entity.
+A **weak entity** is one whose identity depends on another entity (Textbook §4.4, p. 152).
 
 A Section of a course has no meaning without its course. `Section 001` of `COP 5725` is identified only by **both** values together.
 
@@ -615,7 +614,7 @@ The Section example is the standard. Other classic weak entities: LineItem (owne
 <div class="columns">
 <div>
 
-When two entity sets share most of their attributes, model them as **subclasses** of a parent.
+Two entity sets that share most of their attributes can be modeled as **subclasses** of a parent (Textbook §4.1.11, p. 135).
 
 - `Person` → `Student`, `Faculty`
 - `Account` → `Checking`, `Savings`
@@ -663,7 +662,7 @@ ISA has three translation strategies on Friday: single table, joined table per s
 
 ---
 
-# Three Notations, Same Diagram
+# Three Notations
 
 <div class="columns-3">
 <div>
@@ -691,11 +690,11 @@ Explicit relationship boxes. Attributes hang off as ovals.
 erDiagram
   STUDENT }o--o{ COURSE : "enrolls in"
   STUDENT {
-    bigint sid PK
+    bigint student_id PK
     text name
   }
   COURSE {
-    text cid PK
+    text course_id PK
     text title
   }
 ```
@@ -710,17 +709,17 @@ Cardinality drawn at the line ends. Attributes inside the entity box.
 ```mermaid
 classDiagram
   class Student {
-    +bigint sid
+    +bigint student_id
     +text name
   }
   class Course {
-    +text cid
+    +text course_id
     +text title
   }
   Student "*" -- "*" Course : enrolls
 ```
 
-Common in software design tools.
+Common in software design tools (Textbook §4.7, p. 171).
 
 </div>
 </div>
@@ -772,7 +771,7 @@ graph TB
   class S,C,Sec,F,D entity
 ```
 
-Five entities — no relationships drawn yet.
+Five entities, no relationships drawn yet.
 
 <!--
 `grade` and `major` are not entities; they will be attributes (grade) or relationships (major-as-department). `Supervisor` is not an entity either — it's faculty in a different role.
@@ -815,11 +814,11 @@ Walk the diagram once and ask the class which relationship is missing or surpris
 ```mermaid
 graph TB
   S["Student"]
-  S --- SID(("sid"))
+  S --- SID(("student_id"))
   S --- SName(("name"))
   S --- GPA(("gpa"))
   C["Course"]
-  C --- CID(("cid"))
+  C --- CID(("course_id"))
   C --- Title(("title"))
   C --- Cr(("credits"))
   Sec["Section"]
@@ -897,7 +896,7 @@ Pause and ask: why is teach 1:N and enrolls M:N? One faculty teaches a given sec
 
 ---
 
-# Step 5: Relationship Attributes + Final Check
+# Step 5: Relationship Attributes
 
 ```mermaid
 graph TB
@@ -943,8 +942,8 @@ graph TD
   class Friday,Tables next
 ```
 
-We decided **what to model**.
-On Friday we decide **how to store it**.
+Today we decided what to model.
+Friday we decide how to store it.
 
 <!--
 The translation rules on Friday turn this diagram into 5-6 tables. Some choices are mechanical; others involve real tradeoffs (where to put 1:1 attributes, whether to embed multi-valued attributes as arrays). That's why ER lives before SQL.
@@ -952,30 +951,13 @@ The translation rules on Friday turn this diagram into 5-6 tables. Some choices 
 
 ---
 
-# Friday: ER to Relations
+# Friday
 
-The translation rules:
+Topic: translating ER diagrams into relational schemas and SQL DDL.
 
-<div class="columns">
-<div>
+Reading: Textbook §4.5-4.6, pp. 157-171.
 
-- Strong entity → table with primary key
-- Weak entity → table with composite key including owner key
-- 1:1 relationship → embed or separate
-- 1:N relationship → embed FK on N side
-- M:N relationship → relationship table
-- Multi-valued attribute → separate table
-
-</div>
-<div>
-
-We take the diagram you just built and translate it to SQL DDL together.
 The Project 0 setup task is due Friday at 11:59 PM.
-
-</div>
-</div>
-
-Read GMW Ch. 4.5-4.6 before class.
 
 ---
 

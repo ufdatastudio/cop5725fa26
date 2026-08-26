@@ -28,13 +28,11 @@ Featured paper week. Students should have read the C-Store paper over the weeken
 <div class="columns-left-wide">
 <div>
 
-For two lectures you have read about the physical layer.
-You know what a page is, what a buffer pool is, how PostgreSQL stores rows in slotted pages.
+The last two lectures covered pages, buffer pools, and PostgreSQL's slotted row pages.
+Today covers the alternative layout.
 
-Today: the alternative.
-
-A column store keeps **all values of one column together** rather than all values of one row.
-Same data. Same SQL surface. Wildly different performance profile.
+A column store keeps **all values of one column together** instead of all values of one row.
+The data and the SQL are the same, but the performance profile changes completely.
 
 The C-Store paper (Stonebraker et al., VLDB 2005) is the argument that started the modern OLAP era.
 
@@ -72,6 +70,8 @@ graph LR
   class L,C,P,M step
 ```
 
+Reference: Textbook §13.7.6, p. 609, on column stores.
+
 ---
 
 <!-- _class: lead -->
@@ -96,7 +96,7 @@ Two layouts can hold the same data. SQL never tells you which.
 
 ---
 
-# Row Layout: Tuples on a Page
+# Row Layout
 
 ```
 +----------------------------------------------------------+
@@ -113,12 +113,12 @@ Two layouts can hold the same data. SQL never tells you which.
 +----------------------------------------------------------+
 ```
 
-To read one full row: one page access.
-To compute `SUM(amount)` across 100 M rows: read all pages, throw away 80% of the bytes.
+Reading one full row takes one page access.
+Computing `SUM(amount)` across 100 M rows reads every page and throws away 80% of the bytes.
 
 ---
 
-# Column Layout: Columns on Separate Pages
+# Column Layout
 
 ```
 +----------------------+   +----------------------+   +----------------------+
@@ -131,8 +131,8 @@ To compute `SUM(amount)` across 100 M rows: read all pages, throw away 80% of th
 +----------------------+   +----------------------+   +----------------------+
 ```
 
-To read one full row: assemble from many places.
-To compute `SUM(amount)`: read **only the amount column**.
+Reading one full row means assembling values from many places.
+Computing `SUM(amount)` reads only the amount column.
 
 The 80% byte savings shows up as a 5-10× scan speedup.
 
@@ -167,7 +167,7 @@ The 80% byte savings shows up as a 5-10× scan speedup.
 </div>
 </div>
 
-The C-Store paper's central claim: **one engine cannot win both**. PostgreSQL leans row; DuckDB leans column.
+The C-Store paper claims one engine cannot win both workloads. PostgreSQL leans row; DuckDB leans column.
 
 ---
 
@@ -181,16 +181,14 @@ The C-Store paper's central claim: **one engine cannot win both**. PostgreSQL le
 
 A column holds values of **the same type, often with regularities**:
 
-- `sale_date` is a date — most rows in 2024
+- `sale_date` values cluster in recent months
 - `payment_type` is one of {cash, credit, debit, other}
-- `country` is one of ~200 values
+- `country` takes one of ~200 values
 - `quantity` is mostly small integers
 
 Compression schemes exploit these regularities to pack columns into 10-50% of their raw size.
 
-The win is not only disk:
-- Compressed columns mean fewer cache misses
-- Vectorized engines decode in-flight without materializing the original
+The win goes beyond disk space. Compressed columns mean fewer cache misses, and vectorized engines decode in-flight without materializing the original.
 
 ---
 
@@ -201,11 +199,11 @@ raw:        [CA, CA, CA, CA, CA, NY, NY, NY, FL, FL, FL, FL]
 encoded:    [(CA, 5), (NY, 3), (FL, 4)]
 ```
 
-Great when the column is **sorted** or has long runs.
+RLE wins when the column is sorted or has long runs.
 
 DuckDB and Vertica detect runs automatically. Sorting a column by a high-cardinality natural key destroys RLE; sorting by a low-cardinality key creates it.
 
-This is why C-Store's design includes **multiple sort orders** for the same column — different sorts win different compressions.
+This is why C-Store's design includes multiple sort orders for the same column; different sorts win different compressions.
 
 ---
 
@@ -258,7 +256,7 @@ graph LR
   class D,C,M,E,R step
 ```
 
-Counter-intuitive but true: smaller pages = faster queries.
+Smaller pages produce faster queries.
 
 - Less I/O to load the data
 - Fewer cache misses
@@ -316,7 +314,7 @@ Three structural ideas that turn into the modern OLAP architecture.
 
 ---
 
-# Projections — Multiple Sort Orders
+# Projections
 
 ```
 sales table:
@@ -336,7 +334,7 @@ Each projection is a **sorted view of overlapping columns**.
 
 Different sort orders enable different compressions and different query patterns.
 
-The cost is duplication — multiple copies of the column data. Worth it for analytical workloads where reads dominate.
+The cost is duplication, with multiple copies of the column data. Analytical workloads where reads dominate accept that cost.
 
 <!--
 The "projection" word is unfortunately overloaded. C-Store's "projection" is closer to "materialized view sorted differently" than to relational-algebra projection. The paper's word; we use it because the modern literature does.
@@ -451,7 +449,7 @@ DuckDB is the most direct descendant we use in this course.
 
 ---
 
-# Parquet, the Lingua Franca
+# Parquet
 
 ```bash
 # A 3M-row Parquet file
@@ -503,40 +501,26 @@ Two engines, two layouts, one logical schema.
 
 # Wrap-up
 
-You now have:
+- Row layout wins transactional workloads, and column layout wins analytical scans over a few columns.
+- RLE, dictionary encoding, and bit-packing pack columns into a fraction of their raw size and speed up scans.
+- C-Store introduced projections, the write-store/read-store split, and the specialized-engine thesis.
+- Parquet and DuckDB carry the column-store ideas forward, usually paired with PostgreSQL in a hybrid stack.
 
-<div class="columns">
-<div>
-
-- Row vs column layout, and the workloads each wins
-- Three column-store compression schemes: RLE, dictionary, bit-packing
-- The C-Store paper's three structural ideas
-
-</div>
-<div>
-
-- The C-Store → Vertica → Parquet → DuckDB lineage
-- The modern hybrid pattern: Postgres + Parquet + DuckDB
-- A growing instinct for when to reach for which engine
-
-</div>
-</div>
+<!--
+One line per part of the lecture. If time remains, ask students which layout their project dataset favors and why.
+-->
 
 ---
 
-# Wednesday: B+ Trees I
+# Wednesday
 
-We open the indexing arc.
+Wednesday opens the indexing arc with B+ trees.
 
-By the end of Wednesday you can hand-draw a B+ tree, trace a search through it, and explain why every database in this section uses one.
-
-Read GMW Ch. 14.1-14.2 before class.
+Read Textbook §14.1-14.2, pp. 620-646 before class.
 
 ---
 
 # Practice Before Wednesday
-
-Two exercises:
 
 1. Pick three columns from your project's dataset. For each, name the likely compression scheme (RLE, dictionary, bit-pack) and why.
 2. Convert one of your project's tables to Parquet using DuckDB; report disk size before and after.

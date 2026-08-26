@@ -28,9 +28,8 @@ First class after Project 2 deadline. Project 2 small-group breakouts run in the
 <div class="columns-left-wide">
 <div>
 
-Last week: B+ trees give O(log_F N) lookups + range scans.
-
-Today: hash indexes give **O(1) average** lookups — but no range support.
+Last week covered B+ trees, which give O(log_F N) lookups and range scans.
+Today covers hash indexes, which give O(1) average lookups but no range support.
 
 For pure equality work (`WHERE id = 42`), hash beats btree.
 For everything else, btree wins.
@@ -75,7 +74,7 @@ graph LR
   class Pr milestone
 ```
 
-Reference: GMW Ch. 14.4; PostgreSQL docs [Ch. 11.2 Index Types — Hash](https://www.postgresql.org/docs/current/indexes-types.html#INDEXES-TYPES-HASH).
+Reference: Textbook §14.3, pp. 648-659; PostgreSQL docs [Ch. 11.2 Index Types, Hash](https://www.postgresql.org/docs/current/indexes-types.html#INDEXES-TYPES-HASH).
 
 ---
 
@@ -85,12 +84,12 @@ Reference: GMW Ch. 14.4; PostgreSQL docs [Ch. 11.2 Index Types — Hash](https:/
 
 ---
 
-# Hash Functions, Briefly
+# Hash Functions
 
 A hash function $h(k)$ maps a key to a bucket index in O(1).
 
-- Same key → same bucket (deterministic)
-- Different keys → ideally different buckets (uniform)
+- The same key always maps to the same bucket (deterministic)
+- Different keys ideally map to different buckets (uniform)
 - A good hash spreads keys across buckets evenly
 
 ```mermaid
@@ -109,7 +108,7 @@ graph LR
   class B3,B7 b
 ```
 
-42 and 51 collide — they end up in the same bucket. We need a strategy for handling collisions.
+42 and 51 collide and end up in the same bucket, so we need a strategy for handling collisions.
 
 ---
 
@@ -119,14 +118,14 @@ graph LR
 <div>
 
 ### Hash wins
-- `WHERE user_id = 12345` — equality on a high-cardinality column
+- `WHERE user_id = 12345`, equality on a high-cardinality column
 - Lookup-heavy session stores
 - Join keys (hash joins, Week 12)
 
 ### Hash loses
-- `WHERE x > 100` — needs ordered data
-- `ORDER BY x` — same
-- `LIKE 'pre%'` — also a range
+- `WHERE x > 100` needs ordered data
+- `ORDER BY x` needs ordered data
+- `LIKE 'pre%'` is also a range
 - Multi-column composites (sometimes)
 
 </div>
@@ -152,7 +151,7 @@ graph TB
 
 > In practice, B+ trees handle equality almost as fast as hash and also handle ranges. Most databases default to btree.
 
-PostgreSQL's hash index is **most useful when you know you only ever do `=` and never `BETWEEN`**.
+PostgreSQL's hash index is most useful when you know you only ever do `=` and never `BETWEEN`.
 
 ---
 
@@ -187,7 +186,7 @@ The simplest scheme. Fast when load is light.
 
 ---
 
-# Why Static Hashing Falls Apart
+# Why Static Hashing Fails
 
 <div class="columns">
 <div>
@@ -198,9 +197,9 @@ As data grows, **buckets fill up**.
 
 A full bucket spills into an **overflow page**. Then another. Then another.
 
-Lookups degrade from O(1) to O(chain length) — eventually O(N).
+Lookups degrade from O(1) to O(chain length), and eventually O(N).
 
-The fix would be **rehashing** — pick a bigger N, rebuild everything. But rebuilding the entire index for one insert is unacceptable.
+The fix would be rehashing: pick a bigger N and rebuild everything. But rebuilding the entire index for one insert is unacceptable.
 
 </div>
 <div>
@@ -231,7 +230,7 @@ Two real-world solutions emerged: **extendible hashing** (Fagin et al., 1979) an
 
 ---
 
-# Extendible Hashing: The Idea
+# Extendible Hashing
 
 Instead of one fixed `N`, maintain a **directory** that points to buckets.
 
@@ -255,7 +254,7 @@ On overflow, **split the bucket, double the directory if needed**.
 
 ---
 
-# Extendible Hashing — Step 1
+# Extendible Hashing Step 1
 
 Bucket size 2. Global depth $g = 1$. Two directory entries, two buckets.
 
@@ -264,7 +263,7 @@ graph LR
   D0["dir[0]"]
   D1["dir[1]"]
   B0["B0 (l=1)<br/>4, 12"]
-  B1["B1 (l=1)<br/>9, 5"]
+  B1["B1 (l=1)<br/>5, 7"]
   D0 --> B0
   D1 --> B1
   classDef dir fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
@@ -275,20 +274,20 @@ graph LR
 
 Keys go to bucket 0 if their last bit is 0, bucket 1 if it's 1.
 
-- 4 = `100` → ends in 0 → bucket 0
-- 12 = `1100` → ends in 0 → bucket 0
-- 9 = `1001` → ends in 1 → bucket 1
-- 5 = `101` → ends in 1 → bucket 1
+- 4 = `100` ends in 0, so it goes to bucket 0
+- 12 = `1100` ends in 0, so it goes to bucket 0
+- 5 = `101` ends in 1, so it goes to bucket 1
+- 7 = `111` ends in 1, so it goes to bucket 1
 
 ---
 
-# Extendible Hashing — Step 2: Insert 13
+# Extendible Hashing Step 2
 
-13 = `1101` → ends in 1 → bucket 1.
+Insert 13. 13 = `1101` ends in 1, so it belongs in bucket 1.
 
-But bucket 1 is full (already has 9, 5, both with last bit 1).
+But bucket 1 is full (already has 5 and 7, both with last bit 1).
 
-**Split bucket 1** by extending to look at the **last 2 bits**:
+Split bucket 1 by extending to look at the **last 2 bits**:
 
 ```mermaid
 graph LR
@@ -297,8 +296,8 @@ graph LR
   D2["dir[10]"]
   D3["dir[11]"]
   B0["B0 (l=1)<br/>4, 12"]
-  B01["B01 (l=2)<br/>9, 13"]
-  B11["B11 (l=2)<br/>5"]
+  B01["B01 (l=2)<br/>5, 13"]
+  B11["B11 (l=2)<br/>7"]
   D0 --> B0
   D2 --> B0
   D1 --> B01
@@ -312,21 +311,19 @@ graph LR
   class B01,B11 changed
 ```
 
-The directory **doubles** (g goes from 1 to 2). Bucket 0 keeps local depth 1, so both `dir[00]` and `dir[10]` point to it. Bucket 1 splits into two new buckets each at depth 2.
+The directory doubles (g goes from 1 to 2). Bucket 0 keeps local depth 1, so both `dir[00]` and `dir[10]` point to it. Bucket 1 splits into two buckets at depth 2.
 
-9 = `1001` last 2 bits = `01` → new bucket B01
-13 = `1101` last 2 bits = `01` → also B01
-5 = `0101` last 2 bits = `01` ... wait, 5 in binary is `0101`, last 2 bits are `01`. Hmm.
-
-Let me redo with binary that splits cleanly. Keys: 4, 12 → ends 00; 9, 13 → ends 01; 5 → ends 01; ... actually let me show the algorithm pattern not the exact bits.
+- 5 = `101` has last 2 bits `01`, so it goes to B01
+- 13 = `1101` has last 2 bits `01`, so it goes to B01
+- 7 = `111` has last 2 bits `11`, so it goes to B11
 
 <!--
-The on-screen example has a small accounting issue with bit patterns — when teaching, choose keys that split cleanly. The principle is what matters: doubling the directory and splitting one bucket while keeping the other at its old depth.
+Walk this slowly. The two takeaways: the directory doubles but only the overflowing bucket splits, and the untouched bucket keeps its old local depth with two directory entries pointing at it. Keys 4, 12, 5, 7, 13 were chosen so the split lands cleanly: 5 and 13 share suffix 01, 7 has suffix 11.
 -->
 
 ---
 
-# Extendible Hashing — The Algorithm
+# The Extendible Hashing Algorithm
 
 ```
 Insert(key):
@@ -353,7 +350,7 @@ Lookups remain O(1): one directory access + one bucket access.
 
 ---
 
-# Extendible Hashing: Strengths and Costs
+# Extendible Hashing Strengths and Costs
 
 <div class="columns">
 <div>
@@ -361,7 +358,7 @@ Lookups remain O(1): one directory access + one bucket access.
 ### Strengths
 
 - O(1) lookups
-- Grows incrementally — no full rebuild
+- Grows incrementally with no full rebuild
 - Directory is small (a few KB even for huge indexes)
 
 </div>
@@ -371,14 +368,14 @@ Lookups remain O(1): one directory access + one bucket access.
 
 - Directory doubles when global depth grows
 - Bad hash distribution causes one bucket to absorb everything
-- Skew is amplified, not absorbed
+- Repeated splits on a hot bucket enlarge the directory quickly
 
 </div>
 </div>
 
-Extendible hashing is the index structure in **classic textbooks** (Garcia-Molina, Ullman, Widom).
+Extendible hashing is the version the textbook presents (§14.3.5-14.3.6, pp. 652-655).
 
-PostgreSQL's hash index uses a **variant** with optimizations for concurrency.
+PostgreSQL's hash index instead builds on linear hashing, covered next.
 
 ---
 
@@ -388,7 +385,7 @@ PostgreSQL's hash index uses a **variant** with optimizations for concurrency.
 
 ---
 
-# Linear Hashing: The Alternative
+# Linear Hashing
 
 Litwin's 1980 alternative.
 
@@ -411,11 +408,11 @@ graph TB
   class B0,B1,B2,B3 b
 ```
 
-When any bucket overflows, the bucket at the split pointer splits — even if it isn't the one that overflowed.
+When any bucket overflows, the bucket at the split pointer splits, even if it isn't the one that overflowed.
 
 ---
 
-# Linear Hashing — Trade-Offs
+# Linear Hashing Trade-Offs
 
 <div class="columns">
 <div>
@@ -436,7 +433,7 @@ When any bucket overflows, the bucket at the split pointer splits — even if it
 
 PostgreSQL's hash index uses **linear hashing** internally.
 
-That's why a fresh hash index might have unexpected page layout but stabilizes nicely over time.
+A fresh hash index allocates buckets as it grows, and the layout stabilizes over time.
 
 Reference: [PostgreSQL Ch. 67.4 Hash Indexes Internals](https://www.postgresql.org/docs/current/hash-index.html).
 
@@ -469,15 +466,15 @@ ON student
 USING hash (email);
 ```
 
-PostgreSQL's hash index has gone through several lives:
-- Pre-PG 10: not WAL-logged → unsafe across restarts → rarely used
-- PG 10+: WAL-logged, durable, eligible for replication
+PostgreSQL's hash index changed at version 10:
+- Before PG 10 it was not WAL-logged, so it was unsafe across restarts and rarely used
+- Since PG 10 it is WAL-logged, durable, and eligible for replication
 
 Modern PostgreSQL hash indexes are **production-safe** and competitive with btree for pure equality.
 
 ---
 
-# When PG's Hash Index Wins
+# When the Hash Index Wins
 
 ```sql
 EXPLAIN ANALYZE
@@ -488,14 +485,9 @@ If the email column has a hash index:
 - Hash index lookup: 1 page read
 - btree lookup: 3-5 page reads (depending on tree height)
 
-For tables where:
-- The only operation is equality
-- The column has high cardinality (most values distinct)
-- The table is large enough that the btree height matters
+A hash index is slightly faster than a btree when the only operation is equality, the column has high cardinality, and the table is large enough that btree height matters.
 
-…a hash index is slightly faster than a btree.
-
-For most workloads, btree's range support and slight equality cost penalty is worth it.
+For most workloads, btree's range support justifies its slightly slower equality lookups.
 
 ---
 
@@ -519,7 +511,7 @@ graph TB
   class Next wait
 ```
 
-Wednesday: PostgreSQL's specialized index types for everything that doesn't fit btree or hash.
+Wednesday covers PostgreSQL's specialized index types for everything that doesn't fit btree or hash.
 
 ---
 
@@ -529,7 +521,7 @@ Wednesday: PostgreSQL's specialized index types for everything that doesn't fit 
 
 ---
 
-# Project 2 Presentations — Today
+# Project 2 Presentations Today
 
 <div class="columns">
 <div>
@@ -559,47 +551,26 @@ The instructor and TA will circulate during breakouts to time things and answer 
 
 # Wrap-up
 
-You now have:
+- Hash indexes serve equality lookups in O(1) average and give up range support, so btree stays the default.
+- Static hashing degrades into overflow chains because the bucket count is fixed.
+- Extendible hashing grows incrementally by splitting buckets and doubling a small directory.
+- Linear hashing splits buckets in rotation with no directory, and PostgreSQL's `USING hash` builds on it (WAL-logged since PG 10).
 
-<div class="columns">
-<div>
-
-- Hash vs B+ tree: equality vs range trade-off
-- Static hashing and why it fails
-- Extendible hashing with directory doubling
-
-</div>
-<div>
-
-- Linear hashing as the directory-less alternative
-- PostgreSQL's `USING hash` (linear hashing, WAL-logged since PG 10)
-- A working "which index" decision flow
-
-</div>
-</div>
+<!--
+One line per part of the lecture (Project 2 breakouts excluded). The extendible hand-trace exercise below mirrors the in-class example with different keys.
+-->
 
 ---
 
-# Wednesday: PostgreSQL's Full Index Zoo
+# Wednesday
 
-We cover the indexes that aren't btree or hash:
+Wednesday covers PostgreSQL's other index types: GiST, GIN, BRIN, partial, expression, and multi-column indexes. Project 2 winners present.
 
-- **GiST** — generalized search tree (geometry, ranges, full text)
-- **GIN** — inverted index (arrays, JSONB, FTS)
-- **BRIN** — block range index (huge tables, append-only)
-- **Partial** — index a slice
-- **Expression** — index a computed value
-- **Multi-column** — and the leftmost-prefix rule
-
-Plus the **Project 2 winners** present.
-
-Read PostgreSQL docs [Ch. 11.2 Index Types](https://www.postgresql.org/docs/current/indexes-types.html).
+Read PostgreSQL docs [Ch. 11.2 Index Types](https://www.postgresql.org/docs/current/indexes-types.html) before class.
 
 ---
 
 # Practice Before Wednesday
-
-Two exercises:
 
 1. Add a hash index on a high-cardinality equality column in your project's database. Capture `EXPLAIN ANALYZE` before and after, and the size with `pg_relation_size('your_index_name')`.
 2. Hand-trace inserts of `[10, 14, 20, 22, 28, 35]` into an extendible hash with bucket size 2.

@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Wednesday, September 23, 2026
 
-`WITH` — the named subquery
+`WITH`, the named subquery
 
 <!--
 Middle day of Week 6. CTEs feel like a small syntactic convenience but they are a serious leverage point for readability and modifiability of complex queries. Pace 50 min, with the materialization section (Part 3) taking real time because PostgreSQL changed behavior in version 12 and many tutorials online are wrong.
@@ -28,11 +28,11 @@ Middle day of Week 6. CTEs feel like a small syntactic convenience but they are 
 <div class="columns-left-wide">
 <div>
 
-Monday's subqueries showed us how to nest answers inside answers.
+Monday covered subqueries, which nest one answer inside another.
 
-Today's CTEs give those nested answers names — and let us read the query top-to-bottom like a script.
+Today covers CTEs, which name those nested answers so the query reads top to bottom like a script.
 
-Friday's window functions answer the same questions yet differently, by attaching computations to rows rather than groups.
+Friday covers window functions, which attach computations to rows rather than groups.
 
 </div>
 <div>
@@ -92,11 +92,11 @@ WHERE  ...;
 
 A CTE is a query you give a name to, then reference like a table.
 
-The CTE name is visible only inside the statement that defines it. It is **not** persistent — gone after the query finishes.
+The CTE name is visible only inside the statement that defines it. It is **not** persistent; it is gone after the query finishes.
 
 ---
 
-# Subquery vs CTE: Same Query, Two Styles
+# Subquery vs CTE
 
 <div class="columns">
 <div>
@@ -233,7 +233,6 @@ Each CTE can reference any **earlier** CTE. The final `SELECT` ties them togethe
 
 ```mermaid
 graph TB
-  E[("enrollment")]
   S[("student")]
   A["dept_avg<br/>(group by dname)"]
   B["above_avg<br/>(student JOIN dept_avg)"]
@@ -245,7 +244,7 @@ graph TB
   classDef table fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef cte fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
   classDef final fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-  class S,E table
+  class S table
   class A,B cte
   class F final
 ```
@@ -291,7 +290,7 @@ Forces the reader to chase definitions to figure out which query is which.
 </div>
 </div>
 
-Treat CTEs like local variables — names matter.
+Treat CTEs like local variables. Names matter.
 
 ---
 
@@ -301,7 +300,7 @@ Treat CTEs like local variables — names matter.
 
 ---
 
-# A PostgreSQL Version Story
+# Materialization Changed in PostgreSQL 12
 
 <div class="columns">
 <div>
@@ -310,7 +309,7 @@ Treat CTEs like local variables — names matter.
 
 CTEs were always materialized. Each CTE computed its result once, stored it, and the outer query read from the temp result.
 
-This was an "optimization fence" — the optimizer could not push filters into the CTE.
+This made every CTE an "optimization fence", since the optimizer could not push filters into it.
 
 </div>
 <div>
@@ -419,8 +418,6 @@ SELECT count(*) AS rows_archived FROM archived;
 `RETURNING` makes a DML statement act like a query.
 Wrapped in a CTE, you can pipe deletes into inserts into reports.
 
-This is one of PostgreSQL's most underused features.
-
 <!--
 The "DELETE then INSERT" archive pattern in one statement is atomic by virtue of being one statement. Without WITH-RETURNING, doing the same thing required two statements and a transaction; with it, it's one statement that is automatically atomic.
 -->
@@ -477,11 +474,11 @@ SELECT * FROM validated;
 ```
 
 Each CTE is one step in a data-cleaning pipeline.
-This is how working data engineers structure 200-line queries.
+Long production queries are commonly structured this way.
 
 ---
 
-# Pattern 3: Recursive (Friday Preview)
+# Pattern 3: Recursive CTEs
 
 ```sql
 WITH RECURSIVE org_chart AS (
@@ -501,38 +498,23 @@ SELECT * FROM org_chart ORDER BY level, name;
 ```
 
 The `RECURSIVE` keyword lets a CTE reference itself.
-Full coverage on Day 17 — the entire lecture on recursive queries.
+Day 17 covers recursive queries in full.
 
 ---
 
 # Wrap-up
 
-You now have:
-
-<div class="columns">
-<div>
-
-- The `WITH` clause as named subqueries
-- Multi-CTE queries reading top-to-bottom
-- `MATERIALIZED` and `NOT MATERIALIZED` hints
-
-</div>
-<div>
-
-- CTEs with `INSERT`/`UPDATE`/`DELETE` and `RETURNING`
-- Three working patterns: pre-aggregate, step transform, recursive
-- The recursive form as a preview of Day 17
-
-</div>
-</div>
+- `WITH` names a subquery and scopes it to one statement
+- Multiple CTEs chain into a query that reads top to bottom
+- PostgreSQL 12+ inlines single-reference CTEs; `MATERIALIZED` and `NOT MATERIALIZED` override the default
+- CTEs can wrap `INSERT`, `UPDATE`, and `DELETE`, and `RETURNING` pipes rows between them
+- Recursive CTEs let a query reference itself (Day 17)
 
 ---
 
-# Friday: Window Functions I
+# Next Lecture
 
-We learn to compute per-row results without losing the row.
-
-By the end of Friday you write `OVER (PARTITION BY ... ORDER BY ...)` from memory and replace ten lines of correlated subquery with one line of window function.
+Friday covers window functions.
 
 Read PostgreSQL docs Ch. 3.5 before class.
 
@@ -562,7 +544,7 @@ Answers due in your repo before 8:30 AM Fri Sep 25.
 
 [Local PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/hirn2023.pdf) · [papers index](https://ufdatastudio.com/cop5725fa26/papers)
 
-The paper is short (12 pages) and argues that the SQL standard's specification of recursive CTEs is unnecessarily restrictive — and shows PostgreSQL extensions that fix it.
+The paper is short (12 pages). It argues that the SQL standard's specification of recursive CTEs is unnecessarily restrictive, and it shows PostgreSQL extensions that fix it.
 
 The paper is the anchor for Day 17 (Recursive Queries). Read it this week.
 

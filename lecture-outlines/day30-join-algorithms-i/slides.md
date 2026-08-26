@@ -28,14 +28,14 @@ Section 5 opens. The join is the operation that matters most for understanding q
 <div class="columns-left-wide">
 <div>
 
-Sections 1-2 taught you to **write** joins.
-Section 4 taught you to **store** the data.
+Sections 1-2 covered **writing** joins.
+Section 4 covered **storing** the data.
 
-Now we look at how the engine **executes** the join — and why two SQL queries that look identical to you can have wildly different performance.
+Today opens Section 5: how the engine executes a join, and why two queries that look identical can perform very differently.
 
-Today: the nested loop family.
-Wednesday: sort-merge and hash variants.
-Friday: the iterator framework that runs them all.
+Today covers the nested loop family.
+Wednesday covers sort-merge and hash variants.
+Friday covers the iterator framework that runs them all.
 
 </div>
 <div>
@@ -69,11 +69,12 @@ graph LR
   N --> B["3. Block<br/>NL"]
   B --> I["4. Index<br/>NL"]
   I --> C["5. Cost<br/>comparison"]
+  C --> E["6. PostgreSQL<br/>examples"]
   classDef step fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-  class P,N,B,I,C step
+  class P,N,B,I,C,E step
 ```
 
-Reference: GMW Ch. 15.2-15.3.
+Reference: Textbook §15.2, p. 709; §15.3, p. 718; §15.6.3, p. 742.
 
 ---
 
@@ -83,7 +84,7 @@ Reference: GMW Ch. 15.2-15.3.
 
 ---
 
-# Recap: Join = Cross Product + Filter
+# A Join Is a Filtered Cross Product
 
 ```sql
 SELECT s.name, e.cid
@@ -119,7 +120,7 @@ For the rest of the section we use:
 
 All costs are in **page reads**.
 
-We assume seq reads = random reads (modern SSD-friendly). Section 5 of the textbook uses different page-cost assumptions; we go with the simpler one.
+We assume sequential reads cost the same as random reads, which suits modern SSDs. The textbook defines its page-based cost parameters in §15.1.4, p. 705.
 
 <!--
 The cost variables are universal across this and Day 31. Drill them once now and reuse them everywhere. The "seq = random" assumption is a 2026 simplification; HDDs from the textbook era needed separate cost models for each.
@@ -163,9 +164,9 @@ For $|R| = 100$ K tuples and $B_S = 1000$ pages, that's **100 million page reads
 
 ---
 
-# When Nested Loop Is Actually OK
+# When Nested Loop Wins
 
-The only case where pure nested loop wins: **one of the relations is tiny**.
+Pure nested loop wins only when one of the relations is tiny.
 
 ```sql
 -- R is the result of a filter that returns 5 rows
@@ -174,7 +175,7 @@ FROM (SELECT * FROM employee WHERE eid IN (1, 2, 3, 4, 5)) r
 JOIN  department s ON r.dname = s.dname;
 ```
 
-If |R| = 5 and $B_S = 1000$, the nested loop cost is **5005 page reads** — completely acceptable.
+If |R| = 5 and $B_S = 1000$, the nested loop cost is **5005 page reads**, which is completely acceptable.
 
 PostgreSQL's planner picks NL when the outer side is small enough.
 
@@ -206,11 +207,11 @@ for chunk in chunks_of(R, M - 2):       # M-2 pages, 1 for S, 1 for output
 
 **Cost:** $B_R + \lceil B_R / (M - 2) \rceil \cdot B_S$ page reads.
 
-Each "outer scan" of R happens once. S is scanned $\lceil B_R / (M-2) \rceil$ times — but in pages, not tuples.
+R is read once. S is scanned $\lceil B_R / (M-2) \rceil$ times, once per chunk of R.
 
 ---
 
-# Block Nested Loop, Worked
+# Block Nested Loop Worked Example
 
 $B_R = 1000$ pages, $B_S = 5000$ pages, $M = 102$ (100 for chunks).
 
@@ -245,7 +246,7 @@ graph LR
   class Rt,Cr good
 ```
 
-Optimizer's job: pick the right order. The query writer's job: trust the optimizer (or override with hints when needed).
+The optimizer picks the order. The query writer's job is to trust it and verify with EXPLAIN.
 
 ---
 
@@ -297,7 +298,7 @@ For $B_R = 1000$, total is 1500 page reads.
 
 Compare to block NL with $B_S = 5000$: **51,000** reads.
 
-> Index NL is often **the** answer when the inner relation is large and has the right index.
+> Index NL is often the best choice when the inner relation is large and has the right index.
 
 <!--
 This is why we built indexes. The whole point of Section 4 was to make this kind of pattern fast. A foreign key with an index turns multi-table queries from O(N²) to O(N · log N).
@@ -312,9 +313,9 @@ If $|R|$ is large, even index lookups add up.
 $|R| = 1{,}000{,}000$, $h = 4$:
 $$B_R + 1{,}000{,}000 \cdot 5 = B_R + 5{,}000{,}000$$
 
-That's 5 million page reads. Probably worse than a sort-merge or hash join.
+That's 5 million page reads, probably worse than a sort-merge or hash join.
 
-The optimizer's job: estimate $|R|$ and pick.
+The optimizer estimates $|R|$ and picks.
 
 In general:
 - |R| small + index on S: Index NL wins
@@ -409,7 +410,7 @@ RESET enable_mergejoin;
 
 PostgreSQL provides `enable_*` flags for every join algorithm. Use them to **compare plans**, not to force in production.
 
-Reference: [PostgreSQL Ch. 19.7.1 Planner Method Configuration](https://www.postgresql.org/docs/current/runtime-config-query.html#RUNTIME-CONFIG-QUERY-ENABLE).
+Reference: [PostgreSQL docs, Planner Method Configuration](https://www.postgresql.org/docs/current/runtime-config-query.html#RUNTIME-CONFIG-QUERY-ENABLE).
 
 <!--
 Production code should never set these. They exist for debugging — to compare what would happen under different choices. Hardcoding off can cause catastrophic plans when data changes.
@@ -444,38 +445,24 @@ Run both and capture the runtime. This is Project 3 work.
 
 # Wrap-up
 
-You now have:
+- Naive nested loop costs $B_R + |R| \cdot B_S$ and wins only with a tiny outer relation.
+- Block nested loop reads the outer in chunks and costs $B_R + \lceil B_R / (M-2) \rceil \cdot B_S$.
+- Index nested loop costs $B_R + |R| \cdot (h+1)$ and wins with a small outer and an indexed inner.
+- The smaller relation goes on the outside.
+- The decision table shows which algorithm wins for given $B_R$, $B_S$, $|R|$, $M$, and $h$.
+- PostgreSQL's `enable_*` flags let you compare plans during debugging.
 
-<div class="columns">
-<div>
-
-- The naive nested loop and its $|R| \cdot B_S$ cost
-- Block nested loop with $\lceil B_R / (M-2) \rceil$ chunks
-- Index nested loop with $|R| \cdot (h+1)$
-
-</div>
-<div>
-
-- The "put the small relation first" rule
-- The decision table: when each algorithm wins
-- PostgreSQL's `enable_*` flags for plan exploration
-
-</div>
-</div>
+<!--
+One bullet per part. If short on time, the block NL and index NL cost formulas are the two things students must retain for the Worked Comparison style of exam question.
+-->
 
 ---
 
 # Wednesday: Joins Part II
 
-Three more join algorithms:
+Wednesday covers sort-merge join, hash join, and grace hash join.
 
-- **Sort-merge** — uses Day 29's external sort
-- **Hash join** — when the smaller side fits in memory
-- **Grace hash** — when neither side fits
-
-Plus the comparison table fills out.
-
-Read GMW Ch. 15.4-15.5 before class.
+Reading: Textbook §§15.4-15.5, pp. 723-738.
 
 ---
 

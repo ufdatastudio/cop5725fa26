@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Friday, September 4, 2026
 
-Six rules. One diagram. A working schema.
+Translating the registrar ER diagram into SQL DDL
 
 <!--
 Project 0 is due tonight. The lecture's job is to close the design loop: take the ER diagram from Wednesday and produce a SQL DDL script. Pace 50 min, with last 8 min on tradeoffs and the look-ahead to normalization next week.
@@ -28,11 +28,11 @@ Project 0 is due tonight. The lecture's job is to close the design loop: take th
 <div class="columns-left-wide">
 <div>
 
-Wednesday: we drew an ER diagram for a registrar system.
-Today: we turn that diagram into SQL `CREATE TABLE` statements.
+Wednesday we drew an ER diagram for a registrar system.
+Today we turn that diagram into SQL `CREATE TABLE` statements (Textbook §4.5, p. 157).
 
-The translation is **mechanical** for most ER constructs.
-A few cases — 1:1 relationships, ISA hierarchies — require a design choice.
+The translation is mechanical for most ER constructs.
+A few cases, such as 1:1 relationships and ISA hierarchies, require a design choice.
 We will see all of them.
 
 </div>
@@ -65,7 +65,7 @@ graph LR
   class R,W,T,N step
 ```
 
-By the end of the hour you will have a SQL script you can run against PostgreSQL.
+The result is a SQL script that runs against PostgreSQL.
 
 <!--
 The "what ER did not tell us" section is foreshadowing for Week 4: functional dependencies and normalization. ER produces *a* schema, not necessarily the *best* one. Normalization fixes redundancy ER does not catch.
@@ -79,7 +79,7 @@ The "what ER did not tell us" section is foreshadowing for Week 4: functional de
 
 ---
 
-# The Six Rules at a Glance
+# The Six Rules
 
 | ER Construct | Translation |
 |--------------|-------------|
@@ -90,9 +90,9 @@ The "what ER did not tell us" section is foreshadowing for Week 4: functional de
 | M:N relationship | New table; PK = both FKs |
 | Multi-valued attribute | New table; PK = owner PK + value |
 
-Plus one bonus: ISA hierarchies have three strategies of their own.
+ISA hierarchies add three strategies of their own.
 
-We will apply each rule to the registrar diagram.
+We will apply each rule to the registrar diagram (Textbook §4.5, p. 157 and §4.6, p. 165).
 
 ---
 
@@ -104,7 +104,7 @@ We will apply each rule to the registrar diagram.
 ```mermaid
 graph TB
   S["Student"]
-  S --- SID(("sid"))
+  S --- SID(("student_id"))
   S --- N(("name"))
   S --- G(("gpa"))
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
@@ -120,9 +120,9 @@ graph TB
 
 ```sql
 CREATE TABLE student (
-  sid   bigint        PRIMARY KEY,
-  name  text          NOT NULL,
-  gpa   numeric(3,2)  CHECK (gpa BETWEEN 0 AND 4.0)
+  student_id  bigint        PRIMARY KEY,
+  name        text          NOT NULL,
+  gpa         numeric(3,2)  CHECK (gpa BETWEEN 0 AND 4.0)
 );
 ```
 
@@ -131,7 +131,7 @@ CREATE TABLE student (
 
 <div class="rule">
 
-**Rule:** Each strong entity becomes a table. The primary key in the diagram becomes the `PRIMARY KEY` in the table.
+**Rule:** Each strong entity becomes a table. The primary key in the diagram becomes the `PRIMARY KEY` in the table (Textbook §4.5.1, p. 157).
 
 </div>
 
@@ -169,11 +169,11 @@ graph LR
 
 ```sql
 CREATE TABLE section (
-  cid          text     REFERENCES course(cid),
-  section_num  int      NOT NULL,
-  term         text     NOT NULL,
+  course_id    text REFERENCES course(course_id),
+  section_num  int  NOT NULL,
+  term         text NOT NULL,
   room         text,
-  PRIMARY KEY (cid, section_num, term)
+  PRIMARY KEY (course_id, section_num, term)
 );
 ```
 
@@ -182,7 +182,7 @@ CREATE TABLE section (
 
 <div class="rule">
 
-**Rule:** Weak entity becomes a table whose primary key is the **owner's primary key** concatenated with the **partial key**. The owner's key is also a foreign key.
+**Rule:** Weak entity becomes a table whose primary key is the **owner's primary key** concatenated with the **partial key**. The owner's key is also a foreign key (Textbook §4.5.4, p. 161).
 
 </div>
 
@@ -192,7 +192,7 @@ The composite key has three parts here because `term` is also part of the identi
 
 ---
 
-# Rule 3: 1:1 Relationship — Three Options
+# Rule 3: 1:1 Relationships
 
 <div class="columns-3">
 <div>
@@ -282,10 +282,10 @@ graph LR
 
 ```sql
 CREATE TABLE course (
-  cid     text PRIMARY KEY,
-  title   text NOT NULL,
-  credits int  NOT NULL,
-  dname   text REFERENCES department(dname)
+  course_id  text PRIMARY KEY,
+  title      text NOT NULL,
+  credits    int  NOT NULL,
+  dname      text REFERENCES department(dname)
 );
 ```
 
@@ -294,11 +294,11 @@ CREATE TABLE course (
 
 <div class="rule">
 
-**Rule:** Embed the foreign key on the **N** side. Each course has *one* department; the dname column captures that.
+**Rule:** Embed the foreign key on the **N** side. Each course has *one* department; the dname column captures that (Textbook §4.5.2, p. 158 and §4.5.3, p. 160).
 
 </div>
 
-The FK can be `NOT NULL` if participation is total — "every course belongs to a department."
+The FK can be `NOT NULL` if participation is total ("every course belongs to a department").
 
 <!--
 This is the workhorse rule. Most relationships in real schemas are 1:N, and most foreign keys you write follow this pattern. The "embed on N side" intuition: the N-side row already exists once, so adding an FK column is one column per row instead of a whole new table.
@@ -331,14 +331,14 @@ graph LR
 
 ```sql
 CREATE TABLE enrollment (
-  sid          bigint REFERENCES student(sid),
-  cid          text,
+  student_id   bigint REFERENCES student(student_id),
+  course_id    text,
   section_num  int,
   term         text,
   grade        char(2),
-  PRIMARY KEY (sid, cid, section_num, term),
-  FOREIGN KEY (cid, section_num, term)
-    REFERENCES section(cid, section_num, term)
+  PRIMARY KEY (student_id, course_id, section_num, term),
+  FOREIGN KEY (course_id, section_num, term)
+    REFERENCES section(course_id, section_num, term)
 );
 ```
 
@@ -347,12 +347,12 @@ CREATE TABLE enrollment (
 
 <div class="rule">
 
-**Rule:** Every M:N relationship becomes its own table. Primary key = both side FKs. Relationship attributes become additional columns.
+**Rule:** Every M:N relationship becomes its own table. Primary key = both side FKs. Relationship attributes become additional columns (Textbook §4.5.2, p. 158).
 
 </div>
 
 <!--
-The junction-table pattern is everywhere. The complication here is that Section is a weak entity, so its FK is three columns (cid, section_num, term), not one. The FK declaration needs all three.
+The junction-table pattern is everywhere. The complication here is that Section is a weak entity, so its FK is three columns (course_id, section_num, term), not one. The FK declaration needs all three.
 -->
 
 ---
@@ -377,9 +377,9 @@ graph TB
 
 ```sql
 CREATE TABLE student_phone (
-  sid    bigint REFERENCES student(sid),
-  phone  text NOT NULL,
-  PRIMARY KEY (sid, phone)
+  student_id  bigint REFERENCES student(student_id),
+  phone       text   NOT NULL,
+  PRIMARY KEY (student_id, phone)
 );
 ```
 
@@ -398,7 +398,9 @@ PostgreSQL's array support lets you sidestep this rule when you don't query into
 
 ---
 
-# Bonus: ISA Hierarchies — Three Strategies
+# ISA Hierarchies
+
+Three strategies (Textbook §4.6, p. 165):
 
 <div class="columns-3">
 <div>
@@ -432,7 +434,7 @@ One table per subclass; common attributes repeated.
 
 ```sql
 CREATE TABLE student (
-  sid bigint PK,
+  student_id bigint PK,
   name text,
   gpa numeric(3,2)
 );
@@ -482,7 +484,7 @@ PostgreSQL has table inheritance (CREATE TABLE student INHERITS person), which i
 
 ---
 
-# Starting Point: Wednesday's Diagram
+# Wednesday's Diagram
 
 ```mermaid
 graph LR
@@ -515,15 +517,15 @@ Five entities, one weak, six relationships, one relationship attribute. We trans
 
 ```sql
 CREATE TABLE student (
-  sid   bigint        PRIMARY KEY,
-  name  text          NOT NULL,
-  gpa   numeric(3, 2) CHECK (gpa BETWEEN 0 AND 4.0)
+  student_id  bigint        PRIMARY KEY,
+  name        text          NOT NULL,
+  gpa         numeric(3, 2) CHECK (gpa BETWEEN 0 AND 4.0)
 );
 
 CREATE TABLE course (
-  cid     text PRIMARY KEY,
-  title   text NOT NULL,
-  credits int  NOT NULL CHECK (credits BETWEEN 1 AND 6)
+  course_id  text PRIMARY KEY,
+  title      text NOT NULL,
+  credits    int  NOT NULL CHECK (credits BETWEEN 1 AND 6)
 );
 
 CREATE TABLE faculty (
@@ -557,7 +559,7 @@ ALTER TABLE faculty
 
 (Or equivalently, declare the columns in the original `CREATE TABLE`.)
 
-The FKs go on the N side — `course` and `faculty`.
+The FKs go on the N side, `course` and `faculty`.
 
 ---
 
@@ -565,12 +567,12 @@ The FKs go on the N side — `course` and `faculty`.
 
 ```sql
 CREATE TABLE section (
-  cid          text   REFERENCES course(cid),
+  course_id    text   REFERENCES course(course_id),
   section_num  int    NOT NULL,
   term         text   NOT NULL,
   room         text,
   fid          bigint REFERENCES faculty(fid),
-  PRIMARY KEY (cid, section_num, term)
+  PRIMARY KEY (course_id, section_num, term)
 );
 ```
 
@@ -589,19 +591,19 @@ Combining the weak entity translation with the teaches FK in one table is the na
 
 ```sql
 CREATE TABLE enrollment (
-  sid          bigint REFERENCES student(sid),
-  cid          text,
+  student_id   bigint REFERENCES student(student_id),
+  course_id    text,
   section_num  int,
   term         text,
   grade        char(2),  -- NULL until graded
-  PRIMARY KEY (sid, cid, section_num, term),
-  FOREIGN KEY (cid, section_num, term)
-    REFERENCES section(cid, section_num, term)
+  PRIMARY KEY (student_id, course_id, section_num, term),
+  FOREIGN KEY (course_id, section_num, term)
+    REFERENCES section(course_id, section_num, term)
 );
 ```
 
 The relationship is M:N, so it becomes a table.
-`grade` is the relationship attribute — a property of the enrollment.
+`grade` is the relationship attribute, a property of the enrollment.
 
 <!--
 The composite FK to section is the bookkeeping cost of having a weak entity in the schema. If Section had a single surrogate key (section_id), the FK would be one column. Tradeoff: weak entities require composite FKs but make the natural-key constraints cleaner.
@@ -627,7 +629,7 @@ ALTER TABLE enrollment
 
 -- Indexes on frequent join columns
 CREATE INDEX idx_section_fid     ON section (fid);
-CREATE INDEX idx_enrollment_sid  ON enrollment (sid);
+CREATE INDEX idx_enrollment_student_id  ON enrollment (student_id);
 ```
 
 `NOT NULL` enforces the **total participation** the ER diagram captured.
@@ -636,7 +638,7 @@ Indexes are a Week 9 topic, mentioned in passing here.
 
 ---
 
-# The Full Schema, Together
+# The Full Schema
 
 ```sql
 CREATE TABLE department (
@@ -644,7 +646,7 @@ CREATE TABLE department (
   building text
 );
 CREATE TABLE student (
-  sid bigint PRIMARY KEY,
+  student_id bigint PRIMARY KEY,
   name text NOT NULL,
   gpa numeric(3,2) CHECK (gpa BETWEEN 0 AND 4.0)
 );
@@ -655,29 +657,29 @@ CREATE TABLE faculty (
   dname text NOT NULL REFERENCES department(dname)
 );
 CREATE TABLE course (
-  cid text PRIMARY KEY,
+  course_id text PRIMARY KEY,
   title text NOT NULL,
   credits int NOT NULL CHECK (credits BETWEEN 1 AND 6),
   dname text NOT NULL REFERENCES department(dname)
 );
 CREATE TABLE section (
-  cid text REFERENCES course(cid),
+  course_id text REFERENCES course(course_id),
   section_num int NOT NULL,
   term text NOT NULL,
   room text,
   fid bigint REFERENCES faculty(fid),
-  PRIMARY KEY (cid, section_num, term)
+  PRIMARY KEY (course_id, section_num, term)
 );
 CREATE TABLE enrollment (
-  sid bigint REFERENCES student(sid),
-  cid text, section_num int, term text,
+  student_id bigint REFERENCES student(student_id),
+  course_id text, section_num int, term text,
   grade char(2),
-  PRIMARY KEY (sid, cid, section_num, term),
-  FOREIGN KEY (cid, section_num, term) REFERENCES section(cid, section_num, term)
+  PRIMARY KEY (student_id, course_id, section_num, term),
+  FOREIGN KEY (course_id, section_num, term) REFERENCES section(course_id, section_num, term)
 );
 ```
 
-Six tables. One diagram. Sixty lines of DDL.
+One diagram produced six tables and about sixty lines of DDL.
 
 <!--
 Worth pausing to note: this is the entire registrar schema in 60 lines. Real schemas grow from here, but the bones are this small. ER thinking is what makes the bones obvious.
@@ -696,13 +698,13 @@ Worth pausing to note: this is the entire registrar schema in 60 lines. Real sch
 <div class="columns">
 <div>
 
-The rules give *a* schema. Not necessarily the *best* one.
+The rules give *a* schema, not necessarily the best one.
 
 Three places where judgment beats mechanical translation:
 
-1. **1:1 with partial participation** — embed or separate?
-2. **ISA hierarchy** — which of three strategies?
-3. **Multi-valued attribute** — array, side table, or document?
+1. Whether to embed or separate a 1:1 with partial participation
+2. Which of the three ISA strategies to use
+3. Whether a multi-valued attribute becomes an array, a side table, or a document
 
 </div>
 <div>
@@ -723,14 +725,14 @@ graph TD
 
 ---
 
-# Tradeoff: Multi-Valued in 2026
+# Multi-Valued Attributes in Practice
 
 ```sql
 -- Textbook rule: side table
 CREATE TABLE student_phone (
-  sid bigint REFERENCES student(sid),
+  student_id bigint REFERENCES student(student_id),
   phone text,
-  PRIMARY KEY (sid, phone)
+  PRIMARY KEY (student_id, phone)
 );
 
 -- PostgreSQL array
@@ -744,9 +746,9 @@ ALTER TABLE student ADD COLUMN contacts jsonb;
 <div class="tradeoff">
 
 **When to pick which:**
-- **Side table** — when you query individual values, join on them, or update one at a time.
-- **Array** — when reads always grab the whole list, writes replace the whole list, no FK to elements.
-- **JSONB** — when the structure is varied or evolving, and queries are exploratory.
+- Use a side table when you query individual values, join on them, or update one at a time.
+- Use an array when reads grab the whole list, writes replace the whole list, and nothing references individual elements.
+- Use JSONB when the structure is varied or evolving and queries are exploratory.
 
 </div>
 
@@ -756,9 +758,9 @@ The textbook ranking is reversed in practice. JSONB is the most common modern ch
 
 ---
 
-# Tradeoff: When Rules Lie About Performance
+# What the Rules Ignore
 
-The translation rules ignore three things that matter on day one of production:
+The translation rules ignore three things that matter in production.
 
 <div class="columns-3">
 <div>
@@ -831,7 +833,7 @@ ER does not enforce; normalization does.
 </div>
 </div>
 
-These three questions motivate **functional dependencies** and **normalization** — Week 4.
+These three questions motivate functional dependencies and normalization in Week 4.
 
 <!--
 Foreshadow next week's content. Normalization is the math that proves an ER-derived schema is actually well-formed. Most ER diagrams produce 3NF schemas already; normalization is what tells you for sure.
@@ -855,6 +857,8 @@ graph LR
 ```
 
 Quiz 1 closes Section 1: relational model, algebra, ER, FDs, normalization.
+
+Reading for Wednesday: Textbook §3.1-3.2, pp. 67-83.
 
 <!--
 Quiz 1 is a week from today. The single best preparation: walk the algebra ↔ SQL ↔ ER paths in both directions. Most quiz questions ask students to move between two of the three.
@@ -899,41 +903,27 @@ The Project 0 grader runs the same `verify` script the students run locally. If 
 
 Three problems on the handout:
 
-1. **Library scenario from Wednesday** — produce the SQL DDL for the library ER diagram you drew.
-2. **ISA decision** — given a Person→{Student, Faculty} hierarchy, argue for one of the three strategies based on stated access patterns.
-3. **The weak entity question** — translate a Building → Floor → Room weak-entity chain into SQL DDL.
+1. Produce the SQL DDL for the library ER diagram you drew Wednesday.
+2. Given a Person→{Student, Faculty} hierarchy, argue for one of the three ISA strategies based on stated access patterns.
+3. Translate a Building → Floor → Room weak-entity chain into SQL DDL.
 
 Answers due in your repo before 8:30 AM Wed Sep 9.
 
 ---
 
-# What You Can Now Do
+# Wrap-up
 
-<div class="columns-3">
-<div>
+- Strong entities become tables; weak entities get composite keys that include the owner's key.
+- 1:N relationships embed a foreign key on the N side; M:N relationships become junction tables.
+- 1:1 relationships and ISA hierarchies require a choice among the documented options.
+- Multi-valued attributes become side tables, arrays, or JSONB depending on access pattern.
+- ER translation yields a starting schema; normalization checks it for redundancy.
 
-### Design
+<!--
+Close by walking the list against the registrar schema on the previous slide: point to the table that each bullet produced. The common student mistake all term will be putting the FK on the 1 side of a 1:N relationship — call it out here one more time.
+-->
 
-Turn a paragraph of requirements into an ER diagram with entities, relationships, cardinality, weak entities, and ISA.
 
-</div>
-<div>
-
-### Translate
-
-Apply six rules to produce a SQL DDL script that PostgreSQL will accept.
-
-</div>
-<div>
-
-### Critique
-
-Spot the places where the rules force a tradeoff, and pick the option that fits the access pattern.
-
-</div>
-</div>
-
-This is the design half of Section 1. Wednesday and Friday next week tighten the bolts with FDs and normalization.
 
 ---
 

@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Monday, November 9, 2026
 
-Two topics. One closes Friday's execution thread. The other opens the optimization arc.
+Vectorized execution closes the execution thread; algebraic equivalences open query optimization.
 
 <!--
 Two-topic day. Pace 50 min: 20 min on vectorization (the answer to Friday's overhead problem), 30 min on optimization basics (RA equivalences and plan space). Veterans Day takes Wednesday, so this is the only Monday content of the week.
@@ -30,8 +30,8 @@ Two-topic day. Pace 50 min: 20 min on vectorization (the answer to Friday's over
 
 Friday's lecture ended with the **per-tuple overhead** problem of the Volcano model.
 
-Today's first job: see the answer — **vectorized execution**.
-Today's second job: open the question that drives Friday's lecture — **how does the optimizer choose a plan in the first place?**
+Today first covers the answer, **vectorized execution**.
+It then opens the question that drives Friday's lecture: how does the optimizer choose a plan in the first place?
 
 </div>
 <div>
@@ -66,7 +66,7 @@ graph LR
   class V,P,O,E,S step
 ```
 
-Anchors: Boncz et al. *MonetDB/X100* (CIDR 2005); GMW Ch. 16.1-16.3.
+Anchors: Boncz et al. *MonetDB/X100* (CIDR 2005); Textbook §§16.2-16.3, pp. 768-791, and §16.6, p. 814.
 
 ---
 
@@ -76,7 +76,7 @@ Anchors: Boncz et al. *MonetDB/X100* (CIDR 2005); GMW Ch. 16.1-16.3.
 
 ---
 
-# The Problem, Once More
+# The Per-Tuple Overhead Problem
 
 Volcano processes one tuple per `next()` call.
 
@@ -91,7 +91,7 @@ We need a way to amortize that overhead.
 
 ---
 
-# The Answer: Vectors
+# Vectors of Tuples
 
 Process **vectors of tuples** at a time instead of one.
 
@@ -111,9 +111,9 @@ A vector might be:
 - 1024 floats from column B
 - A bitmap of "this row passed the filter"
 
-Per-call overhead is amortized over 1024 tuples — **0.05-0.2 ns per tuple**.
+Per-call overhead is amortized over 1024 tuples, about **0.05-0.2 ns per tuple**.
 
-A 1000× speedup just from changing the granularity.
+The interpretation overhead drops by roughly 1000× just from changing the granularity.
 
 ---
 
@@ -181,14 +181,14 @@ def next_batch(self):
     return batch
 ```
 
-The hot loop is `gpa[i] > 3.5` over a contiguous array — vectorizable by the CPU.
+The hot loop is `gpa[i] > 3.5` over a contiguous array, which the CPU can vectorize.
 
 </div>
 </div>
 
 ---
 
-# MonetDB/X100 — The Origin
+# MonetDB/X100
 
 <div class="columns">
 <div>
@@ -197,9 +197,9 @@ The hot loop is `gpa[i] > 3.5` over a contiguous array — vectorizable by the C
 > *MonetDB/X100: Hyper-Pipelining Query Execution.*
 > CIDR 2005.
 
-The paper that revived vectorized execution for OLAP.
+This paper revived vectorized execution for OLAP.
 
-Showed 10-100× speedup over Volcano-style engines on the same hardware.
+It showed 10-100× speedups over Volcano-style engines on the same hardware.
 
 [Local PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/boncz2005.pdf)
 
@@ -210,7 +210,7 @@ Showed 10-100× speedup over Volcano-style engines on the same hardware.
 graph TB
   V["Volcano<br/>1994"] --> CS["C-Store<br/>2005"]
   V --> X["MonetDB/X100<br/>2005"]
-  X --> Vec["Vectra (Vectorwise)"]
+  X --> Vec["VectorWise<br/>(Actian Vector)"]
   X --> DD["DuckDB"]
   X --> Ph["Photon"]
   X --> Vel["Velox"]
@@ -234,7 +234,7 @@ The 2005 ideas drive the 2026 cloud warehouses.
 DuckDB's execution model uses vectors of 2048 tuples by default.
 
 ```python
-# DuckDB Python — try this against your project's dataset
+# DuckDB Python: try this against your project's dataset
 import duckdb
 
 duckdb.sql("PRAGMA enable_profiling")
@@ -260,7 +260,7 @@ The vectors are passed between operators as **column chunks**, never materialize
 
 ---
 
-# PG Is Still Volcano + JIT
+# PostgreSQL Is Still Volcano Plus JIT
 
 PostgreSQL kept the tuple-at-a-time iterator model but added **JIT compilation** in PG 11 (2018).
 
@@ -370,7 +370,9 @@ We've seen some before:
 - $\sigma_{p \wedge q}(R) = \sigma_p(\sigma_q(R))$
 - $\sigma_p(R \cup S) = \sigma_p(R) \cup \sigma_p(S)$
 
-Today: the rules the optimizer relies on most.
+Today covers the rules the optimizer relies on most.
+
+Reference: Textbook §16.2, p. 768.
 
 ---
 
@@ -423,7 +425,7 @@ graph TB
 
 The selection filters R **before** the join. The join touches fewer tuples.
 
-> Push selections down whenever possible.
+> Push selections down whenever possible. Textbook §16.2.3, p. 772.
 
 ---
 
@@ -477,7 +479,7 @@ We can re-bracket joins.
 </div>
 </div>
 
-These two rules give the optimizer enormous freedom — and create the **plan space** challenge from the next section.
+These two rules give the optimizer enormous freedom and create the **plan space** challenge in the next part.
 
 ---
 
@@ -515,15 +517,15 @@ For `n = 6`: 720 plans.
 For `n = 10`: 3.6 million.
 For `n = 12`: 479 million.
 
-When you include **bushy** plans (subtrees both sides of every join), the count is **double exponential**.
+When you include **bushy** plans (subtrees on both sides of every join), the count grows far faster still.
 
 The optimizer cannot enumerate all of them. We need a search strategy.
 
 ---
 
-# System R's Approach: Dynamic Programming
+# System R Dynamic Programming
 
-Selinger et al. 1979's insight:
+Selinger et al. (1979) observed:
 
 > For an n-way join, the optimal plan over a set S of relations depends only on the optimal plans for subsets of S.
 
@@ -536,7 +538,7 @@ So:
 Cost: O(3^n) instead of O(n!).
 For n = 10: 59 thousand subproblems instead of 3.6 million plans.
 
-This is what PostgreSQL's optimizer does for small joins.
+This is what PostgreSQL's optimizer does for small joins. The textbook presents the same algorithm in §16.6.4, p. 819.
 
 ---
 
@@ -586,7 +588,7 @@ GEQO uses a randomized genetic algorithm:
 - "Cross-breed" the best
 - Iterate
 
-The result isn't guaranteed optimal but is usually good. Reference: [PostgreSQL Ch. 64 GEQO](https://www.postgresql.org/docs/current/geqo.html).
+The result isn't guaranteed optimal but is usually good. Reference: [PostgreSQL docs, Genetic Query Optimizer](https://www.postgresql.org/docs/current/geqo.html).
 
 ```sql
 SHOW geqo_threshold;     -- 12 by default
@@ -600,11 +602,9 @@ The 12-relation threshold is the line between "exhaustive search" and "heuristic
 
 # Interesting Orders
 
-System R's other clever idea: track **physically interesting** orderings of intermediate results.
+System R also tracks **physically interesting** orderings of intermediate results.
 
-Example: if the final query has `ORDER BY age`, a plan that produces results sorted by `age` may be cheaper overall — even if its raw cost is higher.
-
-Why? The final sort can be skipped.
+Example: if the final query has `ORDER BY age`, a plan that produces results sorted by `age` may be cheaper overall, even if its raw cost is higher. The final sort can be skipped.
 
 The optimizer maintains, per subset, the best plan **for each interesting order**, not just one global best plan. This catches optimizations that a naive cost-only search misses.
 
@@ -612,37 +612,24 @@ The optimizer maintains, per subset, the best plan **for each interesting order*
 
 # Wrap-up
 
-You now have:
+- Vectorized execution amortizes per-tuple overhead over batches and wins on OLAP scans.
+- MonetDB/X100 (CIDR 2005) is the origin of today's vectorized engines, including DuckDB.
+- PostgreSQL keeps the Volcano iterator and reduces overhead with JIT compilation.
+- The optimizer turns a logical algebra plan into a physical plan by exploring equivalences and comparing costs.
+- Selection pushdown, projection pushdown, and join commutativity and associativity generate the plan space.
+- System R dynamic programming searches that space, and PostgreSQL switches to GEQO past 12 relations.
 
-<div class="columns">
-<div>
-
-- Vectorized execution and why it crushes Volcano on OLAP
-- MonetDB/X100 (2005) as the origin point
-- PostgreSQL's Volcano + JIT compromise
-
-</div>
-<div>
-
-- The optimizer's job: logical → physical plan
-- Six RA equivalence rules
-- DP-based plan search (Selinger) and GEQO
-
-</div>
-</div>
+<!--
+One bullet per part. The pushdown rules and the DP search are the two exam-relevant pieces; the vectorization half connects to the DuckDB side of Project 3.
+-->
 
 ---
 
 # Friday: Optimization II
 
-Selinger and the cost model in depth, plus the modern critique:
+Friday covers statistics, cost estimation, Selinger 1979 in depth, and Leis et al. 2015, *How Good Are Query Optimizers, Really?*
 
-- **Statistics**: histograms, most-common-values, `pg_stats`
-- **Cost estimation**: selectivity from statistics
-- **Selinger 1979** in detail
-- **Leis 2015** — *How Good Are Query Optimizers, Really?*
-
-Read both papers before class.
+Reading: both papers, before class.
 
 Project 3 due Friday at 11:59 PM.
 
@@ -669,7 +656,7 @@ Push to your `cop5725fa26-project` repo before 8:30 AM Fri Nov 13.
 
 What is on your mind?
 
-Project 3 due Friday. Veterans Day Wednesday — no class.
+Project 3 due Friday. Veterans Day Wednesday, no class.
 
 <!--
 Common Day 33 questions: "Should I switch to DuckDB for my project?" (Project 3 can use either or both — measure with your dataset.) "Is the optimizer ever wrong?" (Constantly. Friday's lecture is about why.) "How do I see what the optimizer was thinking?" (EXPLAIN gives the plan; auto_explain logs it; pg_stat_statements summarizes across queries.)

@@ -28,11 +28,11 @@ Project 1 group presentations start this week. The first 30 min of class today i
 <div class="columns-left-wide">
 <div>
 
-Friday's lecture gave us the OVER clause with `PARTITION BY` and `ORDER BY`.
+Friday covered the OVER clause with `PARTITION BY` and `ORDER BY`.
 
-Today we add the third piece — **frames** — and three more function families: neighbor, boundary, and offset functions.
+Today covers the third piece, the **frame** clause, plus the neighbor functions `LAG`/`LEAD` and the boundary functions `FIRST_VALUE`/`LAST_VALUE`.
 
-By the end of the hour you compute moving averages, period-over-period deltas, and gap detection.
+These pieces combine into moving averages, period-over-period deltas, and gap detection.
 
 </div>
 <div>
@@ -83,7 +83,7 @@ Reference: PostgreSQL docs [Ch. 9.22 Window Functions](https://www.postgresql.or
 
 # The Default Frame
 
-A window function without an explicit frame uses a default — and the default depends on whether `ORDER BY` is present.
+A window function without an explicit frame uses a default. The default depends on whether `ORDER BY` is present.
 
 <div class="columns">
 <div>
@@ -115,7 +115,7 @@ Default frame: **start of partition through current row**.
 </div>
 </div>
 
-This default surprises everyone. Once. Then it surprises them again.
+When an aggregate appears with `ORDER BY` in the OVER clause, set an explicit frame unless you want the running behavior.
 
 <!--
 The "ORDER BY changes the default frame" rule is the source of many "why does my average grow as I scroll down?" questions. The fix is to set an explicit frame.
@@ -194,11 +194,11 @@ Returns all rows whose ORDER BY value is within the range.
 </div>
 </div>
 
-`RANGE` works with `INTERVAL` for time windows — perfect for "everything in the last 7 days." Reference: [PostgreSQL Ch. 4.2.8 Window Function Calls](https://www.postgresql.org/docs/current/sql-expressions.html#SYNTAX-WINDOW-FUNCTIONS).
+`RANGE` works with `INTERVAL` for time windows such as "everything in the last 7 days." Reference: [PostgreSQL Ch. 4.2.8 Window Function Calls](https://www.postgresql.org/docs/current/sql-expressions.html#SYNTAX-WINDOW-FUNCTIONS).
 
 ---
 
-# Moving Average: A Worked Frame
+# Moving Average Example
 
 ```sql
 -- 7-day moving average of daily enrollments
@@ -214,7 +214,7 @@ GROUP BY enrollment_date
 ORDER BY enrollment_date;
 ```
 
-For each day, the window includes the current row and the 6 preceding rows — a 7-day rolling average.
+For each day, the window covers the current row and the 6 preceding rows, a 7-day rolling average.
 
 ```mermaid
 graph LR
@@ -231,6 +231,10 @@ graph LR
   class W win
 ```
 
+<!--
+ROWS counts rows, not calendar days. When dates are missing, the 7-row frame spans more than 7 calendar days; RANGE BETWEEN INTERVAL '6 days' PRECEDING AND CURRENT ROW handles gaps correctly. Worth saying aloud.
+-->
+
 ---
 
 <!-- _class: lead -->
@@ -242,7 +246,7 @@ graph LR
 # Peek Backward and Forward
 
 ```sql run
-CREATE OR REPLACE TABLE enrollment(sid INT, enrollment_date DATE);
+CREATE OR REPLACE TABLE enrollment(student_id INT, enrollment_date DATE);
 INSERT INTO enrollment VALUES
   (1,DATE '2026-09-01'),(2,DATE '2026-09-01'),
   (3,DATE '2026-09-02'),(4,DATE '2026-09-02'),(5,DATE '2026-09-02'),
@@ -259,11 +263,13 @@ FROM   enrollment
 GROUP BY enrollment_date;
 ```
 
-| date | today | yesterday | tomorrow |
+| enrollment_date | today | yesterday | tomorrow |
 |------|-------|-----------|----------|
-| 2026-09-01 | 12 | NULL | 18 |
-| 2026-09-02 | 18 | 12 | 25 |
-| 2026-09-03 | 25 | 18 | NULL |
+| 2026-09-01 | 2 | NULL | 3 |
+| 2026-09-02 | 3 | 2 | 2 |
+| 2026-09-03 | 2 | 3 | 4 |
+| 2026-09-06 | 4 | 2 | 3 |
+| 2026-09-07 | 3 | 4 | NULL |
 
 `lag(expr, offset, default)` and `lead(expr, offset, default)` look at neighboring rows in the window.
 
@@ -287,7 +293,7 @@ GROUP BY enrollment_date;
 ```
 
 The third argument to `lag` is the default when there is no preceding row.
-Use 0 to make boundary rows show a delta of "the value itself" rather than NULL.
+Passing 0 makes boundary rows show the value itself instead of NULL.
 
 ---
 
@@ -300,7 +306,7 @@ Use 0 to make boundary rows show a delta of "the value itself" rather than NULL.
 # Refer to the Ends of the Window
 
 ```sql run
-CREATE OR REPLACE TABLE faculty(fid INT, name TEXT, dname TEXT, salary INT);
+CREATE OR REPLACE TABLE faculty(faculty_id INT, name TEXT, dname TEXT, salary INT);
 INSERT INTO faculty VALUES
   (1,'Grant','CS',95000), (2,'Sahni','CS',110000), (3,'Dobra','CS',102000),
   (4,'Lee','EE',88000), (5,'Rao','EE',99000);
@@ -323,7 +329,7 @@ FROM   faculty;
 
 ---
 
-# The LAST_VALUE Surprise
+# LAST_VALUE and the Default Frame
 
 ```sql
 -- WRONG: returns the *current* row's salary, not the partition's last
@@ -335,14 +341,14 @@ FROM   faculty;
 
 <div class="error">
 
-**Why it bites:** with ORDER BY and no explicit frame, the default frame is `UNBOUNDED PRECEDING ... CURRENT ROW`. The "last" row of that frame is the current row.
+With ORDER BY and no explicit frame, the default frame is `UNBOUNDED PRECEDING ... CURRENT ROW`. The "last" row of that frame is the current row.
 
 </div>
 
-The fix: explicit `UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING`, or use `first_value` with reversed ORDER BY.
+The fix is an explicit `UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` frame, or `first_value` with reversed ORDER BY.
 
 <!--
-This is one of the great SQL gotchas. Every working SQL writer trips over LAST_VALUE at least once. Drilling the explicit frame habit prevents it.
+LAST_VALUE with the default frame trips most first-time users because the "last" row of a running frame is the current row. Drilling the explicit frame habit prevents it.
 -->
 
 ---
@@ -356,7 +362,7 @@ This is one of the great SQL gotchas. Every working SQL writer trips over LAST_V
 # 7-Day Moving Average
 
 ```sql run
-CREATE OR REPLACE TABLE enrollment(sid INT, enrollment_date DATE);
+CREATE OR REPLACE TABLE enrollment(student_id INT, enrollment_date DATE);
 INSERT INTO enrollment VALUES
   (1,DATE '2026-09-01'),(2,DATE '2026-09-01'),
   (3,DATE '2026-09-02'),(4,DATE '2026-09-02'),(5,DATE '2026-09-02'),
@@ -380,7 +386,7 @@ GROUP BY enrollment_date;
 # Cumulative Distribution
 
 ```sql run
-CREATE OR REPLACE TABLE student(sid INT, name TEXT, gpa DECIMAL(3,2));
+CREATE OR REPLACE TABLE student(student_id INT, name TEXT, gpa DECIMAL(3,2));
 INSERT INTO student VALUES
   (1,'Ada',3.95),(2,'Bob',2.90),(3,'Chia',3.70),(4,'Dev',3.85),(5,'Eve',3.20);
 -- @query
@@ -403,7 +409,7 @@ Together they answer "what percentile is this row in?" without manual quartile m
 > "Find runs of consecutive enrollment days."
 
 ```sql run
-CREATE OR REPLACE TABLE enrollment(sid INT, enrollment_date DATE);
+CREATE OR REPLACE TABLE enrollment(student_id INT, enrollment_date DATE);
 INSERT INTO enrollment VALUES
   (1,DATE '2026-09-01'),(2,DATE '2026-09-01'),
   (3,DATE '2026-09-02'),(4,DATE '2026-09-02'),(5,DATE '2026-09-02'),
@@ -435,38 +441,22 @@ Gaps-and-islands is the canonical "show off your SQL chops" problem. It uses row
 
 # Wrap-up
 
-You now have:
-
-<div class="columns">
-<div>
-
-- Explicit frame clauses (`ROWS BETWEEN`, `RANGE BETWEEN`)
-- Neighbor functions: `LAG`, `LEAD` with offset and default
-- Boundary functions: `FIRST_VALUE`, `LAST_VALUE`, `NTH_VALUE`
-
-</div>
-<div>
-
-- The LAST_VALUE default-frame trap
-- Moving averages, percent ranks, gap-and-island patterns
-- Window functions are now complete — you can write the queries dashboards demand
-
-</div>
-</div>
+- `ROWS BETWEEN` counts physical rows and `RANGE BETWEEN` measures value distance; `ORDER BY` without a frame implies a running frame.
+- `lag` and `lead` read neighboring rows, with offset and default arguments.
+- `first_value` and `last_value` read the ends of the frame, and `last_value` needs an explicit frame to reach the partition's end.
+- Moving averages, percentile functions, and the gaps-and-islands trick combine these pieces.
 
 ---
 
 # Wednesday: Recursive Queries
 
-We turn `WITH` into something that can iterate.
+Topic: recursive queries with `WITH RECURSIVE`, including hierarchy and graph traversal.
 
-By the end of Wednesday you traverse org charts, find friends-of-friends, and reason about the termination of a SQL loop.
-
-Read PostgreSQL docs Ch. 7.8.2 and Hirn & Grust, *A Fix for the Fixation on Fixpoints* (CIDR 2023) before class.
+Reading: PostgreSQL docs [Ch. 7.8.2 Recursive Queries](https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-RECURSIVE) and Hirn & Grust, *A Fix for the Fixation on Fixpoints* (CIDR 2023).
 
 ---
 
-# Project 1 Presentations: Today
+# Project 1 Presentations Today
 
 <div class="columns">
 <div>
