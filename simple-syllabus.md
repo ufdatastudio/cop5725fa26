@@ -22,7 +22,7 @@ Office location: TODO add building and room
 
 Phone: TODO add a direct or department main line
 
-Office hours: By appointment. Booking link: <https://outlook.office.com/bookwithme/user/6e844770c73a436780726b9e85b5582d@ufl.edu?anonymous&ep=plink>
+Office hours: Tuesday 2–4 PM, Wednesday 1–4 PM ([Book Here](https://outlook.office.com/bookwithme/user/6e844770c73a436780726b9e85b5582d@ufl.edu?anonymous&ep=plink))
 
 Teaching assistant: Ray Chen
 

@@ -19,7 +19,7 @@ layout: default
 
 Dr. Christan Grant
 - **Email:** christan@ufl.edu
-- **Office Hours**: By appointment (booking link [Book Here](https://outlook.office.com/bookwithme/user/6e844770c73a436780726b9e85b5582d@ufl.edu?anonymous&ep=plink))
+- **Office Hours**: Tuesday 2–4 PM, Wednesday 1–4 PM ([Book Here](https://outlook.office.com/bookwithme/user/6e844770c73a436780726b9e85b5582d@ufl.edu?anonymous&ep=plink))
 
 Ray Chen (Teaching Assistant)
 - **Email:** chenz1@ufl.edu
