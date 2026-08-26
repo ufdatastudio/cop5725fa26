@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Friday, August 28, 2026
 
-The language that compiles down from SQL
+The language SQL compiles into
 
 <!--
 Third content class. Students who skimmed the textbook will recognize this material. Those who didn't will see algebra symbols for the first time — keep the worked examples concrete. Pace: 50 min, with the last 8 min reserved for the SQL ↔ algebra round-trip.
@@ -28,13 +28,11 @@ Third content class. Students who skimmed the textbook will recognize this mater
 <div class="columns-left-wide">
 <div>
 
-Wednesday: relations, tuples, schemas, types, constraints — the static picture.
+Wednesday covered relations, tuples, schemas, types, and constraints.
 
-Today: the operations you can perform on relations — the dynamic picture.
+Today covers the operations on relations: selection, projection, the set operations, cross product, and rename.
 
-Monday: the rest of the algebra (joins, division, extended operators).
-
-By next Friday's lecture you will write SQL and read its algebra translation on the same slide without thinking.
+Monday adds joins, division, and the extended operators.
 
 </div>
 <div>
@@ -47,6 +45,10 @@ graph TD
 
 </div>
 </div>
+
+<!--
+One breath of orientation. Wednesday was what a relation is; today is what you can do to one; Monday finishes the operator set. The textbook covers today's material in §2.4 (p. 38).
+-->
 
 ---
 
@@ -70,18 +72,18 @@ graph LR
 
 ---
 
-# Two Properties That Matter
+# Closure and Composition
 
 <div class="columns">
 <div>
 
-A relational algebra is a small set of operators with two properties.
+A relational algebra is a small set of operators with two properties (Textbook §2.4.2, p. 38).
 
 **Closure**: every operator takes relations and returns a relation.
 
 **Composition**: any output can feed into any other operator.
 
-Closure plus composition lets us build arbitrarily complex queries from a small alphabet. The same property makes the algebra a target for query optimization: rewriting an expression yields another expression, not a different language.
+Closure plus composition builds arbitrarily complex queries from a small alphabet. The same properties make the algebra a target for query optimization, because rewriting an expression always yields another algebra expression.
 
 </div>
 <div>
@@ -165,7 +167,7 @@ Intersection ∩ and join ⋈ can be derived from these six. We treat them as fi
 
 $$\sigma_{\text{predicate}}(R)$$
 
-Returns every tuple in $R$ for which the predicate is true.
+Returns every tuple in $R$ for which the predicate is true (Textbook §2.4.6, p. 42).
 
 <div class="columns">
 <div>
@@ -223,7 +225,7 @@ Walk row by row through the filter. The point students sometimes miss: schema is
 
 ---
 
-# Selectivity Is a Number
+# Selectivity
 
 $$\text{selectivity}(\sigma_p(R)) = \frac{|\sigma_p(R)|}{|R|}$$
 
@@ -237,7 +239,7 @@ Plant the seed: every time you write a WHERE clause, the database guesses what f
 
 ---
 
-# Selection Identities Worth Knowing
+# Selection Identities
 
 ```mermaid
 graph LR
@@ -266,7 +268,7 @@ Both are reasons your query plan often looks nothing like the SQL you typed.
 
 $$\pi_{A_1, A_2, ..., A_k}(R)$$
 
-Keeps only the listed attributes. Drops the rest.
+Keeps only the listed attributes and drops the rest (Textbook §2.4.5, p. 41).
 
 <div class="columns">
 <div>
@@ -286,7 +288,7 @@ Because a relation is a set. If three students all major in CS, then $\pi_{major
 
 ---
 
-# π vs SELECT — A Subtle Difference
+# π vs SELECT
 
 <div class="columns">
 <div>
@@ -404,7 +406,7 @@ graph LR
 <div class="columns">
 <div>
 
-Set operations require **union-compatible** relations:
+Set operations require **union-compatible** relations (Textbook §2.4.4, p. 39):
 
 - Same number of attributes
 - Corresponding attributes have the same domain
@@ -483,7 +485,7 @@ SELECT name FROM faculty;
 </div>
 </div>
 
-$R \cap S = R - (R - S)$ — so intersection is technically not a core operator. Implementations include it because it is common and the optimizer can do better than the rewrite.
+$R \cap S = R - (R - S)$, so intersection is not strictly a core operator. Implementations include it because it is common and the optimizer can do better than the rewrite.
 
 ---
 
@@ -516,17 +518,17 @@ SELECT name FROM faculty;
 </div>
 </div>
 
-Difference is the engine behind "find students who have not yet enrolled" — a query we will see often.
+Difference answers questions like "which students have not yet enrolled."
 
 ---
 
-# Set Operations: When to Reach for Each
+# Choosing a Set Operation
 
 <div class="columns-3">
 <div>
 
 ### "or"
-Reach for ∪
+Use ∪
 
 Combined membership.
 
@@ -534,7 +536,7 @@ Combined membership.
 <div>
 
 ### "and"
-Reach for ∩
+Use ∩
 
 Common membership.
 
@@ -542,14 +544,14 @@ Common membership.
 <div>
 
 ### "but not"
-Reach for −
+Use −
 
 Members of A but not B.
 
 </div>
 </div>
 
-These three operators cover an enormous fraction of business reporting once you stop thinking in joins for everything.
+These three operators cover much of everyday reporting SQL.
 
 <!--
 Many programmers default to "join + WHERE" for everything. The set operations are often cleaner and the optimizer can sometimes do better with them. Both styles are correct; clarity is the deciding factor.
@@ -567,7 +569,7 @@ Many programmers default to "join + WHERE" for everything. The set operations ar
 
 $$R \times S = \{\, (r, s) : r \in R \,\land\, s \in S \,\}$$
 
-Every tuple in $R$ paired with every tuple in $S$.
+Every tuple in $R$ paired with every tuple in $S$ (Textbook §2.4.7, p. 43).
 
 The result has $|R| \cdot |S|$ tuples and the union of both schemas.
 
@@ -624,7 +626,7 @@ In the example, the cross product produced four tuples but only some pairs are *
 
 A join filters cross-product output by a predicate. We define joins formally on Monday.
 
-For today, remember: × is the raw material; we always shape it.
+× supplies the raw pairs. A predicate keeps the meaningful ones.
 
 ---
 
@@ -659,17 +661,17 @@ graph LR
 </div>
 </div>
 
-Rename does no computation. It exists to make joins and self-references writable.
+Rename does no computation. It exists to make joins and self-references writable (Textbook §2.4.11, p. 49).
 
 ---
 
-# Why Rename Exists: Self-Joins
+# Rename and Self-Joins
 
 Find pairs of students with the same major.
 
 Without rename, we cannot refer to "student" twice in one expression.
 
-$$\pi_{s_1.name, s_2.name}\big( \sigma_{s_1.major = s_2.major \land s_1.id < s_2.id} (\rho_{s_1}(student) \times \rho_{s_2}(student)) \big)$$
+$$\pi_{s_1.name, s_2.name}\big( \sigma_{s_1.major = s_2.major \land s_1.student\_id < s_2.student\_id} (\rho_{s_1}(student) \times \rho_{s_2}(student)) \big)$$
 
 In SQL:
 
@@ -693,13 +695,13 @@ The `s1.id < s2.id` predicate is a classic trick: it picks one direction of each
 
 ---
 
-# Closure In Action
+# Closure in Action
 
 Every operator's output is a relation. Therefore any output can feed any operator.
 
-$$\pi_{name}\big( \sigma_{gpa \geq 3.5}\big( student \cap \pi_{*}(\sigma_{age \geq 18}(student)) \big) \big)$$
+$$\pi_{name}\big( \sigma_{gpa \geq 3.5}(student) \,\cap\, \sigma_{major = \text{'CS'}}(student) \big)$$
 
-The structure is mechanical: parentheses associate inside out; relations flow up the tree.
+Parentheses associate inside out, and relations flow up the tree.
 
 This is why query optimizers can do their job. A plan tree is just a parse of an algebra expression, and rewrites preserve closure.
 
@@ -733,16 +735,16 @@ The translation is mechanical once you have the algebra.
 
 ---
 
-# A Subtler One
+# A Query Across Two Relations
 
 > "Names of students enrolled in COP5725 in Fall 2026."
 
 <div class="columns">
 <div>
 
-### Algebra (uses × — we will use ⋈ Monday)
+### Algebra (uses ×; Monday introduces ⋈)
 
-$$\pi_{name}\Bigg( \sigma_{\begin{aligned}&course\_id='COP5725'\\&\,\land\,term='Fall2026'\\&\,\land\,student.sid = enrollment.sid\end{aligned}}(student \times enrollment) \Bigg)$$
+$$\pi_{name}\Bigg( \sigma_{\begin{aligned}&course\_id='COP5725'\\&\,\land\,term='Fall2026'\\&\,\land\,student.student\_id = enrollment.student\_id\end{aligned}}(student \times enrollment) \Bigg)$$
 
 </div>
 <div>
@@ -770,36 +772,32 @@ This is the perfect motivation for joins. The × + σ form works but is verbose;
 
 # Wrap-up
 
-Today you saw:
+- Closure and composition let six small operators express arbitrarily complex queries.
+- σ filters rows and π filters columns. π can shrink its output because relations are sets.
+- ∪, ∩, and − apply to union-compatible relations.
+- × pairs every tuple with every tuple. A predicate keeps the meaningful pairs, and Monday names that pattern a join.
+- ρ renames relations and attributes so self-joins become writable.
+- SQL translates to the algebra mechanically, and the optimizer rewrites the algebra form.
 
-<div class="columns">
-<div>
-
-- Why algebras matter: closure plus composition
-- Six operators: σ, π, ∪, ∩, −, × (plus ρ for renaming)
-
-</div>
-<div>
-
-- The translation pattern from SQL to algebra
-- The first sign of why query optimization is hard
-
-</div>
-</div>
+<!--
+One line per part. If time is short, say the π-collapses-duplicates line and the ×-plus-predicate line out loud — the first is the most common early quiz mistake, and the second is the setup Monday pays off.
+-->
 
 ---
 
 # Monday: Relational Algebra II
 
-We add the operators every real query uses:
+Monday covers the operators most real queries use:
 
 - Joins (θ, equi, natural, outer)
 - Division
-- Extended algebra (aggregation, sorting, projection with computed columns)
+- Extended algebra (aggregation, sorting, computed columns)
 
-By Monday's end the SQL/algebra translation goes both ways.
+Read Textbook §2.4.8–2.4.14 (p. 43–52) before class. §5.2 (p. 213) covers the extended operators.
 
-Read GMW Ch. 2.5 before class.
+<!--
+Topic and reading only. Note the reading correction: joins live in §2.4.8–2.4.14 and the extended operators in §5.2 — §2.5 is constraints, not algebra.
+-->
 
 ---
 
