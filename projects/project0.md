@@ -65,6 +65,47 @@ Browse the [datasets page](../datasets/) for descriptions of each dataset family
 
 Classmates may land in the same family; the slice you pick keeps your work your own. If the assigned family genuinely doesn't fit your interests, propose an alternative dataset by email (subject line including `cop5725fa26`). Approval is required before you commit your time.
 
+### Getting an OpenAlex slice
+
+<details markdown="1">
+<summary markdown="span">How to sample OpenAlex through the API (P–T family, click to expand)</summary>
+
+Do not download the [full snapshot](https://help.openalex.org/access/snapshot/); it is roughly 750 GB compressed. The [REST API](https://api.openalex.org) serves the same records and needs no key or login.
+
+Your slice is one field of study. Browse the 26 fields at [api.openalex.org/fields](https://api.openalex.org/fields); each has a numeric ID, such as `fields/17` for Computer Science.
+
+Check the size of a slice before you choose it. The query below reports about 729,000 works in `meta.count` (Computer Science, 2024). Adding or removing filters like `publication_year` changes the count.
+
+```
+https://api.openalex.org/works?filter=primary_topic.field.id:fields/17,publication_year:2024&per_page=1
+```
+
+The `sample` and `seed` parameters return a random subset that is identical on every run, which satisfies the reproducibility rule for `data/sample.csv`. The script below pulls a seeded 1000-work sample and flattens it to CSV. Adapt the field ID, year, and `select` columns to your slice, and record the exact URL and seed in `data/source.md`.
+
+```python
+# fetch_sample.py -- regenerates data/sample.csv; the URL records the exact slice
+import json
+import urllib.request
+
+import pandas as pd
+
+BASE = ("https://api.openalex.org/works"
+        "?filter=primary_topic.field.id:fields/17,publication_year:2024"
+        "&sample=1000&seed=5725&per_page=200"
+        "&select=id,title,publication_year,cited_by_count,type,language")
+
+rows = []
+for page in range(1, 6):
+    with urllib.request.urlopen(f"{BASE}&page={page}") as response:
+        rows += json.load(response)["results"]
+pd.DataFrame(rows).to_csv("data/sample.csv", index=False)
+print(f"wrote {len(rows)} rows to data/sample.csv")
+```
+
+Run it with `uv run fetch_sample.py`; pandas is already in your `pyproject.toml`. Later projects can pull larger slices with cursor paging. The `referenced_works` field lists each work's citations, which you will use for recursive queries later in the course. A free API key raises the daily request budget; this project needs only five requests, well under the keyless limit.
+
+</details>
+
 ---
 
 ## Required Repository Contents
@@ -260,6 +301,9 @@ A: That's expected. Project 1 will guide you through partial loading. For Projec
 **Q: My dataset requires authentication.**
 A: That counts as "not freely accessible" — pick a different one or propose with the instructor's approval. The course's pedagogical model assumes all artifacts can be reproduced by anyone.
 
+**Q: OpenAlex is hundreds of gigabytes. Do I need to download it?**
+A: No. Use the API with a field filter and a seeded sample; see [Getting an OpenAlex slice](#getting-an-openalex-slice).
+
 **Q: Can I pick the same slice as a classmate?**
 A: Yes. The letter rule spreads the class across sources for variety, but your schema, queries, and writeups must be your own work either way.
 
@@ -268,6 +312,7 @@ A: Yes. The letter rule spreads the class across sources for variety, but your s
 ## Errata
 
 - August 26, 2026: The README requirement asking for a one-line semester plan now asks for one or two sentences of ideas you could explore with the data. The later project specs are not yet released, so a plan for the full semester is not something you can write yet.
+- August 26, 2026: Added the [Getting an OpenAlex slice](#getting-an-openalex-slice) subsection and a matching FAQ entry for the P–T family. A field filter plus a seeded API sample replaces any need to download the multi-hundred-gigabyte snapshot.
 
 ---
 
