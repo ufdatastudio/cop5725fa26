@@ -23,7 +23,7 @@ Dr. Christan Grant
 
 Ray Chen (Teaching Assistant)
 - **Email:** chenz1@ufl.edu
-- **Office Hours**: To be announced
+- **Office Hours**: Tuesday and Thursday from 12:30–2:00 PM ([Zoom](https://ufl.zoom.us/my/chenz1))
 
 ---
 
