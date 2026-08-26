@@ -92,7 +92,7 @@ At minimum:
 - Dataset family and the slice you selected, and why it interests you
 - Local install commands you used
 - A short paragraph on the Parquet file format: what it is, how it differs from CSV, and when you would choose each
-- One-line summary of what you plan to do across the semester
+- One or two sentences on things you could imagine doing with the data. This is brainstorming, not a commitment; the later project specs will shape the actual work.
 
 ### `data/source.md`
 
@@ -262,6 +262,12 @@ A: That counts as "not freely accessible" — pick a different one or propose wi
 
 **Q: Can I pick the same slice as a classmate?**
 A: Yes. The letter rule spreads the class across sources for variety, but your schema, queries, and writeups must be your own work either way.
+
+---
+
+## Errata
+
+- August 26, 2026: The README requirement asking for a one-line semester plan now asks for one or two sentences of ideas you could explore with the data. The later project specs are not yet released, so a plan for the full semester is not something you can write yet.
 
 ---
 
