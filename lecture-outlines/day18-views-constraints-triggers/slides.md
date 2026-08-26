@@ -18,7 +18,7 @@ Friday, October 2, 2026
 Three production features close Section 2.
 
 <!--
-Full 50 min lecture: 12 min views, 12 min advanced constraints, 16 min triggers, 10 min wrap and Section 3 preview. Use clicker checks at the end of each feature to gauge comprehension before moving on. No paper quiz.
+40 min lecture, then Quiz 2 in the last 10 minutes (it covers Section 2, per the schedule). Timing: 11 min views, 11 min advanced constraints, 13 min triggers, 5 min wrap and Section 3 preview, 10 min quiz. Day 17 already told students the quiz lands today.
 -->
 
 ---
@@ -35,6 +35,8 @@ Three weeks of SQL so far has read the database. Today's three features shape ho
 - Views are named queries the database treats like tables.
 - Advanced constraints encode invariants beyond column types.
 - Triggers run automatically when data changes.
+
+Quiz 2 covers Section 2 and runs in the last 10 minutes of class.
 
 Exam 1 in two weeks covers everything in Sections 1-3.
 
@@ -466,10 +468,10 @@ Have a good weekend.
 
 ---
 
-# Questions
+# Questions and Quiz 2
 
-What is on your mind?
+Quick questions, then Quiz 2 takes the last 10 minutes. It covers Section 2 (SQL Mastery, Days 10-18).
 
 <!--
-Section 2 closes. The cumulative test of Sections 1-3 comes in two weeks on Exam 1.
+Keep questions to a couple of minutes, hand out Quiz 2, collect at the bell. Section 2 closes with this quiz; the cumulative test of Sections 1-3 comes in two weeks on Exam 1.
 -->
