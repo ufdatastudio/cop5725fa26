@@ -21,6 +21,7 @@ const PUBLISH_CLICKER = true;
 const PUBLISH_ONLY = new Set([
   'day1-introduction',
   'day2-database-history',
+  'day3-relational-model',
 ]);
 
 // Date-gating hook (inert while empty: everything publishes). To gate a deck,

@@ -25,11 +25,13 @@ Second content class. Today we make the relational model *precise* — definitio
 
 # Where We Were Monday
 
-We watched the relational model win an argument it started in 1970.
+Monday covered the history of database systems and how the relational model came to dominate.
 
-Today we sharpen the model into definitions you can write down, then walk through the PostgreSQL type system to see how a real engine fills in Codd's `domain` slot.
+Today we define the relational model and discuss how it is implemented.
 
-By Friday you will be reading and writing relational algebra expressions.
+<!--
+One breath of recap, then move. The history lecture ended with the relational model winning; today is the model itself — definitions first, then the implementation view through PostgreSQL.
+-->
 
 ---
 
@@ -38,14 +40,14 @@ By Friday you will be reading and writing relational algebra expressions.
 ```mermaid
 graph LR
   A["1. Formal<br/>model"] --> B["2. Data types<br/>+ domains"]
-  B --> C["3. Constraints"]
+  B --> C["3. Constraints +<br/>transactions"]
   C --> D["4. NULL<br/>semantics"]
   D --> E["5. Course<br/>schema"]
 ```
 
 1. The formal relational model
-2. Data types and the domain question
-3. Integrity constraints in SQL
+2. Data types and domains
+3. Integrity constraints, transactions, and ACID
 4. NULL semantics
 5. A schema we will use the rest of the semester
 
@@ -57,39 +59,28 @@ graph LR
 
 ---
 
-# Three Levels of Vocabulary
-
-The same idea has three sets of names depending on who you ask.
+# Math, Codd, SQL
 
 <div class="columns">
 <div>
 
-| Math | Codd | SQL / Postgres |
-|------|------|----------------|
+| Math | Codd | SQL |
+|------|------|-----|
 | Set element | Tuple | Row |
 | Function | Attribute | Column |
 | Domain | Domain | Data type |
 | Set of tuples | Relation | Table |
 
-We move between vocabularies. The math is cleanest; SQL is what you type.
-
 </div>
 <div>
 
-```mermaid
-graph TD
-  M["Math"] -. "renames" .-> C["Codd"]
-  C -. "renames" .-> S["SQL"]
-  M --> R["Same thing"]
-  C --> R
-  S --> R
-```
+![w:520px](images/relation-anatomy.svg)
 
 </div>
 </div>
 
 <!--
-Students struggle when papers slip between vocabularies without warning. The Codd column is what the GMW textbook uses. The SQL column is what you'll see in psql output.
+Students struggle when papers slip between vocabularies without warning. The Codd column is what the textbook uses. The SQL column is what you'll see in psql output. The annotated Movies relation is Figure 2.3 from the textbook (Ch. 2, p. 22) — point at each callout while reading the table rows: the whole table is the relation, a column is an attribute, a row is a tuple, and the set of legal values for a column is its domain.
 -->
 
 ---
@@ -104,7 +95,7 @@ A **tuple** over $R$ is a function $t : \{A_1, ..., A_n\} \rightarrow \bigcup do
 
 A **relation instance** is a finite set of such tuples.
 
-Three properties fall out:
+Properties:
 
 - Tuple order does not matter (relation is a set)
 - Attribute order does not matter (we name by attribute, not position)
@@ -117,8 +108,6 @@ The "tuple is a function" formalism trips up some students. Walk through one tup
 ---
 
 # What SQL Does to These Properties
-
-SQL relaxes all three.
 
 <div class="columns">
 <div>
@@ -149,6 +138,39 @@ The bag-vs-set distinction matters all semester. Bag semantics is faster (no ded
 
 ---
 
+# Telling Tuples Apart
+
+A relation is a set, so every tuple must differ from every other. Which attributes do the telling?
+
+<div class="columns">
+<div>
+
+| title | year | length | genre |
+|-------|------|--------|-------|
+| King Kong | 1933 | 100 | horror |
+| King Kong | 2005 | 187 | action |
+| Star Wars | 1977 | 121 | sciFi |
+
+</div>
+<div>
+
+Two movies share a title, so `title` alone cannot identify a tuple.
+
+No two movies share a title and a year. The pair `{title, year}` pins down exactly one tuple.
+
+A set of attributes with that property is a key of the relation.
+
+</div>
+</div>
+
+The textbook declares `{title, year}` as the key of `Movies` in §2.3.6, Example 2.7 (p. 36).
+
+<!--
+This is the concrete case before the formal ladder on the next slide. Ask the room: is {title} a key? No — King Kong appears twice. Is {title, year, genre} a key? It identifies tuples, but it carries a passenger attribute; minimality is the next slide's distinction between superkey and candidate key. The two-attribute key for Movies is Example 2.7 in the textbook (§2.3.6, p. 36), so students will meet it again in the reading. Never call the book "GMW" in course materials; say "the textbook."
+-->
+
+---
+
 # Keys
 
 <div class="columns">
@@ -165,21 +187,20 @@ The bag-vs-set distinction matters all semester. Bag semantics is faster (no ded
 </div>
 <div>
 
-```mermaid
-graph TD
-  SK["Superkey<br/>(any unique set)"] --> CK["Candidate key<br/>(minimal)"]
-  CK --> PK["Primary key<br/>(designer's pick)"]
-  PK --> FK["Foreign key<br/>(reference from S to R)"]
-```
+![w:520px](images/key-types.svg)
 
 </div>
 </div>
 
 Keys turn a relation from "data" into "data with structure." They are how foreign keys, joins, and indexes connect tables.
 
+<!--
+Walk the cartoon left to right. The star on student_id is the primary key. Both {student_id} and {ufid} identify students with nothing to spare, so both are candidate keys; we picked student_id. The dashed loop around {student_id, name} is a superkey — it identifies every row but drags name along for no reason. The enrollment table below holds the foreign key: its student_id values must appear as a primary key value in student.
+-->
+
 ---
 
-# The Three Integrity Rules
+# Integrity Rules
 
 <div class="columns">
 <div>
@@ -206,23 +227,25 @@ graph TD
 </div>
 </div>
 
-PostgreSQL enforces all three by default. MySQL (with older defaults) historically did not — and the practical cost showed up as inconsistent data.
+When an engine skips these checks, orphaned rows, out-of-range values, and dangling references accumulate silently. Every application that later reads the data inherits the cleanup.
+
+Enforcement costs write throughput, which is why engines have been tempted to skip it. (Aside: PostgreSQL has historically implemented these rules more completely than MySQL.)
 
 <!--
-The MySQL note is worth landing. The early-2010s "MySQL is faster than Postgres" narrative was partly because MySQL was skipping integrity checks. Postgres looked slower but was doing more.
+Land the general point first: integrity rules fail quietly, and the damage surfaces far from the write that caused it — a report that double-counts, a join that drops rows, a migration that cannot find a parent record. The MySQL aside is color, not the argument: the early-2010s "MySQL is faster than Postgres" benchmarks partly reflected skipped integrity checking, so Postgres looked slower while doing more work.
 -->
 
 ---
 
 <!-- _class: lead -->
 
-# Part 2: Data Types and the Domain Question
+# Part 2: Data Types and Domains
 
 ---
 
 # The Atomic-Value Debate
 
-Codd's First Normal Form says every attribute value is **atomic** — indivisible from the database's perspective.
+Codd's *First Normal Form* says every attribute value is **atomic** — indivisible from the database's perspective. We return to normal forms later in the semester.
 
 That definition is older than every type system on the next slide.
 
@@ -240,37 +263,155 @@ This is a contested view. Some database theorists insist arrays and JSON violate
 
 PostgreSQL ships with roughly 40 built-in types.
 
+<div class="columns small">
+<div>
+
+| Family | Types | Example value |
+|--------|-------|---------------|
+| Numeric | `int`, `bigint`, `numeric` | `3.14159` |
+| Character | `char`, `varchar`, `text` | `'Ada Lovelace'` |
+| Date/time | `date`, `timestamptz`, `interval` | `'2026-08-26 09:35-04'` |
+| Boolean | `boolean` | `true` |
+| Identifier | `uuid` | `'a0eebc99-…-4ef8'` |
+| Binary | `bytea` | `'\xDEADBEEF'` |
+
+</div>
+<div>
+
+| Family | Types | Example value |
+|--------|-------|---------------|
+| Semi-structured | `jsonb` | `'{"day": 3}'` |
+| Collection | `int[]` | `'{88, 92}'` |
+| Range | `int4range` | `'[1, 10)'` |
+| Geometric | `point` | `'(29.6, -82.3)'` |
+| Network | `inet` | `'10.0.0.0/8'` |
+| Enum | `CREATE TYPE` | `'shipped'` |
+
+</div>
+</div>
+
+<!--
+The slide is dense on purpose. Don't read every row. Point out 3-4 entries the room will not have used: `tstzrange` (range types), `inet` (network), `uuid` (identifier). These types are what makes Postgres a serious working tool. Easter eggs in the example column: the `point` is Gainesville's latitude/longitude, and the timestamptz is this class meeting.
+-->
+
+---
+
+# DDL and DML
+
+SQL splits into two sublanguages, and the split mirrors Part 1's schema/instance distinction.
+
 <div class="columns">
 <div>
 
-| Family | Examples |
-|--------|----------|
-| Numeric | `int`, `bigint`, `numeric`, `double precision` |
-| Character | `char`, `varchar`, `text` |
-| Date/time | `date`, `time`, `timestamp`, `timestamptz`, `interval` |
-| Boolean | `boolean` |
-| Identifier | `uuid` |
-| Binary | `bytea` |
+### Data Definition Language
+
+DDL declares and changes schemas.
+
+- `CREATE TABLE`
+- `ALTER TABLE`
+- `DROP TABLE`
+
+The textbook introduces DDL in §2.3.
 
 </div>
 <div>
 
-| Family | Examples |
-|--------|----------|
-| Semi-structured | `json`, `jsonb` |
-| Collection | arrays (`int[]`), composite types |
-| Range | `int4range`, `tstzrange` |
-| Geometric | `point`, `polygon` |
-| Network | `inet`, `cidr` |
-| Enum / user-defined | `CREATE TYPE`, `CREATE DOMAIN` |
+### Data Manipulation Language
+
+DML reads and changes the rows of an instance.
+
+- `SELECT`
+- `INSERT`, `UPDATE`, `DELETE`
+
+The instance changes constantly; the schema rarely.
 
 </div>
 </div>
-
-This is the menu Codd's "domain" expanded into over fifty years.
 
 <!--
-The slide is dense on purpose. Don't read every row. Point out 3-4 entries the room will not have used: `tstzrange` (range types), `inet` (network), `uuid` (identifier). These types are what makes Postgres a serious working tool.
+Definitions before syntax. DDL acts on the schema (the attribute list and types you declare once); DML acts on the instance (the tuples that come and go). A good check for the room: which sublanguage is ALTER TABLE? DDL, because it rewrites the schema, even though it may touch every stored row to do it.
+-->
+
+---
+
+# DDL and DML Examples
+
+```sql
+-- DDL: declare the schema
+CREATE TABLE pet (
+  pet_id   INTEGER PRIMARY KEY,   -- name, type, constraints
+  name     TEXT    NOT NULL,
+  species  TEXT    NOT NULL
+);
+
+-- DML: fill and read the instance
+INSERT INTO pet VALUES (1, 'Albert', 'alligator');
+SELECT name FROM pet WHERE species = 'alligator';
+```
+
+`CREATE TABLE` lists each column as name, type, then constraints. `INSERT` adds tuples in declaration order. `SELECT` reads them back.
+
+This core syntax is shared by PostgreSQL, SQLite, and DuckDB. The next two slides run it live in the in-browser SQL engine, the same one built into the HTML decks for the SQL lectures ahead.
+
+<!--
+Keep this slide at the anatomy level; the next two slides run the real thing. Point students at the in-browser runner in the posted HTML decks as this week's practice — no install, edit and re-run right in the slides — with PostgreSQL taking over once Project 0 setup lands.
+-->
+
+---
+
+# Try It: Create and Insert
+
+Every statement below runs unchanged in SQLite, PostgreSQL, and this slide.
+
+```sql run
+DROP TABLE IF EXISTS pet;
+CREATE TABLE pet (
+  pet_id   INTEGER PRIMARY KEY,
+  name     TEXT NOT NULL,
+  species  TEXT NOT NULL,
+  age      INTEGER CHECK (age >= 0)
+);
+INSERT INTO pet VALUES
+  (1, 'Albert',  'alligator', 12),
+  (2, 'Alberta', 'alligator',  9),
+  (3, 'Scout',   'dog',        4);
+SELECT * FROM pet;
+```
+
+Edit and re-run. Try inserting a pet with a negative age and watch the `CHECK` constraint reject it.
+
+<!--
+Live slide (HTML deck only; the PDF shows static code). The in-browser engine is DuckDB-WASM, but every statement shown is the shared core that runs verbatim in sqlite3 and psql — say that out loud so nobody thinks they are learning a toy dialect. The DROP TABLE IF EXISTS makes the block safe to re-run. Demo the CHECK rejection: change an age to -3 and run.
+-->
+
+---
+
+# Try It: Query the Instance
+
+The `pet` table from the last slide is already loaded. This is pure DML; the schema does not change.
+
+```sql run
+DROP TABLE IF EXISTS pet;
+CREATE TABLE pet (
+  pet_id   INTEGER PRIMARY KEY,
+  name     TEXT NOT NULL,
+  species  TEXT NOT NULL,
+  age      INTEGER CHECK (age >= 0)
+);
+INSERT INTO pet VALUES
+  (1, 'Albert',  'alligator', 12),
+  (2, 'Alberta', 'alligator',  9),
+  (3, 'Scout',   'dog',        4);
+-- @query
+SELECT species, count(*) AS n, avg(age) AS avg_age
+FROM pet
+GROUP BY species;
+```
+
+Edit the query: filter with `WHERE age > 5`, or sort with `ORDER BY avg_age DESC`.
+
+<!--
+The setup (CREATE and INSERT) is hidden behind the @query marker, so students see only the SELECT — the point is that DML operates against whatever instance exists. Aggregation is a preview; it gets its own lecture in Section 2. If someone asks about UPDATE and DELETE, write one on the board against this table rather than detouring the deck.
 -->
 
 ---
@@ -314,7 +455,7 @@ The "never float for money" rule is non-negotiable. Showing the classic floating
 
 ---
 
-# Date/Time, More Carefully
+# Date/Time
 
 ```sql
 CREATE TABLE events (
@@ -331,53 +472,37 @@ CREATE TABLE events (
 ### `timestamptz`
 Stores UTC, converts on read. Default to this.
 
+`'2026-08-26 09:35-04'` is stored as `2026-08-26 13:35 UTC`. A reader in London sees `14:35+01`.
+
 </div>
 <div>
 
 ### `timestamp`
 Without time zone. For civil-calendar concepts (a meeting always at 9 AM wherever the user is).
 
+`'2026-08-26 09:35'` stays those exact digits for every reader, in every time zone.
+
 </div>
 </div>
 
-`interval` is its own algebra; you can add and subtract it from timestamps.
+An `interval` can be added to or subtracted from a timestamp.
 
 <!--
-The `timestamptz` vs `timestamp` distinction is the source of more bugs than any other Postgres type choice. The rule: use `timestamptz` unless you're absolutely sure you mean wall-clock-without-timezone (rare).
--->
-
----
-
-# Where Types Stress the Relational Model
-
-```mermaid
-graph TD
-  T1["Array (int[])"] -->|"opaque?"| OK["Atomic"]
-  T1 -->|"WHERE x = ANY(arr)?"| BAD["Violates 1NF"]
-  T2["JSONB"] -->|"opaque?"| OK
-  T2 -->|"query into fields?"| BAD
-  T3["Composite (record)"] -->|"almost always"| BAD
-  BAD --> N["Normalize"]
-  OK --> K["Keep"]
-```
-
-The relational model survives these features when the database treats the type as a domain element with its own operators.
-
-<!--
-The decision diagram captures the practical rule: if your queries reach into the structured type, it's no longer atomic — split it out. If they treat it as a blob, fine.
-
-We will return to this on Day 9 — the textbook treats arrays, JSON, and composite types as **explicit 1NF violations**, regardless of how PostgreSQL chooses to support them.
+The `timestamptz` vs `timestamp` distinction is the source of more bugs than any other Postgres type choice. The rule: use `timestamptz` unless you're absolutely sure you mean wall-clock-without-timezone (rare). Walk the paired example: the same class meeting entered as timestamptz comes back adjusted for the reader's session time zone, while the timestamp version never changes its digits — which is exactly what you want for "the standing 9:35 lecture" and exactly wrong for "when the payment cleared."
 -->
 
 ---
 
 # JSONB in Practice
 
+<div class="columns-left-wide">
+<div>
+
 ```sql
 CREATE TABLE webhooks (
-  webhook_id bigint   PRIMARY KEY,
+  webhook_id  bigint      PRIMARY KEY,
   received_at timestamptz NOT NULL,
-  payload    jsonb    NOT NULL
+  payload     jsonb       NOT NULL
 );
 
 -- Pull a field
@@ -387,13 +512,33 @@ WHERE received_at > now() - interval '7 days'
 GROUP BY 1;
 
 -- Index a field used often
-CREATE INDEX webhooks_event_idx ON webhooks ((payload ->> 'event_type'));
+CREATE INDEX webhooks_event_idx
+  ON webhooks ((payload ->> 'event_type'));
 ```
+
+</div>
+<div>
+
+One `payload` value:
+
+```json
+{
+  "event_type": "signup",
+  "user": {
+    "id": 4021,
+    "plan": "free"
+  },
+  "source": "mobile"
+}
+```
+
+</div>
+</div>
 
 > Used well, JSONB absorbs schema churn. Used poorly, it becomes a write-only column.
 
 <!--
-The expression index on `payload ->> 'event_type'` is the trick that makes the JSONB pattern survive. Without it, every query scans the table. Mention this once now; we will return to expression indexes in Section 4.
+Point at the payload document while reading the SELECT: `payload ->> 'event_type'` reaches into that JSON and pulls out 'signup' as text. The expression index on the same expression is the trick that makes the JSONB pattern survive — without it, every query scans the table. Mention this once now; we will return to expression indexes in Section 4.
 -->
 
 ---
@@ -404,7 +549,7 @@ The expression index on `payload ->> 'event_type'` is the trick that makes the J
 
 ---
 
-# The Five Constraint Kinds
+# The SQL-Based Constraints
 
 <div class="columns">
 <div>
@@ -433,7 +578,9 @@ graph TD
 </div>
 </div>
 
-Layered together they encode the three integrity rules and most of your domain logic.
+<!--
+Layered together, these five encode the three integrity rules and most of your domain logic. Map them to the earlier slide: the type system plus CHECK gives domain integrity, PRIMARY KEY with its implied NOT NULL gives entity integrity, and FOREIGN KEY gives referential integrity.
+-->
 
 ---
 
@@ -462,7 +609,7 @@ Domains are underused in practice. They make column constraints reusable across 
 
 ---
 
-# Where Constraints Live: Tradeoffs
+# Tradeoffs of Constraints
 
 ```mermaid
 graph TD
@@ -472,11 +619,52 @@ graph TD
   A["App code"] --> A1["Catches: anything<br/>Misses: direct DB access"]
 ```
 
-Push constraints down as far as you can without making them tear-down hazards.
-PostgreSQL's `CHECK` and `EXCLUDE` cover a lot.
+Enforce each rule at the lowest layer that can express it: the type system first, then column constraints, then triggers, with application code as the last resort. The lower layers run on every write, no matter which application did the writing.
+
+The caution runs the other way for rules that change often. A complex `CHECK` or trigger has to be dropped and recreated during schema migrations, so keep fast-moving business rules in higher layers.
 
 <!--
-The "tear-down hazard" idea: a complex check or trigger can make schema migrations painful. Choose the layer based on how often the constraint changes vs how often the schema changes.
+"Lowest layer" means closest to the storage: the database itself rather than the code calling it. A NOT NULL in the schema protects the table from every client — the web app, a batch script, a psql session — while a check in application code protects it only from that one application. The counterweight: every constraint in the schema is something a migration must work around, so rules that change monthly belong in code, and rules that define the data belong in the schema. PostgreSQL's CHECK and EXCLUDE cover most per-row and overlap rules before you ever need a trigger.
+-->
+
+---
+
+# Transactions
+
+A transaction is a group of database operations executed as one unit — atomically, and in apparent isolation from every other transaction (Textbook §1.2.4, p. 8).
+
+```sql
+BEGIN;
+UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
+COMMIT;
+```
+
+Either both updates happen or neither does. A crash between the two statements cannot make $100 vanish.
+
+Constraints restrict what a database state may look like.
+
+<!--
+First mention of transactions in the course. Keep it at the definition level — Day 35 covers how engines actually deliver these guarantees (logging, locking, MVCC). The bank-transfer example is the canonical one; the point to land is that neither UPDATE alone leaves a legal state, so the unit of correctness is the pair.
+-->
+
+---
+
+# The ACID Test
+
+A transaction makes four guarantees, remembered by the acronym ACID (Textbook §1.2.4, p. 9).
+
+| Letter | Property | Guarantee |
+|--------|----------|-----------|
+| A | Atomicity | All-or-nothing execution |
+| C | Consistency | Constraints hold after every transaction |
+| I | Isolation | Appears to run as if alone |
+| D | Durability | Completed work is never lost |
+
+The consistency guarantee builds on today's constraints. A transaction may assume they hold when it starts and must leave them holding when it commits.
+
+<!--
+Unpack each letter with the transfer example. Atomicity: both UPDATEs or neither. Consistency: a CHECK (balance >= 0) may not be violated at COMMIT. Isolation: a concurrent reader never sees the money missing from both accounts. Durability: once COMMIT returns, a crash cannot roll the transfer back. Section 5 (Day 35 onward) is entirely about the machinery behind these four words.
 -->
 
 ---
@@ -519,6 +707,12 @@ graph TD
 </div>
 
 This is the source of a remarkable amount of accidental data deletion.
+
+In 2019 a security researcher registered the vanity plate NULL, and California's citation systems matched tickets with missing plate data to his car. He received $12,049 of other drivers' fines. Wired: [How a 'NULL' License Plate Landed One Hacker in Ticket Hell](https://www.wired.com/story/null-license-plate-landed-one-hacker-ticket-hell/).
+
+<!--
+The Wired story lands well: Joseph Tartaro (DEF CON 2019) chose the plate as a joke, and record systems that stored "no plate on file" as the string NULL routed every plateless citation to him. The deeper lesson is the slide's table — NULL is a marker, not a value, and any system that lets the two blur will misroute data. Ask: which cell in the table does the DMV bug correspond to? (NULL = 'NULL' evaluating as a match.)
+-->
 
 ---
 
@@ -577,7 +771,7 @@ Allow NULL only when *no value yet* or *not applicable* is a real domain state.
 
 <!-- _class: lead -->
 
-# Part 5: A Schema We Will Use All Semester
+# Part 5: A Schema
 
 ---
 
@@ -606,15 +800,13 @@ CREATE TABLE enrollment (
 );
 ```
 
-We will query this schema throughout Sections 1 and 2.
-
 <!--
-This is the schema in the Project 0 starter and in most quiz/exam questions through Quiz 2. Encourage students to type it locally tonight.
+This is the schema in the Project 0 starter and in most quiz/exam questions through Quiz 2. Encourage students to type it locally tonight — sqlite3 works fine for tonight's practice, PostgreSQL once Project 0 setup is done.
 -->
 
 ---
 
-# Why This Schema Is Worth Reading Twice
+# Schema as a Relation
 
 ```mermaid
 erDiagram
@@ -650,36 +842,29 @@ The ER diagram here is intentionally chen-ish. Wednesday's lecture (Day 6) will 
 
 # Wrap-up
 
-You now have, in one place:
+- A relation is a set of tuples over named attributes, each drawn from a domain.
+- A key is a set of attributes no two tuples share; `{title, year}` for `Movies`.
+- PostgreSQL fills Codd's domain slot with 40+ types. Pick `numeric` for money and `timestamptz` for time.
+- Five constraint kinds — `NOT NULL`, `UNIQUE`, `PRIMARY KEY`, `FOREIGN KEY`, `CHECK` — enforce the three integrity rules.
+- Transactions run groups of statements all-or-nothing, and ACID names their four guarantees.
+- NULL is not a value. Comparing against it yields UNKNOWN, so write `IS NULL` when you mean it.
+- The university schema comes back in every SQL lecture. Type it in tonight.
 
-<div class="columns">
-<div>
-
-- The math: relations, tuples, schemas, integrity rules
-- The plumbing: 40+ PostgreSQL types and how they map to Codd's domain
-
-</div>
-<div>
-
-- The fences: five kinds of constraints plus three-valued logic
-- The schema we revisit all semester
-
-</div>
-</div>
+<!--
+One sentence per part of the lecture. If time is short, the two lines to say out loud are the key definition and the NULL warning — those are the ones that show up on Quiz 1.
+-->
 
 ---
 
 # Friday: Relational Algebra I
 
-We turn what you can declare into something you can compute.
+Friday covers the operators that compute over relations: selection, projection, and joins.
 
-By the end of Friday you will translate
+Read Textbook Ch. 2.4 before class.
 
-> "the names of students enrolled in COP5725 this fall"
-
-into both an algebra expression and a SQL query.
-
-Read GMW Ch. 2.4 before class.
+<!--
+Keep this to the topic and the reading. The English-to-algebra-to-SQL translation exercise lives in Friday's deck itself.
+-->
 
 ---
 
@@ -688,3 +873,32 @@ Read GMW Ch. 2.4 before class.
 What is on your mind?
 
 Project 1 ships at 8 AM tomorrow. Project 0 setup remains due Fri Sep 4.
+
+---
+
+<!-- _class: lead -->
+
+# Backup Slides
+
+---
+
+# Where Types Stress the Relational Model
+
+```mermaid
+graph TD
+  T1["Array (int[])"] -->|"opaque?"| OK["Atomic"]
+  T1 -->|"WHERE x = ANY(arr)?"| BAD["Violates 1NF"]
+  T2["JSONB"] -->|"opaque?"| OK
+  T2 -->|"query into fields?"| BAD
+  T3["Composite (record)"] -->|"almost always"| BAD
+  BAD --> N["Normalize"]
+  OK --> K["Keep"]
+```
+
+The relational model survives these features when the database treats the type as a domain element with its own operators.
+
+<!--
+Backup slide — pull it up if a student asks whether arrays or JSONB break the relational model. The decision diagram captures the practical rule: if your queries reach into the structured type, it's no longer atomic — split it out. If they treat it as a blob, fine.
+
+We will return to this on Day 9 — the textbook treats arrays, JSON, and composite types as **explicit 1NF violations**, regardless of how PostgreSQL chooses to support them.
+-->
