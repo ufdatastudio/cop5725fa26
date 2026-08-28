@@ -66,7 +66,7 @@ graph LR
 
 ---
 
-# Schema Shorthand: Underline the Key
+# Schema Shorthand
 
 A schema is written as the relation name followed by its attributes.
 Underlining marks the attributes that form the key (Textbook §2.2.7, p. 25).
@@ -841,7 +841,7 @@ The translation is mechanical once you have the algebra.
 
 ---
 
-# A Query Across Two Relations
+# A Query with Two Relations
 
 > "Names of students enrolled in COP5725 in Fall 2026."
 
