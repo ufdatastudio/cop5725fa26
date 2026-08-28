@@ -509,7 +509,7 @@ graph LR
   class G attr
 ```
 
-Five entities, one weak, six relationships, one relationship attribute. We translate each.
+Five entities, one weak, five relationships, one relationship attribute. We translate each.
 
 ---
 
@@ -607,6 +607,56 @@ The relationship is M:N, so it becomes a table.
 
 <!--
 The composite FK to section is the bookkeeping cost of having a weak entity in the schema. If Section had a single surrogate key (section_id), the FK would be one column. Tradeoff: weak entities require composite FKs but make the natural-key constraints cleaner.
+-->
+
+---
+
+# Junction Table Example
+
+<div class="columns">
+<div>
+
+**student**
+
+<table>
+<thead><tr><th>student_id</th><th>name</th></tr></thead>
+<tbody>
+<tr style="background:#F8BBD0"><td>1</td><td>Ada</td></tr>
+<tr style="background:#F8BBD0"><td>2</td><td>Bob</td></tr>
+</tbody>
+</table>
+
+**section** (key columns)
+
+<table>
+<thead><tr><th>course_id</th><th>section_num</th><th>term</th></tr></thead>
+<tbody>
+<tr style="background:#90CAF9"><td>COP5725</td><td>1</td><td>Fall2026</td></tr>
+<tr style="background:#90CAF9"><td>COT5405</td><td>1</td><td>Fall2026</td></tr>
+</tbody>
+</table>
+
+</div>
+<div>
+
+**enrollment**
+
+<table>
+<thead><tr><th>student_id</th><th>course_id</th><th>section_num</th><th>term</th><th>grade</th></tr></thead>
+<tbody>
+<tr><td style="background:#F8BBD0">1</td><td style="background:#90CAF9">COP5725</td><td style="background:#90CAF9">1</td><td style="background:#90CAF9">Fall2026</td><td style="background:#FFE082">A</td></tr>
+<tr><td style="background:#F8BBD0">1</td><td style="background:#90CAF9">COT5405</td><td style="background:#90CAF9">1</td><td style="background:#90CAF9">Fall2026</td><td style="background:#FFE082">B+</td></tr>
+<tr><td style="background:#F8BBD0">2</td><td style="background:#90CAF9">COP5725</td><td style="background:#90CAF9">1</td><td style="background:#90CAF9">Fall2026</td><td style="background:#FFE082"><strong>NULL</strong></td></tr>
+</tbody>
+</table>
+
+Pink cells copy the student key, blue cells copy section's composite key, and the amber grade is the relationship's own attribute.
+
+</div>
+</div>
+
+<!--
+The colors trace provenance: enrollment stores nothing of its own except grade — every other column is a borrowed key. Bob's NULL grade is an enrollment awaiting grading, the reason grade is nullable in the DDL on the previous slide.
 -->
 
 ---
@@ -786,6 +836,12 @@ The ER rules cannot know your query patterns.
 A composite key on a weak entity gives you a natural index.
 A surrogate key requires you to add a unique constraint on the natural key.
 
+<div class="small">
+
+A surrogate key is a system-generated identifier with no real-world meaning. A natural key is built from attributes the domain already has.
+
+</div>
+
 </div>
 </div>
 
@@ -858,7 +914,7 @@ graph LR
 
 Quiz 1 closes Section 1: relational model, algebra, ER, FDs, normalization.
 
-Reading for Wednesday: Textbook §3.1-3.2, pp. 67-83.
+Reading for Wednesday: Textbook §3.1-3.3, pp. 67-92.
 
 <!--
 Quiz 1 is a week from today. The single best preparation: walk the algebra ↔ SQL ↔ ER paths in both directions. Most quiz questions ask students to move between two of the three.
@@ -907,7 +963,7 @@ Three problems on the handout:
 2. Given a Person→{Student, Faculty} hierarchy, argue for one of the three ISA strategies based on stated access patterns.
 3. Translate a Building → Floor → Room weak-entity chain into SQL DDL.
 
-Answers due in your repo before 8:30 AM Wed Sep 9.
+This is an exercise.
 
 ---
 

@@ -116,7 +116,7 @@ This is the spine of the lecture. Every slide that follows lands on one of these
 
 Computers had files.
 Applications had pointers into files.
-Adding a new query meant editing the file layout — or writing a new program.
+Adding a new query meant editing the file layout, or writing a new program.
 
 Two responses emerged:
 
@@ -217,7 +217,7 @@ Codd spent the late 1960s convincing his own employer that the relational model 
 
 A short paper (11 pages) proposing:
 
-- Data as **relations** — unordered sets of tuples with named attributes
+- Data as **relations**, unordered sets of tuples with named attributes
 - Queries as expressions over relations, not navigation
 - A separation between the **logical** schema users see and the **physical** layout the system manages
 
@@ -420,7 +420,7 @@ The conceptual architect of transactions:
 
 - Coined ACID
 - Two-phase locking
-- "Notes on Database Operating Systems" (1978) — still the definitive reference
+- "Notes on Database Operating Systems" (1978), still the definitive reference
 
 Lost at sea January 28, 2007 while sailing solo off the California coast.
 
@@ -484,12 +484,12 @@ The Berkeley/IBM rivalry shaped a generation of database engineers. Stonebraker 
 
 # The SQL Wars Ended Quickly
 
-QUEL was arguably the cleaner language. SQL won.
+QUEL was the cleaner language. SQL won.
 
 QUEL was more compact and used operators like `retrieve` instead of `select`, making it feel more mathematical. SQL was more English-like and explicit, which made it more approachable for business users.
 
 Why did SQL win? IBM shipped SQL/DS in 1981 and DB2 in 1983.
-Oracle shipped a SQL implementation in 1979 — before IBM did.
+Oracle shipped a SQL implementation in 1979, before IBM did.
 
 By 1986 ANSI ratified SQL-86. The language that came out of System R became *the* language for relational systems.
 
@@ -728,7 +728,7 @@ AT&T built **Daytona** starting in 1989 to manage the company's billing data.
 
 By the late 1990s it held what was, at the time, the largest commercial database in the world.
 
-Daytona was never relational in the strict System R sense — its query language (Cymbal) had no SQL surface. It was optimized for time-series data and append-heavy telecom workloads.
+Daytona was never relational in the strict System R sense; its query language (Cymbal) had no SQL surface. It was optimized for time-series data and append-heavy telecom workloads.
 
 </div>
 <div>
@@ -838,7 +838,7 @@ The version-numbering story lands well: there was never an Oracle V1 because Ell
 </div>
 <div>
 
-### What Got Wrong
+### What Went Wrong
 
 - One size fits all
 - The mainframe assumption (distribution stayed niche)
@@ -914,7 +914,7 @@ Three critique papers:
 
 The argument: workloads diverged in the 2000s (OLTP vs OLAP vs streaming vs graph vs vector), and "one general-purpose DBMS" gave up too much in each direction.
 
-We will see the consequence in Section 7 — PostgreSQL + DuckDB is the working example of two specialized engines doing what one DBMS used to attempt.
+We will see the consequence in Section 7. PostgreSQL + DuckDB is the working example of two specialized engines doing what one DBMS used to attempt.
 
 </div>
 </div>
@@ -972,7 +972,7 @@ timeline
 
 MySQL (1995) traded ACID guarantees for speed and simplicity.
 
-It powered the early web — the L, A, M, P stack (Linux, Apache, MySQL, PHP) is the architecture of Wikipedia, early Facebook, and most of the 1998-2008 web.
+It powered the early web. The L, A, M, P stack (Linux, Apache, MySQL, PHP) is the architecture of Wikipedia, early Facebook, and most of the 1998-2008 web.
 
 MySQL also taught a generation that **defaults matter**. Its default storage engine (MyISAM, then InnoDB) shaped the assumptions of millions of developers.
 
@@ -1250,11 +1250,11 @@ Their critique:
 
 The follow-up paper put numbers on the argument:
 
-> Pavlo, Paulson, Rasin, Abadi, DeWitt, Madden, Stonebraker.
+> Stonebraker, Abadi, DeWitt, Madden, Paulson, Pavlo, Rasin.
 > *MapReduce and Parallel DBMSs: Friends or Foes?*
 > CACM, January 2010.
 
-Parallel DBs were 3-7× faster on the same workloads — when they could load the data at all.
+Parallel DBs were 3-7× faster on the same workloads, when they could load the data at all.
 
 </div>
 </div>
@@ -1380,7 +1380,7 @@ Stonebraker's "one size does not fit all" argument from 2005 is now the consensu
 
 **DuckDB** teaches the modern analytical architecture in the simplest packaging available.
 
-- DuckDB is an embedded library — no server, no daemon, one binary
+- DuckDB is an embedded library: no server, no daemon, one binary
 - It reads PostgreSQL, Parquet, CSV, and JSON natively
 - Its execution engine is vectorized in the style of MonetDB/X100 (Boncz et al., CIDR 2005)
 
@@ -1405,9 +1405,6 @@ graph LR
   C70["Codd<br/>1970"] --> RM["Relations<br/>+ algebra"]
   C70 --> DI["Data<br/>independence"]
   C70 --> DEC["Declarative<br/>queries"]
-  RM --> NOW["Every engine<br/>you will touch"]
-  DI --> NOW
-  DEC --> NOW
 ```
 
 Notice what survived from Codd's 1970 paper. Even Cassandra has tables and a query language; even DynamoDB has expressions and projections.

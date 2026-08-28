@@ -19,6 +19,7 @@ How a database sorts more data than it has memory for
 
 <!--
 Closes Section 4. Pace 50 min. The two-phase algorithm and the multi-way merge tree are the central concepts; the PostgreSQL work_mem connection at the end is what students need for Project 3.
+Quiz 3 takes the last 10 minutes (it covers Section 4, per the schedule), so the lecture itself gets about 40.
 -->
 
 ---
@@ -35,6 +36,8 @@ Wednesday covered PostgreSQL's index types. Today covers sorting.
 When the data is bigger than memory, the database uses **external sorting**, a two-phase algorithm that dates to the earliest database systems and still runs every day in production.
 
 Today covers how the algorithm works and why PostgreSQL's `work_mem` matters for it.
+
+Quiz 3 covers Section 4 and runs in the last 10 minutes of class.
 
 </div>
 <div>
@@ -128,26 +131,33 @@ Write the sorted chunk to disk as a "run".
 Repeat until all input is read.
 ```
 
-```mermaid
-graph LR
-  Inp["Input table<br/>B pages"]
-  R1["Run 1<br/>M pages sorted"]
-  R2["Run 2<br/>M pages sorted"]
-  R3["Run 3<br/>M pages sorted"]
-  Rdots["..."]
-  Inp --> R1
-  Inp --> R2
-  Inp --> R3
-  Inp --> Rdots
-  classDef in_class fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-  classDef run fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-  class Inp in_class
-  class R1,R2,R3,Rdots run
-```
+<table>
+<tbody>
+<tr><th>input</th><td style="background:#FFE082">7</td><td style="background:#FFE082">3</td><td style="background:#FFE082">12</td><td style="background:#A5D6A7">15</td><td style="background:#A5D6A7">5</td><td style="background:#A5D6A7">9</td><td style="background:#90CAF9">20</td><td style="background:#90CAF9">8</td><td style="background:#90CAF9">1</td></tr>
+</tbody>
+</table>
 
-After Phase 1, you have $\lceil B / M \rceil$ sorted runs on disk.
+<table>
+<tbody>
+<tr><th>Run 1</th><td style="background:#FFE082">3</td><td style="background:#FFE082">7</td><td style="background:#FFE082">12</td></tr>
+<tr><th>Run 2</th><td style="background:#A5D6A7">5</td><td style="background:#A5D6A7">9</td><td style="background:#A5D6A7">15</td></tr>
+<tr><th>Run 3</th><td style="background:#90CAF9">1</td><td style="background:#90CAF9">8</td><td style="background:#90CAF9">20</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+Each color is one memory-load of M values, sorted in place and written out as one run; Phase 2 merges these runs.
+
+</div>
+
+After Phase 1, you have $\lceil B / M \rceil$ sorted runs on disk (Textbook §15.4.1, p. 723).
 
 **I/O cost:** read B, write B = 2B.
+
+<!--
+The textbook calls runs "sorted sublists" (§15.4.1). The colors carry across to the Phase 2 slide: the same three runs get merged there.
+-->
 
 ---
 
@@ -161,24 +171,25 @@ When a stream's page is consumed, read the next page from that run.
 Repeat until all runs are exhausted.
 ```
 
-```mermaid
-graph TB
-  R1["Run 1<br/>3, 7, 12"]
-  R2["Run 2<br/>5, 9, 15"]
-  R3["Run 3<br/>1, 8, 20"]
-  M["Merge<br/>(pick smallest)"]
-  Out["Output<br/>1, 3, 5, 7, 8, 9, 12, 15, 20"]
-  R1 --> M
-  R2 --> M
-  R3 --> M
-  M --> Out
-  classDef run fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-  classDef merge fill:#fff3e0,stroke:#e65100,stroke-width:3px
-  classDef out fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-  class R1,R2,R3 run
-  class M merge
-  class Out out
-```
+<table>
+<tbody>
+<tr><th>Run 1</th><td style="background:#FFE082">3</td><td style="background:#FFE082">7</td><td style="background:#FFE082">12</td></tr>
+<tr><th>Run 2</th><td style="background:#A5D6A7">5</td><td style="background:#A5D6A7">9</td><td style="background:#A5D6A7">15</td></tr>
+<tr><th>Run 3</th><td style="background:#90CAF9">1</td><td style="background:#90CAF9">8</td><td style="background:#90CAF9">20</td></tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<tr><th>merged</th><td style="background:#90CAF9">1</td><td style="background:#FFE082">3</td><td style="background:#A5D6A7">5</td><td style="background:#FFE082">7</td><td style="background:#90CAF9">8</td><td style="background:#A5D6A7">9</td><td style="background:#FFE082">12</td><td style="background:#A5D6A7">15</td><td style="background:#90CAF9">20</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+Each merged cell keeps the color of the run it came from. The merge repeatedly outputs the smallest value at the front of any run.
+
+</div>
 
 **I/O cost:** read B, write B = 2B.
 
@@ -203,7 +214,7 @@ But if M is large enough to merge all runs at once, **two passes is enough**.
 # When Two Passes Suffice
 
 Phase 1 produces $\lceil B / M \rceil$ runs.
-We can merge $M - 1$ runs in one pass.
+We can merge $M - 1$ runs in one pass (Textbook §15.4.1, p. 723).
 
 Two passes suffice when:
 $$\frac{B}{M} \leq M - 1$$
@@ -262,7 +273,7 @@ graph TB
   class Out out
 ```
 
-Each level of the merge tree adds a 2B I/O pass.
+Each level of the merge tree adds a 2B I/O pass (Textbook §15.8.1, p. 752).
 
 ---
 
@@ -491,7 +502,7 @@ Section 5 builds query processing on top of these pieces.
 
 ---
 
-# Section 5 Preview (Next Week)
+# Section 5 Preview
 
 ```mermaid
 graph LR
@@ -512,7 +523,7 @@ graph LR
 
 Section 5 covers query processing: joins, iterators, vectorized execution, and optimization. Exam 2 follows the week after.
 
-Reading for Monday: Textbook §15.3, p. 718.
+Reading for Monday: Textbook §§15.2-15.3, pp. 709-722.
 
 ---
 
@@ -541,16 +552,17 @@ Three exercises in your project repo:
 2. Bump `work_mem` and rerun. Capture both plans and the elapsed times.
 3. Update your README with the two plans and a short paragraph explaining the difference.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Mon Nov 2.
+This is an exercise.
 
 ---
 
-# Questions
+# Questions and Quiz 3
 
-What is on your mind?
+Quick questions, then Quiz 3 takes the last 10 minutes. It covers Section 4 (Storage and Indexing).
 
 Project 3 due Fri Nov 13.
 
 <!--
 Common Day 29 questions: "Can I bump work_mem permanently?" (Yes, in postgresql.conf or via ALTER SYSTEM. Be careful with concurrent load — total memory = work_mem × active sorts × connections.) "Why does GROUP BY use sorts?" (It can — though hash aggregation is often used instead. We compare in Week 12.) "How do I know if a sort is the bottleneck?" (EXPLAIN ANALYZE shows time per operator. The Sort line's time tells you.)
+Keep questions to a couple of minutes, hand out Quiz 3, collect at the bell. Section 4 closes with this quiz.
 -->

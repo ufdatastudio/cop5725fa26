@@ -192,9 +192,13 @@ REFRESH MATERIALIZED VIEW dept_stats;
 REFRESH MATERIALIZED VIEW CONCURRENTLY dept_stats;
 ```
 
-A **materialized view** stores the query's result. Reads hit the cache, not the underlying tables.
+A **materialized view** stores the query's result. Reads hit the cache, not the underlying tables. The tradeoff is fast reads against stale data until the next refresh.
 
-The tradeoff is fast reads against stale data until the next refresh.
+<div class="small">
+
+Textbook §8.5, p. 359. Reference: [PostgreSQL docs REFRESH MATERIALIZED VIEW](https://www.postgresql.org/docs/current/sql-refreshmaterializedview.html).
+
+</div>
 
 <!--
 Materialized views are the PostgreSQL answer to denormalization (Day 9 follow-up). They cache the result of an expensive query and refresh on demand. Used heavily in reporting workloads.
@@ -275,6 +279,12 @@ CREATE TABLE invoice (
 ```
 
 `CHECK` constraints encode invariants the schema can prove without a subquery.
+
+<div class="small">
+
+An invariant is a condition on the data that must hold after every insert and update.
+
+</div>
 
 PostgreSQL allows `CHECK` to reference only the row being inserted/updated. Cross-row invariants need a trigger. Textbook §7.2, p. 319.
 

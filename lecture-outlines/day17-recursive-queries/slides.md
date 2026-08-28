@@ -124,6 +124,9 @@ The loop stops when the recursive case produces no new rows.
 
 # Execution as a Fixed-Point Loop
 
+<div class="columns">
+<div>
+
 ```mermaid
 graph TB
   B["Base case<br/>seeds the working set"] --> W["Working set"]
@@ -140,7 +143,19 @@ graph TB
   class End done
 ```
 
+</div>
+<div>
+
 PostgreSQL calls the working set the *recursive term's input*. Each iteration replaces it with the rows produced in the previous iteration, not the cumulative result.
+
+<div class="small">
+
+A fixed point is a state the iteration can no longer change; the loop reaches it when one more round of the recursive case adds no new rows.
+
+</div>
+
+</div>
+</div>
 
 <!--
 The "working set replaces, doesn't accumulate" semantic is the source of subtle bugs. The recursive case sees only the *new* rows from the previous iteration. Reference cumulative results via a separate column (depth, path, etc.).
@@ -213,34 +228,56 @@ ORDER BY path;
 <div>
 
 ### Iteration 0 (base)
-| faculty_id | name | depth |
-|-----|------|-------|
-| 1 | Dr. Provost | 1 |
+
+<table>
+<thead><tr><th>faculty_id</th><th>name</th><th>depth</th></tr></thead>
+<tbody>
+<tr style="background:#F8BBD0"><td>1</td><td>Dr. Provost</td><td>1</td></tr>
+</tbody>
+</table>
 
 ### Iteration 1
-| faculty_id | name | depth |
-|-----|------|-------|
-| 2 | Dr. Dean | 2 |
+
+<table>
+<thead><tr><th>faculty_id</th><th>name</th><th>depth</th></tr></thead>
+<tbody>
+<tr style="background:#90CAF9"><td>2</td><td>Dr. Dean</td><td>2</td></tr>
+</tbody>
+</table>
 
 ### Iteration 2
-| faculty_id | name | depth |
-|-----|------|-------|
-| 3 | Dr. Chair | 3 |
-| 6 | Dr. Lee | 3 |
+
+<table>
+<thead><tr><th>faculty_id</th><th>name</th><th>depth</th></tr></thead>
+<tbody>
+<tr style="background:#FFE082"><td>3</td><td>Dr. Chair</td><td>3</td></tr>
+<tr style="background:#FFE082"><td>6</td><td>Dr. Lee</td><td>3</td></tr>
+</tbody>
+</table>
 
 </div>
 <div>
 
 ### Iteration 3
-| faculty_id | name | depth |
-|-----|------|-------|
-| 4 | Dr. Grant | 4 |
-| 5 | Dr. Sahni | 4 |
+
+<table>
+<thead><tr><th>faculty_id</th><th>name</th><th>depth</th></tr></thead>
+<tbody>
+<tr style="background:#A5D6A7"><td>4</td><td>Dr. Grant</td><td>4</td></tr>
+<tr style="background:#A5D6A7"><td>5</td><td>Dr. Sahni</td><td>4</td></tr>
+</tbody>
+</table>
 
 ### Iteration 4
 Recursive case produces no rows → terminate.
 
-The final result is the **union** of every iteration's output.
+The final result is the **union** of every iteration's output, all four colors together.
+
+<div class="small">
+
+Each color marks the rows one iteration adds. The recursive case joins only the previous color's rows, so the amber rows found their supervisor in the blue row and the green rows found theirs in the amber rows.
+
+</div>
 
 </div>
 </div>
@@ -490,7 +527,7 @@ Five recursive queries:
 4. Generate every Monday for the Fall 2026 semester.
 5. Compute the first 30 Fibonacci numbers.
 
-Answers due in your repo before 8:30 AM Fri Oct 2.
+This is an exercise.
 
 ---
 

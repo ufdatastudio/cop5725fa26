@@ -65,7 +65,7 @@ graph LR
   class W,M,V,S step
 ```
 
-Reference: PostgreSQL docs [Ch. 13.1 Introduction (MVCC)](https://www.postgresql.org/docs/current/mvcc-intro.html), [Ch. 25.1 Routine Vacuuming](https://www.postgresql.org/docs/current/routine-vacuuming.html).
+Reference: PostgreSQL docs [Ch. 13.1 Introduction (MVCC)](https://www.postgresql.org/docs/current/mvcc-intro.html) and [Routine Vacuuming](https://www.postgresql.org/docs/current/routine-vacuuming.html).
 
 The textbook covers multiversion timestamps briefly in §18.8.5, p. 939. MVCC as PostgreSQL practices it is thin there, so today leans on the PostgreSQL documentation.
 
@@ -132,7 +132,7 @@ SELECT txid_current();   -- e.g., 12345
 
 XIDs are the time coordinate of MVCC. Every row version is stamped with the XIDs that **created** and **deleted** it.
 
-Reference: [PostgreSQL Ch. 73.5 HeapTupleHeaderData](https://www.postgresql.org/docs/current/storage-page-layout.html#STORAGE-TUPLE-LAYOUT).
+Reference: [PostgreSQL docs, Database Page Layout](https://www.postgresql.org/docs/current/storage-page-layout.html#STORAGE-TUPLE-LAYOUT) (the HeapTupleHeaderData fields).
 
 ---
 
@@ -211,24 +211,28 @@ The visibility rule is the textbook version. PostgreSQL's actual implementation 
 
 # A Concurrent Read-Write Story
 
-```
-Time   Tx 1 (snapshot at T=100)       Tx 2 (start at T=110)
-─────  ────────────────────────────   ────────────────────────────
-100    BEGIN
-101    SELECT gpa FROM student         (snapshot xid = 100)
-       WHERE sid = 1
-       → 3.95
-102                                    BEGIN (xid = 110)
-103                                    UPDATE student SET gpa = 3.96 WHERE sid = 1
-104                                       (old row: xmax = 110; new row: xmin = 110)
-105                                    COMMIT
-106    SELECT gpa FROM student
-       WHERE sid = 1
-       → 3.95   ← still sees old value!
-107    COMMIT
-```
+<div class="small">
 
-Tx1 keeps seeing 3.95 even after Tx2 commits. Tx1's snapshot was at xid=100; the new row's xmin is 110, which is **>=** Tx1's snapshot. Invisible.
+<table>
+<thead><tr><th>Time</th><th>Tx 1 (snapshot at xid 100)</th><th>Tx 2 (start at xid 110)</th></tr></thead>
+<tbody>
+<tr><td>100-101</td><td style="background:#F8BBD0">BEGIN; <code>SELECT gpa … WHERE sid = 1</code> → 3.95</td><td></td></tr>
+<tr><td>102</td><td></td><td style="background:#90CAF9">BEGIN (xid = 110)</td></tr>
+<tr><td>103</td><td></td><td style="background:#90CAF9"><code>UPDATE student SET gpa = 3.96 WHERE sid = 1</code></td></tr>
+<tr><td>104</td><td></td><td style="background:#90CAF9">old row: xmax = 110; new row: xmin = 110</td></tr>
+<tr><td>105</td><td></td><td style="background:#90CAF9">COMMIT</td></tr>
+<tr><td>106</td><td style="background:#FFE082"><code>SELECT gpa … WHERE sid = 1</code> → 3.95, still the old value</td><td></td></tr>
+<tr><td>107</td><td style="background:#F8BBD0">COMMIT</td><td></td></tr>
+</tbody>
+</table>
+
+</div>
+
+<div class="small">
+
+Pink cells are Tx1's operations and blue cells are Tx2's. The amber read keeps seeing 3.95 even after Tx2 commits: Tx1's snapshot was at xid=100; the new row's xmin is 110, which is **>=** Tx1's snapshot. Invisible.
+
+</div>
 
 This is `REPEATABLE READ` behavior, achieved without locking. That level fixes the snapshot at the transaction's first statement. Under the default `READ COMMITTED`, each statement takes a fresh snapshot, so Tx1's second SELECT would see 3.96.
 
@@ -311,7 +315,7 @@ ALTER TABLE busy_table SET (
 For tables with high update churn, more aggressive thresholds prevent bloat.
 For static tables, weaker thresholds save CPU.
 
-Reference: [PostgreSQL Ch. 25.1.6 The Autovacuum Daemon](https://www.postgresql.org/docs/current/routine-vacuuming.html#AUTOVACUUM).
+Reference: [PostgreSQL docs, The Autovacuum Daemon](https://www.postgresql.org/docs/current/routine-vacuuming.html#AUTOVACUUM).
 
 <!--
 "VACUUM is not optional" is one of the most important production lessons in PostgreSQL. Disabling autovacuum to "save CPU" is a path to a database that grinds to a halt within weeks.
@@ -450,6 +454,8 @@ Single flat takeaway list, one line per part. Write skew is the concept most lik
 
 Wednesday covers recovery (WAL and ARIES), distributed transactions (Spanner, CockroachDB), and a survey of modern systems (DuckDB, lakehouses, vector databases), plus course wrap and Final Exam prep.
 
+Quiz 5 closes Section 6 in the last 10 minutes of Wednesday's class.
+
 Reading: [Mohan ARIES](https://ufdatastudio.com/cop5725fa26/papers/pdfs/mohan1992.pdf) and [DuckDB](https://ufdatastudio.com/cop5725fa26/papers/pdfs/raasveldt2019.pdf) before class; Textbook §17.1-17.2, p. 843-862 for logging background.
 
 ---
@@ -459,7 +465,7 @@ Reading: [Mohan ARIES](https://ufdatastudio.com/cop5725fa26/papers/pdfs/mohan199
 - Run `SELECT xmin, xmax, * FROM your_table LIMIT 5;` against your project's database. Update a row in another psql session, then re-run. Capture the output.
 - Try the doctor-on-call scenario in psql using two transactions. Observe the write skew. Then try the same with `BEGIN ISOLATION LEVEL SERIALIZABLE;` and see the SSI error.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Wed Dec 2.
+This is an exercise.
 
 ---
 
@@ -467,7 +473,7 @@ Push to your `cop5725fa26-project` repo before 8:30 AM Wed Dec 2.
 
 What is on your mind?
 
-Final Project releases today. Due Wed Dec 9.
+Final Project due Wed Dec 9. Quiz 5 closes Section 6 on Wednesday.
 
 <!--
 Common Day 38 questions: "Is MVCC the only way?" (No — SQL Server originally used pure 2PL; recent versions support snapshot. Oracle uses MVCC throughout. MySQL InnoDB uses MVCC. Pretty much every modern engine has MVCC now.) "Does VACUUM block?" (Regular VACUUM doesn't; VACUUM FULL does.) "Why does it take so long?" (For huge tables, it scans every page. PG 16 added parallel vacuum.)

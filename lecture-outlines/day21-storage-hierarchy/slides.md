@@ -106,7 +106,7 @@ graph TB
   class D,T slow
 ```
 
-Each step is **10×-1000×** slower than the previous. The gaps shape every database decision.
+Each step is **10×-1000×** slower than the previous. The gaps shape every database decision (Textbook §13.1.1, p. 557).
 
 <!--
 The "10-1000x slower per layer" is the key intuition. Database engines are mostly about working around these gaps — caching the next layer, batching reads, avoiding random access where sequential will do.
@@ -163,9 +163,9 @@ Every major DB feature is a workaround for the latency gap.
 <div class="columns-left-wide">
 <div>
 
-A hard disk is **a stack of spinning platters** with a read/write head that physically moves.
+A hard disk is **a stack of spinning platters** with a read/write head that physically moves (Textbook §13.2.1, p. 562).
 
-Three time costs to access a block:
+Three time costs to access a block (Textbook §13.2.3, p. 564):
 
 - **Seek time:** move the head to the right track (~5-10 ms)
 - **Rotational latency:** wait for the right sector to pass under the head (~3-4 ms)
@@ -176,17 +176,7 @@ Sequential reads skip the seek and rotation. **Random reads incur all three.**
 </div>
 <div>
 
-```mermaid
-graph TB
-  Plat["Platter"]
-  Trk["Track"]
-  Sec["Sector"]
-  Plat --> Trk
-  Trk --> Sec
-  Sec --> Blk["Block<br/>(several sectors)"]
-  classDef d fill:#e3f2fd,stroke:#1976d2
-  class Plat,Trk,Sec,Blk d
-```
+![w:430px](images/disk-anatomy.svg)
 
 </div>
 </div>
@@ -215,21 +205,16 @@ The 100-1000× sequential-vs-random gap on HDDs is the original reason database 
 </div>
 <div>
 
-```mermaid
-graph TB
-  Pg["Page (4 KB)"]
-  Blk["Erase block<br/>(2-4 MB)"]
-  Chip["Flash chip"]
-  Pg --> Blk
-  Blk --> Chip
-  classDef s fill:#e3f2fd,stroke:#1976d2
-  class Pg,Blk,Chip s
-```
+![w:400px](images/ssd-erase.svg)
 
 </div>
 </div>
+
+<div class="small">
 
 PostgreSQL's `random_page_cost` defaults to 4.0 (4× sequential). On SSDs, lowering it to 1.1 often produces better plans.
+
+</div>
 
 <!--
 The random_page_cost tweak is the simplest PostgreSQL-on-SSD optimization. The default 4.0 assumes HDDs; modern installations on SSDs should typically use 1.1-1.5. Mention this; students may need it for Project 3.
@@ -262,30 +247,19 @@ The page is the **smallest unit the database reads from or writes to disk**. Pos
 
 A page holds many records. Reading one record means reading the page that contains it.
 
+<div class="small">
+
+The Textbook's word for this unit is block (§13.5.2, p. 592); PostgreSQL's word is page. Same idea.
+
+</div>
+
 ---
 
 # Slotted Page Layout (PostgreSQL)
 
-```
-+---------------------------------+
-| PageHeaderData (24 bytes)       |
-+---------------------------------+
-| LinePointer[]  ──> ──> ──>      |
-| (grows downward)                |
-+---------------------------------+
-|                                 |
-|     free space                  |
-|                                 |
-+---------------------------------+
-|        <── <── <── Tuple data   |
-|                  (grows upward) |
-+---------------------------------+
-| Special space (varies by type)  |
-+---------------------------------+
-```
+![w:800px](images/slotted-page.svg)
 
-Two halves grow toward each other.
-A `LinePointer` (4 bytes) per tuple gives O(1) access by tuple index.
+Two halves grow toward each other, and colors pair each line pointer with the tuple it addresses.
 Reference: [PostgreSQL Ch. 73.6 Database Page Layout](https://www.postgresql.org/docs/current/storage-page-layout.html).
 
 <!--
@@ -365,14 +339,11 @@ DuckDB defaults to 256 KB row groups (Parquet-style), reflecting its column-orie
 # Three Organizations
 
 ```mermaid
-graph TB
-  F["File of records"]
-  F --> H["Heap<br/>(unordered)"]
-  F --> S["Sorted<br/>(by some key)"]
-  F --> Ha["Hash-organized<br/>(by hash of key)"]
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+graph LR
+  H["Heap<br/>(unordered)"]
+  S["Sorted<br/>(by some key)"]
+  Ha["Hash-organized<br/>(by hash of key)"]
   classDef opt fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  class F root
   class H,S,Ha opt
 ```
 
@@ -443,11 +414,11 @@ CLUSTER student USING student_gpa_idx;
 
 After `CLUSTER`, rows are physically sorted by GPA until the next insert/update breaks the order.
 
-</div>
-</div>
-
-Sorted files suit read-mostly tables.
+Sorted files suit read-mostly tables; the Textbook calls them sequential files (§14.1.1, p. 621).
 B+ trees (Week 10) keep lookups fast while also keeping inserts cheap.
+
+</div>
+</div>
 
 ---
 
@@ -477,7 +448,7 @@ Sections 1-3 (all material up to and including last Wednesday's DuckDB lecture).
 ### Preparation
 - Practice exam packet was released Wed Oct 7
 - Worked solutions live in `practice-exams/exam1-solutions.md`
-- Tuesday office hours 10:00-11:30 for last-minute questions
+- Tuesday office hours 2:00-4:00 PM for last-minute questions
 
 ### Today
 - Storage Hierarchy (you can use this on a few problems)
@@ -518,7 +489,7 @@ Read Textbook §15.7, pp. 746-751 before class.
 1. Work at least three full problems from the practice exam packet before Tuesday office hours.
 2. In your project, run `pg_relation_size('your_table_name')` and `pg_indexes_size('your_table_name')`. Report sizes in your repo's `README.md`.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Fri Oct 16.
+This is an exercise.
 
 ---
 
@@ -526,7 +497,7 @@ Push to your `cop5725fa26-project` repo before 8:30 AM Fri Oct 16.
 
 What is on your mind?
 
-Exam 1 in two class days.
+Exam 1 is Wednesday.
 
 <!--
 Most questions today are about the exam, not the material. Hold them briefly; redirect to office hours for individual concerns.

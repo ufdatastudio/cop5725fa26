@@ -99,12 +99,13 @@ FROM   student
 GROUP BY major;
 ```
 
-Output:
-
-| major | mean_gpa |
-|-------|----------|
-| CS | 3.88 |
-| EE | 3.30 |
+<table>
+<thead><tr><th>major</th><th>mean_gpa</th></tr></thead>
+<tbody>
+<tr style="background:#FFE082"><td>CS</td><td>3.88</td></tr>
+<tr style="background:#A5D6A7"><td>EE</td><td>3.30</td></tr>
+</tbody>
+</table>
 
 </div>
 <div>
@@ -122,20 +123,25 @@ SELECT name, major, gpa,
 FROM   student;
 ```
 
-Output:
-
-| name | major | gpa | major_avg |
-|------|-------|-----|-----------|
-| Ada | CS | 3.95 | 3.88 |
-| Bob | EE | 2.90 | 3.30 |
-| Chia | CS | 3.85 | 3.88 |
-| Dev | CS | 3.85 | 3.88 |
-| Eve | EE | 3.70 | 3.30 |
+<table>
+<thead><tr><th>name</th><th>major</th><th>gpa</th><th>major_avg</th></tr></thead>
+<tbody>
+<tr style="background:#FFE082"><td>Ada</td><td>CS</td><td>3.95</td><td>3.88</td></tr>
+<tr style="background:#A5D6A7"><td>Bob</td><td>EE</td><td>2.90</td><td>3.30</td></tr>
+<tr style="background:#FFE082"><td>Chia</td><td>CS</td><td>3.85</td><td>3.88</td></tr>
+<tr style="background:#FFE082"><td>Dev</td><td>CS</td><td>3.85</td><td>3.88</td></tr>
+<tr style="background:#A5D6A7"><td>Eve</td><td>EE</td><td>3.70</td><td>3.30</td></tr>
+</tbody>
+</table>
 
 </div>
 </div>
 
-Same average, two presentations. The window form keeps each row alongside its group's value.
+<div class="small">
+
+Rows sharing a color share a major. GROUP BY collapses each color to one row, and OVER writes its average onto every row.
+
+</div>
 
 <!--
 This single comparison is the entire lecture. If students leave understanding the GROUP BY to window mental shift, every other window concept follows. The averages are rounded to two decimals; DuckDB prints more digits.
@@ -184,28 +190,13 @@ Day 16. Skip for now.
 
 # The Three Pieces
 
-```mermaid
-graph TB
-  All["Whole table"] --> P1["Partition: CS"]
-  All --> P2["Partition: EE"]
-  All --> P3["Partition: Math"]
-  P1 --> O1["Ordered by gpa DESC"]
-  P2 --> O2["Ordered by gpa DESC"]
-  P3 --> O3["Ordered by gpa DESC"]
-  O1 --> F1["Frame: current row"]
-  O2 --> F2["Frame: current row"]
-  O3 --> F3["Frame: current row"]
-  classDef root fill:#e3f2fd,stroke:#1976d2
-  classDef p fill:#fff3e0,stroke:#e65100
-  classDef o fill:#f3e5f5,stroke:#7b1fa2
-  classDef f fill:#e8f5e9,stroke:#388e3c
-  class All root
-  class P1,P2,P3 p
-  class O1,O2,O3 o
-  class F1,F2,F3 f
-```
+![w:920px](images/partition-order-frame.svg)
 
 Each row's window is the partition it belongs to, optionally ordered, optionally sliced by frame.
+
+<!--
+Read the picture left to right: PARTITION BY splits the five rows into the amber CS band and the green EE band, ORDER BY sorts inside each band (watch Eve and Bob swap), and the dashed outline is the frame of the current row — for Dev, the partition start down through Dev. Frames become explicit on Day 16.
+-->
 
 ---
 
@@ -228,15 +219,18 @@ SELECT name, gpa,
 FROM   student;
 ```
 
-| name | gpa | rk |
-|------|-----|----|
-| Ada | 3.95 | 1 |
-| Chia | 3.85 | 2 |
-| Dev | 3.85 | 3 |
-| Eve | 3.70 | 4 |
-| Bob | 2.90 | 5 |
+<table>
+<thead><tr><th>name</th><th>gpa</th><th>rk</th></tr></thead>
+<tbody>
+<tr><td>Ada</td><td>3.95</td><td>1</td></tr>
+<tr style="background:#E1BEE7"><td>Chia</td><td>3.85</td><td>2</td></tr>
+<tr style="background:#E1BEE7"><td>Dev</td><td>3.85</td><td>3</td></tr>
+<tr><td>Eve</td><td>3.70</td><td>4</td></tr>
+<tr><td>Bob</td><td>2.90</td><td>5</td></tr>
+</tbody>
+</table>
 
-`row_number()` assigns a unique sequence number per row in the window. Ties are broken arbitrarily, so Chia and Dev could swap places.
+`row_number()` assigns a unique sequence number per row in the window. The purple rows tie at 3.85, so their order is arbitrary and Chia and Dev could swap places.
 
 It appears in leaderboards, top-N-per-group queries, and deduplication.
 
@@ -256,29 +250,38 @@ SELECT name, gpa,
 FROM   student;
 ```
 
-| name | gpa | r | dr |
-|------|-----|---|----|
-| Ada | 3.95 | 1 | 1 |
-| Chia | 3.85 | 2 | 2 |
-| Dev | 3.85 | 2 | 2 |
-| Eve | 3.70 | 4 | 3 |
-| Bob | 2.90 | 5 | 4 |
-
 <div class="columns">
+<div>
+
+<table>
+<thead><tr><th>name</th><th>gpa</th><th>r</th><th>dr</th></tr></thead>
+<tbody>
+<tr><td>Ada</td><td>3.95</td><td>1</td><td>1</td></tr>
+<tr style="background:#E1BEE7"><td>Chia</td><td>3.85</td><td>2</td><td>2</td></tr>
+<tr style="background:#E1BEE7"><td>Dev</td><td>3.85</td><td>2</td><td>2</td></tr>
+<tr><td>Eve</td><td>3.70</td><td style="background:#FFE082">4</td><td style="background:#FFE082">3</td></tr>
+<tr><td>Bob</td><td>2.90</td><td>5</td><td>4</td></tr>
+</tbody>
+</table>
+
+</div>
 <div>
 
 ### RANK
 Gives same rank to ties.
 **Skips** numbers after ties (1, 2, 2, 4).
 
-</div>
-<div>
-
 ### DENSE_RANK
 Gives same rank to ties.
 **No gaps** after ties (1, 2, 2, 3).
 
 </div>
+</div>
+
+<div class="small">
+
+Purple marks the tied rows; the amber cells are where the two functions diverge after the tie.
+
 </div>
 
 <!--
@@ -333,15 +336,18 @@ SELECT name, dname, salary,
 FROM   faculty;
 ```
 
-| name | dname | salary | dept_rank |
-|------|-------|--------|-----------|
-| Sahni | CS | 110000 | 1 |
-| Dobra | CS | 102000 | 2 |
-| Grant | CS | 95000 | 3 |
-| Rao | EE | 99000 | 1 |
-| Lee | EE | 88000 | 2 |
+<table>
+<thead><tr><th>name</th><th>dname</th><th>salary</th><th>dept_rank</th></tr></thead>
+<tbody>
+<tr style="background:#FFE082"><td>Sahni</td><td>CS</td><td>110000</td><td>1</td></tr>
+<tr style="background:#FFE082"><td>Dobra</td><td>CS</td><td>102000</td><td>2</td></tr>
+<tr style="background:#FFE082"><td>Grant</td><td>CS</td><td>95000</td><td>3</td></tr>
+<tr style="background:#A5D6A7"><td>Rao</td><td>EE</td><td>99000</td><td>1</td></tr>
+<tr style="background:#A5D6A7"><td>Lee</td><td>EE</td><td>88000</td><td>2</td></tr>
+</tbody>
+</table>
 
-The rank resets at each partition boundary. This ranking is the building block for top-N-per-group queries.
+Rows sharing a color share a partition, and the rank resets to 1 where the color changes. This ranking is the building block for top-N-per-group queries.
 
 ---
 
@@ -415,15 +421,33 @@ SELECT name, dname, salary,
 FROM   faculty;
 ```
 
+<div class="columns">
+<div>
+
+<table>
+<thead><tr><th>name</th><th>dname</th><th>salary</th><th>running_payroll</th></tr></thead>
+<tbody>
+<tr style="background:#FFE082"><td>Dobra</td><td>CS</td><td>102000</td><td>102000</td></tr>
+<tr style="background:#FFE082"><td>Grant</td><td>CS</td><td>95000</td><td>197000</td></tr>
+<tr style="background:#F8BBD0"><td>Sahni</td><td>CS</td><td>110000</td><td>307000</td></tr>
+<tr><td>Lee</td><td>EE</td><td>88000</td><td>88000</td></tr>
+<tr><td>Rao</td><td>EE</td><td>99000</td><td>187000</td></tr>
+</tbody>
+</table>
+
+</div>
+<div>
+
 The combination of `PARTITION BY` and `ORDER BY` produces a **running total**: each row's value plus the cumulative sum of preceding rows in the partition.
 
-| name | dname | salary | running_payroll |
-|------|-------|--------|-----------------|
-| Dobra | CS | 102000 | 102000 |
-| Grant | CS | 95000 | 197000 |
-| Sahni | CS | 110000 | 307000 |
-| Lee | EE | 88000 | 88000 |
-| Rao | EE | 99000 | 187000 |
+<div class="small">
+
+The pink row's total covers the amber rows plus itself: 102000 + 95000 + 110000 = 307000. Lee restarts at 88000 because the partition changed.
+
+</div>
+
+</div>
+</div>
 
 <!--
 The "ORDER BY in OVER causes running aggregation" rule trips many students. We formalize this with frames on Day 16. For now: ORDER BY in OVER usually means "compute over preceding rows in this partition."
@@ -431,7 +455,7 @@ The "ORDER BY in OVER causes running aggregation" rule trips many students. We f
 
 ---
 
-# A Worked Comparison
+# Grade vs Section Average
 
 > "For each enrollment, show the student's grade, the section's average grade, and how the student compares."
 
@@ -552,7 +576,7 @@ Reading: PostgreSQL docs [Ch. 9.22 Window Functions](https://www.postgresql.org/
 
 - Mon Sep 28: small-group presentations during class
 - Wed Sep 30: winners present to the full class
-- Project 2 (Advanced SQL) releases Mon Sep 28, due Oct 23
+- Project 2 (Advanced SQL) released Mon Sep 21, due Fri Oct 23
 
 </div>
 </div>
@@ -569,7 +593,7 @@ Five queries:
 4. List students whose GPA is above their department's average, including the difference.
 5. Find duplicate enrollments (same student_id + course_id across multiple terms), keep most recent.
 
-Answers due in your repo before 8:30 AM Mon Sep 28.
+This is an exercise.
 
 ---
 

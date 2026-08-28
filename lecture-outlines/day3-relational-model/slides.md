@@ -89,11 +89,11 @@ Students struggle when papers slip between vocabularies without warning. The Cod
 
 A **relation schema** is a set of attributes: $R(A_1, A_2, ..., A_n)$.
 
-Each attribute $A_i$ has a **domain** $dom(A_i)$ — the set of legal values.
+Each attribute $A_i$ has a **domain** $dom(A_i)$, the set of legal values.
 
 A **tuple** over $R$ is a function $t : \{A_1, ..., A_n\} \rightarrow \bigcup dom(A_i)$ with $t(A_i) \in dom(A_i)$.
 
-A **relation instance** is a finite set of such tuples.
+A **relation instance** is a finite set of such tuples (Textbook §2.2.1–2.2.6, p. 22–24).
 
 Properties:
 
@@ -145,11 +145,20 @@ A relation is a set, so every tuple must differ from every other. Which attribut
 <div class="columns">
 <div>
 
-| title | year | length | genre |
-|-------|------|--------|-------|
-| King Kong | 1933 | 100 | horror |
-| King Kong | 2005 | 187 | action |
-| Star Wars | 1977 | 121 | sciFi |
+<table>
+<thead><tr><th>title</th><th>year</th><th>length</th><th>genre</th></tr></thead>
+<tbody>
+<tr><td style="background:#FFE082">King Kong</td><td style="background:#A5D6A7">1933</td><td>100</td><td>horror</td></tr>
+<tr><td style="background:#FFE082">King Kong</td><td style="background:#A5D6A7">2005</td><td>187</td><td>action</td></tr>
+<tr><td>Star Wars</td><td>1977</td><td>121</td><td>sciFi</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+Amber marks the colliding `title` values; green marks the `year` values that tell the two King Kong tuples apart.
+
+</div>
 
 </div>
 <div>
@@ -183,6 +192,12 @@ This is the concrete case before the formal ladder on the next slide. Ask the ro
 **Primary key:** the candidate key the designer picks as canonical.
 
 **Foreign key:** attributes in $R$ whose values must appear as a primary key in some referenced relation $S$.
+
+<div class="small">
+
+Textbook: keys and underlining §2.2.7, p. 25; superkeys §3.1.3, p. 71; foreign keys §7.1, p. 311.
+
+</div>
 
 </div>
 <div>
@@ -219,9 +234,6 @@ graph TD
   T["Type system"] --> D["Domain"]
   PK["PRIMARY KEY<br/>+ NOT NULL"] --> E["Entity"]
   FK["FOREIGN KEY<br/>REFERENCES"] --> R["Referential"]
-  D --> I["Integrity"]
-  E --> I
-  R --> I
 ```
 
 </div>
@@ -245,11 +257,11 @@ Land the general point first: integrity rules fail quietly, and the damage surfa
 
 # The Atomic-Value Debate
 
-Codd's *First Normal Form* says every attribute value is **atomic** — indivisible from the database's perspective. We return to normal forms later in the semester.
+Codd's *First Normal Form* says every attribute value is **atomic**, indivisible from the database's perspective (Textbook §2.2.4, p. 23). We return to normal forms later in the semester.
 
 That definition is older than every type system on the next slide.
 
-What counts as atomic depends on what operations the database can perform on the value. An integer is atomic because the database cannot operate on its bits; a string is atomic because the database does not parse its sub-string structure for join purposes — though it can compare and slice it.
+What counts as atomic depends on what operations the database can perform on the value. An integer is atomic because the database cannot operate on its bits; a string is atomic because the database does not parse its sub-string structure for join purposes, though it can compare and slice it.
 
 > A type is atomic if the system treats the value as a single domain element and provides operators tailored to that domain.
 
@@ -311,7 +323,7 @@ DDL declares and changes schemas.
 - `ALTER TABLE`
 - `DROP TABLE`
 
-The textbook introduces DDL in §2.3.
+The textbook introduces DDL in §2.3 (p. 29).
 
 </div>
 <div>
@@ -439,6 +451,12 @@ Never `float` or `double`.
 
 ### Surrogate keys
 Reach for `bigint` over `int` in any system that may outlive prototype.
+
+<div class="small">
+
+A surrogate key is a system-assigned identifier, like `invoice_id`, with no meaning in the domain.
+
+</div>
 
 </div>
 <div>
@@ -631,7 +649,7 @@ The caution runs the other way for rules that change often. A complex `CHECK` or
 
 # Transactions
 
-A transaction is a group of database operations executed as one unit — atomically, and in apparent isolation from every other transaction (Textbook §1.2.4, p. 8).
+A transaction is a group of database operations executed as one unit, atomically and in apparent isolation from every other transaction (Textbook §1.2.4, p. 8).
 
 ```sql
 BEGIN;
@@ -664,7 +682,7 @@ A transaction makes four guarantees, remembered by the acronym ACID (Textbook §
 The consistency guarantee builds on today's constraints. A transaction may assume they hold when it starts and must leave them holding when it commits.
 
 <!--
-Unpack each letter with the transfer example. Atomicity: both UPDATEs or neither. Consistency: a CHECK (balance >= 0) may not be violated at COMMIT. Isolation: a concurrent reader never sees the money missing from both accounts. Durability: once COMMIT returns, a crash cannot roll the transfer back. Section 5 (Day 35 onward) is entirely about the machinery behind these four words.
+Unpack each letter with the transfer example. Atomicity: both UPDATEs or neither. Consistency: a CHECK (balance >= 0) may not be violated at COMMIT. Isolation: a concurrent reader never sees the money missing from both accounts. Durability: once COMMIT returns, a crash cannot roll the transfer back. Section 6 (Day 35 onward) is entirely about the machinery behind these four words.
 -->
 
 ---
@@ -748,7 +766,7 @@ Default to `NOT NULL` for any column where:
 <div>
 
 ### Business rule
-"Must have a value" — make the database enforce it.
+"Must have a value" is a rule the database itself should enforce.
 
 </div>
 <div>
@@ -831,8 +849,12 @@ erDiagram
   }
 ```
 
+<div class="small">
+
 Composite primary key on `enrollment` says "a student takes a course in a term at most once."
-`grade char(2)` allows NULL for in-progress courses — the kind of NULL that *means* something.
+`grade char(2)` allows NULL for in-progress courses, the kind of NULL that *means* something.
+
+</div>
 
 <!--
 The ER diagram here is intentionally chen-ish. Wednesday's lecture (Day 6) will be all about ER notation; planting one now lets students see the connection. Notice the diamond would be cleaner in chen, but mermaid's erDiagram is good enough.
@@ -845,7 +867,7 @@ The ER diagram here is intentionally chen-ish. Wednesday's lecture (Day 6) will 
 - A relation is a set of tuples over named attributes, each drawn from a domain.
 - A key is a set of attributes no two tuples share; `{title, year}` for `Movies`.
 - PostgreSQL fills Codd's domain slot with 40+ types. Pick `numeric` for money and `timestamptz` for time.
-- Five constraint kinds — `NOT NULL`, `UNIQUE`, `PRIMARY KEY`, `FOREIGN KEY`, `CHECK` — enforce the three integrity rules.
+- Five constraint kinds (`NOT NULL`, `UNIQUE`, `PRIMARY KEY`, `FOREIGN KEY`, `CHECK`) enforce the three integrity rules.
 - Transactions run groups of statements all-or-nothing, and ACID names their four guarantees.
 - NULL is not a value. Comparing against it yields UNKNOWN, so write `IS NULL` when you mean it.
 - The university schema comes back in every SQL lecture. Type it in tonight.
@@ -858,9 +880,9 @@ One sentence per part of the lecture. If time is short, the two lines to say out
 
 # Friday: Relational Algebra I
 
-Friday covers the operators that compute over relations: selection, projection, and joins.
+Friday covers the operators that compute over relations: selection, projection, and the set operations.
 
-Read Textbook Ch. 2.4 before class.
+Read Textbook §2.4 (p. 38) before class.
 
 <!--
 Keep this to the topic and the reading. The English-to-algebra-to-SQL translation exercise lives in Friday's deck itself.
@@ -872,7 +894,7 @@ Keep this to the topic and the reading. The English-to-algebra-to-SQL translatio
 
 What is on your mind?
 
-Project 1 ships at 8 AM tomorrow. Project 0 setup remains due Fri Sep 4.
+Project 1 releases Wednesday, Sep 2. Project 0 setup remains due Fri Sep 4.
 
 ---
 

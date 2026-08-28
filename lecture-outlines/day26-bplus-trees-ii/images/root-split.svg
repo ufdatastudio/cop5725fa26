@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="rsarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+  </defs>
+
+  <!-- ============ before panel ============ -->
+  <g>
+    <rect x="140" y="60" width="180" height="48" rx="10" fill="#F8BBD0" stroke="#AD1457" stroke-width="3"/>
+    <text x="230" y="91" font-size="20" fill="#263238" text-anchor="middle">13 | 34 | 55</text>
+
+    <g transform="rotate(6 366 62)">
+      <rect x="330" y="46" width="72" height="32" rx="10" fill="#FFE082" stroke="#4E342E" stroke-width="2"/>
+      <text x="366" y="68" font-size="16" fill="#263238" text-anchor="middle">full!</text>
+    </g>
+
+    <line x1="170" y1="108" x2="152" y2="146" stroke="#4E342E" stroke-width="2"/>
+    <line x1="210" y1="108" x2="204" y2="146" stroke="#4E342E" stroke-width="2"/>
+    <line x1="250" y1="108" x2="256" y2="146" stroke="#4E342E" stroke-width="2"/>
+    <line x1="290" y1="108" x2="308" y2="146" stroke="#4E342E" stroke-width="2"/>
+    <rect x="128" y="148" width="46" height="30" rx="8" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="151" y="169" font-size="15" fill="#607D8B" text-anchor="middle">&#8230;</text>
+    <rect x="182" y="148" width="46" height="30" rx="8" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="205" y="169" font-size="15" fill="#607D8B" text-anchor="middle">&#8230;</text>
+    <rect x="236" y="148" width="46" height="30" rx="8" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="259" y="169" font-size="15" fill="#607D8B" text-anchor="middle">&#8230;</text>
+    <rect x="290" y="148" width="46" height="30" rx="8" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="313" y="169" font-size="15" fill="#607D8B" text-anchor="middle">&#8230;</text>
+
+    <text x="230" y="240" font-size="18" fill="#607D8B" text-anchor="middle">before: the root holds its 3 keys,</text>
+    <text x="230" y="266" font-size="18" fill="#607D8B" text-anchor="middle">and a child split hands it one more</text>
+  </g>
+
+  <!-- ============ middle arrow ============ -->
+  <g>
+    <path d="M 420 130 L 540 130" fill="none" stroke="#4E342E" stroke-width="3" marker-end="url(#rsarrow)"/>
+    <text x="480" y="112" font-size="18" fill="#37474F" text-anchor="middle">split</text>
+    <text x="480" y="162" font-size="15" fill="#6A1B9A" text-anchor="middle">middle key 34</text>
+    <text x="480" y="182" font-size="15" fill="#6A1B9A" text-anchor="middle">moves up</text>
+  </g>
+
+  <!-- ============ after panel ============ -->
+  <g>
+    <text x="740" y="30" font-size="15" fill="#607D8B" text-anchor="middle">new root</text>
+    <rect x="700" y="38" width="80" height="44" rx="10" fill="#FFE082" stroke="#4E342E" stroke-width="3"/>
+    <text x="740" y="67" font-size="20" fill="#263238" text-anchor="middle">34</text>
+
+    <path d="M 722 82 C 700 100, 670 115, 652 132" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#rsarrow)"/>
+    <path d="M 758 82 C 780 100, 810 115, 828 132" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#rsarrow)"/>
+
+    <rect x="600" y="136" width="90" height="44" rx="10" fill="#A5D6A7" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="645" y="165" font-size="19" fill="#263238" text-anchor="middle">13</text>
+    <rect x="790" y="136" width="90" height="44" rx="10" fill="#A5D6A7" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="835" y="165" font-size="19" fill="#263238" text-anchor="middle">55</text>
+
+    <line x1="628" y1="180" x2="620" y2="206" stroke="#4E342E" stroke-width="2"/>
+    <line x1="662" y1="180" x2="670" y2="206" stroke="#4E342E" stroke-width="2"/>
+    <line x1="818" y1="180" x2="810" y2="206" stroke="#4E342E" stroke-width="2"/>
+    <line x1="852" y1="180" x2="860" y2="206" stroke="#4E342E" stroke-width="2"/>
+    <rect x="597" y="208" width="46" height="28" rx="8" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="620" y="228" font-size="15" fill="#607D8B" text-anchor="middle">&#8230;</text>
+    <rect x="647" y="208" width="46" height="28" rx="8" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="670" y="228" font-size="15" fill="#607D8B" text-anchor="middle">&#8230;</text>
+    <rect x="787" y="208" width="46" height="28" rx="8" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="810" y="228" font-size="15" fill="#607D8B" text-anchor="middle">&#8230;</text>
+    <rect x="837" y="208" width="46" height="28" rx="8" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="860" y="228" font-size="15" fill="#607D8B" text-anchor="middle">&#8230;</text>
+
+    <text x="740" y="266" font-size="18" fill="#607D8B" text-anchor="middle">after: a new root with one key, height +1</text>
+  </g>
+</svg>

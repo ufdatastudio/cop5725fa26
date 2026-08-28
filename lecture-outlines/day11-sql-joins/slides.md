@@ -191,20 +191,7 @@ Multi-way joins read top-down. The order of the JOIN clauses does not affect cor
 
 # The Three Outer Joins
 
-```mermaid
-graph TB
-  subgraph LJ["LEFT OUTER JOIN"]
-    L1["A"] -. "all of A" .-> R1["B"]
-  end
-  subgraph RJ["RIGHT OUTER JOIN"]
-    L2["A"] -. "all of B" .-> R2["B"]
-  end
-  subgraph FJ["FULL OUTER JOIN"]
-    L3["A"] -. "all of both" .-> R3["B"]
-  end
-  classDef j fill:#e3f2fd,stroke:#1976d2
-  class L1,R1,L2,R2,L3,R3 j
-```
+![w:920px](images/outer-joins.svg)
 
 When a row from the kept side has no match, missing columns become NULL.
 
@@ -229,12 +216,41 @@ LEFT JOIN enrollment e ON e.sid = s.sid
 WHERE  e.sid IS NULL;
 ```
 
+<div class="columns">
+<div>
+
 Step through:
 
 1. `LEFT JOIN` keeps every student row even with no enrollment.
 2. `e.sid IS NULL` filters to *only* the students with no match.
 
 This is the canonical "find what is missing" pattern.
+
+<div class="small">
+
+The amber rows are the students the join padded with NULL; the `WHERE` keeps exactly those rows.
+
+</div>
+
+</div>
+<div>
+
+**after the LEFT JOIN**
+
+<table>
+<thead><tr><th>s.sid</th><th>name</th><th>e.sid</th><th>e.cid</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Ada</td><td>1</td><td>COP5725</td></tr>
+<tr><td>1</td><td>Ada</td><td>1</td><td>COP5536</td></tr>
+<tr><td>2</td><td>Bose</td><td>2</td><td>COP5725</td></tr>
+<tr><td>3</td><td>Chen</td><td>3</td><td>COP5725</td></tr>
+<tr style="background:#FFE082"><td>4</td><td>Devi</td><td><strong>NULL</strong></td><td><strong>NULL</strong></td></tr>
+<tr style="background:#FFE082"><td>5</td><td>Evan</td><td><strong>NULL</strong></td><td><strong>NULL</strong></td></tr>
+</tbody>
+</table>
+
+</div>
+</div>
 
 <!--
 Students sometimes write this as NOT EXISTS instead, which is equivalent and often clearer. Both forms are correct; the optimizer treats them similarly. Cover NOT EXISTS in Part 3.
@@ -324,6 +340,12 @@ A **semi-join** returns rows from one side that have a match on the other, witho
 
 The pattern is `WHERE EXISTS (correlated subquery)`.
 
+<div class="small">
+
+A correlated subquery references a column of the outer query; here the inner `e.sid = s.sid` reaches into the outer `s`. Day 13 covers subqueries in depth.
+
+</div>
+
 ---
 
 # NOT EXISTS for Anti-Join
@@ -346,7 +368,7 @@ WHERE  NOT EXISTS (
 );
 ```
 
-Equivalent to the `LEFT JOIN ... WHERE IS NULL` pattern from earlier, often clearer.
+An anti-join keeps the rows from one side that have no match on the other. `NOT EXISTS` is equivalent to the `LEFT JOIN ... WHERE IS NULL` pattern from earlier, often clearer.
 
 <div class="columns">
 <div>
@@ -391,6 +413,12 @@ Three-valued logic strikes again.
 </div>
 
 `NOT EXISTS` is NULL-safe. Prefer it when the subquery might contain NULLs.
+
+<div class="small">
+
+Three-valued logic: a predicate with NULL can evaluate to unknown, and filters keep only true rows.
+
+</div>
 
 <!--
 This is a real, frequent production bug. Especially common when the subquery comes from a denormalized table where NULLs are tolerated. NOT EXISTS sidesteps the issue entirely.
@@ -572,7 +600,7 @@ Five queries on the university schema:
 4. Top 2 highest-paid faculty per department, using LATERAL.
 5. Symmetric diff of two enrollment snapshots.
 
-Answers due in your repo before 8:30 AM Fri Sep 18.
+This is an exercise.
 
 ---
 

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 470" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="daarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+    <marker id="daseek" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#E65100"/>
+    </marker>
+  </defs>
+
+  <!-- ============ platter ============ -->
+  <circle cx="225" cy="220" r="150" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+
+  <!-- sector spokes -->
+  <g stroke="#CFD8DC" stroke-width="1.5">
+    <line x1="225" y1="70" x2="225" y2="370"/>
+    <line x1="75" y1="220" x2="375" y2="220"/>
+    <line x1="119" y1="114" x2="331" y2="326"/>
+    <line x1="331" y1="114" x2="119" y2="326"/>
+  </g>
+
+  <!-- other tracks (dashed) -->
+  <circle cx="225" cy="220" r="75" fill="none" stroke="#B0BEC5" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <circle cx="225" cy="220" r="125" fill="none" stroke="#B0BEC5" stroke-width="1.5" stroke-dasharray="6 6"/>
+
+  <!-- one highlighted sector wedge -->
+  <path d="M 225 220 L 331.1 326.1 A 150 150 0 0 1 225 370 Z" fill="#FFE082" opacity="0.55" stroke="#F57F17" stroke-width="1.5"/>
+
+  <!-- highlighted track -->
+  <circle cx="225" cy="220" r="100" fill="none" stroke="#90CAF9" stroke-width="14"/>
+
+  <!-- block: consecutive sectors along the track -->
+  <path d="M 160.7 296.6 A 100 100 0 0 1 128.4 194.1" fill="none" stroke="#2E7D32" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- spindle -->
+  <circle cx="225" cy="220" r="12" fill="#ECEFF1" stroke="#4E342E" stroke-width="2.5"/>
+
+  <!-- ============ arm and head ============ -->
+  <line x1="470" y1="415" x2="325" y2="178" stroke="#4E342E" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="470" cy="415" r="13" fill="#ECEFF1" stroke="#4E342E" stroke-width="3"/>
+  <circle cx="313" cy="172" r="9" fill="#C62828" stroke="#4E342E" stroke-width="2"/>
+
+  <!-- seek: double arrow across tracks -->
+  <line x1="346" y1="146" x2="285" y2="184" stroke="#E65100" stroke-width="2.5" stroke-dasharray="7 5" marker-start="url(#daseek)" marker-end="url(#daseek)"/>
+
+  <!-- rotation arrow -->
+  <path d="M 155.3 70.5 A 165 165 0 0 1 281.4 65.0" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#daarrow)"/>
+  <text x="218" y="36" font-size="16" fill="#37474F" text-anchor="middle">rotation: wait for the sector</text>
+
+  <!-- ============ labels ============ -->
+  <text x="52" y="118" font-size="18" fill="#263238" text-anchor="middle">platter</text>
+  <path d="M 66 126 Q 88 140 103 152" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#daarrow)"/>
+
+  <text x="38" y="238" font-size="18" fill="#263238" text-anchor="middle">track</text>
+  <path d="M 60 232 Q 90 226 118 222" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#daarrow)"/>
+
+  <text x="322" y="416" font-size="18" fill="#263238" text-anchor="middle">sector</text>
+  <path d="M 308 400 Q 288 372 276 340" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#daarrow)"/>
+
+  <text x="86" y="374" font-size="17" fill="#263238" text-anchor="middle">block =</text>
+  <text x="86" y="394" font-size="15" fill="#37474F" text-anchor="middle">consecutive</text>
+  <text x="86" y="412" font-size="15" fill="#37474F" text-anchor="middle">sectors</text>
+  <path d="M 104 358 Q 128 330 148 300" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#daarrow)"/>
+
+  <text x="416" y="120" font-size="17" fill="#263238" text-anchor="middle">seek: arm</text>
+  <text x="416" y="139" font-size="17" fill="#263238" text-anchor="middle">moves across</text>
+  <text x="416" y="158" font-size="17" fill="#263238" text-anchor="middle">tracks</text>
+  <path d="M 392 164 Q 366 168 344 164" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#daarrow)"/>
+
+  <text x="404" y="228" font-size="17" fill="#263238" text-anchor="middle">read/write</text>
+  <text x="404" y="247" font-size="17" fill="#263238" text-anchor="middle">head</text>
+  <path d="M 384 218 Q 352 196 326 180" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#daarrow)"/>
+
+  <text x="452" y="330" font-size="17" fill="#263238">arm</text>
+  <path d="M 448 324 Q 428 316 414 306" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#daarrow)"/>
+
+  <text x="240" y="448" font-size="15" fill="#607D8B" text-anchor="middle">the platters spin; only the arm and the platters move</text>
+</svg>

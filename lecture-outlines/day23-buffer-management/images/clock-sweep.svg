@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 470" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="ckarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+    <marker id="cksweep" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#E65100"/>
+    </marker>
+  </defs>
+
+  <!-- ring guide -->
+  <circle cx="250" cy="225" r="150" fill="none" stroke="#CFD8DC" stroke-width="2" stroke-dasharray="8 7"/>
+
+  <!-- ============ frames around the ring ============ -->
+  <!-- F1 top: recently used -->
+  <rect x="204" y="48" width="92" height="54" rx="10" fill="#A5D6A7" stroke="#2E7D32" stroke-width="2.5"/>
+  <text x="250" y="71" font-size="16" fill="#263238" text-anchor="middle">F1</text>
+  <text x="250" y="92" font-size="14" fill="#37474F" text-anchor="middle">ref 1</text>
+
+  <!-- F2 upper right: just cleared by the hand -->
+  <rect x="334" y="123" width="92" height="54" rx="10" fill="#FFE082" stroke="#F57F17" stroke-width="2.5"/>
+  <text x="380" y="146" font-size="16" fill="#263238" text-anchor="middle">F2</text>
+  <text x="380" y="167" font-size="14" fill="#37474F" text-anchor="middle">ref 1 &#8594; 0</text>
+
+  <!-- F3 lower right: victim -->
+  <rect x="334" y="273" width="92" height="54" rx="10" fill="#F8BBD0" stroke="#C62828" stroke-width="3"/>
+  <text x="380" y="296" font-size="16" fill="#263238" text-anchor="middle">F3</text>
+  <text x="380" y="317" font-size="14" fill="#37474F" text-anchor="middle">ref 0</text>
+
+  <!-- F4 bottom: not reached yet -->
+  <rect x="204" y="348" width="92" height="54" rx="10" fill="#FFFFFF" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="250" y="371" font-size="16" fill="#263238" text-anchor="middle">F4</text>
+  <text x="250" y="392" font-size="14" fill="#37474F" text-anchor="middle">ref 0</text>
+
+  <!-- F5 lower left: recently used -->
+  <rect x="74" y="273" width="92" height="54" rx="10" fill="#A5D6A7" stroke="#2E7D32" stroke-width="2.5"/>
+  <text x="120" y="296" font-size="16" fill="#263238" text-anchor="middle">F5</text>
+  <text x="120" y="317" font-size="14" fill="#37474F" text-anchor="middle">ref 1</text>
+
+  <!-- F6 upper left: not reached yet -->
+  <rect x="74" y="123" width="92" height="54" rx="10" fill="#FFFFFF" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="120" y="146" font-size="16" fill="#263238" text-anchor="middle">F6</text>
+  <text x="120" y="167" font-size="14" fill="#37474F" text-anchor="middle">ref 0</text>
+
+  <!-- ============ the hand ============ -->
+  <line x1="250" y1="225" x2="336" y2="276" stroke="#4E342E" stroke-width="5" stroke-linecap="round" marker-end="url(#ckarrow)"/>
+  <circle cx="250" cy="225" r="12" fill="#ECEFF1" stroke="#4E342E" stroke-width="3"/>
+  <text x="238" y="258" font-size="15" fill="#607D8B" text-anchor="end">clock hand</text>
+
+  <!-- sweep direction -->
+  <path d="M 420 180 A 172 172 0 0 1 428 262" fill="none" stroke="#E65100" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#cksweep)"/>
+  <text x="464" y="226" font-size="15" fill="#E65100" text-anchor="middle">sweep</text>
+
+  <!-- ============ sticky notes ============ -->
+  <g transform="rotate(-3 268 128)">
+    <rect x="183" y="105" width="170" height="46" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="268" y="124" font-size="14" fill="#263238" text-anchor="middle">ref was 1:</text>
+    <text x="268" y="142" font-size="14" fill="#263238" text-anchor="middle">clear it, keep sweeping</text>
+  </g>
+
+  <g transform="rotate(3 385 400)">
+    <rect x="305" y="377" width="160" height="46" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="385" y="396" font-size="14" fill="#263238" text-anchor="middle">ref is 0:</text>
+    <text x="385" y="414" font-size="14" fill="#263238" text-anchor="middle">evict this frame</text>
+  </g>
+
+  <!-- ============ legend ============ -->
+  <rect x="30" y="440" width="26" height="15" rx="5" fill="#A5D6A7" stroke="#2E7D32" stroke-width="2"/>
+  <text x="63" y="453" font-size="14" fill="#37474F">recently used</text>
+  <rect x="185" y="440" width="26" height="15" rx="5" fill="#FFE082" stroke="#F57F17" stroke-width="2"/>
+  <text x="218" y="453" font-size="14" fill="#37474F">just cleared</text>
+  <rect x="330" y="440" width="26" height="15" rx="5" fill="#F8BBD0" stroke="#C62828" stroke-width="2"/>
+  <text x="363" y="453" font-size="14" fill="#37474F">evicted</text>
+</svg>

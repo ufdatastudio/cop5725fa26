@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="pfarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+  </defs>
+
+  <!-- ============ panel headers ============ -->
+  <text x="135" y="52" font-size="22" fill="#263238" text-anchor="middle">student</text>
+  <text x="420" y="52" font-size="22" fill="#263238" text-anchor="middle">PARTITION BY major</text>
+  <text x="780" y="52" font-size="22" fill="#263238" text-anchor="middle">ORDER BY gpa DESC</text>
+
+  <!-- ============ panel 1: the raw table ============ -->
+  <g>
+    <rect x="30" y="68" width="210" height="284" rx="12" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+    <rect x="44" y="84" width="182" height="36" rx="18" fill="#FFFFFF" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="135" y="108" font-size="17" fill="#263238" text-anchor="middle">Ada &#183; CS &#183; 3.95</text>
+    <rect x="44" y="136" width="182" height="36" rx="18" fill="#FFFFFF" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="135" y="160" font-size="17" fill="#263238" text-anchor="middle">Bob &#183; EE &#183; 2.90</text>
+    <rect x="44" y="188" width="182" height="36" rx="18" fill="#FFFFFF" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="135" y="212" font-size="17" fill="#263238" text-anchor="middle">Chia &#183; CS &#183; 3.85</text>
+    <rect x="44" y="240" width="182" height="36" rx="18" fill="#FFFFFF" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="135" y="264" font-size="17" fill="#263238" text-anchor="middle">Dev &#183; CS &#183; 3.85</text>
+    <rect x="44" y="292" width="182" height="36" rx="18" fill="#FFFFFF" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="135" y="316" font-size="17" fill="#263238" text-anchor="middle">Eve &#183; EE &#183; 3.70</text>
+  </g>
+
+  <path d="M 248 210 L 300 210" fill="none" stroke="#4E342E" stroke-width="3" marker-end="url(#pfarrow)"/>
+
+  <!-- ============ panel 2: partitioned ============ -->
+  <g>
+    <rect x="310" y="68" width="220" height="178" rx="12" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="324" y="90" font-size="17" fill="#37474F">CS</text>
+    <rect x="324" y="98" width="192" height="34" rx="17" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="420" y="121" font-size="17" fill="#263238" text-anchor="middle">Ada &#183; 3.95</text>
+    <rect x="324" y="142" width="192" height="34" rx="17" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="420" y="165" font-size="17" fill="#263238" text-anchor="middle">Chia &#183; 3.85</text>
+    <rect x="324" y="186" width="192" height="34" rx="17" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="420" y="209" font-size="17" fill="#263238" text-anchor="middle">Dev &#183; 3.85</text>
+
+    <rect x="310" y="262" width="220" height="134" rx="12" fill="#A5D6A7" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="324" y="284" font-size="17" fill="#37474F">EE</text>
+    <rect x="324" y="292" width="192" height="34" rx="17" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="420" y="315" font-size="17" fill="#263238" text-anchor="middle">Bob &#183; 2.90</text>
+    <rect x="324" y="336" width="192" height="34" rx="17" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="420" y="359" font-size="17" fill="#263238" text-anchor="middle">Eve &#183; 3.70</text>
+  </g>
+
+  <path d="M 538 210 L 632 210" fill="none" stroke="#4E342E" stroke-width="3" marker-end="url(#pfarrow)"/>
+
+  <!-- ============ panel 3: ordered, with the current row's frame ============ -->
+  <g>
+    <rect x="640" y="68" width="280" height="192" rx="12" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="654" y="90" font-size="17" fill="#37474F">CS</text>
+    <rect x="658" y="98" width="200" height="34" rx="17" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="758" y="121" font-size="17" fill="#263238" text-anchor="middle">Ada &#183; 3.95</text>
+    <rect x="658" y="142" width="200" height="34" rx="17" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="758" y="165" font-size="17" fill="#263238" text-anchor="middle">Chia &#183; 3.85</text>
+    <rect x="658" y="186" width="200" height="34" rx="17" fill="#FFF8E1" stroke="#AD1457" stroke-width="3.5"/>
+    <text x="758" y="209" font-size="17" fill="#263238" text-anchor="middle">Dev &#183; 3.85</text>
+    <rect x="650" y="92" width="216" height="134" rx="10" fill="none" stroke="#AD1457" stroke-width="2.5" stroke-dasharray="8 6"/>
+    <text x="758" y="248" font-size="15" fill="#AD1457" text-anchor="middle">Dev's frame (Day 16)</text>
+    <path d="M 890 100 L 890 218" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pfarrow)"/>
+
+    <rect x="640" y="276" width="280" height="134" rx="12" fill="#A5D6A7" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="654" y="298" font-size="17" fill="#37474F">EE</text>
+    <rect x="658" y="306" width="200" height="34" rx="17" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="758" y="329" font-size="17" fill="#263238" text-anchor="middle">Eve &#183; 3.70</text>
+    <rect x="658" y="350" width="200" height="34" rx="17" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="758" y="373" font-size="17" fill="#263238" text-anchor="middle">Bob &#183; 2.90</text>
+    <path d="M 890 312 L 890 380" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pfarrow)"/>
+  </g>
+
+  <!-- ============ legend ============ -->
+  <g>
+    <rect x="60" y="436" width="30" height="16" rx="5" fill="#FFE082" stroke="#4E342E" stroke-width="2"/>
+    <text x="98" y="450" font-size="16" fill="#37474F">CS partition</text>
+    <rect x="230" y="436" width="30" height="16" rx="5" fill="#A5D6A7" stroke="#4E342E" stroke-width="2"/>
+    <text x="268" y="450" font-size="16" fill="#37474F">EE partition</text>
+    <rect x="400" y="436" width="30" height="16" rx="5" fill="#FFF8E1" stroke="#AD1457" stroke-width="2.5"/>
+    <text x="438" y="450" font-size="16" fill="#37474F">current row</text>
+    <rect x="570" y="436" width="30" height="16" rx="5" fill="none" stroke="#AD1457" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="608" y="450" font-size="16" fill="#37474F">its frame (Day 16)</text>
+  </g>
+</svg>

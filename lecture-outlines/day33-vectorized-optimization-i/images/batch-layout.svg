@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="blarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+  </defs>
+
+  <!-- ============ batch container ============ -->
+  <text x="318" y="26" font-size="19" fill="#263238" text-anchor="middle">one batch (6 of ~1024 rows shown)</text>
+  <rect x="18" y="36" width="600" height="246" rx="14" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+
+  <!-- column headers -->
+  <text x="52" y="64" font-size="14" fill="#607D8B" text-anchor="middle">row</text>
+  <text x="137" y="64" font-size="16" fill="#37474F" text-anchor="middle">gpa float[]</text>
+  <text x="287" y="64" font-size="16" fill="#37474F" text-anchor="middle">name text[]</text>
+  <text x="447" y="64" font-size="16" fill="#37474F" text-anchor="middle">major text[]</text>
+
+  <!-- row indices -->
+  <text x="52" y="94" font-size="15" fill="#607D8B" text-anchor="middle">0</text>
+  <text x="52" y="127" font-size="15" fill="#607D8B" text-anchor="middle">1</text>
+  <text x="52" y="160" font-size="15" fill="#607D8B" text-anchor="middle">2</text>
+  <text x="52" y="193" font-size="15" fill="#607D8B" text-anchor="middle">3</text>
+  <text x="52" y="226" font-size="15" fill="#607D8B" text-anchor="middle">4</text>
+  <text x="52" y="259" font-size="15" fill="#607D8B" text-anchor="middle">5</text>
+
+  <!-- gpa column -->
+  <g>
+    <rect x="82" y="74" width="110" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="137" y="94" font-size="17" fill="#263238" text-anchor="middle">3.9</text>
+    <rect x="82" y="107" width="110" height="29" rx="6" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+    <text x="137" y="127" font-size="17" fill="#90A4AE" text-anchor="middle">2.4</text>
+    <rect x="82" y="140" width="110" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="137" y="160" font-size="17" fill="#263238" text-anchor="middle">3.7</text>
+    <rect x="82" y="173" width="110" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="137" y="193" font-size="17" fill="#263238" text-anchor="middle">3.6</text>
+    <rect x="82" y="206" width="110" height="29" rx="6" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+    <text x="137" y="226" font-size="17" fill="#90A4AE" text-anchor="middle">1.9</text>
+    <rect x="82" y="239" width="110" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="137" y="259" font-size="17" fill="#263238" text-anchor="middle">3.8</text>
+  </g>
+
+  <!-- name column -->
+  <g>
+    <rect x="212" y="74" width="150" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="287" y="94" font-size="17" fill="#263238" text-anchor="middle">Ada</text>
+    <rect x="212" y="107" width="150" height="29" rx="6" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+    <text x="287" y="127" font-size="17" fill="#90A4AE" text-anchor="middle">Bob</text>
+    <rect x="212" y="140" width="150" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="287" y="160" font-size="17" fill="#263238" text-anchor="middle">Chia</text>
+    <rect x="212" y="173" width="150" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="287" y="193" font-size="17" fill="#263238" text-anchor="middle">Dev</text>
+    <rect x="212" y="206" width="150" height="29" rx="6" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+    <text x="287" y="226" font-size="17" fill="#90A4AE" text-anchor="middle">Eli</text>
+    <rect x="212" y="239" width="150" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="287" y="259" font-size="17" fill="#263238" text-anchor="middle">Fay</text>
+  </g>
+
+  <!-- major column -->
+  <g>
+    <rect x="372" y="74" width="150" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="447" y="94" font-size="17" fill="#263238" text-anchor="middle">CS</text>
+    <rect x="372" y="107" width="150" height="29" rx="6" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+    <text x="447" y="127" font-size="17" fill="#90A4AE" text-anchor="middle">EE</text>
+    <rect x="372" y="140" width="150" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="447" y="160" font-size="17" fill="#263238" text-anchor="middle">CS</text>
+    <rect x="372" y="173" width="150" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="447" y="193" font-size="17" fill="#263238" text-anchor="middle">Math</text>
+    <rect x="372" y="206" width="150" height="29" rx="6" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+    <text x="447" y="226" font-size="17" fill="#90A4AE" text-anchor="middle">CS</text>
+    <rect x="372" y="239" width="150" height="29" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="447" y="259" font-size="17" fill="#263238" text-anchor="middle">EE</text>
+  </g>
+
+  <text x="318" y="306" font-size="15" fill="#607D8B" text-anchor="middle">each column is one contiguous array, so scans stay cache-friendly</text>
+
+  <!-- ============ legend ============ -->
+  <g>
+    <rect x="650" y="12" width="30" height="16" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+    <text x="688" y="25" font-size="14" fill="#37474F">live row</text>
+    <rect x="770" y="12" width="30" height="16" rx="8" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+    <text x="808" y="25" font-size="14" fill="#37474F">filtered out</text>
+    <rect x="650" y="36" width="30" height="16" rx="8" fill="#FFE082" stroke="#F57F17" stroke-width="2"/>
+    <text x="688" y="49" font-size="14" fill="#37474F">live positions</text>
+  </g>
+
+  <!-- ============ selection vector ============ -->
+  <g>
+    <text x="795" y="94" font-size="16" fill="#37474F" text-anchor="middle">selection vector</text>
+    <rect x="750" y="104" width="90" height="29" rx="6" fill="#FFE082" stroke="#F57F17" stroke-width="2"/>
+    <text x="795" y="124" font-size="17" fill="#263238" text-anchor="middle">0</text>
+    <rect x="750" y="137" width="90" height="29" rx="6" fill="#FFE082" stroke="#F57F17" stroke-width="2"/>
+    <text x="795" y="157" font-size="17" fill="#263238" text-anchor="middle">2</text>
+    <rect x="750" y="170" width="90" height="29" rx="6" fill="#FFE082" stroke="#F57F17" stroke-width="2"/>
+    <text x="795" y="190" font-size="17" fill="#263238" text-anchor="middle">3</text>
+    <rect x="750" y="203" width="90" height="29" rx="6" fill="#FFE082" stroke="#F57F17" stroke-width="2"/>
+    <text x="795" y="223" font-size="17" fill="#263238" text-anchor="middle">5</text>
+    <text x="795" y="254" font-size="15" fill="#607D8B" text-anchor="middle">positions of the live rows</text>
+  </g>
+
+  <!-- arrow: selection entry 2 points at row 2 -->
+  <path d="M 746 152 C 700 152, 690 154, 626 154" fill="none" stroke="#4E342E" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#blarrow)"/>
+
+  <!-- filter callout -->
+  <text x="648" y="285" font-size="16" fill="#C62828">the filter gpa &gt; 3.5 marked rows</text>
+  <text x="648" y="305" font-size="16" fill="#C62828">1 and 4 dead; no data moved</text>
+  <path d="M 644 280 Q 600 262 530 226" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#blarrow)"/>
+</svg>

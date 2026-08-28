@@ -30,7 +30,7 @@ First class of Section 3. Many students arrive familiar with psycopg2 from inter
 
 Sections 1-2 covered three weeks of SQL, run in `psql` and DuckDB shells.
 
-Real systems run SQL from application code, and the application is usually written in Python (or Java, or Go).
+Real systems run SQL from application code, and the application is usually written in Python, Java, or Go (Textbook §9.3, p. 378).
 
 Today covers connecting Python to PostgreSQL with psycopg. Wednesday covers DuckDB for analytical work.
 
@@ -198,6 +198,12 @@ Three context managers:
 
 Connections and cursors close deterministically, so no resources leak.
 
+<div class="small">
+
+A cursor is the object that sends SQL statements over its connection and fetches their results. A context manager is any object a `with` block can hold; it runs its cleanup code when the block exits.
+
+</div>
+
 ---
 
 # Cursor Result Shapes
@@ -334,6 +340,12 @@ cur.execute(
 
 # Part 4: Transactions
 
+<div class="caption">
+
+A transaction groups statements into one unit of work; a commit keeps its changes and a rollback discards them.
+
+</div>
+
 ---
 
 # Implicit Transactions
@@ -384,6 +396,12 @@ Reference: [psycopg `transaction()`](https://www.psycopg.org/psycopg3/docs/api/c
 
 # Part 5: pandas Bridge
 
+<div class="caption">
+
+A DataFrame is pandas' in-memory table: named columns over ordered rows.
+
+</div>
+
 ---
 
 # read_sql_query
@@ -408,6 +426,12 @@ df.groupby("major")["gpa"].mean()
 
 One function call turns a query result into a DataFrame.
 `pd.read_sql_query` accepts a SQLAlchemy connection or a DBAPI connection (psycopg works directly).
+
+<div class="small">
+
+DBAPI is Python's standard database-driver interface, defined in PEP 249; psycopg implements it.
+
+</div>
 
 ---
 
@@ -476,6 +500,8 @@ The database aggregates, the client paints. Modern visualization libraries (matp
 
 # Pagila Demo
 
+<div style="font-size:0.9em">
+
 ```python
 import pandas as pd
 import psycopg
@@ -497,7 +523,9 @@ with psycopg.connect("postgresql://student:student@localhost/pagila") as conn:
 top_actors.plot.barh(x="name", y="films", legend=False)
 ```
 
-Pagila is a widely used PostgreSQL sample database (DVD rental), a real schema with non-trivial joins.
+</div>
+
+Pagila is a PostgreSQL sample database (DVD rental), a real schema with non-trivial joins.
 Install: [github.com/devrimgunduz/pagila](https://github.com/devrimgunduz/pagila).
 
 ---
@@ -528,7 +556,7 @@ Three exercises in your project repo:
 2. Wrap the query in a transaction that updates one column then rolls back; verify the change does not persist.
 3. Plot the top-5 categories from your dataset using `pandas.read_sql_query` + matplotlib.
 
-Commit and push to your `cop5725fa26-project` repo.
+This is an exercise.
 
 ---
 

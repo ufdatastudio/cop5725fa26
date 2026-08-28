@@ -18,7 +18,7 @@ Wednesday, December 2, 2026
 The last lecture: recovery, distributed transactions, and modern systems
 
 <!--
-Final regular lecture. Acknowledge the milestone briefly at the start. The lecture is intentionally broad — recovery (textbook closer), distributed (one-slide-per-system survey), modern (where the field stands in 2026). Last 10 minutes: course wrap and Final Exam reminders.
+Final regular lecture. Acknowledge the milestone briefly at the start. The lecture is intentionally broad — recovery (textbook closer), distributed (one-slide-per-system survey), modern (where the field stands in 2026). Last 10 minutes: course wrap and Final Exam reminders. Quiz 5 (Section 6) also lands today per the schedule — hand it out in the final 10 minutes and compress the wrap if needed.
 -->
 
 ---
@@ -35,6 +35,7 @@ This is the last lecture. The previous 15 weeks built up the database engine lay
 - **Modern** surveys where the field stands as you leave this class
 
 The last section covers the course wrap and Final Exam prep.
+Quiz 5 covers Section 6 and runs in the last 10 minutes of class.
 
 </div>
 <div>
@@ -89,6 +90,12 @@ Textbook background: logging and recovery are Ch. 17, p. 843; distributed commit
 # The Crash Problem
 
 The buffer pool (Day 23) caches **dirty pages** in memory. A `COMMIT` doesn't immediately flush every changed page to disk, because that would be too slow.
+
+<div class="small">
+
+A dirty page is a page changed in memory but not yet written back to disk.
+
+</div>
 
 But what if the server crashes between commit and flush?
 
@@ -158,7 +165,7 @@ On `COMMIT`, the WAL buffer up to and including the commit record is **fsync'd t
 
 After fsync returns, the commit is **durable**. Even a power loss preserves it.
 
-Reference: [PostgreSQL Ch. 30 Reliability and the Write-Ahead Log](https://www.postgresql.org/docs/current/wal-intro.html).
+Reference: [PostgreSQL docs, Reliability and the Write-Ahead Log](https://www.postgresql.org/docs/current/wal-intro.html).
 
 ---
 
@@ -197,7 +204,7 @@ graph LR
   class CP cp
 ```
 
-After a checkpoint, the log records from before the checkpoint are no longer needed for recovery. They can be archived or recycled.
+After a checkpoint, the log records from before the checkpoint are no longer needed for recovery. They can be archived or recycled (Textbook §17.2.4, p. 857).
 
 PostgreSQL runs checkpoints periodically (every ~5 minutes by default, or when WAL grows large enough).
 
@@ -450,6 +457,12 @@ Google's globally-distributed database. Provides:
 - ACID transactions over data on dozens of servers
 - The **TrueTime API**, which returns a clock interval instead of a single timestamp
 
+<div class="small">
+
+External consistency means the commit order matches real-time order: if T1 commits before T2 starts, every observer sees T1 first.
+
+</div>
+
 Spanner uses GPS receivers and atomic clocks to bound clock uncertainty (~5 ms). Transactions wait out the uncertainty before committing.
 
 Underpins Gmail, Google Calendar, AdWords, much of Google's infrastructure.
@@ -468,16 +481,13 @@ Open-source descendants: **CockroachDB**, **Yugabyte**, **TiDB**.
 
 ```mermaid
 graph TB
-  M["Database systems in 2026"]
-  M --> OLTP["OLTP<br/>(PG, MySQL, Spanner)"]
-  M --> OLAP["OLAP<br/>(DuckDB, Snowflake, BigQuery)"]
-  M --> Vec["Vector / RAG<br/>(pgvector, LanceDB)"]
-  M --> Stream["Streaming<br/>(Kafka, Flink)"]
-  M --> KV["Key-value<br/>(Redis, DynamoDB)"]
-  M --> Lake["Lakehouses<br/>(Databricks, Iceberg)"]
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+  OLTP["OLTP<br/>(PG, MySQL, Spanner)"]
+  OLAP["OLAP<br/>(DuckDB, Snowflake, BigQuery)"]
+  Vec["Vector / RAG<br/>(pgvector, LanceDB)"]
+  Stream["Streaming<br/>(Kafka, Flink)"]
+  KV["Key-value<br/>(Redis, DynamoDB)"]
+  Lake["Lakehouses<br/>(Databricks, Iceberg)"]
   classDef cat fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  class M root
   class OLTP,OLAP,Vec,Stream,KV,Lake cat
 ```
 
@@ -628,7 +638,7 @@ There is always more. We didn't go deeply into:
 
 The systems above apply ideas from this course to different workloads.
 
-The Section 7 lecture didn't happen because it merged with today's modern systems coverage. The schedule reflects this.
+Section 7's single lecture is the distributed-and-modern half of today; the schedule reflects this.
 
 ---
 
@@ -638,7 +648,7 @@ Released today: `practice-exams/exam3-final.md`.
 
 The final exam is **cumulative**; every section is in scope. The emphasis is on Sections 6-7 (most recent material) but you should be ready for any topic.
 
-Format: 90 minutes, closed notes, in the assigned final exam slot during Dec 5-11.
+Format: 90 minutes, closed notes, in the final exam slot on Fri Dec 11, 10:00 AM-12:00 PM.
 
 The practice packet is the best preparation. The Project 3 and Final Project work is the second-best preparation.
 
@@ -664,7 +674,7 @@ Deliverables in your `cop5725fa26-project` repo:
 
 ### Presentations
 
-In the assigned final exam block (Wed Dec 9). 3-5 minutes per student.
+In the final exam block (Fri Dec 11). 3-5 minutes per student.
 
 The class will vote on the most impressive capstone.
 
@@ -701,11 +711,13 @@ Use them well.
 
 ---
 
-# Questions
+# Questions and Quiz 5
 
 What is on your mind?
 
-Final Exam in the Dec 5-11 window. Final Project due Wed Dec 9.
+Quiz 5 takes the last 10 minutes. It covers Section 6 (transactions, concurrency, and recovery).
+
+Final Exam Fri Dec 11, 10:00 AM-12:00 PM. Final Project due Wed Dec 9.
 
 Thank you for the semester.
 

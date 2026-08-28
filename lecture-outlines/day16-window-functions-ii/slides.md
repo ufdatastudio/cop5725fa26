@@ -79,6 +79,12 @@ Reference: PostgreSQL docs [Ch. 9.22 Window Functions](https://www.postgresql.or
 
 # Part 1: Frame Clauses
 
+<div class="caption">
+
+The frame is the subset of the current partition that the function computes over for the current row.
+
+</div>
+
 ---
 
 # The Default Frame
@@ -200,6 +206,9 @@ Returns all rows whose ORDER BY value is within the range.
 
 # Moving Average Example
 
+<div class="columns">
+<div>
+
 ```sql
 -- 7-day moving average of daily enrollments
 SELECT
@@ -214,22 +223,34 @@ GROUP BY enrollment_date
 ORDER BY enrollment_date;
 ```
 
-For each day, the window covers the current row and the 6 preceding rows, a 7-day rolling average.
+For each day, the frame covers the current row and the 6 preceding rows, a 7-day rolling average.
 
-```mermaid
-graph LR
-  D1["Day 1"] -. "in" .-> W["7-day frame"]
-  D2["Day 2"] -. "in" .-> W
-  D3["Day 3"] -. "in" .-> W
-  D4["Day 4"] -. "in" .-> W
-  D5["Day 5"] -. "in" .-> W
-  D6["Day 6"] -. "in" .-> W
-  D7["Day 7 (current)"] -. "in" .-> W
-  classDef row fill:#e3f2fd,stroke:#1976d2
-  classDef win fill:#fff3e0,stroke:#e65100,stroke-width:3px
-  class D1,D2,D3,D4,D5,D6,D7 row
-  class W win
-```
+</div>
+<div>
+
+<table>
+<thead><tr><th>day</th><th>daily</th></tr></thead>
+<tbody>
+<tr style="background:#F8BBD0"><td>Day 1</td><td>2</td></tr>
+<tr style="background:#F8BBD0"><td>Day 2</td><td>3</td></tr>
+<tr style="background:#F8BBD0"><td>Day 3</td><td>2</td></tr>
+<tr style="background:#F8BBD0"><td>Day 4</td><td>5</td></tr>
+<tr style="background:#F8BBD0"><td>Day 5</td><td>4</td></tr>
+<tr style="background:#F8BBD0"><td>Day 6</td><td>4</td></tr>
+<tr style="background:#FFE082"><td>Day 7 (current)</td><td>3</td></tr>
+<tr><td>Day 8</td><td>6</td></tr>
+<tr><td>Day 9</td><td>2</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+Day 7's frame is the six pink rows plus the amber current row; `moving_avg_7d` averages those seven `daily` values. Days 8 and 9 sit outside the frame until they become the current row.
+
+</div>
+
+</div>
+</div>
 
 <!--
 ROWS counts rows, not calendar days. When dates are missing, the 7-row frame spans more than 7 calendar days; RANGE BETWEEN INTERVAL '6 days' PRECEDING AND CURRENT ROW handles gaps correctly. Worth saying aloud.
@@ -263,15 +284,33 @@ FROM   enrollment
 GROUP BY enrollment_date;
 ```
 
-| enrollment_date | today | yesterday | tomorrow |
-|------|-------|-----------|----------|
-| 2026-09-01 | 2 | NULL | 3 |
-| 2026-09-02 | 3 | 2 | 2 |
-| 2026-09-03 | 2 | 3 | 4 |
-| 2026-09-06 | 4 | 2 | 3 |
-| 2026-09-07 | 3 | 4 | NULL |
+<div class="columns">
+<div>
+
+<table>
+<thead><tr><th>enrollment_date</th><th>today</th><th>yesterday</th><th>tomorrow</th></tr></thead>
+<tbody>
+<tr><td>2026-09-01</td><td>2</td><td>NULL</td><td style="background:#FFE082">3</td></tr>
+<tr><td>2026-09-02</td><td style="background:#FFE082">3</td><td>2</td><td>2</td></tr>
+<tr><td>2026-09-03</td><td>2</td><td style="background:#FFE082">3</td><td style="background:#A5D6A7">4</td></tr>
+<tr><td>2026-09-06</td><td style="background:#A5D6A7">4</td><td>2</td><td>3</td></tr>
+<tr><td>2026-09-07</td><td>3</td><td style="background:#A5D6A7">4</td><td>NULL</td></tr>
+</tbody>
+</table>
+
+</div>
+<div>
 
 `lag(expr, offset, default)` and `lead(expr, offset, default)` look at neighboring rows in the window.
+
+<div class="small">
+
+Each color follows one count through the output: Sep 2's amber 3 is Sep 3's `yesterday` and Sep 1's `tomorrow`, and Sep 6's green 4 shifts the same way.
+
+</div>
+
+</div>
+</div>
 
 <!--
 LAG and LEAD are the "running diff" tool. With them, "how much did enrollment change day-over-day?" becomes one expression.
@@ -471,9 +510,9 @@ Reading: PostgreSQL docs [Ch. 7.8.2 Recursive Queries](https://www.postgresql.or
 </div>
 <div>
 
-### Project 2 released today
+### Project 2
 
-**Advanced SQL.** Due **Fri Oct 23**.
+**Advanced SQL.** Released Mon Sep 21, due **Fri Oct 23**.
 
 The project tests subqueries, CTEs, window functions, and (after Wednesday) recursive queries.
 
@@ -492,7 +531,7 @@ Five queries:
 4. Identify runs of 3+ consecutive enrollment days.
 5. For each student, the time gap between their last two enrollments.
 
-Answers due in your repo before 8:30 AM Wed Sep 30.
+This is an exercise.
 
 ---
 
@@ -500,7 +539,7 @@ Answers due in your repo before 8:30 AM Wed Sep 30.
 
 What is on your mind?
 
-Project 2 released today. Project 1 winners present on Wednesday.
+Project 2 is due Fri Oct 23. Project 1 winners present on Wednesday.
 
 <!--
 Project 1 presentations dominate today. Save window function questions for the practice handout and office hours.

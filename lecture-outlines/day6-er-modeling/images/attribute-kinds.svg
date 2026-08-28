@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="akarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+  </defs>
+
+  <!-- ============ panel 1: simple ============ -->
+  <g>
+    <text x="120" y="34" font-size="22" fill="#263238" text-anchor="middle">simple</text>
+    <rect x="66" y="48" width="108" height="36" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/>
+    <text x="120" y="72" font-size="18" fill="#0d47a1" text-anchor="middle">Student</text>
+    <line x1="120" y1="84" x2="120" y2="118" stroke="#4E342E" stroke-width="2.5"/>
+    <ellipse cx="120" cy="142" rx="48" ry="24" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2.5"/>
+    <text x="120" y="148" font-size="18" fill="#4a148c" text-anchor="middle">gpa</text>
+    <text x="120" y="262" font-size="16" fill="#607D8B" text-anchor="middle">one atomic value</text>
+  </g>
+
+  <!-- ============ panel 2: composite ============ -->
+  <g>
+    <text x="360" y="34" font-size="22" fill="#263238" text-anchor="middle">composite</text>
+    <rect x="306" y="48" width="108" height="36" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/>
+    <text x="360" y="72" font-size="18" fill="#0d47a1" text-anchor="middle">Student</text>
+    <line x1="360" y1="84" x2="360" y2="108" stroke="#4E342E" stroke-width="2.5"/>
+    <ellipse cx="360" cy="130" rx="48" ry="22" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2.5"/>
+    <text x="360" y="136" font-size="18" fill="#4a148c" text-anchor="middle">name</text>
+    <line x1="336" y1="148" x2="314" y2="176" stroke="#4E342E" stroke-width="2.5"/>
+    <line x1="384" y1="148" x2="406" y2="176" stroke="#4E342E" stroke-width="2.5"/>
+    <ellipse cx="306" cy="196" rx="40" ry="20" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2.5"/>
+    <text x="306" y="202" font-size="16" fill="#4a148c" text-anchor="middle">first</text>
+    <ellipse cx="414" cy="196" rx="40" ry="20" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2.5"/>
+    <text x="414" y="202" font-size="16" fill="#4a148c" text-anchor="middle">last</text>
+    <text x="360" y="262" font-size="16" fill="#607D8B" text-anchor="middle">built from parts</text>
+  </g>
+
+  <!-- ============ panel 3: derived ============ -->
+  <g>
+    <text x="600" y="34" font-size="22" fill="#263238" text-anchor="middle">derived</text>
+    <rect x="546" y="48" width="108" height="36" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/>
+    <text x="600" y="72" font-size="18" fill="#0d47a1" text-anchor="middle">Student</text>
+    <line x1="588" y1="84" x2="556" y2="118" stroke="#4E342E" stroke-width="2.5"/>
+    <line x1="612" y1="84" x2="644" y2="118" stroke="#4E342E" stroke-width="2.5"/>
+    <ellipse cx="548" cy="142" rx="42" ry="22" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2.5"/>
+    <text x="548" y="148" font-size="17" fill="#4a148c" text-anchor="middle">dob</text>
+    <ellipse cx="652" cy="142" rx="42" ry="22" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2.5" stroke-dasharray="7 5"/>
+    <text x="652" y="148" font-size="17" fill="#4a148c" text-anchor="middle">age</text>
+    <path d="M 566 172 Q 600 196 634 172" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#akarrow)"/>
+    <text x="600" y="216" font-size="15" fill="#607D8B" text-anchor="middle">computed</text>
+    <text x="600" y="262" font-size="16" fill="#607D8B" text-anchor="middle">dashed: derived, not stored</text>
+  </g>
+
+  <!-- ============ panel 4: multi-valued ============ -->
+  <g>
+    <text x="840" y="34" font-size="22" fill="#263238" text-anchor="middle">multi-valued</text>
+    <rect x="786" y="48" width="108" height="36" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/>
+    <text x="840" y="72" font-size="18" fill="#0d47a1" text-anchor="middle">Student</text>
+    <line x1="840" y1="84" x2="840" y2="114" stroke="#4E342E" stroke-width="2.5"/>
+    <ellipse cx="840" cy="144" rx="54" ry="28" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2.5"/>
+    <ellipse cx="840" cy="144" rx="44" ry="20" fill="none" stroke="#7b1fa2" stroke-width="2.5"/>
+    <text x="840" y="150" font-size="16" fill="#4a148c" text-anchor="middle">phone</text>
+    <text x="840" y="262" font-size="16" fill="#607D8B" text-anchor="middle">double: a set of values</text>
+  </g>
+
+  <!-- ============ legend ============ -->
+  <g>
+    <rect x="352" y="290" width="34" height="20" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="394" y="306" font-size="16" fill="#37474F">entity set</text>
+    <ellipse cx="522" cy="300" rx="20" ry="11" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+    <text x="550" y="306" font-size="16" fill="#37474F">attribute</text>
+  </g>
+</svg>

@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="rlarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+  </defs>
+
+  <!-- ============ the page ============ -->
+  <text x="78" y="44" font-size="16" fill="#607D8B">one page</text>
+  <rect x="70" y="56" width="560" height="234" rx="12" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+
+  <!-- column captions -->
+  <text x="136" y="70" font-size="12" fill="#607D8B" text-anchor="middle">sale_id</text>
+  <text x="230" y="70" font-size="12" fill="#607D8B" text-anchor="middle">cust</text>
+  <text x="318" y="70" font-size="12" fill="#607D8B" text-anchor="middle">prod</text>
+  <text x="422" y="70" font-size="12" fill="#2E7D32" text-anchor="middle">amount</text>
+  <text x="548" y="70" font-size="12" fill="#607D8B" text-anchor="middle">date</text>
+
+  <!-- row 1 -->
+  <g stroke="#4E342E" stroke-width="2">
+    <rect x="86" y="76" width="100" height="44" fill="#FFFFFF"/>
+    <rect x="186" y="76" width="88" height="44" fill="#FFFFFF"/>
+    <rect x="274" y="76" width="88" height="44" fill="#FFFFFF"/>
+    <rect x="362" y="76" width="120" height="44" fill="#A5D6A7"/>
+    <rect x="482" y="76" width="132" height="44" fill="#FFFFFF"/>
+  </g>
+  <g font-size="16" fill="#263238" text-anchor="middle">
+    <text x="136" y="104">10001</text><text x="230" y="104">c81</text><text x="318" y="104">p12</text><text x="422" y="104">100.00</text><text x="548" y="104">Jan 15</text>
+  </g>
+
+  <!-- row 2: the traced logical row -->
+  <g stroke="#4E342E" stroke-width="2">
+    <rect x="86" y="128" width="100" height="44" fill="#F8BBD0"/>
+    <rect x="186" y="128" width="88" height="44" fill="#F8BBD0"/>
+    <rect x="274" y="128" width="88" height="44" fill="#F8BBD0"/>
+    <rect x="482" y="128" width="132" height="44" fill="#F8BBD0"/>
+  </g>
+  <rect x="362" y="128" width="120" height="44" fill="#A5D6A7" stroke="#AD1457" stroke-width="3.5"/>
+  <g font-size="16" fill="#263238" text-anchor="middle">
+    <text x="136" y="156">10002</text><text x="230" y="156">c07</text><text x="318" y="156">p95</text><text x="422" y="156">45.50</text><text x="548" y="156">Jan 15</text>
+  </g>
+
+  <!-- row 3 -->
+  <g stroke="#4E342E" stroke-width="2">
+    <rect x="86" y="180" width="100" height="44" fill="#FFFFFF"/>
+    <rect x="186" y="180" width="88" height="44" fill="#FFFFFF"/>
+    <rect x="274" y="180" width="88" height="44" fill="#FFFFFF"/>
+    <rect x="362" y="180" width="120" height="44" fill="#A5D6A7"/>
+    <rect x="482" y="180" width="132" height="44" fill="#FFFFFF"/>
+  </g>
+  <g font-size="16" fill="#263238" text-anchor="middle">
+    <text x="136" y="208">10003</text><text x="230" y="208">c81</text><text x="318" y="208">p33</text><text x="422" y="208">220.00</text><text x="548" y="208">Jan 16</text>
+  </g>
+
+  <!-- row 4 -->
+  <g stroke="#4E342E" stroke-width="2">
+    <rect x="86" y="232" width="100" height="44" fill="#FFFFFF"/>
+    <rect x="186" y="232" width="88" height="44" fill="#FFFFFF"/>
+    <rect x="274" y="232" width="88" height="44" fill="#FFFFFF"/>
+    <rect x="362" y="232" width="120" height="44" fill="#A5D6A7"/>
+    <rect x="482" y="232" width="132" height="44" fill="#FFFFFF"/>
+  </g>
+  <g font-size="16" fill="#263238" text-anchor="middle">
+    <text x="136" y="260">10004</text><text x="230" y="260">c33</text><text x="318" y="260">p12</text><text x="422" y="260">75.25</text><text x="548" y="260">Jan 16</text>
+  </g>
+
+  <!-- dashed outline around the scattered amount cells -->
+  <rect x="356" y="73" width="132" height="209" rx="8" fill="none" stroke="#2E7D32" stroke-width="2.5" stroke-dasharray="8 6"/>
+
+  <!-- ============ annotations ============ -->
+  <text x="666" y="96" font-size="17" fill="#37474F">SUM(amount) wants only green,</text>
+  <text x="666" y="118" font-size="17" fill="#37474F">but every byte of every row</text>
+  <text x="666" y="140" font-size="17" fill="#37474F">comes along for the ride</text>
+  <path d="M 660 102 Q 580 92 494 88" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#rlarrow)"/>
+
+  <text x="666" y="208" font-size="17" fill="#37474F">row 2 sits together:</text>
+  <text x="666" y="230" font-size="17" fill="#37474F">one page read returns it all</text>
+  <path d="M 660 216 Q 640 200 618 172" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#rlarrow)"/>
+
+  <!-- ============ legend ============ -->
+  <rect x="70" y="306" width="26" height="15" rx="5" fill="#F8BBD0" stroke="#AD1457" stroke-width="2"/>
+  <text x="103" y="319" font-size="15" fill="#37474F">one logical row</text>
+  <rect x="290" y="306" width="26" height="15" rx="5" fill="#A5D6A7" stroke="#2E7D32" stroke-width="2"/>
+  <text x="323" y="319" font-size="15" fill="#37474F">the amount column, scattered across records</text>
+</svg>

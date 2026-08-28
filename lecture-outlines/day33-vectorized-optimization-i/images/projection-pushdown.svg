@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="pparrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+  </defs>
+
+  <!-- ================= panel A: join first ================= -->
+  <text x="24" y="28" font-size="19" fill="#263238">before: join wide tables, then project</text>
+
+  <!-- R -->
+  <text x="76" y="52" font-size="16" fill="#37474F" text-anchor="middle">R</text>
+  <rect x="24" y="58" width="104" height="76" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <rect x="30" y="64" width="16" height="64" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="49" y="64" width="16" height="64" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="68" y="64" width="16" height="64" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="87" y="64" width="16" height="64" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="106" y="64" width="16" height="64" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <text x="76" y="152" font-size="13" fill="#607D8B" text-anchor="middle">needs 2 of 5</text>
+
+  <!-- S -->
+  <text x="214" y="52" font-size="16" fill="#37474F" text-anchor="middle">S</text>
+  <rect x="172" y="58" width="85" height="76" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <rect x="178" y="64" width="16" height="64" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="197" y="64" width="16" height="64" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="216" y="64" width="16" height="64" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="235" y="64" width="16" height="64" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <text x="214" y="152" font-size="13" fill="#607D8B" text-anchor="middle">needs 2 of 4</text>
+
+  <!-- join -->
+  <path d="M 132 90 C 200 78, 240 88, 286 94" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+  <path d="M 261 96 L 286 97" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+  <rect x="292" y="78" width="46" height="38" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="315" y="105" font-size="24" fill="#263238" text-anchor="middle">&#8904;</text>
+  <path d="M 342 97 L 370 97" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+
+  <!-- wide intermediate -->
+  <text x="456" y="52" font-size="16" fill="#37474F" text-anchor="middle">R &#8904; S</text>
+  <rect x="376" y="58" width="161" height="76" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <rect x="382" y="64" width="16" height="64" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="401" y="64" width="16" height="64" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="420" y="64" width="16" height="64" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="439" y="64" width="16" height="64" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="458" y="64" width="16" height="64" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="477" y="64" width="16" height="64" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="496" y="64" width="16" height="64" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="515" y="64" width="16" height="64" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <text x="456" y="152" font-size="13" fill="#607D8B" text-anchor="middle">8-column rows</text>
+
+  <!-- project late -->
+  <path d="M 541 97 L 572 97" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+  <rect x="578" y="78" width="46" height="38" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="601" y="105" font-size="22" fill="#263238" text-anchor="middle">&#960;</text>
+  <path d="M 628 97 L 654 97" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+
+  <!-- result -->
+  <text x="693" y="52" font-size="16" fill="#37474F" text-anchor="middle">result</text>
+  <rect x="660" y="58" width="66" height="76" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <rect x="666" y="64" width="16" height="64" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="685" y="64" width="16" height="64" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="704" y="64" width="16" height="64" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+
+  <text x="24" y="180" font-size="15" fill="#607D8B">every gray column rides through the join and is dropped only at the end</text>
+
+  <!-- ================= panel B: project first ================= -->
+  <text x="24" y="222" font-size="19" fill="#263238">after: project narrow first, then join</text>
+
+  <!-- R track -->
+  <text x="30" y="280" font-size="16" fill="#37474F" text-anchor="end">R</text>
+  <rect x="40" y="246" width="104" height="56" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <rect x="46" y="252" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="65" y="252" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="84" y="252" width="16" height="44" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="103" y="252" width="16" height="44" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="122" y="252" width="16" height="44" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <path d="M 148 274 L 182 274" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+  <rect x="188" y="257" width="40" height="34" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="208" y="281" font-size="20" fill="#263238" text-anchor="middle">&#960;</text>
+  <path d="M 232 274 L 262 274" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+  <rect x="268" y="246" width="47" height="56" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <rect x="274" y="252" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="293" y="252" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+
+  <!-- S track -->
+  <text x="30" y="350" font-size="16" fill="#37474F" text-anchor="end">S</text>
+  <rect x="40" y="316" width="85" height="56" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <rect x="46" y="322" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="65" y="322" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="84" y="322" width="16" height="44" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="103" y="322" width="16" height="44" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  <path d="M 129 344 L 182 344" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+  <rect x="188" y="327" width="40" height="34" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="208" y="351" font-size="20" fill="#263238" text-anchor="middle">&#960;</text>
+  <path d="M 232 344 L 262 344" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+  <rect x="268" y="316" width="47" height="56" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <rect x="274" y="322" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="293" y="322" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+
+  <!-- join of the narrow inputs -->
+  <path d="M 319 274 C 336 274, 340 292, 348 300" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+  <path d="M 319 344 C 336 344, 340 322, 348 314" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+  <rect x="352" y="288" width="46" height="38" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="375" y="315" font-size="24" fill="#263238" text-anchor="middle">&#8904;</text>
+  <path d="M 402 307 L 430 307" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#pparrow)"/>
+
+  <text x="467" y="272" font-size="15" fill="#37474F" text-anchor="middle">result</text>
+  <rect x="434" y="279" width="66" height="56" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2.5"/>
+  <rect x="440" y="285" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="459" y="285" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+  <rect x="478" y="285" width="16" height="44" rx="4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/>
+
+  <text x="24" y="394" font-size="15" fill="#607D8B">the gray columns never enter the join; a column store never reads them at all</text>
+
+  <!-- ============ legend ============ -->
+  <g>
+    <rect x="700" y="282" width="30" height="16" rx="8" fill="#A5D6A7" stroke="#2E7D32" stroke-width="2"/>
+    <text x="738" y="295" font-size="14" fill="#37474F">columns the query needs</text>
+    <rect x="700" y="310" width="30" height="16" rx="8" fill="#ECEFF1" stroke="#90A4AE" stroke-width="2"/>
+    <text x="738" y="323" font-size="14" fill="#37474F">columns it does not</text>
+  </g>
+</svg>

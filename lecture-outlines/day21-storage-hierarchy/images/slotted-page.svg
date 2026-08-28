@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 430" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="sparrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+    <marker id="sppink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#AD1457"/>
+    </marker>
+    <marker id="spblue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#1565C0"/>
+    </marker>
+    <marker id="spgreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#2E7D32"/>
+    </marker>
+  </defs>
+
+  <!-- ============ the page ============ -->
+  <rect x="300" y="26" width="360" height="380" rx="12" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+
+  <!-- header -->
+  <rect x="312" y="38" width="336" height="38" rx="6" fill="#FFE082" stroke="#F57F17" stroke-width="2.5"/>
+  <text x="480" y="63" font-size="17" fill="#263238" text-anchor="middle">page header (24 B)</text>
+
+  <!-- line pointer array -->
+  <rect x="312" y="86" width="52" height="30" rx="6" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+  <text x="338" y="107" font-size="16" fill="#263238" text-anchor="middle">1</text>
+  <rect x="370" y="86" width="52" height="30" rx="6" fill="#90CAF9" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="396" y="107" font-size="16" fill="#263238" text-anchor="middle">2</text>
+  <rect x="428" y="86" width="52" height="30" rx="6" fill="#A5D6A7" stroke="#2E7D32" stroke-width="2.5"/>
+  <text x="454" y="107" font-size="16" fill="#263238" text-anchor="middle">3</text>
+  <rect x="486" y="86" width="52" height="30" rx="6" fill="none" stroke="#B0BEC5" stroke-width="2" stroke-dasharray="6 5"/>
+
+  <!-- free space -->
+  <rect x="312" y="128" width="336" height="98" rx="6" fill="none" stroke="#B0BEC5" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="560" y="182" font-size="18" fill="#607D8B" text-anchor="middle">free space</text>
+
+  <!-- tuples, growing upward -->
+  <rect x="348" y="234" width="300" height="36" rx="6" fill="#A5D6A7" stroke="#2E7D32" stroke-width="2.5"/>
+  <text x="498" y="258" font-size="16" fill="#263238" text-anchor="middle">tuple 3</text>
+  <rect x="312" y="276" width="336" height="36" rx="6" fill="#90CAF9" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="480" y="300" font-size="16" fill="#263238" text-anchor="middle">tuple 2</text>
+  <rect x="330" y="318" width="318" height="36" rx="6" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+  <text x="489" y="342" font-size="16" fill="#263238" text-anchor="middle">tuple 1</text>
+
+  <!-- special space -->
+  <rect x="312" y="360" width="336" height="38" rx="6" fill="#ECEFF1" stroke="#78909C" stroke-width="2"/>
+  <text x="480" y="384" font-size="15" fill="#37474F" text-anchor="middle">special space (index metadata)</text>
+
+  <!-- pointer arrows: slot k to tuple k -->
+  <path d="M 338 116 C 326 170 322 290 342 332" fill="none" stroke="#AD1457" stroke-width="2.5" marker-end="url(#sppink)"/>
+  <path d="M 396 116 C 384 180 356 250 338 290" fill="none" stroke="#1565C0" stroke-width="2.5" marker-end="url(#spblue)"/>
+  <path d="M 454 116 C 446 170 400 218 368 248" fill="none" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#spgreen)"/>
+
+  <!-- growth arrows -->
+  <line x1="276" y1="92" x2="276" y2="152" stroke="#4E342E" stroke-width="2.5" marker-end="url(#sparrow)"/>
+  <text x="262" y="102" font-size="15" fill="#607D8B" text-anchor="end">slot array</text>
+  <text x="262" y="121" font-size="15" fill="#607D8B" text-anchor="end">grows down</text>
+
+  <line x1="276" y1="350" x2="276" y2="240" stroke="#4E342E" stroke-width="2.5" marker-end="url(#sparrow)"/>
+  <text x="262" y="290" font-size="15" fill="#607D8B" text-anchor="end">tuple data</text>
+  <text x="262" y="309" font-size="15" fill="#607D8B" text-anchor="end">grows up</text>
+
+  <!-- right-side notes -->
+  <text x="688" y="94" font-size="16" fill="#37474F">one 4-byte line pointer per tuple:</text>
+  <text x="688" y="114" font-size="16" fill="#37474F">slot k finds tuple k directly</text>
+  <path d="M 682 100 Q 610 100 546 101" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#sparrow)"/>
+
+  <text x="688" y="176" font-size="16" fill="#37474F">the next tuple lands here,</text>
+  <text x="688" y="196" font-size="16" fill="#37474F">just above tuple 3</text>
+  <path d="M 684 200 Q 660 220 652 232" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#sparrow)"/>
+
+  <text x="688" y="382" font-size="16" fill="#37474F">B-tree pages keep extra</text>
+  <text x="688" y="402" font-size="16" fill="#37474F">metadata down here</text>
+</svg>

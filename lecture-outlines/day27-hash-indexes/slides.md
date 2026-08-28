@@ -41,17 +41,11 @@ PostgreSQL ships both. The optimizer picks.
 
 ```mermaid
 graph TB
-  B["B+ tree<br/>O(log_F N)<br/>+ ranges"]
-  H["Hash<br/>O(1)<br/>equality only"]
-  W["When?"]
-  W --> B
-  W --> H
+  B["B+ tree<br/>O(log_F N)<br/>+ ranges"] ~~~ H["Hash<br/>O(1)<br/>equality only"]
   classDef tree fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef hash fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  classDef root fill:#f3e5f5,stroke:#7b1fa2
   class B tree
   class H hash
-  class W root
 ```
 
 </div>
@@ -133,23 +127,25 @@ graph LR
 
 ```mermaid
 graph TB
-  Q["Workload"]
   E["Equality only?"]
-  Q --> E
   E -->|yes| H["Hash"]
   E -->|no| B["B+ tree"]
-  classDef q fill:#e3f2fd,stroke:#1976d2
   classDef d fill:#fff3e0,stroke:#e65100
   classDef opt fill:#e8f5e9,stroke:#388e3c
-  class Q q
   class E d
   class H,B opt
 ```
 
-</div>
+> In practice, B+ trees handle equality almost as fast as hash and also handle ranges. Most databases default to btree.
+
+<div class="small">
+
+A high-cardinality column has many distinct values (an email, a user ID), so few rows share any one value.
+
 </div>
 
-> In practice, B+ trees handle equality almost as fast as hash and also handle ranges. Most databases default to btree.
+</div>
+</div>
 
 PostgreSQL's hash index is most useful when you know you only ever do `=` and never `BETWEEN`.
 
@@ -180,7 +176,7 @@ graph TB
   class O0 ov
 ```
 
-Pick `N` buckets up front. Each bucket is a page (or chain of pages).
+Pick `N` buckets up front. Each bucket is a page, or a chain of pages (Textbook §14.3.1, p. 649).
 
 The simplest scheme. Fast when load is light.
 
@@ -220,7 +216,7 @@ graph TB
 </div>
 </div>
 
-Two real-world solutions emerged: **extendible hashing** (Fagin et al., 1979) and **linear hashing** (Litwin, 1980). Both grow the table incrementally.
+Two real-world solutions emerged. **Extendible hashing** (Fagin et al., 1979) and **linear hashing** (Litwin, 1980) both grow the table incrementally.
 
 ---
 
@@ -289,33 +285,9 @@ But bucket 1 is full (already has 5 and 7, both with last bit 1).
 
 Split bucket 1 by extending to look at the **last 2 bits**:
 
-```mermaid
-graph LR
-  D0["dir[00]"]
-  D1["dir[01]"]
-  D2["dir[10]"]
-  D3["dir[11]"]
-  B0["B0 (l=1)<br/>4, 12"]
-  B01["B01 (l=2)<br/>5, 13"]
-  B11["B11 (l=2)<br/>7"]
-  D0 --> B0
-  D2 --> B0
-  D1 --> B01
-  D3 --> B11
-  classDef dir fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-  classDef changed fill:#fff3e0,stroke:#e65100,stroke-width:3px
-  classDef b fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-  class D0,D2 dir
-  class D1,D3 dir
-  class B0 b
-  class B01,B11 changed
-```
+![w:780px](images/extendible-split.svg)
 
 The directory doubles (g goes from 1 to 2). Bucket 0 keeps local depth 1, so both `dir[00]` and `dir[10]` point to it. Bucket 1 splits into two buckets at depth 2.
-
-- 5 = `101` has last 2 bits `01`, so it goes to B01
-- 13 = `1101` has last 2 bits `01`, so it goes to B01
-- 7 = `111` has last 2 bits `11`, so it goes to B11
 
 <!--
 Walk this slowly. The two takeaways: the directory doubles but only the overflowing bucket splits, and the untouched bucket keeps its old local depth with two directory entries pointing at it. Keys 4, 12, 5, 7, 13 were chosen so the split lands cleanly: 5 and 13 share suffix 01, 7 has suffix 11.
@@ -373,7 +345,7 @@ Lookups remain O(1): one directory access + one bucket access.
 </div>
 </div>
 
-Extendible hashing is the version the textbook presents (§14.3.5-14.3.6, pp. 652-655).
+Extendible hashing is the version the textbook presents, under the spelling extensible hashing (§14.3.5-14.3.6, pp. 652-655).
 
 PostgreSQL's hash index instead builds on linear hashing, covered next.
 
@@ -387,7 +359,7 @@ PostgreSQL's hash index instead builds on linear hashing, covered next.
 
 # Linear Hashing
 
-Litwin's 1980 alternative.
+Litwin's 1980 alternative (Textbook §14.3.7, p. 655).
 
 - No directory
 - Buckets split **in order**, one at a time
@@ -395,13 +367,9 @@ Litwin's 1980 alternative.
 - Doubles in size over the course of $N$ splits
 
 ```mermaid
-graph TB
-  P["Split pointer p"]
-  B0["B0"]
-  B1["B1"]
-  B2["B2"]
-  B3["B3"]
-  P -.->|"next to split"| B0
+graph LR
+  P["Split pointer p"] -.->|"next to split"| B0["B0"]
+  B0 ~~~ B1["B1"] ~~~ B2["B2"] ~~~ B3["B3"]
   classDef ptr fill:#fff3e0,stroke:#e65100,stroke-width:3px
   classDef b fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
   class P ptr
@@ -435,7 +403,7 @@ PostgreSQL's hash index uses **linear hashing** internally.
 
 A fresh hash index allocates buckets as it grows, and the layout stabilizes over time.
 
-Reference: [PostgreSQL Ch. 67.4 Hash Indexes Internals](https://www.postgresql.org/docs/current/hash-index.html).
+Reference: PostgreSQL docs [Hash Indexes, Implementation](https://www.postgresql.org/docs/current/hash-index.html).
 
 </div>
 </div>
@@ -470,6 +438,12 @@ PostgreSQL's hash index changed at version 10:
 - Before PG 10 it was not WAL-logged, so it was unsafe across restarts and rarely used
 - Since PG 10 it is WAL-logged, durable, and eligible for replication
 
+<div class="small">
+
+WAL is the write-ahead log, the journal every durable change reaches before the data pages do. Section 6 covers it.
+
+</div>
+
 Modern PostgreSQL hash indexes are **production-safe** and competitive with btree for pure equality.
 
 ---
@@ -495,17 +469,12 @@ For most workloads, btree's range support justifies its slightly slower equality
 
 ```mermaid
 graph TB
-  Q["Query pattern"]
-  Q --> E["Equality<br/>only?"]
-  Q --> R["Range or<br/>sort needed?"]
-  Q --> C["Complex types?<br/>(JSON, arrays, geometry)"]
-  E -->|yes| H["Hash"]
-  R -->|yes| BT["B+ tree"]
-  C -->|yes| Next["See Wednesday"]
+  E["Equality<br/>only?"] -->|yes| H["Hash"]
+  R["Range or<br/>sort needed?"] -->|yes| BT["B+ tree"]
+  C["Complex types?<br/>(JSON, arrays, geometry)"] -->|yes| Next["See Wednesday"]
   classDef q fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef opt fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
   classDef wait fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  class Q q
   class E,R,C q
   class H,BT opt
   class Next wait
@@ -575,7 +544,7 @@ Read PostgreSQL docs [Ch. 11.2 Index Types](https://www.postgresql.org/docs/curr
 1. Add a hash index on a high-cardinality equality column in your project's database. Capture `EXPLAIN ANALYZE` before and after, and the size with `pg_relation_size('your_index_name')`.
 2. Hand-trace inserts of `[10, 14, 20, 22, 28, 35]` into an extendible hash with bucket size 2.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Wed Oct 28.
+This is an exercise.
 
 ---
 

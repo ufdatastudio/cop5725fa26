@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="tvwarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+  </defs>
+
+  <!-- ============ panel 1: binary tree, tall and skinny ============ -->
+  <g>
+    <text x="230" y="40" font-size="23" fill="#263238" text-anchor="middle">Binary tree: 2 children per node</text>
+
+    <line x1="230" y1="92" x2="187" y2="140" stroke="#4E342E" stroke-width="2.5"/>
+    <line x1="230" y1="92" x2="273" y2="140" stroke="#4E342E" stroke-width="2.5"/>
+    <line x1="185" y1="152" x2="162" y2="198" stroke="#4E342E" stroke-width="2.5"/>
+    <line x1="185" y1="152" x2="210" y2="198" stroke="#4E342E" stroke-width="2.5"/>
+    <line x1="275" y1="152" x2="252" y2="198" stroke="#4E342E" stroke-width="2.5"/>
+    <line x1="275" y1="152" x2="300" y2="198" stroke="#4E342E" stroke-width="2.5"/>
+
+    <circle cx="230" cy="86" r="14" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+    <circle cx="185" cy="146" r="14" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+    <circle cx="275" cy="146" r="14" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+    <circle cx="160" cy="206" r="14" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+    <circle cx="210" cy="206" r="14" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+    <circle cx="250" cy="206" r="14" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+    <circle cx="300" cy="206" r="14" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+
+    <text x="230" y="262" font-size="30" fill="#607D8B" text-anchor="middle">&#8942;</text>
+    <text x="230" y="296" font-size="17" fill="#607D8B" text-anchor="middle">27 more levels down here</text>
+
+    <text x="230" y="336" font-size="21" fill="#C62828" text-anchor="middle">height &#8776; 30 &#8594; 30 page reads</text>
+  </g>
+
+  <!-- ============ panel 2: B+ tree, short and wide ============ -->
+  <g>
+    <text x="700" y="40" font-size="23" fill="#263238" text-anchor="middle">B+ tree: hundreds of children per node</text>
+
+    <path d="M 690 104 C 640 125, 560 135, 532 148" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#tvwarrow)"/>
+    <path d="M 695 104 C 670 125, 630 135, 617 148" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#tvwarrow)"/>
+    <line x1="700" y1="104" x2="700" y2="146" stroke="#4E342E" stroke-width="2.5" marker-end="url(#tvwarrow)"/>
+    <path d="M 705 104 C 730 125, 770 135, 783 148" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#tvwarrow)"/>
+    <path d="M 710 104 C 760 125, 840 135, 868 148" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#tvwarrow)"/>
+
+    <rect x="640" y="66" width="120" height="38" rx="10" fill="#90CAF9" stroke="#1565C0" stroke-width="2.5"/>
+    <text x="700" y="91" font-size="17" fill="#263238" text-anchor="middle">root page</text>
+
+    <rect x="495" y="150" width="70" height="32" rx="8" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <rect x="580" y="150" width="70" height="32" rx="8" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <rect x="665" y="150" width="70" height="32" rx="8" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <rect x="750" y="150" width="70" height="32" rx="8" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <rect x="835" y="150" width="70" height="32" rx="8" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+
+    <line x1="530" y1="182" x2="545" y2="216" stroke="#4E342E" stroke-width="2" marker-end="url(#tvwarrow)"/>
+    <line x1="615" y1="182" x2="622" y2="216" stroke="#4E342E" stroke-width="2" marker-end="url(#tvwarrow)"/>
+    <line x1="700" y1="182" x2="700" y2="216" stroke="#4E342E" stroke-width="2" marker-end="url(#tvwarrow)"/>
+    <line x1="785" y1="182" x2="778" y2="216" stroke="#4E342E" stroke-width="2" marker-end="url(#tvwarrow)"/>
+    <line x1="870" y1="182" x2="855" y2="216" stroke="#4E342E" stroke-width="2" marker-end="url(#tvwarrow)"/>
+
+    <rect x="480" y="220" width="440" height="34" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <line x1="530" y1="220" x2="530" y2="254" stroke="#2E7D32" stroke-width="1.5"/>
+    <line x1="580" y1="220" x2="580" y2="254" stroke="#2E7D32" stroke-width="1.5"/>
+    <line x1="820" y1="220" x2="820" y2="254" stroke="#2E7D32" stroke-width="1.5"/>
+    <line x1="870" y1="220" x2="870" y2="254" stroke="#2E7D32" stroke-width="1.5"/>
+    <text x="700" y="243" font-size="16" fill="#37474F" text-anchor="middle">&#8230; hundreds of leaves per parent &#8230;</text>
+
+    <text x="700" y="296" font-size="17" fill="#607D8B" text-anchor="middle">the whole billion rows is only ~5 levels away</text>
+    <text x="700" y="336" font-size="21" fill="#2E7D32" text-anchor="middle">height &#8776; 5 &#8594; 5 page reads</text>
+  </g>
+
+  <!-- ============ sticky note ============ -->
+  <g transform="rotate(-3 480 372)">
+    <rect x="322" y="350" width="316" height="42" rx="10" fill="#FFE082" stroke="#4E342E" stroke-width="2"/>
+    <text x="480" y="378" font-size="19" fill="#263238" text-anchor="middle">one node = one page = one I/O</text>
+  </g>
+</svg>

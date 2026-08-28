@@ -18,7 +18,7 @@ Friday, November 13, 2026
 Statistics · Cost · Selinger · Leis · Project 3 due
 
 <!--
-Closes Section 5. Last class before Exam 2 next Wednesday. Pace 50 min, with the Leis 2015 paper getting 8-10 minutes and the Project 3 wrap getting the final 5. Practice exam packet released today.
+Closes Section 5. Last class before Exam 2 next Wednesday. Pace 50 min, with the Leis 2015 paper getting 8-10 minutes and the Project 3 wrap getting the final 5. Practice exam packet released today. Quiz 4 (Section 5, per the schedule) takes the last 10 minutes, so compress the Leis discussion and the Project 3 wrap to fit.
 -->
 
 ---
@@ -33,6 +33,8 @@ Monday covered algebraic equivalences and the plan space. The optimizer must pic
 Today covers statistics, cost estimation, and the algorithm Pat Selinger published in 1979, which still runs inside PostgreSQL.
 
 We then read Leis et al. 2015, which measured how fragile optimizer cost models remain after 30+ years of improvement.
+
+Quiz 4 covers Section 5 and runs in the last 10 minutes of class.
 
 </div>
 <div>
@@ -141,11 +143,22 @@ histogram_bounds = {0, 2.1, 2.4, 2.7, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0}
 
 These ten boundaries describe 9 buckets. Each bucket holds **approximately the same number of rows**.
 
-For a query `WHERE gpa > 3.5`:
-- Find which bucket(s) overlap (3.4-3.6, 3.6-3.8, 3.8-4.0)
-- Estimate the fraction of rows above 3.5
+For a query `WHERE gpa > 3.5`, find the buckets that overlap the predicate and estimate the fraction of rows above 3.5:
 
-These are **equi-depth histograms**. They are cheap to compute and accurate for most range predicates.
+<table>
+<thead><tr><th>0-2.1</th><th>2.1-2.4</th><th>2.4-2.7</th><th>2.7-3.0</th><th>3.0-3.2</th><th>3.2-3.4</th><th>3.4-3.6</th><th>3.6-3.8</th><th>3.8-4.0</th></tr></thead>
+<tbody>
+<tr><td>1/9</td><td>1/9</td><td>1/9</td><td>1/9</td><td>1/9</td><td>1/9</td><td style="background:#FFE082">1/9</td><td style="background:#A5D6A7">1/9</td><td style="background:#A5D6A7">1/9</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+The green buckets lie entirely above 3.5 and count in full. The amber bucket straddles 3.5, so the planner interpolates inside it and counts about half. The estimate is (0.5 + 1 + 1) / 9 ≈ 0.28 of the table.
+
+</div>
+
+These are **equi-depth histograms**, the Textbook's equal-height histograms (§16.5.1, p. 804). They are cheap to compute and accurate for most range predicates.
 
 <!--
 Equi-depth is the default histogram strategy. Other engines support multi-dimensional, equi-width, or sample-based histograms. PostgreSQL's choice is a pragmatic compromise: accurate for most queries and cheap to maintain.
@@ -185,13 +198,19 @@ ALTER TABLE student ALTER COLUMN gpa SET STATISTICS 1000;
 - Higher target = better stats, slower ANALYZE
 - For columns with skewed distributions, bump the target
 
-Reference: [PostgreSQL Ch. 19.7.1 Planner Cost Constants](https://www.postgresql.org/docs/current/runtime-config-query.html).
+Reference: [PostgreSQL docs, Query Planning settings](https://www.postgresql.org/docs/current/runtime-config-query.html).
 
 ---
 
 <!-- _class: lead -->
 
 # Part 2: Cost Estimation
+
+<div class="caption">
+
+Selectivity is the fraction of rows a predicate keeps. Cardinality is the number of rows an operator produces.
+
+</div>
 
 ---
 
@@ -210,6 +229,7 @@ where:
 - `cpu_operator_cost` — cost per simple operator call (default: 0.0025)
 
 These weights matter. Tuning `random_page_cost` on an SSD-backed system is one of the most-cited PG performance tweaks.
+Reference: [PostgreSQL docs, Planner Cost Constants](https://www.postgresql.org/docs/current/runtime-config-query.html).
 
 ---
 
@@ -280,15 +300,12 @@ The Selinger paper is the single most-cited paper in query optimization. It is s
 
 ```mermaid
 graph TB
-  S["Selinger 1979"]
-  S --> A["1. Access path selection<br/>(seq scan vs index)"]
-  S --> O["2. Cost model<br/>(I/O + CPU)"]
-  S --> D["3. DP over subsets<br/>(System R optimizer)"]
-  S --> I["4. Interesting orders<br/>(per-subset cheapest)"]
-  S --> J["5. Left-deep<br/>plan trees"]
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+  A["1. Access path selection<br/>(seq scan vs index)"]
+  O["2. Cost model<br/>(I/O + CPU)"]
+  D["3. DP over subsets<br/>(System R optimizer)"]
+  I["4. Interesting orders<br/>(per-subset cheapest)"]
+  J["5. Left-deep<br/>plan trees"]
   classDef idea fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  class S root
   class A,O,D,I,J idea
 ```
 
@@ -298,7 +315,7 @@ Almost every modern relational optimizer descends from these five ideas.
 
 # Why Left-Deep Plans
 
-In a **left-deep** plan, the right side of every join is a base table:
+In a **left-deep** plan, the right side of every join is a base table (Textbook §16.6.3, p. 816):
 
 ```
 ((A ⋈ B) ⋈ C) ⋈ D
@@ -589,15 +606,19 @@ Single flat takeaway list, one line per part of the lecture. Hit the Selinger an
 - Work through the Exam 2 practice packet without notes. Check yourself against the solutions.
 - For your project, pick one query whose plan you can't explain. Run `EXPLAIN (ANALYZE, BUFFERS)`. Run `ANALYZE` on the tables. Run the query again. Did the plan change? Capture both.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Mon Nov 16.
+This is an exercise.
 
 ---
 
-# Questions
+# Questions and Quiz 4
 
-What is on your mind?
+Quick questions, then Quiz 4 takes the last 10 minutes. It covers Section 5 (Query Processing and Optimization, Days 30-34).
 
 Project 3 due tonight at 11:59 PM. Have a good weekend.
+
+<!--
+Keep questions to a couple of minutes, hand out Quiz 4, collect at the bell. Section 5 closes with this quiz; Exam 2 next Wednesday covers Sections 4-5.
+-->
 
 <!--
 Common Day 34 questions: "Why doesn't Postgres use the modern learned cardinality methods?" (Engineering caution + statistics overhead + lack of a standard implementation. Some forks experiment.) "Should I set random_page_cost to 1.1 on my project?" (If you're on SSD and you're benchmarking, yes; it's one of the cheapest legitimate tuning moves.) "Can I use my own statistics?" (Not directly. But you can ALTER ... SET STATISTICS to increase the sample size for specific columns.)

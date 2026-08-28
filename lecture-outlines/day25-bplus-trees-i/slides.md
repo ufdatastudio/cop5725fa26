@@ -36,6 +36,12 @@ The B+ tree turns that O(B) into O(log_F N), on disk, with the page and buffer-p
 
 The B+ tree is the universal database index. PostgreSQL's `CREATE INDEX` defaults to it, and SQL Server, Oracle, DB2, MySQL, and SQLite all use B+ trees.
 
+<div class="small">
+
+B counts the pages in the file, N counts the records, and F is the fan-out, the number of children per node.
+
+</div>
+
 </div>
 <div>
 
@@ -66,7 +72,7 @@ graph LR
   class W,S,Sr,B step
 ```
 
-Reference: Textbook §14.1-14.2, pp. 620-646; PostgreSQL docs [Ch. 67 B-tree Indexes](https://www.postgresql.org/docs/current/btree.html).
+Reference: Textbook §14.1-14.2, pp. 620-646; PostgreSQL docs [B-Tree Indexes](https://www.postgresql.org/docs/current/btree.html).
 
 ---
 
@@ -87,26 +93,13 @@ Reference: Textbook §14.1-14.2, pp. 620-646; PostgreSQL docs [Ch. 67 B-tree Ind
 | LSM tree | Write-heavy | O(log N) batched |
 
 The "+" in B+ tree refers to all data living at the leaf level; internal nodes contain only routing keys.
+The Textbook covers this variant under the family name B-tree (§14.2, p. 633).
 
 ---
 
 # Why Disk-Friendly Matters
 
-```mermaid
-graph LR
-  BST["Binary tree<br/>2 children/node"]
-  BT["B+ tree<br/>100s of children/node"]
-  D["1 B record<br/>= 1 page<br/>= 1 I/O"]
-  BST --> D
-  BT --> D
-  D --> Choice["log_2 N<br/>vs<br/>log_100 N"]
-  classDef tree fill:#e3f2fd,stroke:#1976d2
-  classDef io fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  classDef result fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-  class BST,BT tree
-  class D io
-  class Choice result
-```
+![w:720px](images/tall-vs-wide.svg)
 
 For 1 billion rows:
 - A binary tree has height ~30, so a lookup costs 30 disk reads.
@@ -128,43 +121,9 @@ Fan-out is the single most important number in a B+ tree. Doubling fan-out cuts 
 
 # A B+ Tree
 
-```mermaid
-graph TB
-  R["Internal: [40 | 80]"]
-  I1["Internal: [10 | 25]"]
-  I2["Internal: [50 | 65]"]
-  I3["Internal: [85 | 95]"]
-  L1["Leaf: 1, 5, 7 → values"]
-  L2["Leaf: 10, 15, 20 → values"]
-  L3["Leaf: 25, 30, 35 → values"]
-  L4["Leaf: 40, 45 → values"]
-  L5["Leaf: 50, 55, 60 → values"]
-  L6["Leaf: 65, 70, 75 → values"]
-  L7["Leaf: 80, 82 → values"]
-  L8["Leaf: 85, 90 → values"]
-  L9["Leaf: 95, 99 → values"]
-  R --> I1
-  R --> I2
-  R --> I3
-  I1 --> L1
-  I1 --> L2
-  I1 --> L3
-  I2 --> L4
-  I2 --> L5
-  I2 --> L6
-  I3 --> L7
-  I3 --> L8
-  I3 --> L9
-  L1 -.-> L2 -.-> L3 -.-> L4 -.-> L5 -.-> L6 -.-> L7 -.-> L8 -.-> L9
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
-  classDef internal fill:#fff8e1,stroke:#f57f17,stroke-width:2px
-  classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-  class R root
-  class I1,I2,I3 internal
-  class L1,L2,L3,L4,L5,L6,L7,L8,L9 leaf
-```
+![w:880px](images/bplus-tree.svg)
 
-Three levels. Internal nodes route. Leaves hold all data. Dotted arrows are the **leaf-level linked list**.
+Three levels. Internal nodes route. Leaves hold all data. The dashed arrows are the **leaf-level linked list** (Textbook §14.2.1, p. 634).
 
 ---
 
@@ -255,7 +214,7 @@ Find(key):
   return data
 ```
 
-Each step descends one level. Total cost: tree height.
+Each step descends one level. Total cost: tree height (Textbook §14.2.3, p. 639).
 
 ---
 
@@ -277,11 +236,11 @@ graph TB
   L8["85, 90"]
   L9["95, 99"]
   R ==>|"30 < 40"| I1
-  I1 ==>|"30 ≥ 25"| L3
   R --> I2
   R --> I3
   I1 --> L1
   I1 --> L2
+  I1 ==>|"30 ≥ 25"| L3
   I2 --> L4
   I2 --> L5
   I2 --> L6
@@ -330,29 +289,21 @@ For `WHERE key BETWEEN 25 AND 60`:
 2. Walk the leaf-level linked list, reading each leaf
 3. Stop when key > 60
 
-Cost: O(log_F N) + (number of leaves in range).
+Cost: O(log_F N) + the number of leaves in range (Textbook §14.2.4, p. 639).
 
 ---
 
 # Where the Buffer Pool Pays Off
 
 ```mermaid
-graph TB
-  R["Root: 1 page"]
-  L1["Level 1: ~100 pages"]
-  L2["Level 2: ~10000 pages"]
-  LD["Leaves: ~1M+ pages"]
-  R --> L1 --> L2 --> LD
-  R -.- C1["Cached (always)"]
-  L1 -.- C2["Cached (mostly)"]
-  L2 -.- C3["Cached (sometimes)"]
-  LD -.- C4["Disk-resident"]
-  classDef level fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-  classDef cache fill:#e8f5e9,stroke:#388e3c
-  classDef disk fill:#ffebee,stroke:#c62828
-  class R,L1,L2,LD level
-  class C1,C2,C3 cache
-  class C4 disk
+graph LR
+  R["Root: 1 page<br/>always cached"] --> L1["Level 1: ~100 pages<br/>mostly cached"]
+  L1 --> L2["Level 2: ~10,000 pages<br/>sometimes cached"]
+  L2 --> LD["Leaves: ~1M pages<br/>disk-resident"]
+  classDef cached fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+  classDef disk fill:#ffebee,stroke:#c62828,stroke-width:2px
+  class R,L1,L2 cached
+  class LD disk
 ```
 
 For a 5-level tree with 1 B records:
@@ -393,12 +344,10 @@ Slow. For a 1-billion-row table, this can take days.
 ```
 
 ```mermaid
-graph TB
-  S["Sort N rows"]
-  PL["Pack into leaves<br/>(80% full)"]
-  P1["Build level 1<br/>from leaf keys"]
-  PR["Continue up<br/>until one root"]
-  S --> PL --> P1 --> PR
+graph LR
+  S["Sort N rows"] --> PL["Pack into leaves<br/>(80% full)"]
+  PL --> P1["Build level 1<br/>from leaf keys"]
+  P1 --> PR["Continue up<br/>until one root"]
   classDef step fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   class S,PL,P1,PR step
 ```
@@ -424,7 +373,7 @@ CREATE INDEX CONCURRENTLY student_gpa_idx ON student (gpa);
 
 `CONCURRENTLY` is the production-safe form. It takes longer (2× the work) but lets reads and writes continue.
 
-For a large table, even `CONCURRENTLY` benefits from the bottom-up bulk-load approach internally. Reference: [PostgreSQL Ch. 11.6 Building Indexes Concurrently](https://www.postgresql.org/docs/current/sql-createindex.html#SQL-CREATEINDEX-CONCURRENTLY).
+For a large table, even `CONCURRENTLY` benefits from the bottom-up bulk-load approach internally. Reference: PostgreSQL docs [CREATE INDEX, Building Indexes Concurrently](https://www.postgresql.org/docs/current/sql-createindex.html#SQL-CREATEINDEX-CONCURRENTLY).
 
 ---
 
@@ -456,7 +405,13 @@ Read Textbook §14.2.5-14.2.7, pp. 640-646 before class.
 1. Hand-draw the B+ tree (order 4) that results from inserting `[10, 20, 30, 40, 50, 60, 70, 80]` in order. Show each step.
 2. On your project's database, run `EXPLAIN ANALYZE` for a query that uses an index. Capture the plan and the elapsed time, with and without the index.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Fri Oct 23.
+<div class="small">
+
+Order 4 means a node holds at most 4 child pointers and 3 keys.
+
+</div>
+
+This is an exercise.
 
 ---
 

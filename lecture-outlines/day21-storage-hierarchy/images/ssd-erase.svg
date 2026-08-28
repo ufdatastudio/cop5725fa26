@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 460" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="ssarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#2E7D32"/>
+    </marker>
+    <marker id="ssred" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#C62828"/>
+    </marker>
+  </defs>
+
+  <!-- ============ flash chip ============ -->
+  <text x="250" y="30" font-size="20" fill="#263238" text-anchor="middle">flash chip</text>
+  <rect x="40" y="44" width="420" height="140" rx="12" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+
+  <!-- erase blocks inside the chip -->
+  <g>
+    <rect x="52" y="58" width="62" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+    <rect x="120" y="58" width="62" height="54" rx="4" fill="#FFE082" stroke="#F57F17" stroke-width="3"/>
+    <rect x="188" y="58" width="62" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+    <rect x="256" y="58" width="62" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+    <rect x="324" y="58" width="62" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+    <rect x="392" y="58" width="56" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+    <rect x="52" y="118" width="62" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+    <rect x="120" y="118" width="62" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+    <rect x="188" y="118" width="62" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+    <rect x="256" y="118" width="62" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+    <rect x="324" y="118" width="62" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+    <rect x="392" y="118" width="56" height="54" rx="4" fill="#ECEFF1" stroke="#90A4AE" stroke-width="1.5"/>
+  </g>
+
+  <!-- zoom lines -->
+  <line x1="120" y1="112" x2="60" y2="252" stroke="#F57F17" stroke-width="2" stroke-dasharray="6 5"/>
+  <line x1="182" y1="112" x2="440" y2="252" stroke="#F57F17" stroke-width="2" stroke-dasharray="6 5"/>
+
+  <!-- ============ one erase block, zoomed ============ -->
+  <text x="250" y="240" font-size="18" fill="#263238" text-anchor="middle">one erase block (2-4 MB)</text>
+  <rect x="60" y="252" width="380" height="146" rx="10" fill="#FFF8E1" stroke="#F57F17" stroke-width="3"/>
+
+  <!-- pages inside the erase block -->
+  <g fill="#FFFFFF" stroke="#90A4AE" stroke-width="1.5">
+    <rect x="74" y="262" width="42" height="38"/><rect x="121" y="262" width="42" height="38"/><rect x="168" y="262" width="42" height="38"/><rect x="215" y="262" width="42" height="38"/><rect x="262" y="262" width="42" height="38"/><rect x="309" y="262" width="42" height="38"/><rect x="356" y="262" width="42" height="38"/><rect x="403" y="262" width="24" height="38"/>
+    <rect x="74" y="305" width="42" height="38"/><rect x="121" y="305" width="42" height="38"/><rect x="215" y="305" width="42" height="38"/><rect x="262" y="305" width="42" height="38"/><rect x="309" y="305" width="42" height="38"/><rect x="356" y="305" width="42" height="38"/><rect x="403" y="305" width="24" height="38"/>
+    <rect x="74" y="348" width="42" height="38"/><rect x="121" y="348" width="42" height="38"/><rect x="168" y="348" width="42" height="38"/><rect x="215" y="348" width="42" height="38"/><rect x="262" y="348" width="42" height="38"/><rect x="309" y="348" width="42" height="38"/><rect x="356" y="348" width="42" height="38"/><rect x="403" y="348" width="24" height="38"/>
+  </g>
+  <rect x="168" y="305" width="42" height="38" fill="#A5D6A7" stroke="#2E7D32" stroke-width="3"/>
+
+  <!-- red dashed erase outline -->
+  <rect x="50" y="244" width="400" height="162" rx="12" fill="none" stroke="#C62828" stroke-width="2.5" stroke-dasharray="9 6"/>
+
+  <!-- annotations -->
+  <text x="118" y="434" font-size="17" fill="#2E7D32" text-anchor="middle">read or write: one 4 KB page</text>
+  <path d="M 140 418 Q 165 390 182 348" fill="none" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#ssarrow)"/>
+
+  <text x="374" y="434" font-size="17" fill="#C62828" text-anchor="middle">erase: the whole block</text>
+  <path d="M 400 418 Q 424 412 442 402" fill="none" stroke="#C62828" stroke-width="2.5" marker-end="url(#ssred)"/>
+</svg>

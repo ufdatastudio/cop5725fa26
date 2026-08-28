@@ -136,6 +136,9 @@ The cost variables are universal across this and Day 31. Drill them once now and
 
 # The Naive Algorithm
 
+<div class="columns">
+<div>
+
 ```python
 for r in R:
     for s in S:
@@ -143,24 +146,63 @@ for r in R:
             yield (r, s)
 ```
 
-For each tuple in R, scan every tuple in S.
-
-```mermaid
-graph LR
-  R["R (outer)"]
-  S["S (inner, scanned in full per R-tuple)"]
-  R -.->|"for each r"| S
-  S --> O["Output matches"]
-  classDef rel fill:#e3f2fd,stroke:#1976d2
-  classDef proc fill:#fff3e0,stroke:#e65100
-  classDef out fill:#e8f5e9,stroke:#388e3c
-  class R,S rel
-  class O out
-```
+For each tuple in R, scan every tuple in S (Textbook §15.3.1, p. 719).
 
 **Cost:** $B_R + |R| \cdot B_S$ page reads.
 
 For $|R| = 100$ K tuples and $B_S = 1000$ pages, that's **100 million page reads**. Awful.
+
+</div>
+<div>
+
+<div class="columns">
+<div>
+
+R (outer)
+
+<table>
+<thead><tr><th>x</th><th>name</th></tr></thead>
+<tbody>
+<tr style="background:#F8BBD0"><td>1</td><td>Ada</td></tr>
+<tr style="background:#F8BBD0"><td>2</td><td>Bob</td></tr>
+</tbody>
+</table>
+
+</div>
+<div>
+
+S (inner)
+
+<table>
+<thead><tr><th>y</th><th>cid</th></tr></thead>
+<tbody>
+<tr style="background:#90CAF9"><td>1</td><td>COP5725</td></tr>
+<tr style="background:#90CAF9"><td>1</td><td>COT5405</td></tr>
+<tr style="background:#90CAF9"><td>3</td><td>CIS4301</td></tr>
+</tbody>
+</table>
+
+</div>
+</div>
+
+output
+
+<table>
+<thead><tr><th>x</th><th>name</th><th>cid</th></tr></thead>
+<tbody>
+<tr style="background:#E1BEE7"><td>1</td><td>Ada</td><td>COP5725</td></tr>
+<tr style="background:#E1BEE7"><td>1</td><td>Ada</td><td>COT5405</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+Pink rows are the outer relation and blue the inner; all six pink-blue pairs get tested, and purple marks the two with $r.x = s.y$. Bob and CIS4301 match nothing.
+
+</div>
+
+</div>
+</div>
 
 ---
 
@@ -193,7 +235,7 @@ PostgreSQL's planner picks NL when the outer side is small enough.
 
 # Better Use of Memory
 
-The naive NL ignores that we have **M pages of buffer**. We could read M-2 pages of R at a time, then scan S once per **block** instead of once per tuple.
+The naive NL ignores that we have **M pages of buffer**. We could read M-2 pages of R at a time, then scan S once per **block** instead of once per tuple (Textbook §15.3.3, p. 719).
 
 ```python
 for chunk in chunks_of(R, M - 2):       # M-2 pages, 1 for S, 1 for output
@@ -211,7 +253,7 @@ R is read once. S is scanned $\lceil B_R / (M-2) \rceil$ times, once per chunk o
 
 ---
 
-# Block Nested Loop Worked Example
+# Block Nested Loop Example
 
 $B_R = 1000$ pages, $B_S = 5000$ pages, $M = 102$ (100 for chunks).
 
@@ -258,7 +300,7 @@ The optimizer picks the order. The query writer's job is to trust it and verify 
 
 # When One Side Has an Index
 
-If S has a B+ tree (or hash) index on the join key:
+If S has a B+ tree (or hash) index on the join key (Textbook §15.6.3, p. 742):
 
 ```python
 for r in R:
@@ -370,7 +412,7 @@ Sort-merge, hash, and grace hash are Wednesday's topics.
 
 ---
 
-# Worked Comparison
+# Comparison Example
 
 $B_R = 1000$ pages, $B_S = 5000$ pages, $|R| = 10{,}000$ tuples, $M = 50$, $h = 3$.
 
@@ -453,7 +495,7 @@ Run both and capture the runtime. This is Project 3 work.
 - PostgreSQL's `enable_*` flags let you compare plans during debugging.
 
 <!--
-One bullet per part. If short on time, the block NL and index NL cost formulas are the two things students must retain for the Worked Comparison style of exam question.
+One bullet per part. If short on time, the block NL and index NL cost formulas are the two things students must retain for the Comparison Example style of exam question.
 -->
 
 ---
@@ -473,7 +515,7 @@ Two exercises:
 1. Compute cost for block NL and index NL given: $B_R = 500$, $B_S = 8000$, $|R| = 5000$, $M = 30$, $h = 3$. Which wins?
 2. Run `EXPLAIN ANALYZE` on a two-table join in your project's database. Capture the join algorithm chosen.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Wed Nov 4.
+This is an exercise.
 
 ---
 

@@ -94,18 +94,27 @@ graph LR
 
 # The Denormalized Table
 
-| student_id | student_name | course_id | course_title | instructor | dept | grade |
-|-----|--------------|-----|--------------|------------|------|-------|
-| 1 | Ada | COP5725 | Database Management Systems | Grant | CS | A |
-| 1 | Ada | COT5405 | Algorithms | Sahni | CS | B+ |
-| 2 | Bob | COP5725 | Database Management Systems | Grant | CS | B |
-| 3 | Chia | COP5725 | Database Management Systems | Grant | CS | A- |
+<table>
+<thead><tr><th>student_id</th><th>student_name</th><th>course_id</th><th>course_title</th><th>instructor</th><th>dept</th><th>grade</th></tr></thead>
+<tbody>
+<tr><td>1</td><td style="background:#F8BBD0">Ada</td><td>COP5725</td><td style="background:#FFE082">Database Management Systems</td><td style="background:#FFE082">Grant</td><td style="background:#FFE082">CS</td><td>A</td></tr>
+<tr><td>1</td><td style="background:#F8BBD0">Ada</td><td>COT5405</td><td>Algorithms</td><td>Sahni</td><td>CS</td><td>B+</td></tr>
+<tr><td>2</td><td>Bob</td><td>COP5725</td><td style="background:#FFE082">Database Management Systems</td><td style="background:#FFE082">Grant</td><td style="background:#FFE082">CS</td><td>B</td></tr>
+<tr><td>3</td><td>Chia</td><td>COP5725</td><td style="background:#FFE082">Database Management Systems</td><td style="background:#FFE082">Grant</td><td style="background:#FFE082">CS</td><td>A-</td></tr>
+</tbody>
+</table>
 
 FDs at work:
 
 - $student\_id \rightarrow student\_name$
 - $course\_id \rightarrow course\_title,\, instructor,\, dept$
 - $\{student\_id, course\_id\} \rightarrow grade$
+
+<div class="small">
+
+Amber cells repeat the facts `course_id` determines, and pink cells repeat the fact `student_id` determines.
+
+</div>
 
 The redundancy is visible. The anomalies it produces stay hidden until they bite.
 
@@ -173,7 +182,7 @@ The three anomalies are the empirical motivation for normalization. Students who
 
 <div class="nf">
 
-**Rule:** Every attribute is atomic: single-valued, no sets, no nested structure.
+**Rule:** Every attribute is atomic: single-valued, no sets, no nested structure (Textbook §3.5, p. 103).
 
 </div>
 
@@ -182,23 +191,35 @@ The three anomalies are the empirical motivation for normalization. Students who
 
 ### Violation
 
-| student_id | name | phones |
-|-----|------|--------|
-| 1 | Ada | {555-1234, 555-9999} |
-| 2 | Bob | {555-2222} |
+<table>
+<thead><tr><th>student_id</th><th>name</th><th>phones</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Ada</td><td style="background:#FFE082">{555-1234, 555-9999}</td></tr>
+<tr><td>2</td><td>Bob</td><td style="background:#FFE082">{555-2222}</td></tr>
+</tbody>
+</table>
 
 </div>
 <div>
 
 ### 1NF
 
-| student_id | name | phone |
-|-----|------|-------|
-| 1 | Ada | 555-1234 |
-| 1 | Ada | 555-9999 |
-| 2 | Bob | 555-2222 |
+<table>
+<thead><tr><th>student_id</th><th>name</th><th>phone</th></tr></thead>
+<tbody>
+<tr style="background:#E8F5E9"><td>1</td><td>Ada</td><td>555-1234</td></tr>
+<tr style="background:#E8F5E9"><td>1</td><td>Ada</td><td>555-9999</td></tr>
+<tr style="background:#E8F5E9"><td>2</td><td>Bob</td><td>555-2222</td></tr>
+</tbody>
+</table>
 
 </div>
+</div>
+
+<div class="small">
+
+Each amber cell holds a set, and every value inside it becomes its own pale-green row.
+
 </div>
 
 Arrays, JSON, and composite types are all technically 1NF violations under the classical rule. We examine each below.
@@ -377,11 +398,18 @@ Use the decision flow to audit your project's schema. Arrays, JSON, and composit
 
 PK = $\{student\_id, course\_id\}$.
 
-| student_id | course_id | grade | student_name |
-|-----|-----|-------|--------------|
-| 1 | COP5725 | A | Ada |
+<table>
+<thead><tr><th>student_id</th><th>course_id</th><th>grade</th><th>student_name</th></tr></thead>
+<tbody>
+<tr><td style="background:#F8BBD0">1</td><td>COP5725</td><td>A</td><td style="background:#F8BBD0">Ada</td></tr>
+</tbody>
+</table>
+
+<div class="small">
 
 $student\_id \rightarrow student\_name$ is a partial dependency: `student_name` depends on only part of the key.
+
+</div>
 
 </div>
 <div>
@@ -390,15 +418,27 @@ $student\_id \rightarrow student\_name$ is a partial dependency: `student_name` 
 
 Split into two tables:
 
-| student_id | name |
-|-----|------|
-| 1 | Ada |
+<table>
+<thead><tr><th>student_id</th><th>name</th></tr></thead>
+<tbody>
+<tr style="background:#F8BBD0"><td>1</td><td>Ada</td></tr>
+</tbody>
+</table>
 
-| student_id | course_id | grade |
-|-----|-----|-------|
-| 1 | COP5725 | A |
+<table>
+<thead><tr><th>student_id</th><th>course_id</th><th>grade</th></tr></thead>
+<tbody>
+<tr style="background:#E8F5E9"><td>1</td><td>COP5725</td><td>A</td></tr>
+</tbody>
+</table>
 
 </div>
+</div>
+
+<div class="small">
+
+Pink marks the partial dependency; the pale-green rows depend on the whole key.
+
 </div>
 
 2NF only matters when the primary key is composite. Tables with single-attribute keys are 2NF automatically.
@@ -424,9 +464,12 @@ Equivalently: no non-key attribute determines another non-key attribute.
 
 ### Violation
 
-| course_id | course_title | instructor | dept |
-|-----|--------------|------------|------|
-| COP5725 | Database | Grant | CS |
+<table>
+<thead><tr><th>course_id</th><th>course_title</th><th>instructor</th><th>dept</th></tr></thead>
+<tbody>
+<tr><td>COP5725</td><td>Database</td><td style="background:#FFE082">Grant</td><td style="background:#FFE082">CS</td></tr>
+</tbody>
+</table>
 
 The key is `course_id`, but `instructor → dept` is a transitive dependency.
 
@@ -435,15 +478,27 @@ The key is `course_id`, but `instructor → dept` is a transitive dependency.
 
 ### 3NF
 
-| course_id | course_title | instructor |
-|-----|--------------|------------|
-| COP5725 | Database | Grant |
+<table>
+<thead><tr><th>course_id</th><th>course_title</th><th>instructor</th></tr></thead>
+<tbody>
+<tr style="background:#E8F5E9"><td>COP5725</td><td>Database</td><td>Grant</td></tr>
+</tbody>
+</table>
 
-| instructor | dept |
-|------------|------|
-| Grant | CS |
+<table>
+<thead><tr><th>instructor</th><th>dept</th></tr></thead>
+<tbody>
+<tr style="background:#FFE082"><td>Grant</td><td>CS</td></tr>
+</tbody>
+</table>
 
 </div>
+</div>
+
+<div class="small">
+
+Amber marks the transitive pair `instructor → dept`; the split gives it its own table.
+
 </div>
 
 Most well-designed schemas in production aim for 3NF.
@@ -484,6 +539,12 @@ The "A is part of a candidate key" allowance is what saves 3NF in cases where st
 </div>
 
 BCNF is 3NF without the wiggle room.
+
+<div class="small">
+
+The determinant of an FD $X \rightarrow Y$ is its left side $X$, so the rule reads "every determinant is a superkey."
+
+</div>
 
 Most 3NF schemas are also BCNF. The cases where they differ involve overlapping candidate keys.
 
@@ -614,16 +675,13 @@ Output: a set of 3NF relations whose union recovers $R$ and whose constraints re
 
 ---
 
-# Synthesis Worked Example
+# Synthesis Example
 
 Schema $R(A, B, C, D, E)$ with $F = \{\, AB \rightarrow C,\;\; D \rightarrow E,\;\; AB \rightarrow D,\;\; C \rightarrow B \,\}$.
 
 **Step 1.** Minimal cover (after work): $\{AB \rightarrow C, AB \rightarrow D, C \rightarrow B, D \rightarrow E\}$.
 
-**Step 2.** Group by left side:
-- $AB$: $\{C, D\}$
-- $C$: $\{B\}$
-- $D$: $\{E\}$
+**Step 2.** Group by left side: $AB \rightarrow \{C, D\}$, $\;C \rightarrow \{B\}$, $\;D \rightarrow \{E\}$.
 
 **Step 3.** Create relations:
 - $R_1(A, B, C, D)$

@@ -76,7 +76,7 @@ graph LR
   D["1. PostgreSQL<br/>docs"] --> DDL["2. DDL:<br/>CREATE, ALTER, DROP"]
   DDL --> S["3. SELECT:<br/>basics"]
   S --> P["4. Predicates,<br/>DISTINCT, ORDER BY"]
-  P --> W["5. Worked queries"]
+  P --> W["5. Example<br/>queries"]
   classDef step fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   class D,DDL,S,P,W step
 ```
@@ -114,9 +114,7 @@ Every engine implements a different subset.
 
 > We anchor on the **PostgreSQL 16 documentation** as the authoritative reference for this course.
 
-Two reasons:
-- PostgreSQL has the most thorough, accessible docs of any production engine
-- You will run against PostgreSQL for projects, so you can verify everything
+PostgreSQL has the most thorough, accessible docs of any production engine, and you will run against PostgreSQL for projects, so you can verify everything you read.
 
 [postgresql.org/docs/current](https://www.postgresql.org/docs/current/)
 
@@ -133,21 +131,18 @@ This framing matters: students often hold an implicit "SQL is one thing" model f
 
 ```mermaid
 graph TB
-  D["PostgreSQL Docs"]
-  D --> P1["Part I<br/>Tutorial"]
-  D --> P2["Part II<br/>The SQL Language"]
-  D --> P3["Part III<br/>Server Admin"]
-  D --> P4["Part IV<br/>Client Interfaces"]
-  D --> P5["Part V<br/>Server Programming"]
-  D --> P6["Part VI<br/>Reference"]
+  P1["Part I<br/>Tutorial"]
+  P2["Part II<br/>The SQL Language"]
+  P3["Part III<br/>Server Admin"]
+  P4["Part IV<br/>Client Interfaces"]
+  P5["Part V<br/>Server Programming"]
+  P6["Part VI<br/>Reference"]
   P2 --> Q["Ch. 7 Queries"]
   P2 --> F["Ch. 9 Functions"]
   P2 --> I["Ch. 11 Indexes"]
   P6 --> SQL["SQL Commands"]
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
   classDef part fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
   classDef chap fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-  class D root
   class P1,P2,P3,P4,P5,P6 part
   class Q,F,I,SQL chap
 ```
@@ -200,7 +195,7 @@ This BNF-like notation is universal in DB documentation. Once you can read it, e
 
 ---
 
-# A Worked Doc Read
+# A Doc Read
 
 <div class="doc">
 
@@ -229,6 +224,12 @@ Do this live on the projector. The "I'll grep the SQL command page" reflex is th
 
 # Part 2: DDL
 
+<div class="caption">
+
+DDL, the Data Definition Language, is the part of SQL that defines and changes schemas (CREATE, ALTER, DROP, TRUNCATE).
+
+</div>
+
 ---
 
 # CREATE TABLE Recap
@@ -246,7 +247,7 @@ We met this on Day 7. The PostgreSQL reference for the full syntax is at [postgr
 
 A few features the synopsis surfaces:
 
-- `IF NOT EXISTS` makes creation idempotent
+- `IF NOT EXISTS` makes creation idempotent (a second run changes nothing)
 - `TEMPORARY` and `UNLOGGED` create non-durable variants
 - `PARTITION OF` declares partitioning (we return to this in Section 4)
 - `INHERITS` is a PostgreSQL extension for table inheritance
@@ -349,6 +350,12 @@ Faster than `DELETE` because it skips per-row WAL.
 </div>
 
 `TRUNCATE` is a Postgres extension to standard SQL with its own semantics around triggers and FKs. Reference: [postgresql.org/docs/current/sql-truncate.html](https://www.postgresql.org/docs/current/sql-truncate.html).
+
+<div class="small">
+
+WAL is the write-ahead log, the journal PostgreSQL writes before touching data pages; Section 6 studies it.
+
+</div>
 
 <!--
 DELETE FROM table can take an hour on a billion-row table; TRUNCATE on the same table runs in milliseconds. The difference is huge once datasets get nontrivial.
@@ -511,7 +518,7 @@ Answer: no ORDER BY means the "second page" depends on the row order the executo
 
 ---
 
-# Worked Query 1: Top GPA in CS
+# Query 1: Top GPA in CS
 
 > "List the top 3 CS-major students by GPA, name and GPA only."
 
@@ -533,7 +540,7 @@ The mapping from English to SQL is mechanical. Run it, then edit the data and re
 
 ---
 
-# Worked Query 2: Active Enrollments
+# Query 2: Active Enrollments
 
 > "Find all sections of COP5725 in any term where at least one student is still enrolled (grade is NULL)."
 
@@ -556,7 +563,7 @@ ORDER BY term, section_num;
 
 ---
 
-# Worked Query 3: Recent Hires
+# Query 3: Recent Hires
 
 > "List faculty hired in the past five years, by name, salary descending."
 
@@ -659,7 +666,7 @@ Five queries to run against the university schema in your repo:
 4. List students with GPA strictly between 3.0 and 3.9, sorted by name.
 5. Page 3 of student names alphabetically, 10 per page.
 
-Answers due in your repo before 8:30 AM Wed Sep 16.
+This is an exercise.
 
 ---
 

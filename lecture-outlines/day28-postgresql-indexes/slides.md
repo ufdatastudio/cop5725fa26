@@ -42,19 +42,13 @@ Workloads these types serve:
 </div>
 <div>
 
-```mermaid
-graph TB
-  Q["What's in your column?"]
-  Q --> S["Scalar:<br/>btree, hash"]
-  Q --> T["Text / FTS:<br/>GIN"]
-  Q --> J["JSON / array:<br/>GIN"]
-  Q --> G["Geometry:<br/>GiST"]
-  Q --> A["Append-only:<br/>BRIN"]
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-  classDef opt fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-  class Q root
-  class S,T,J,G,A opt
-```
+| What's in the column | Index |
+|----------------------|-------|
+| Scalar (int, text, date) | btree, hash |
+| Text / full-text | GIN |
+| JSON / array | GIN |
+| Geometry / ranges | GiST |
+| Append-only, huge | BRIN |
 
 </div>
 </div>
@@ -113,23 +107,12 @@ Six types but only four matter for most workloads: btree, hash, GIN, BRIN. GiST 
 
 ```mermaid
 graph TB
-  C["The column"]
-  S["Scalar? (int, text, date)"]
-  V["Set-shaped? (array, JSONB, tsvector)"]
-  G["Geometric / range?"]
-  A["Append-only / huge?"]
-  C --> S
-  C --> V
-  C --> G
-  C --> A
-  S --> BTH["btree or hash"]
-  V --> GIN["GIN"]
-  G --> GST["GiST"]
-  A --> BRN["BRIN"]
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  S["Scalar? (int, text, date)"] --> BTH["btree or hash"]
+  V["Set-shaped? (array, JSONB, tsvector)"] --> GIN["GIN"]
+  G["Geometric / range?"] --> GST["GiST"]
+  A["Append-only / huge?"] --> BRN["BRIN"]
   classDef q fill:#fff3e0,stroke:#e65100
   classDef opt fill:#e8f5e9,stroke:#388e3c
-  class C root
   class S,V,G,A q
   class BTH,GIN,GST,BRN opt
 ```
@@ -337,14 +320,23 @@ CREATE INDEX ... USING GIN (col) WITH (fastupdate = off);
 
 A BRIN (Block Range Index) stores, for each **block range** (a contiguous set of pages), just the min and max values.
 
-```
-Block 1-128: min=2024-01-01, max=2024-01-08
-Block 129-256: min=2024-01-08, max=2024-01-15
-Block 257-384: min=2024-01-15, max=2024-01-22
-...
-```
+<table>
+<thead><tr><th>Block range</th><th>min(created_at)</th><th>max(created_at)</th><th>= '2024-01-10'?</th></tr></thead>
+<tbody>
+<tr><td>1-128</td><td>2024-01-01</td><td>2024-01-08</td><td>skip</td></tr>
+<tr style="background:#FFE082"><td>129-256</td><td>2024-01-08</td><td>2024-01-15</td><td>scan</td></tr>
+<tr><td>257-384</td><td>2024-01-15</td><td>2024-01-22</td><td>skip</td></tr>
+<tr><td>&#8230;</td><td>&#8230;</td><td>&#8230;</td><td>&#8230;</td></tr>
+</tbody>
+</table>
 
 When you query `WHERE created_at = '2024-01-10'`, BRIN reads the block-range summary, sees which ranges could possibly contain the value, and scans only those.
+
+<div class="small">
+
+The amber row is the only range whose min/max interval can contain 2024-01-10, so BRIN scans its 128 blocks and skips the rest.
+
+</div>
 
 The index is **1/1000th the size of a btree**.
 
@@ -395,7 +387,7 @@ USING BRIN (created_at)
 WITH (pages_per_range = 128);  -- granularity tuning
 ```
 
-A BRIN index on a 1B-row time-series column is **3 MB**. It loads in microseconds. It costs nothing to maintain. It accelerates time-range queries that scan only the relevant blocks.
+A BRIN index on a 1B-row time-series column is **3 MB**. It loads in microseconds. It is cheap to maintain. It accelerates time-range queries that scan only the relevant blocks.
 
 BRIN should be the first index you consider for any time-series, log, or append-only table.
 
@@ -418,7 +410,7 @@ Index a **slice** of the table.
 ```sql
 -- Most rows have is_active=true; index only inactive
 CREATE INDEX user_inactive_idx
-ON user (last_login)
+ON users (last_login)
 WHERE NOT is_active;
 
 -- Or, the more common case: pending tasks
@@ -442,9 +434,9 @@ Index a **computed value**.
 ```sql
 -- Case-insensitive email lookup
 CREATE INDEX user_lower_email_idx
-ON user (lower(email));
+ON users (lower(email));
 
-SELECT * FROM user WHERE lower(email) = 'ada@uf.edu';
+SELECT * FROM users WHERE lower(email) = 'ada@uf.edu';
 -- The optimizer can use the expression index.
 
 -- Index a JSONB field
@@ -545,7 +537,7 @@ The class votes for the overall winner. The recognition is small and has no grad
 
 ---
 
-# Project 3 Released Today
+# Project 3 Is Underway
 
 <div class="columns">
 <div>
@@ -565,14 +557,16 @@ You will:
 
 ### Timeline
 
-- Released today (Wed Oct 28)
+- Released Mon Oct 19
 - Due **Fri Nov 13** at 11:59 PM
 - Presentations Mon Nov 16 / Fri Nov 20
 
+Today's index types are the heart of it: pick by column shape, then measure.
+
 </div>
 </div>
 
-Reference: full spec in `projects/project3.md` (to be added).
+Reference: full spec in `projects/project3.md`.
 
 ---
 
@@ -596,6 +590,8 @@ Flat recap of the six parts. If time is short after the Project 2 presentations,
 
 Friday covers external sorting, the algorithm behind `ORDER BY`, `GROUP BY`, and sort-merge joins that do not fit in memory.
 
+Quiz 3 also runs Friday. It covers Section 4 (Storage and Indexing), and the lowest quiz score is dropped.
+
 Reading: Textbook §15.4, p. 723.
 
 ---
@@ -608,7 +604,7 @@ Three exercises in your project repo:
 2. Create a partial index on a frequently-filtered slice. Verify the optimizer uses it.
 3. Create an expression index for a `lower()` or `payload ->>` query. Verify with EXPLAIN.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Fri Oct 30.
+This is an exercise.
 
 ---
 
@@ -616,7 +612,7 @@ Push to your `cop5725fa26-project` repo before 8:30 AM Fri Oct 30.
 
 What is on your mind?
 
-Project 3 released today; due Fri Nov 13.
+Project 3 is due Fri Nov 13. Quiz 3 is Friday.
 
 <!--
 Common Day 28 questions: "When should I use SP-GiST?" (Rarely. Quadtrees / k-d trees with custom operators. PostGIS uses it; most apps don't.) "Can I use multiple indexes for one query?" (Yes — PostgreSQL can combine bitmaps from multiple indexes via Bitmap Index Scan. We see this in Section 5.) "How do I know which indexes are actually used?" (pg_stat_user_indexes from Day 26 — track idx_scan.)

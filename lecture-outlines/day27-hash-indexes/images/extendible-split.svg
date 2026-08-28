@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="exsarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+  </defs>
+
+  <!-- ============ directory ============ -->
+  <text x="180" y="36" font-size="18" fill="#37474F" text-anchor="middle">directory (g = 2)</text>
+  <rect x="120" y="50" width="120" height="44" rx="8" fill="#90CAF9" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="180" y="79" font-size="17" fill="#263238" text-anchor="middle">dir[00]</text>
+  <rect x="120" y="102" width="120" height="44" rx="8" fill="#90CAF9" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="180" y="131" font-size="17" fill="#263238" text-anchor="middle">dir[01]</text>
+  <rect x="120" y="154" width="120" height="44" rx="8" fill="#90CAF9" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="180" y="183" font-size="17" fill="#263238" text-anchor="middle">dir[10]</text>
+  <rect x="120" y="206" width="120" height="44" rx="8" fill="#90CAF9" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="180" y="235" font-size="17" fill="#263238" text-anchor="middle">dir[11]</text>
+
+  <!-- ============ arrows ============ -->
+  <path d="M 242 72 C 320 72, 380 78, 424 92" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#exsarrow)"/>
+  <path d="M 242 176 C 320 176, 380 150, 424 118" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#exsarrow)"/>
+  <path d="M 242 124 C 320 124, 380 160, 424 186" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#exsarrow)"/>
+  <path d="M 242 228 C 320 228, 380 250, 424 266" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#exsarrow)"/>
+
+  <!-- ============ buckets ============ -->
+  <rect x="430" y="70" width="250" height="60" rx="10" fill="#A5D6A7" stroke="#2E7D32" stroke-width="2.5"/>
+  <text x="555" y="96" font-size="17" fill="#263238" text-anchor="middle">B0 (l = 1): 4, 12</text>
+  <text x="555" y="119" font-size="14" fill="#37474F" text-anchor="middle">keys ending in 0</text>
+
+  <rect x="430" y="158" width="250" height="60" rx="10" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="555" y="184" font-size="17" fill="#263238" text-anchor="middle">B01 (l = 2): 5, 13</text>
+  <text x="555" y="207" font-size="14" fill="#37474F" text-anchor="middle">keys ending in 01</text>
+
+  <rect x="430" y="238" width="250" height="60" rx="10" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="555" y="264" font-size="17" fill="#263238" text-anchor="middle">B11 (l = 2): 7</text>
+  <text x="555" y="287" font-size="14" fill="#37474F" text-anchor="middle">keys ending in 11</text>
+
+  <!-- ============ notes ============ -->
+  <text x="710" y="92" font-size="15" fill="#607D8B">l &lt; g: two directory entries</text>
+  <text x="710" y="112" font-size="15" fill="#607D8B">still share bucket B0</text>
+
+  <g transform="rotate(-4 810 208)">
+    <rect x="716" y="180" width="188" height="56" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="2"/>
+    <text x="810" y="203" font-size="16" fill="#263238" text-anchor="middle">13 arrived here:</text>
+    <text x="810" y="225" font-size="16" fill="#263238" text-anchor="middle">old B1 split in two</text>
+  </g>
+  <path d="M 714 214 Q 700 200 686 192" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#exsarrow)"/>
+
+  <!-- ============ legend ============ -->
+  <g>
+    <rect x="150" y="308" width="30" height="16" rx="5" fill="#A5D6A7" stroke="#4E342E" stroke-width="2"/>
+    <text x="188" y="322" font-size="15" fill="#37474F">untouched bucket (l = 1)</text>
+    <rect x="450" y="308" width="30" height="16" rx="5" fill="#FFE082" stroke="#4E342E" stroke-width="2"/>
+    <text x="488" y="322" font-size="15" fill="#37474F">buckets from the split (l = 2)</text>
+  </g>
+</svg>

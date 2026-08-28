@@ -39,18 +39,14 @@ That framework is the **iterator model**, also called the **Volcano model** afte
 
 ```mermaid
 graph TB
-  Plan["Plan tree"]
   Op1["Sort"]
   Op2["Join"]
   Op3["Scan A"]
   Op4["Scan B"]
-  Plan --> Op1
   Op1 --> Op2
   Op2 --> Op3
   Op2 --> Op4
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef op fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  class Plan root
   class Op1,Op2,Op3,Op4 op
 ```
 
@@ -96,6 +92,12 @@ You need:
 
 The Volcano model solves all of these with a single uniform interface.
 
+<div class="small">
+
+To materialize an intermediate result is to compute and store it in full before the next operator reads it. Streaming hands each tuple onward as soon as it is produced.
+
+</div>
+
 ---
 
 # Operators Are Iterators
@@ -114,7 +116,7 @@ class Operator:
         """Release resources."""
 ```
 
-This is the **Volcano interface**: three methods in total.
+This is the **Volcano interface**: three methods in total. The textbook builds its physical operators on the same Open, GetNext, and Close methods (Textbook §15.1.6, p. 707).
 
 Operators are composed by **child pointers** in the tree. When an operator needs more input, it calls `next()` on its child.
 
@@ -157,10 +159,8 @@ class Filter(Operator):
     def __init__(self, child, predicate):
         self.child = child
         self.predicate = predicate
-
     def open(self):
         self.child.open()
-
     def next(self):
         while True:
             tup = self.child.next()
@@ -168,7 +168,6 @@ class Filter(Operator):
                 return None
             if self.predicate(tup):
                 return tup
-
     def close(self):
         self.child.close()
 ```
@@ -181,9 +180,13 @@ The filter pulls tuples from `child.next()` and yields the ones that pass.
 
 # A Hash Join Operator
 
+<div class="columns">
+<div>
+
 ```python
 class HashJoin(Operator):
-    def __init__(self, build_side, probe_side, join_keys):
+    def __init__(self, build_side,
+                 probe_side, join_keys):
         self.build = build_side
         self.probe = probe_side
         self.keys = join_keys
@@ -193,23 +196,32 @@ class HashJoin(Operator):
 
     def open(self):
         self.build.open()
-        # Drain the build side completely (blocking!)
+        # Drain the build side (blocking!)
         while True:
             tup = self.build.next()
             if tup is None: break
-            self.hash_table.setdefault(tup[self.keys[0]], []).append(tup)
+            k = tup[self.keys[0]]
+            self.hash_table.setdefault(
+                k, []).append(tup)
         self.build.close()
         self.probe.open()
+```
 
+</div>
+<div>
+
+```python
     def next(self):
         while True:
             if self.current_matches:
-                return (self.current_probe, self.current_matches.pop())
+                return (self.current_probe,
+                        self.current_matches.pop())
             self.current_probe = self.probe.next()
-            if self.current_probe is None: return None
+            if self.current_probe is None:
+                return None
+            k = self.current_probe[self.keys[1]]
             self.current_matches = list(
-                self.hash_table.get(self.current_probe[self.keys[1]], [])
-            )
+                self.hash_table.get(k, []))
 
     def close(self):
         self.probe.close()
@@ -217,6 +229,9 @@ class HashJoin(Operator):
 ```
 
 Notice `open()` drains the build side **completely** before yielding any output. We return to this.
+
+</div>
+</div>
 
 ---
 
@@ -331,7 +346,7 @@ Examples of pipelined operators:
 
 # Blocking Operators
 
-A **blocking** operator must **see all its input** before producing any output.
+A **blocking** operator must **see all its input** before producing any output. The textbook studies this pipelining-versus-materialization choice in §16.7.3, p. 830.
 
 ```mermaid
 graph LR
@@ -360,6 +375,8 @@ The blocking operator's `open()` typically drains all its input.
 SELECT name FROM student WHERE gpa > 3.5 LIMIT 10;
 ```
 
+<div class="small">
+
 Plan tree:
 
 ```
@@ -369,11 +386,14 @@ Limit (10)
       Scan student
 ```
 
-All four operators are pipelined. The driver calls `Limit.next()` 10 times, then **stops**.
+</div>
 
-Each call propagates down to the scan. The scan reads pages **as needed**. We never read the full table.
+All four operators are pipelined. The driver calls `Limit.next()` 10 times, then **stops**. Each call propagates down to the scan; the scan reads pages **as needed**, and we never read the full table.
+
+<div class="small">
 
 PostgreSQL's `EXPLAIN ANALYZE` shows this:
+
 ```
 Limit (cost=0.00..6.21 rows=10 width=20)
   ->  Seq Scan on student (cost=0.00...) (actual rows=10)
@@ -381,6 +401,8 @@ Limit (cost=0.00..6.21 rows=10 width=20)
 ```
 
 The "actual rows" on the scan is **10, not |student|**.
+
+</div>
 
 <!--
 This LIMIT-stops-early behavior is one of the most important practical consequences of the iterator model. A query with LIMIT 1 on a filtered scan often reads almost no data, even from huge tables.
@@ -466,6 +488,12 @@ This is the architecture inside **DuckDB**, MonetDB/X100, Photon, Velox.
 
 Volcano is for OLTP and broad compatibility; vectorized is for OLAP throughput. Monday's lecture goes deeper.
 
+<div class="small">
+
+OLTP workloads run many small transactional queries that each touch a few rows. OLAP workloads run analytical queries that scan and aggregate large fractions of the data.
+
+</div>
+
 ---
 
 # When Volcano Still Wins
@@ -513,7 +541,7 @@ Two exercises:
 1. Pick a query from your project. Run `EXPLAIN (ANALYZE, BUFFERS)` and label each node as pipelined or blocking.
 2. Add `LIMIT 10` to a query that returns many rows. Capture the plan with and without the LIMIT. Where does the optimizer cut the work?
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Mon Nov 9.
+This is an exercise.
 
 ---
 

@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 430" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="bptarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+    <marker id="bptlink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#6A1B9A"/>
+    </marker>
+  </defs>
+
+  <!-- ============ root ============ -->
+  <text x="398" y="58" font-size="17" fill="#607D8B" text-anchor="end">root</text>
+  <rect x="410" y="30" width="140" height="44" rx="10" fill="#90CAF9" stroke="#1565C0" stroke-width="3"/>
+  <text x="480" y="59" font-size="20" fill="#263238" text-anchor="middle">40 | 80</text>
+
+  <!-- root to internal edges -->
+  <path d="M 455 74 C 380 100, 260 112, 190 136" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#bptarrow)"/>
+  <line x1="480" y1="74" x2="480" y2="136" stroke="#4E342E" stroke-width="2.5" marker-end="url(#bptarrow)"/>
+  <path d="M 505 74 C 580 100, 700 112, 770 136" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#bptarrow)"/>
+  <text x="300" y="100" font-size="15" fill="#607D8B">&lt; 40</text>
+  <text x="492" y="106" font-size="15" fill="#607D8B">40&#8211;79</text>
+  <text x="622" y="100" font-size="15" fill="#607D8B" text-anchor="end">&#8805; 80</text>
+
+  <!-- ============ internal level ============ -->
+  <rect x="110" y="140" width="140" height="44" rx="10" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="180" y="169" font-size="20" fill="#263238" text-anchor="middle">10 | 25</text>
+  <rect x="410" y="140" width="140" height="44" rx="10" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="480" y="169" font-size="20" fill="#263238" text-anchor="middle">50 | 65</text>
+  <rect x="710" y="140" width="140" height="44" rx="10" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+  <text x="780" y="169" font-size="20" fill="#263238" text-anchor="middle">85 | 95</text>
+
+  <!-- internal to leaf edges -->
+  <path d="M 150 184 C 115 210, 95 235, 84 264" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#bptarrow)"/>
+  <line x1="180" y1="184" x2="180" y2="264" stroke="#4E342E" stroke-width="2" marker-end="url(#bptarrow)"/>
+  <path d="M 210 184 C 245 210, 265 235, 276 264" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#bptarrow)"/>
+
+  <path d="M 450 184 C 415 210, 395 235, 384 264" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#bptarrow)"/>
+  <line x1="480" y1="184" x2="480" y2="264" stroke="#4E342E" stroke-width="2" marker-end="url(#bptarrow)"/>
+  <path d="M 510 184 C 545 210, 565 235, 576 264" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#bptarrow)"/>
+
+  <path d="M 750 184 C 715 210, 695 235, 684 264" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#bptarrow)"/>
+  <line x1="780" y1="184" x2="780" y2="264" stroke="#4E342E" stroke-width="2" marker-end="url(#bptarrow)"/>
+  <path d="M 810 184 C 845 210, 865 235, 876 264" fill="none" stroke="#4E342E" stroke-width="2" marker-end="url(#bptarrow)"/>
+
+  <!-- ============ leaf level ============ -->
+  <g>
+    <rect x="36" y="270" width="88" height="46" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="80" y="299" font-size="17" fill="#263238" text-anchor="middle">1 5 7</text>
+    <rect x="136" y="270" width="88" height="46" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="180" y="299" font-size="17" fill="#263238" text-anchor="middle">10 15 20</text>
+    <rect x="236" y="270" width="88" height="46" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="280" y="299" font-size="17" fill="#263238" text-anchor="middle">25 30 35</text>
+    <rect x="336" y="270" width="88" height="46" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="380" y="299" font-size="17" fill="#263238" text-anchor="middle">40 45</text>
+    <rect x="436" y="270" width="88" height="46" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="480" y="299" font-size="17" fill="#263238" text-anchor="middle">50 55 60</text>
+    <rect x="536" y="270" width="88" height="46" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="580" y="299" font-size="17" fill="#263238" text-anchor="middle">65 70 75</text>
+    <rect x="636" y="270" width="88" height="46" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="680" y="299" font-size="17" fill="#263238" text-anchor="middle">80 82</text>
+    <rect x="736" y="270" width="88" height="46" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="780" y="299" font-size="17" fill="#263238" text-anchor="middle">85 90</text>
+    <rect x="836" y="270" width="88" height="46" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <text x="880" y="299" font-size="17" fill="#263238" text-anchor="middle">95 99</text>
+  </g>
+
+  <!-- ============ leaf linked list ============ -->
+  <path d="M 88 322 Q 130 340 168 324" fill="none" stroke="#6A1B9A" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#bptlink)"/>
+  <path d="M 188 322 Q 230 340 268 324" fill="none" stroke="#6A1B9A" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#bptlink)"/>
+  <path d="M 288 322 Q 330 340 368 324" fill="none" stroke="#6A1B9A" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#bptlink)"/>
+  <path d="M 388 322 Q 430 340 468 324" fill="none" stroke="#6A1B9A" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#bptlink)"/>
+  <path d="M 488 322 Q 530 340 568 324" fill="none" stroke="#6A1B9A" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#bptlink)"/>
+  <path d="M 588 322 Q 630 340 668 324" fill="none" stroke="#6A1B9A" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#bptlink)"/>
+  <path d="M 688 322 Q 730 340 768 324" fill="none" stroke="#6A1B9A" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#bptlink)"/>
+  <path d="M 788 322 Q 830 340 868 324" fill="none" stroke="#6A1B9A" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#bptlink)"/>
+  <text x="480" y="366" font-size="16" fill="#6A1B9A" text-anchor="middle">leaf-level linked list &#8594; range scans never climb back up</text>
+
+  <!-- ============ legend ============ -->
+  <g>
+    <rect x="120" y="392" width="30" height="16" rx="5" fill="#90CAF9" stroke="#4E342E" stroke-width="2"/>
+    <text x="158" y="406" font-size="16" fill="#37474F">root</text>
+    <rect x="230" y="392" width="30" height="16" rx="5" fill="#FFE082" stroke="#4E342E" stroke-width="2"/>
+    <text x="268" y="406" font-size="16" fill="#37474F">internal: separator keys + child pointers</text>
+    <rect x="610" y="392" width="30" height="16" rx="5" fill="#E8F5E9" stroke="#4E342E" stroke-width="2"/>
+    <text x="648" y="406" font-size="16" fill="#37474F">leaf: keys + data</text>
+  </g>
+</svg>

@@ -171,7 +171,7 @@ graph TB
   class F1,F2,F3,Fn frame
 ```
 
-A **frame** is a fixed-size slot that holds one page in memory.
+A **frame** is a fixed-size slot that holds one page in memory; the frames together form the buffer pool (Textbook §15.7.1, p. 746).
 The **page table** maps disk-page ID to frame.
 Each frame has a **pin count** (how many threads are using it) and a **dirty bit** (modified since loaded).
 
@@ -199,13 +199,14 @@ sequenceDiagram
   Q->>BP: ReleasePage (unpin)
 ```
 
-The pin count keeps pages alive while in use; unpinned pages become eligible for eviction.
+The pin count protects pages in use; unpinned pages are eviction candidates (Textbook §15.7.2, p. 749).
 
 ---
 
 # Dirty Pages and Write-Back
 
 A page is **dirty** when something in memory has been modified but the disk does not yet know.
+A clean page can simply be dropped; a dirty page must be written back before its frame is reused (Textbook §15.7.1, p. 747).
 
 Two write-back strategies:
 
@@ -228,7 +229,7 @@ Real databases use **write-back with a write-ahead log** (Section 6). The log ma
 
 When a new page needs a frame and the pool is full, **which frame is evicted**?
 
-A bad choice evicts a page that is about to be re-used, forcing an immediate disk read.
+A bad choice evicts a page that is about to be re-used, forcing an immediate disk read (Textbook §15.7.2, p. 747).
 
 Five common strategies:
 
@@ -282,7 +283,7 @@ graph LR
 <div>
 
 ### Idea
-Arrange frames in a ring with a "reference bit" per frame.
+Arrange frames in a ring with a "reference bit" per frame (Textbook §15.7.2, p. 748).
 
 On access, set the reference bit.
 When evicting, advance a clock hand. If the current frame's bit is 1, clear it and advance; if 0, evict it.
@@ -295,23 +296,14 @@ PostgreSQL uses a variant: **clock-sweep** with usage counters.
 </div>
 <div>
 
-```mermaid
-graph TB
-  H["Clock hand"]
-  F1["F1 ref=1"]
-  F2["F2 ref=0"]
-  F3["F3 ref=1"]
-  F4["F4 ref=0"]
-  F1 --> F2 --> F3 --> F4 --> F1
-  H -. "scan" .-> F2
-  classDef f fill:#e3f2fd,stroke:#1976d2
-  classDef h fill:#fff3e0,stroke:#e65100,stroke-width:3px
-  class F1,F2,F3,F4 f
-  class H h
-```
+![w:430px](images/clock-sweep.svg)
 
 </div>
 </div>
+
+<!--
+The figure freezes one sweep: the hand cleared F2's bit on the way past and landed on F3, whose bit is already 0, so F3 is the victim. F4 and F6 sit untouched because the hand has not reached them this sweep. The Textbook presents clock as the second-chance algorithm (§15.7.2, p. 748).
+-->
 
 ---
 
@@ -497,7 +489,7 @@ Read the C-Store paper before Monday: [stonebraker2005.pdf](https://ufdatastudio
 1. Run the `pg_buffercache` query above against your project's database and capture the output.
 2. Compute the cache hit ratio for your database. If it's below 95%, hypothesize why.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Mon Oct 19.
+This is an exercise.
 
 ---
 

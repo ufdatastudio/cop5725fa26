@@ -167,18 +167,11 @@ The "without transactions you'd have to write it all yourself" framing is the ri
 
 ```mermaid
 graph TB
-  ACID["ACID"]
   A["Atomicity<br/>all or nothing"]
   C["Consistency<br/>integrity preserved"]
   I["Isolation<br/>tx looks alone"]
   D["Durability<br/>commits survive crashes"]
-  ACID --> A
-  ACID --> C
-  ACID --> I
-  ACID --> D
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
   classDef letter fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  class ACID root
   class A,C,I,D letter
 ```
 
@@ -286,7 +279,7 @@ The synchronous_commit tradeoff is the classic durability-vs-speed knob. Modern 
 
 # A Schedule
 
-A **schedule** is an interleaving of operations from multiple transactions.
+A **schedule** is an interleaving of operations from multiple transactions (Textbook §18.1.1, p. 884).
 
 For transactions T1 (read A, write A) and T2 (read A, write A):
 
@@ -295,23 +288,31 @@ For transactions T1 (read A, write A) and T2 (read A, write A):
 
 ### Serial schedule (T1 then T2)
 
-```
-T1: r(A) w(A)
-T2:           r(A) w(A)
-```
+<table>
+<thead><tr><th></th><th>t1</th><th>t2</th><th>t3</th><th>t4</th></tr></thead>
+<tbody>
+<tr><td>T1</td><td style="background:#F8BBD0">r(A)</td><td style="background:#F8BBD0">w(A)</td><td></td><td></td></tr>
+<tr><td>T2</td><td></td><td></td><td style="background:#90CAF9">r(A)</td><td style="background:#90CAF9">w(A)</td></tr>
+</tbody>
+</table>
 
 </div>
 <div>
 
 ### Interleaved schedule
 
-```
-T1: r(A)      w(A)
-T2:      r(A)      w(A)
-```
+<table>
+<thead><tr><th></th><th>t1</th><th>t2</th><th>t3</th><th>t4</th></tr></thead>
+<tbody>
+<tr><td>T1</td><td style="background:#F8BBD0">r(A)</td><td></td><td style="background:#F8BBD0">w(A)</td><td></td></tr>
+<tr><td>T2</td><td></td><td style="background:#90CAF9">r(A)</td><td></td><td style="background:#90CAF9">w(A)</td></tr>
+</tbody>
+</table>
 
 </div>
 </div>
+
+Pink cells are T1's operations and blue cells are T2's; time runs left to right.
 
 Serial schedules are always correct. Interleaved schedules sometimes corrupt state.
 
@@ -334,7 +335,7 @@ Two operations **conflict** if:
 | w(A) | w(A) | yes |
 | r(A) | r(B) | no |
 
-Two non-conflicting operations can be swapped without changing the result.
+Two non-conflicting operations can be swapped without changing the result (Textbook §18.2.1, p. 890).
 
 ---
 
@@ -391,12 +392,15 @@ The dashed edge (T3 → T1) creates a cycle. The schedule is **not** conflict se
 
 # Build a Conflict Graph
 
-```
-T1: r(A)        w(B)
-T2:       w(A)        r(B)
-```
+<table>
+<thead><tr><th></th><th>t1</th><th>t2</th><th>t3</th><th>t4</th></tr></thead>
+<tbody>
+<tr><td>T1</td><td style="background:#F8BBD0">r(A)</td><td></td><td style="background:#F8BBD0">w(B)</td><td></td></tr>
+<tr><td>T2</td><td></td><td style="background:#90CAF9">w(A)</td><td></td><td style="background:#90CAF9">r(B)</td></tr>
+</tbody>
+</table>
 
-Conflicts:
+Pink cells are T1's operations and blue cells are T2's. Conflicts:
 - T1's `r(A)` precedes T2's `w(A)`, so add edge T1 → T2
 - T1's `w(B)` precedes T2's `r(B)`, so add edge T1 → T2 again
 
@@ -417,12 +421,15 @@ Walk both conflict pairs slowly. Both point the same direction (T1 before T2), s
 
 # A Conflict Graph with a Cycle
 
-```
-T1: r(A)              w(B)
-T2:       w(A)  r(B)
-```
+<table>
+<thead><tr><th></th><th>t1</th><th>t2</th><th>t3</th><th>t4</th></tr></thead>
+<tbody>
+<tr><td>T1</td><td style="background:#F8BBD0">r(A)</td><td></td><td></td><td style="background:#FFE082">w(B)</td></tr>
+<tr><td>T2</td><td></td><td style="background:#90CAF9">w(A)</td><td style="background:#FFE082">r(B)</td><td></td></tr>
+</tbody>
+</table>
 
-Conflicts:
+Amber marks the conflict on B: T2 now reads B before T1 writes it, so that edge points backward. Conflicts:
 - T1's `r(A)` precedes T2's `w(A)`, so add edge T1 → T2
 - T2's `r(B)` precedes T1's `w(B)`, so add edge T2 → T1
 
@@ -453,14 +460,11 @@ Same shape as the previous slide but the B conflict now points the other way. Th
 
 ```mermaid
 graph TB
-  A["Anomalies"]
-  A --> D["Dirty Read"]
-  A --> L["Lost Update"]
-  A --> N["Non-Repeatable<br/>Read"]
-  A --> P["Phantom Read"]
-  classDef root fill:#ffebee,stroke:#c62828,stroke-width:3px
+  D["Dirty Read"]
+  L["Lost Update"]
+  N["Non-Repeatable<br/>Read"]
+  P["Phantom Read"]
   classDef a fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  class A root
   class D,L,N,P a
 ```
 
@@ -577,7 +581,7 @@ The Read Committed lost-update cell is the subtle one. A single UPDATE statement
 ### Reminders
 
 - Exam 2 Wednesday Nov 18
-- Final Project released Mon Nov 30
+- Final Project releases today (Mon Nov 16)
 - Thanksgiving break Nov 23-28
 
 </div>
@@ -633,7 +637,7 @@ Bring caffeine. Be on time. The exam starts at 8:30 sharp.
 - Take a simple transaction in your project (e.g., insert a row, update a related row). Run it with `BEGIN; ... ROLLBACK;`. Verify nothing persists.
 - Work the Exam 2 practice packet, especially problems on cost estimation and join algorithms.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Wed Nov 18.
+This is an exercise.
 
 ---
 

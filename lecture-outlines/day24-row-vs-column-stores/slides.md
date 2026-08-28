@@ -36,6 +36,12 @@ The data and the SQL are the same, but the performance profile changes completel
 
 The C-Store paper (Stonebraker et al., VLDB 2005) is the argument that started the modern OLAP era.
 
+<div class="small">
+
+OLTP (online transaction processing) means many small reads and writes from a live application. OLAP (online analytical processing) means large scans and aggregations for analysis.
+
+</div>
+
 </div>
 <div>
 
@@ -98,20 +104,7 @@ Two layouts can hold the same data. SQL never tells you which.
 
 # Row Layout
 
-```
-+----------------------------------------------------------+
-| Page 1                                                   |
-|  +------------------------------------------------+      |
-|  | row 1: sale_id, cust_id, prod_id, amount, date |      |
-|  +------------------------------------------------+      |
-|  | row 2: sale_id, cust_id, prod_id, amount, date |      |
-|  +------------------------------------------------+      |
-|  | row 3: sale_id, cust_id, prod_id, amount, date |      |
-|  +------------------------------------------------+      |
-|  | ...                                            |      |
-|  +------------------------------------------------+      |
-+----------------------------------------------------------+
-```
+![w:800px](images/row-layout.svg)
 
 Reading one full row takes one page access.
 Computing `SUM(amount)` across 100 M rows reads every page and throws away 80% of the bytes.
@@ -120,21 +113,16 @@ Computing `SUM(amount)` across 100 M rows reads every page and throws away 80% o
 
 # Column Layout
 
-```
-+----------------------+   +----------------------+   +----------------------+
-| sale_id column       |   | amount column        |   | sale_date column     |
-|  10001               |   |  100.00              |   |  2024-01-15          |
-|  10002               |   |   45.50              |   |  2024-01-15          |
-|  10003               |   |  220.00              |   |  2024-01-16          |
-|  10004               |   |   75.25              |   |  2024-01-16          |
-|  ...                 |   |  ...                 |   |  ...                 |
-+----------------------+   +----------------------+   +----------------------+
-```
+![w:800px](images/column-layout.svg)
 
 Reading one full row means assembling values from many places.
-Computing `SUM(amount)` reads only the amount column.
+Computing `SUM(amount)` reads only the amount column. The 80% byte savings shows up as a 5-10× scan speedup.
 
-The 80% byte savings shows up as a 5-10× scan speedup.
+<div class="small">
+
+The colors match the row layout. Pink is the one logical row, now split across three files, and green is the amount column, now contiguous.
+
+</div>
 
 <!--
 "Read only the columns the query needs" is the entire column-store advantage. Wide tables with narrow queries see the biggest wins.
@@ -194,10 +182,14 @@ The win goes beyond disk space. Compressed columns mean fewer cache misses, and 
 
 # Run-Length Encoding (RLE)
 
-```
-raw:        [CA, CA, CA, CA, CA, NY, NY, NY, FL, FL, FL, FL]
-encoded:    [(CA, 5), (NY, 3), (FL, 4)]
-```
+<div style="font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace; font-size:0.85em; line-height:2.4; background:#F6F8FA; border-radius:8px; padding:12px 18px;">
+
+raw:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span style="background:#FFE082; padding:2px 7px; border-radius:8px;">CA, CA, CA, CA, CA</span>, <span style="background:#90CAF9; padding:2px 7px; border-radius:8px;">NY, NY, NY</span>, <span style="background:#A5D6A7; padding:2px 7px; border-radius:8px;">FL, FL, FL, FL</span>]<br>
+encoded:&nbsp;&nbsp;&nbsp;&nbsp;[<span style="background:#FFE082; padding:2px 7px; border-radius:8px;">(CA, 5)</span>, <span style="background:#90CAF9; padding:2px 7px; border-radius:8px;">(NY, 3)</span>, <span style="background:#A5D6A7; padding:2px 7px; border-radius:8px;">(FL, 4)</span>]
+
+</div>
+
+Each colored run collapses into the (value, count) pair of the same color.
 
 RLE wins when the column is sorted or has long runs.
 
@@ -209,13 +201,15 @@ This is why C-Store's design includes multiple sort orders for the same column; 
 
 # Dictionary Encoding
 
-```
-column:        [Texas, Florida, Texas, California, Florida, Texas]
+<div style="font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace; font-size:0.85em; line-height:2.4; background:#F6F8FA; border-radius:8px; padding:12px 18px;">
 
-dictionary:    { 0: 'California', 1: 'Florida', 2: 'Texas' }
+column:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span style="background:#FFE082; padding:2px 7px; border-radius:8px;">Texas</span>, <span style="background:#90CAF9; padding:2px 7px; border-radius:8px;">Florida</span>, <span style="background:#FFE082; padding:2px 7px; border-radius:8px;">Texas</span>, <span style="background:#A5D6A7; padding:2px 7px; border-radius:8px;">California</span>, <span style="background:#90CAF9; padding:2px 7px; border-radius:8px;">Florida</span>, <span style="background:#FFE082; padding:2px 7px; border-radius:8px;">Texas</span>]<br>
+dictionary:&nbsp;&nbsp;&nbsp;&nbsp;{ <span style="background:#A5D6A7; padding:2px 7px; border-radius:8px;">0: 'California'</span>, <span style="background:#90CAF9; padding:2px 7px; border-radius:8px;">1: 'Florida'</span>, <span style="background:#FFE082; padding:2px 7px; border-radius:8px;">2: 'Texas'</span> }<br>
+encoded:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span style="background:#FFE082; padding:2px 7px; border-radius:8px;">2</span>, <span style="background:#90CAF9; padding:2px 7px; border-radius:8px;">1</span>, <span style="background:#FFE082; padding:2px 7px; border-radius:8px;">2</span>, <span style="background:#A5D6A7; padding:2px 7px; border-radius:8px;">0</span>, <span style="background:#90CAF9; padding:2px 7px; border-radius:8px;">1</span>, <span style="background:#FFE082; padding:2px 7px; border-radius:8px;">2</span>]
 
-encoded:       [2, 1, 2, 0, 1, 2]
-```
+</div>
+
+Each value keeps its color as it turns into a code, so the encoded array reads the same left to right.
 
 Replace each value with its dictionary code. Especially powerful for low-cardinality columns (country, status, category).
 
@@ -294,19 +288,13 @@ C-Store the prototype became **Vertica** the company (2005), acquired by HP in 2
 
 ```mermaid
 graph TB
-  CS["C-Store"]
   P["Projections<br/>(sorted column groups)"]
   W["Write store<br/>(small, row-format)"]
   R["Read store<br/>(big, column-format)"]
   C["Tuple mover<br/>(write → read)"]
-  CS --> P
-  CS --> W
-  CS --> R
   W --> C
   C --> R
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
   classDef proc fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  class CS root
   class P,W,R,C proc
 ```
 
@@ -525,7 +513,7 @@ Read Textbook §14.1-14.2, pp. 620-646 before class.
 1. Pick three columns from your project's dataset. For each, name the likely compression scheme (RLE, dictionary, bit-pack) and why.
 2. Convert one of your project's tables to Parquet using DuckDB; report disk size before and after.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Wed Oct 21.
+This is an exercise.
 
 ---
 

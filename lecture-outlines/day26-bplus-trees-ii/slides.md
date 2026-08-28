@@ -88,7 +88,6 @@ graph TB
   L2["40, 50"]
   R --> L1
   R --> L2
-  L1 -.-> L2
   classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
   class R root
@@ -104,7 +103,6 @@ graph TB
   L2["40, 50"]
   R --> L1
   R --> L2
-  L1 -.-> L2
   classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef hit fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
   classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
@@ -113,7 +111,7 @@ graph TB
   class L2 leaf
 ```
 
-Find the right leaf, slot the value in sorted order. Done.
+Find the right leaf, slot the value in sorted order (Textbook §14.2.5, p. 640). Done.
 
 ---
 
@@ -128,7 +126,6 @@ graph TB
   L2["40, 50"]
   R --> L1
   R --> L2
-  L1 -.-> L2
   classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
   class R root
@@ -152,7 +149,6 @@ graph TB
   R --> L1a
   R --> L1b
   R --> L2
-  L1a -.-> L1b -.-> L2
   classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef new fill:#fff3e0,stroke:#e65100,stroke-width:3px
   classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
@@ -178,7 +174,6 @@ graph TB
   R --> L1a
   R --> L1b
   R --> L2
-  L1a -.-> L1b -.-> L2
   classDef root fill:#fff3e0,stroke:#e65100,stroke-width:3px
   classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
   class R root
@@ -198,21 +193,7 @@ When the **root** itself splits, the tree grows one level. A new root is created
 
 This is the **only way** a B+ tree's height changes.
 
-```mermaid
-graph TB
-  R["[old root, full]"]
-  R -.-> R1["[left half]"]
-  R -.-> R2["[right half]"]
-  NR["[new root: 1 key]"]
-  NR --> R1
-  NR --> R2
-  classDef old fill:#ffebee,stroke:#c62828,stroke-width:2px
-  classDef new fill:#fff3e0,stroke:#e65100,stroke-width:3px
-  classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-  class R old
-  class NR new
-  class R1,R2 leaf
-```
+![w:840px](images/root-split.svg)
 
 In practice, a 5-level B+ tree grows to 6 levels only after billions of inserts.
 
@@ -238,6 +219,12 @@ In the steady state:
 
 Amortized cost: **O(log_F N) per insert** with a small constant.
 
+<div class="small">
+
+Amortized means averaged over a long run of operations, so the rare splits are spread across the many cheap inserts.
+
+</div>
+
 ---
 
 <!-- _class: lead -->
@@ -255,7 +242,6 @@ graph TB
   L2["40, 50"]
   R --> L1
   R --> L2
-  L1 -.-> L2
   classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
   class R root
@@ -271,7 +257,6 @@ graph TB
   L2["40, 50"]
   R --> L1
   R --> L2
-  L1 -.-> L2
   classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef hit fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
   classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
@@ -280,7 +265,7 @@ graph TB
   class L2 leaf
 ```
 
-Find, remove, done. The leaf remains at least half full.
+Find, remove, done (Textbook §14.2.6, p. 642). The leaf remains at least half full.
 
 ---
 
@@ -295,7 +280,6 @@ graph TB
   L2["40"]
   R --> L1
   R --> L2
-  L1 -.-> L2
   classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
   classDef under fill:#ffebee,stroke:#c62828,stroke-width:3px
   classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
@@ -310,14 +294,15 @@ The right leaf has only 1 key. The tree can redistribute a key from the sibling 
 
 # Redistribute
 
+Redistribution needs a sibling with a key to spare. Suppose the left leaf held 10, 20, 30.
+
 ```mermaid
 graph TB
   R["[30]"]
-  L1["10"]
+  L1["10, 20"]
   L2["30, 40"]
   R --> L1
   R --> L2
-  L1 -.-> L2
   classDef root fill:#fff3e0,stroke:#e65100,stroke-width:3px
   classDef ok fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
   classDef leaf fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
@@ -325,13 +310,20 @@ graph TB
   class L1,L2 ok
 ```
 
-Move one key (30) from the left sibling to the right; update the parent's separator.
+Move the left sibling's largest key (30) into the underfull leaf; update the parent's separator.
 
 Now both leaves have ≥ minimum keys.
+
+<!--
+The premise changes here on purpose: with the minimum of 2 keys, a donor holding exactly 10 and 30 has nothing to spare, and stealing from it would just move the violation. Redistribution is legal only when the sibling sits above minimum, so this slide gives the left leaf a third key. The next slide returns to the real 10, 30 state, where merge is the only option.
+-->
+
 
 ---
 
 # Merge
+
+In our actual state the left leaf holds only 10 and 30, with no key to spare, so the leaves merge instead.
 
 ```mermaid
 graph TB
@@ -430,6 +422,7 @@ The tree's height stays stable across realistic dataset sizes.
 | Build a new index | O(N log N) sort + O(N) build | `CREATE INDEX CONCURRENTLY` |
 
 The full-scan-via-index row is surprising: scanning the heap directly is usually faster than scanning every leaf of an index. The optimizer knows this.
+The height-bound analysis behind the first four rows is Textbook §14.2.7, p. 645.
 
 ---
 
@@ -491,7 +484,7 @@ ORDER BY idx_scan DESC;
 This view tells you **which indexes earn their keep**.
 
 An index with `idx_scan = 0` after weeks of traffic is dead weight; drop it.
-Reference: [PostgreSQL Ch. 28.2.11 pg_stat_user_indexes](https://www.postgresql.org/docs/current/monitoring-stats.html#MONITORING-PG-STAT-USER-INDEXES-VIEW).
+Reference: PostgreSQL docs [pg_stat_all_indexes](https://www.postgresql.org/docs/current/monitoring-stats.html#MONITORING-PG-STAT-ALL-INDEXES-VIEW); `pg_stat_user_indexes` is the same view filtered to user tables.
 
 ---
 
@@ -555,7 +548,7 @@ Tag the commit `v2` and push to your `cop5725fa26-project` repo.
 - **Mon Oct 26:** small-group breakouts during class
 - **Wed Oct 28:** winners present to the full class
 
-Project 3 (Indexing + Query Plans) is released Monday and builds on today's material.
+Project 3 (Indexing + Query Plans), released Mon Oct 19, builds on today's material.
 
 </div>
 </div>
@@ -588,7 +581,7 @@ Read Textbook §14.3, pp. 648-659 before class.
 1. Hand-trace the insert sequence `[10, 20, 30, 40, 50, 60, 70, 80, 90]` into an empty order-4 B+ tree. Show splits.
 2. Add a btree index to one of your project's tables. Run `EXPLAIN ANALYZE` on a query that uses it; capture the plan. Then `DROP INDEX` and rerun; compare.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Mon Oct 26.
+This is an exercise.
 
 ---
 

@@ -112,12 +112,21 @@ Set up the example. The denormalized enrollment table is the canonical teaching 
 
 # The Data It Generates
 
-| student_id | student_name | course_id | course_title | instructor | dept | grade |
-|-----|--------------|---------|--------------|------------|------|-------|
-| 1 | Ada | COP5725 | Database Management Systems | Grant | CS | A |
-| 1 | Ada | COT5405 | Algorithms | Sahni | CS | B+ |
-| 2 | Bob | COP5725 | Database Management Systems | Grant | CS | B |
-| 3 | Chia | COP5725 | Database Management Systems | Grant | CS | A- |
+<table>
+<thead><tr><th>student_id</th><th>student_name</th><th>course_id</th><th>course_title</th><th>instructor</th><th>dept</th><th>grade</th></tr></thead>
+<tbody>
+<tr><td>1</td><td style="background:#F8BBD0">Ada</td><td>COP5725</td><td style="background:#FFE082">Database Management Systems</td><td style="background:#FFE082">Grant</td><td style="background:#FFE082">CS</td><td>A</td></tr>
+<tr><td>1</td><td style="background:#F8BBD0">Ada</td><td>COT5405</td><td>Algorithms</td><td>Sahni</td><td>CS</td><td>B+</td></tr>
+<tr><td>2</td><td>Bob</td><td>COP5725</td><td style="background:#FFE082">Database Management Systems</td><td style="background:#FFE082">Grant</td><td style="background:#FFE082">CS</td><td>B</td></tr>
+<tr><td>3</td><td>Chia</td><td>COP5725</td><td style="background:#FFE082">Database Management Systems</td><td style="background:#FFE082">Grant</td><td style="background:#FFE082">CS</td><td>A-</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+Amber cells restate one fact about COP5725, and pink cells restate one fact about Ada.
+
+</div>
 
 <div class="error">
 
@@ -163,35 +172,18 @@ The phrase "facts about the world that the schema does not enforce" is the key i
 
 # Functional Dependency
 
-<div class="columns">
-<div>
+Given a relation $R$, an **FD** $X \rightarrow Y$ holds if for every pair of tuples $t_1, t_2 \in R$ (Textbook §3.1.1, p. 68):
 
-Given a relation $R$ with attributes, an **FD** $X \rightarrow Y$ holds if (Textbook §3.1.1, p. 68):
-
-For every pair of tuples $t_1, t_2 \in R$:
 $$t_1[X] = t_2[X] \Rightarrow t_1[Y] = t_2[Y]$$
 
 In English: any two tuples that agree on $X$ must agree on $Y$.
-
 We read $X \rightarrow Y$ as "$X$ functionally determines $Y$" or "$X$ implies $Y$."
 
-</div>
-<div>
-
-```mermaid
-graph LR
-  X["X<br/>(determinant)"] -->|"determines"| Y["Y<br/>(dependent)"]
-  classDef left fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-  classDef right fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-  class X left
-  class Y right
-```
-
-</div>
-</div>
+![w:840px](images/fd-two-tuples.svg)
 
 <!--
 Stress: the FD is a statement *about the meaning of the data*, not about a particular table. Whether `course_id → course_title` holds depends on the real world (one title per course id), not on which rows happen to be loaded.
+The figure previews the enrollment example: the two tuples match on course_id (blue), so course_id → instructor forces them to match on instructor (purple), while grade stays free.
 -->
 
 ---
@@ -321,7 +313,7 @@ The loop terminates because `result` can grow at most to all attributes.
 
 ---
 
-# Closure Worked Example
+# Closure Example
 
 Given:
 
@@ -426,7 +418,7 @@ Chains compose.
 </div>
 
 These three rules are **sound** (everything they derive is true) and **complete** (everything true is derivable).
-Armstrong proved completeness in 1974 (Textbook §3.2.1, p. 72).
+The textbook calls them Armstrong's axioms (§3.2.7, p. 81); Armstrong published them in 1974 (§3.9, p. 122).
 
 <!--
 Sound + complete is a strong claim — we can use *only* these three rules and recover every valid FD that follows from a given set. The closure algorithm is one efficient way to apply them.
@@ -494,7 +486,7 @@ The two-sided check is fast. For each FD X → Y in G, compute X+ under F. If Y 
 
 # Minimal Cover
 
-A **minimal cover** (or canonical cover; the textbook says minimal basis, §3.5.2, p. 103) is an equivalent FD set with three properties:
+A **minimal cover** (or canonical cover; the textbook says minimal basis, §3.2.7, p. 80) is an equivalent FD set with three properties:
 
 <div class="columns-3">
 <div>
@@ -527,11 +519,11 @@ If $F - \{X \rightarrow Y\}$ still implies $X \rightarrow Y$, drop it.
 </div>
 </div>
 
-Minimal covers are not unique, but every minimal cover has the same number of FDs.
+Minimal covers are not unique and can even differ in size. Textbook Example 3.11 gives one relation a three-FD minimal basis and a four-FD minimal basis (§3.2.7, pp. 80-81).
 
 ---
 
-# Minimal Cover Worked Example
+# Minimal Cover Example
 
 Given $F = \{\, A \rightarrow BC,\;\; B \rightarrow C,\;\; A \rightarrow B,\;\; AB \rightarrow C \,\}$:
 
@@ -657,7 +649,7 @@ Four problems on the handout:
 3. Find a minimal cover for a given FD set.
 4. Argue whether one FD set is equivalent to another.
 
-Answers due in your repo before 8:30 AM Fri Sep 11.
+This is an exercise.
 
 ---
 

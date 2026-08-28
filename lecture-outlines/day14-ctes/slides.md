@@ -229,6 +229,77 @@ Each CTE can reference any **earlier** CTE. The final `SELECT` ties them togethe
 
 ---
 
+# What Each CTE Produces
+
+<div class="columns-3">
+<div>
+
+**dept_avg**
+
+<table>
+<thead><tr><th>dname</th><th>mean_gpa</th></tr></thead>
+<tbody>
+<tr style="background:#FFE082"><td>CS</td><td>3.50</td></tr>
+<tr style="background:#A5D6A7"><td>EE</td><td>3.37</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+One row per department. CS: (3.9 + 3.1 + 3.5) / 3 = 3.50. EE's 3.37 is rounded.
+
+</div>
+
+</div>
+<div>
+
+**above_avg**
+
+<table>
+<thead><tr><th>sid</th><th>name</th><th>dname</th><th>gpa</th></tr></thead>
+<tbody>
+<tr style="background:#FFE082"><td>1</td><td>Ada</td><td>CS</td><td>3.90</td></tr>
+<tr style="background:#A5D6A7"><td>4</td><td>Devi</td><td>EE</td><td>3.80</td></tr>
+<tr style="background:#A5D6A7"><td>6</td><td>Fei</td><td>EE</td><td>3.40</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+Students above their own department's mean. Bose, Chen, and Evan drop out.
+
+</div>
+
+</div>
+<div>
+
+**final SELECT**
+
+<table>
+<thead><tr><th>dname</th><th>above_avg_count</th></tr></thead>
+<tbody>
+<tr style="background:#A5D6A7"><td>EE</td><td>2</td></tr>
+<tr style="background:#FFE082"><td>CS</td><td>1</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+Count the survivors per department, sorted descending.
+
+</div>
+
+</div>
+</div>
+
+Amber traces the CS rows and green traces the EE rows through the three stages.
+
+<!--
+Step through the tables left to right after running the widget on the previous slide. Each named block is a checkpoint you can SELECT * from while debugging — that habit is the practical payoff of CTEs once queries grow past a screen.
+-->
+
+---
+
 # CTE Dependency Graph
 
 ```mermaid
@@ -323,7 +394,13 @@ Use `MATERIALIZED` to force the old behavior; `NOT MATERIALIZED` to require inli
 </div>
 </div>
 
-Reference: [PostgreSQL Ch. 7.8.1 SELECT in WITH](https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-SELECT).
+<div class="small">
+
+Inlining substitutes the CTE's definition into the outer query before planning, so filters and column pruning pass through it.
+
+</div>
+
+Reference: [PostgreSQL Ch. 7.8.3 Common Table Expression Materialization](https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-CTE-MATERIALIZATION).
 
 <!--
 The PG 12 change broke a lot of online tutorials. The old "use CTE as an optimization fence" advice still appears in many StackOverflow answers but is incorrect on modern PostgreSQL. Worth surfacing.
@@ -394,7 +471,7 @@ SELECT * FROM new_enrollments;
 The CTE computes the rows to insert.
 The outer statement is the actual mutation.
 
-Reference: [PostgreSQL Ch. 7.8.2 Data-Modifying Statements in WITH](https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-MODIFYING).
+Reference: [PostgreSQL Ch. 7.8.4 Data-Modifying Statements in WITH](https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-MODIFYING).
 
 ---
 
@@ -532,7 +609,7 @@ Five queries using CTEs:
 4. A `WITH ... INSERT` that backfills enrollment rows for a missing section.
 5. Rewrite three of Monday's subquery answers as CTEs.
 
-Answers due in your repo before 8:30 AM Fri Sep 25.
+This is an exercise.
 
 ---
 

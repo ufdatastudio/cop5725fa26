@@ -119,30 +119,15 @@ The interpretation overhead drops by roughly 1000× just from changing the granu
 
 # What Goes Inside a Batch
 
-```mermaid
-graph TB
-  B["Batch (1024 rows)"]
-  C1["column 1: int[1024]"]
-  C2["column 2: text[1024]"]
-  C3["column 3: float[1024]"]
-  M["selection vector"]
-  B --> C1
-  B --> C2
-  B --> C3
-  B --> M
-  classDef b fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-  classDef c fill:#e8f5e9,stroke:#388e3c
-  classDef sel fill:#fff3e0,stroke:#e65100
-  class B b
-  class C1,C2,C3 c
-  class M sel
-```
+![w:840px](images/batch-layout.svg)
 
-The batch holds:
-- One contiguous array per **column** (cache-friendly)
-- A **selection vector** (or bitmap) marking which rows are "still alive"
+The batch holds one contiguous array per **column** (cache-friendly) and a **selection vector** (or bitmap) marking which rows are still alive.
 
 Filters mark rows dead; they don't physically remove them. Subsequent operators iterate only the live indices.
+
+<!--
+Walk the picture left to right: the three arrays are the columns of the same six rows, the gray rows are the ones a filter killed, and the amber selection vector holds the surviving positions. The dashed arrow shows how entry 2 indexes back into every array.
+-->
 
 ---
 
@@ -300,6 +285,12 @@ graph LR
   class Plan,E step
 ```
 
+<div class="caption">
+
+The parse and preprocess stages are Textbook §16.1, p. 760; the optimizer stages fill the rest of Chapter 16.
+
+</div>
+
 The **optimizer** is the brain in the middle. Given a parsed query, it picks:
 
 - Join order
@@ -327,7 +318,7 @@ What the query means, in algebra:
     student ⋈_{sid} enrollment
 ```
 
-The relational algebra tree.
+The relational algebra tree (Textbook §16.3, p. 781).
 No commitment to algorithm or access path.
 
 </div>
@@ -345,7 +336,7 @@ Project name
       Seq Scan on enrollment
 ```
 
-Operators are concrete. Costs are computed. Order is committed.
+Operators are concrete. Costs are computed. Order is committed (Textbook §16.7, p. 826).
 
 </div>
 </div>
@@ -433,18 +424,9 @@ The selection filters R **before** the join. The join touches fewer tuples.
 
 $$\pi_L(R \bowtie S) \equiv \pi_L((\pi_{L_R}(R)) \bowtie (\pi_{L_S}(S)))$$
 
-If we only want columns $L$ in the result, we can drop unneeded columns from R and S before the join.
+If we only want columns $L$ in the result, we can drop unneeded columns from R and S before the join (Textbook §16.2.4, p. 774).
 
-```mermaid
-graph LR
-  Before["Before:<br/>join wide tables,<br/>then project"]
-  After["After:<br/>project narrow first,<br/>then join"]
-  Before --> After
-  classDef before fill:#ffebee,stroke:#c62828
-  classDef after fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
-  class Before before
-  class After after
-```
+![w:680px](images/projection-pushdown.svg)
 
 Projection pushdown is especially valuable in column stores, where the projected-away columns never need to be read at all.
 
@@ -480,6 +462,7 @@ We can re-bracket joins.
 </div>
 
 These two rules give the optimizer enormous freedom and create the **plan space** challenge in the next part.
+The commutative and associative laws for joins are Textbook §16.2.1, p. 768.
 
 ---
 
@@ -511,7 +494,13 @@ The join is **always** cheaper than cross-product-plus-filter. Modern optimizers
 
 # The Search Problem
 
-For an `n`-way join, the number of distinct **left-deep** plans is `n!`.
+For an `n`-way join, the number of distinct **left-deep** plans is `n!` (Textbook §16.6.2, p. 815).
+
+<div class="small">
+
+A plan is left-deep when the right input of every join is a base relation, so the plan adds one new relation at a time (Textbook §16.6.3, p. 816).
+
+</div>
 
 For `n = 6`: 720 plans.
 For `n = 10`: 3.6 million.
@@ -648,7 +637,7 @@ FROM pg_stats
 WHERE tablename = 'your_table';
 ```
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Fri Nov 13.
+This is an exercise.
 
 ---
 

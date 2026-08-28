@@ -63,7 +63,7 @@ Director of the [UF Data Studio](https://ufdatastudio.com)
 **Contact:** `christan@ufl.edu`
 Subject line **must** include `cop5725fa26`.
 
-**Office hours:** by appointment — booking link in the syllabus.
+**Office hours:** by appointment; the booking link is in the syllabus.
 
 **Course site:** [ufdatastudio.com/cop5725fa26](https://ufdatastudio.com/cop5725fa26)
 
@@ -89,7 +89,7 @@ Brief on past teaching: CIS 6930 last spring (data engineering with LLMs) is the
 
 # About You
 
-Take 90 seconds — share with the person next to you:
+Take 90 seconds to share with the person next to you:
 
 1. Your name and program
 2. The most database-ish thing you have built so far
@@ -150,7 +150,7 @@ Almost every system you will build holds data in motion and at rest.
 
 - A web service routes user actions through a transactional store
 - A model pipeline reads features from a warehouse and writes back predictions
-- A spreadsheet, a Jupyter cell, a logs dashboard — all do the same thing at different sizes
+- A spreadsheet, a Jupyter cell, and a logs dashboard all do the same thing at different sizes
 
 A database systems course teaches you to see the machinery.
 
@@ -166,6 +166,12 @@ graph LR
   W --> ML["ML Pipeline"]
   W --> BI["Dashboards"]
 ```
+
+<div class="small">
+
+ETL (extract-transform-load) and CDC (change data capture) are the copy pipelines that move rows from the transactional store into the analytical one.
+
+</div>
 
 </div>
 </div>
@@ -495,15 +501,12 @@ Expect the "industry uses AI everywhere" pushback. Honest answer: true, and the 
 
 ```mermaid
 graph TD
-  L["Local Machine"] --> P["PostgreSQL"]
-  L --> D["DuckDB"]
-  L --> U["uv + Python"]
-  L --> G["Git CLI"]
-  P --> PS["psql CLI"]
-  D --> DC["duckdb CLI"]
-  U --> PG["psycopg2"]
+  P["PostgreSQL"] --> PS["psql CLI"]
+  D["DuckDB"] --> DC["duckdb CLI"]
+  U["uv + Python"] --> PG["psycopg"]
   U --> PD["pandas"]
   U --> JN["Jupyter"]
+  G["Git CLI"]
 ```
 
 </div>
@@ -579,7 +582,7 @@ The timeline diagram is the centerpiece of Monday's lecture. Showing it here, on
 
 1. Clone the course repo (link on Canvas)
 2. Read the syllabus
-3. Start Project 0 — no rush, due Sep 4
+3. Start Project 0 (due Sep 4, no rush)
 
 > There is no graded work this week.
 

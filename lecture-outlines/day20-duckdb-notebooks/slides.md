@@ -36,6 +36,12 @@ PostgreSQL stores rows; DuckDB stores **columns**.
 
 PostgreSQL is built for concurrent writes; DuckDB is built for **analytical scans** over local or remote files (CSV, Parquet, JSON).
 
+<div class="small">
+
+Column storage lays each attribute out contiguously, so an analytical scan reads only the columns the query touches.
+
+</div>
+
 </div>
 <div>
 
@@ -46,13 +52,12 @@ graph TB
   Both["Same SQL surface"]
   PG --> Both
   DD --> Both
-  Both --> Apps["Your code"]
   classDef pg fill:#e3f2fd,stroke:#1976d2
   classDef dd fill:#fff3e0,stroke:#e65100,stroke-width:3px
   classDef shared fill:#e8f5e9,stroke:#388e3c
   class PG pg
   class DD dd
-  class Both,Apps shared
+  class Both shared
 ```
 
 </div>
@@ -110,6 +115,12 @@ DuckDB plays the role of SQLite for analytics.
 | Concurrency | Heavy writes | Single-writer |
 | Files | Internal | Reads anything |
 | Install | Setup | `pip install` |
+
+<div class="small">
+
+OLTP (online transaction processing) is many small concurrent reads and writes; OLAP (online analytical processing) is few large scans and aggregates.
+
+</div>
 
 </div>
 </div>
@@ -188,7 +199,7 @@ result = duckdb.sql("SELECT 42")
 result.show()
 ```
 
-The `duckdb.sql(query)` form runs against the default in-memory database and is perfect for notebooks. The `connect()` form is right for scripts that need persistence.
+The `duckdb.sql(query)` form runs against the default in-memory database, so a notebook cell needs no connection object. The `connect()` form is right for scripts that need persistence.
 
 <!--
 DuckDB's Python API is intentionally lighter than psycopg's. There is no cursor concept; queries return a result object that you `.show()`, `.fetchall()`, `.df()` (pandas), or `.arrow()` (Arrow).
@@ -381,7 +392,9 @@ DuckDB intentionally drops the OLTP machinery in exchange for much faster scan-h
 
 ---
 
-# A Working Notebook Cell
+# Explore, Aggregate, Visualize
+
+<div style="font-size:0.85em">
 
 ```python
 import duckdb
@@ -406,6 +419,8 @@ trips = duckdb.sql("""
 # Cell 3 — visualize
 trips.plot.line(x="day", y="trips", figsize=(10, 4))
 ```
+
+</div>
 
 SQL does the aggregation and pandas paints, all against one dataset.
 
@@ -508,7 +523,7 @@ Sections 1-3:
 
 - Released after class today as `practice-exams/exam1.md` in the course repo
 - Solutions in `practice-exams/exam1-solutions.md`
-- Work it solo first; office hours Mon-Tue for questions
+- Work it solo first; office hours Tuesday for questions
 - Exam 1 on **Wed Oct 14**, 50 min, in this room
 
 </div>
@@ -547,7 +562,7 @@ Four exercises in your project repo:
 3. Repeat one of your Project 1 queries against the raw files using DuckDB. Compare results.
 4. Work the Exam 1 practice packet without looking at solutions; check yourself afterward.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Mon Oct 12.
+This is an exercise.
 
 ---
 

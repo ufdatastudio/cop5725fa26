@@ -196,21 +196,15 @@ Vocabulary note: most texts call the diagram element an "entity," even though it
 
 # Attribute Kinds
 
-```mermaid
-graph LR
-  A["Attribute"] --> S["Simple<br/>(int, string)"]
-  A --> C["Composite<br/>(Name → First+Last)"]
-  A --> D["Derived<br/>(age from DOB)"]
-  A --> M["Multi-valued<br/>(phone numbers)"]
-  classDef root fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
-  classDef simple fill:#e8f5e9,stroke:#388e3c
-  classDef tricky fill:#fff3e0,stroke:#e65100
-  class A root
-  class S simple
-  class C,D,M tricky
-```
+![w:880px](images/attribute-kinds.svg)
 
-Four kinds of attribute (Textbook §4.1.2, p. 126). The first is easy. The other three force design choices.
+Four kinds of attribute. The first is easy. The other three force design choices.
+
+<div class="small">
+
+The Textbook's E/R model keeps attributes primitive and treats struct-valued (composite) and set-valued (multi-valued) attributes as variations (Textbook §4.1.2, p. 126–127). Derived attributes come from the wider ER tradition.
+
+</div>
 
 <!--
 Composite attributes invite the question "should I split this in the schema?" Derived attributes invite "should I store this or compute it?" Multi-valued attributes invite "is this really one attribute, or a separate entity?"
@@ -256,7 +250,7 @@ graph TB
   class SID key
 ```
 
-The green attribute is the **primary key**. By convention we underline it on paper, color it on slides.
+The green attribute is the **primary key**. By convention we underline it on paper, color it on slides (Textbook §4.3.2, p. 149).
 
 ---
 
@@ -331,6 +325,12 @@ The answer: split it if you want to attach more attributes to a phone (type, pri
 <!-- _class: lead -->
 
 # Part 2: Relationships and Cardinality
+
+<div class="caption">
+
+Cardinality of a relationship: how many entities on one side can pair with each entity on the other. Day 4 used the same word for |R|, a relation's tuple count.
+
+</div>
 
 ---
 
@@ -620,7 +620,7 @@ Two entity sets that share most of their attributes can be modeled as **subclass
 - `Account` → `Checking`, `Savings`
 - `Vehicle` → `Car`, `Truck`, `Motorcycle`
 
-The triangle is the ISA relationship.
+The triangle is the ISA relationship, read "is a": every Student is a Person.
 
 Subclasses *inherit* the parent's attributes and may add their own.
 
@@ -969,7 +969,7 @@ Three problems on the handout in this folder:
 2. Cardinality identification: ten scenarios, classify each as 1:1, 1:N, or M:N.
 3. The weak entity question: identify the weak entities in a given e-commerce schema.
 
-Answers due in your repo before 8:30 AM Fri Sep 4.
+This is an exercise.
 
 ---
 
@@ -978,6 +978,8 @@ Answers due in your repo before 8:30 AM Fri Sep 4.
 What is on your mind?
 
 Today we drew. Friday we translate.
+
+Project 1 releases today. Project 0 setup remains due Fri Sep 4.
 
 <!--
 Common questions to expect: "When is a multi-valued attribute really a separate entity?" (when it has its own attributes), "Can a relationship participate in another relationship?" (yes — Chen calls these aggregate relationships, used rarely), "Why bother with Chen when crow's foot is industry standard?" (the textbook uses Chen; Chen's diamonds force explicit relationship modeling; crow's foot conflates entities with their attributes).

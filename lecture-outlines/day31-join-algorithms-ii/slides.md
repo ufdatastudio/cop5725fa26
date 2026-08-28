@@ -86,7 +86,7 @@ Reference: Textbook §§15.4-15.5, pp. 723-738; PostgreSQL docs [Statistics Used
 
 # The Sort-Merge Idea
 
-If both relations were **sorted on the join key**, we could merge them in one pass, just as external sort merges sorted runs (Day 29).
+If both relations were **sorted on the join key**, we could merge them in one pass, just as external sort merges sorted runs (Day 29; Textbook §15.4.6, p. 728).
 
 ```python
 sort R on join key
@@ -115,7 +115,13 @@ Phase 2: sort S                  → ~2 B_S reads + writes
 Phase 3: merge in lockstep       → B_R + B_S reads
 ```
 
-**Total cost:** $\approx 3(B_R + B_S)$ page reads.
+**Total cost:** $\approx 3(B_R + B_S)$ page reads (Textbook §15.4.8, p. 729).
+
+<div class="small">
+
+Monday's cost variables carry over: $B_R$ and $B_S$ count the pages of R and S, and $M$ is the buffer pages available.
+
+</div>
 
 For $B_R = 1000$, $B_S = 5000$:
 $$3 \cdot 6000 = 18{,}000 \text{ page reads}$$
@@ -126,22 +132,29 @@ Compare to block NL's **106,000** (Monday) on the same inputs.
 
 # When Sort-Merge Wins
 
-```mermaid
-graph TB
-  Cond["Conditions"]
-  Cond --> S1["Both sides<br/>already sorted"]
-  Cond --> S2["Large M makes<br/>two-pass sort cheap"]
-  Cond --> S3["Result needs to be<br/>sorted anyway"]
-  S1 --> W["Sort-merge wins"]
-  S2 --> W
-  S3 --> W
-  classDef root fill:#e3f2fd,stroke:#1976d2
-  classDef cond fill:#fff3e0,stroke:#e65100
-  classDef win fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
-  class Cond root
-  class S1,S2,S3 cond
-  class W win
-```
+<div class="columns-3">
+<div>
+
+### Sorted inputs
+
+Both sides arrive already sorted on the join key.
+
+</div>
+<div>
+
+### Large M
+
+A big memory budget makes the two-pass sort cheap.
+
+</div>
+<div>
+
+### Sorted output
+
+The result needs to be sorted anyway.
+
+</div>
+</div>
 
 PostgreSQL picks sort-merge when:
 - An index already provides one side sorted (free sort)
@@ -180,7 +193,10 @@ Repeated keys make sort-merge's cost slightly worse than the formula suggests; i
 
 # The Hash Join Idea
 
-If we had a **hash table mapping S.y → S tuples**, we could probe it once per R tuple.
+If we had a **hash table mapping S.y → S tuples**, we could probe it once per R tuple (Textbook §15.2.3, p. 715).
+
+<div class="columns">
+<div>
 
 ```python
 # Build phase
@@ -194,24 +210,40 @@ for r in R:
         yield (r, s)
 ```
 
-```mermaid
-graph LR
-  S["S (build side)"]
-  HT["In-memory<br/>hash table"]
-  R["R (probe side)"]
-  M["Matches"]
-  S --> HT
-  R -.->|"probe"| HT
-  HT --> M
-  classDef rel fill:#e3f2fd,stroke:#1976d2
-  classDef ht fill:#fff3e0,stroke:#e65100,stroke-width:3px
-  classDef out fill:#e8f5e9,stroke:#388e3c
-  class R,S rel
-  class HT ht
-  class M out
-```
-
 **Cost (when build fits in memory):** $B_R + B_S$ page reads.
+
+</div>
+<div>
+
+Build: hash table on S.y, with h(y) = y mod 2
+
+<table>
+<thead><tr><th>bucket</th><th>S tuples</th></tr></thead>
+<tbody>
+<tr><td>0</td><td style="background:#90CAF9">(2, Bob)</td></tr>
+<tr><td>1</td><td style="background:#90CAF9">(1, Ada) (3, Chia)</td></tr>
+</tbody>
+</table>
+
+Probe: one bucket per R tuple
+
+<table>
+<thead><tr><th>R tuple</th><th>bucket</th><th>output</th></tr></thead>
+<tbody>
+<tr><td style="background:#F8BBD0">(1, COP5725)</td><td>1</td><td style="background:#E1BEE7">(1, Ada, COP5725)</td></tr>
+<tr><td style="background:#F8BBD0">(3, COP5725)</td><td>1</td><td style="background:#E1BEE7">(3, Chia, COP5725)</td></tr>
+<tr><td style="background:#F8BBD0">(6, CDA5155)</td><td>0</td><td>no match</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+Blue tuples fill the hash table built from S; each pink R tuple probes exactly one bucket, and purple marks the emitted pairs.
+
+</div>
+
+</div>
+</div>
 
 ---
 
@@ -290,7 +322,7 @@ for i in range(k):
         probe hash table for matches
 ```
 
-Tuples with the same join key always end up in the same partition pair, so joining partition pairs covers all matches.
+Tuples with the same join key always end up in the same partition pair, so joining partition pairs covers all matches (Textbook §15.5.5, p. 734).
 
 ---
 
@@ -353,7 +385,7 @@ The cost matches sort-merge with **no need to maintain sort order** at the end. 
 
 # Keeping One Partition in Memory
 
-In grace hash, **every** partition gets written to disk. But the first partition could just stay in memory while we partition.
+In grace hash, **every** partition gets written to disk. But the first partition could just stay in memory while we partition (Textbook §15.5.6, p. 735).
 
 ```python
 # Hybrid: keep partition 0 in memory
@@ -536,7 +568,7 @@ Two exercises:
 1. Run a 3-way join in your project's database. Capture `EXPLAIN (ANALYZE, BUFFERS)` output and label each join algorithm.
 2. Try the same join with `SET enable_hashjoin = off` and capture the plan. Which is faster on your data?
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Fri Nov 6.
+This is an exercise.
 
 ---
 

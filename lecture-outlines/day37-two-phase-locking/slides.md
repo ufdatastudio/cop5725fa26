@@ -105,14 +105,14 @@ graph TB
 
 **Shared lock (S):** multiple transactions can hold it simultaneously. Many readers in parallel.
 
-**Exclusive lock (X):** only one transaction. No other reader or writer.
+**Exclusive lock (X):** only one transaction. No other reader or writer (Textbook §18.4.1, p. 905).
 
 | You want → | with S held | with X held |
 |------------|-------------|-------------|
 | **S** | OK | wait |
 | **X** | wait | wait |
 
-The compatibility matrix. Two readers don't block each other. A writer blocks everyone.
+The compatibility matrix (Textbook §18.4.2, p. 907). Two readers don't block each other. A writer blocks everyone.
 
 ---
 
@@ -120,10 +120,15 @@ The compatibility matrix. Two readers don't block each other. A writer blocks ev
 
 Suppose T1 releases its lock on A as soon as it finishes reading, and T2 writes both A and B in the gap:
 
-```
-T1: lock-S(A), r(A), unlock(A)                                lock-X(B), w(B)
-T2:                    lock-X(A), w(A), lock-X(B), w(B), commit, unlock
-```
+<table>
+<thead><tr><th></th><th>t1</th><th>t2</th><th>t3</th><th>t4</th><th>t5</th></tr></thead>
+<tbody>
+<tr><td>T1</td><td style="background:#F8BBD0">lock-S(A), r(A)</td><td style="background:#F8BBD0">unlock(A)</td><td></td><td></td><td style="background:#F8BBD0">lock-X(B), w(B)</td></tr>
+<tr><td>T2</td><td></td><td></td><td style="background:#90CAF9">lock-X(A), w(A)</td><td style="background:#90CAF9">lock-X(B), w(B), commit, unlock</td><td></td></tr>
+</tbody>
+</table>
+
+Pink cells are T1's operations and blue cells are T2's; time runs left to right.
 
 The conflict graph has an edge T1 → T2 on A (T1 read before T2 wrote) and an edge T2 → T1 on B (T2 wrote before T1 wrote). That cycle means the schedule matches **no** serial order.
 
@@ -198,18 +203,25 @@ PostgreSQL uses a strict-2PL-like mechanism alongside MVCC.
 
 ---
 
-# A Worked Example
+# Strict 2PL: Example
 
 Two transactions:
 - T1: read A, write B
 - T2: read A, write A
 
-```
-T1: lock-S(A), r(A), lock-X(B), w(B), COMMIT, release S(A), release X(B)
-T2:               lock-X(A) [wait for T1 to release S(A)]
-T2:                                  ... T1 commits, T2 wakes up
-T2:                                  lock-X(A), r(A), w(A), COMMIT, release
-```
+<table>
+<thead><tr><th></th><th>t1</th><th>t2</th><th>t3</th><th>t4</th></tr></thead>
+<tbody>
+<tr><td>T1</td><td style="background:#F8BBD0">lock-S(A), r(A)</td><td style="background:#F8BBD0">lock-X(B), w(B)</td><td style="background:#F8BBD0">COMMIT, release all</td><td></td></tr>
+<tr><td>T2</td><td></td><td style="background:#FFE082">lock-X(A) → blocked</td><td style="background:#FFE082">blocked on S(A)</td><td style="background:#90CAF9">lock-X(A), r(A), w(A), COMMIT, release</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+Pink cells are T1's operations and blue cells are T2's; amber marks the time T2 spends blocked on A.
+
+</div>
 
 T2 was blocked until T1 finished. The final result is equivalent to running T1, then T2.
 
@@ -337,19 +349,22 @@ In practice, most deadlocks arise on hot-spot tables (queues, counters, sequence
 
 ```mermaid
 graph TB
-  L["Lock granularity"]
-  L --> Table["Table-level"]
-  L --> Page["Page-level"]
-  L --> Row["Row-level"]
-  L --> Pred["Predicate (range)"]
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+  Table["Table-level"]
+  Page["Page-level"]
+  Row["Row-level"]
+  Pred["Predicate (range)"]
   classDef opt fill:#fff3e0,stroke:#e65100
-  class L root
   class Table,Page,Row,Pred opt
 ```
 
 **Coarse** locks (table-level) cost little bookkeeping and cause high contention.
 **Fine** locks (row-level) cost more bookkeeping and cause low contention.
+
+<div class="small">
+
+Contention is transactions waiting on each other's locks for the same items.
+
+</div>
 
 PostgreSQL uses **row-level** locks by default plus **table-level** locks for DDL. It does *not* use page-level locks the way SQL Server does for some operations.
 
@@ -473,7 +488,7 @@ The Project 3 deliverable encouraged you to look at locks at least once. The que
 </div>
 </div>
 
-Final Project releases Monday Nov 30. Capstone is graded heavily; start thinking about scope now.
+The Final Project released Mon Nov 16 and is due Wed Dec 9. The capstone is graded heavily; start thinking about scope now.
 
 ---
 
@@ -500,7 +515,7 @@ graph LR
   Today["Today<br/>Fri Nov 20"] --> T["Thanksgiving<br/>Nov 23-28<br/>no class"]
   T --> M["Mon Nov 30<br/>MVCC, Snapshot Iso"]
   M --> W["Wed Dec 2<br/>Recovery + Distributed"]
-  W --> F["Fri Dec 5 onward<br/>Finals week<br/>Final Exam, Final Project"]
+  W --> F["Finals week<br/>Dec 5-11<br/>Final Exam Fri Dec 11"]
   classDef now fill:#fff3e0,stroke:#e65100,stroke-width:3px
   classDef holiday fill:#f3e5f5,stroke:#7b1fa2
   classDef next fill:#e3f2fd,stroke:#1976d2
@@ -522,7 +537,7 @@ Two light exercises in your project repo:
 - Open two psql sessions. In one, run `BEGIN; UPDATE student SET gpa = gpa + 0.01 WHERE sid = 1;`. In the other, run `UPDATE student SET gpa = gpa + 0.02 WHERE sid = 1;`. Observe the second blocks. Commit the first. Observe the second proceeds.
 - While the lock waits, run the `pg_locks` query and capture the output.
 
-Push to your `cop5725fa26-project` repo before 8:30 AM Mon Nov 30.
+This is an exercise.
 
 ---
 
@@ -530,7 +545,7 @@ Push to your `cop5725fa26-project` repo before 8:30 AM Mon Nov 30.
 
 What is on your mind?
 
-Final Project releases Mon Nov 30. Have a good Thanksgiving.
+Final Project due Wed Dec 9. Have a good Thanksgiving.
 
 <!--
 Common Day 37 questions: "Does PostgreSQL really use 2PL?" (Yes for some operations; MVCC handles most read-write conflicts. The whole story is a hybrid covered on Day 38.) "How do I know if a query is waiting on a lock?" (pg_stat_activity.wait_event_type = 'Lock'.) "Can I avoid locks entirely?" (No, but MVCC means most reads don't take row locks at all — Day 38 explains.)

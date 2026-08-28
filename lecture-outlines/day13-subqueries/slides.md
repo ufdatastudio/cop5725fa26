@@ -86,21 +86,16 @@ Reference: PostgreSQL docs [Ch. 7.2.1.3 Subqueries](https://www.postgresql.org/d
 
 ```mermaid
 graph TB
-  S["Subquery"] --> SC["Scalar<br/>(one value)"]
-  S --> T["Table<br/>(used in FROM)"]
-  S --> C["Correlated<br/>(refs outer row)"]
-  SC --> SCEx["...= (SELECT max(...) FROM ...)"]
-  T --> TEx["FROM (SELECT ...) AS t"]
-  C --> CEx["WHERE EXISTS (SELECT 1 WHERE outer.x = ...)"]
-  classDef root fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+  SC["Scalar<br/>(one value)"] --> SCEx["...= (SELECT max(...) FROM ...)"]
+  T["Table<br/>(used in FROM)"] --> TEx["FROM (SELECT ...) AS t"]
+  C["Correlated<br/>(refs outer row)"] --> CEx["WHERE EXISTS (SELECT 1 WHERE outer.x = ...)"]
   classDef kind fill:#fff3e0,stroke:#e65100,stroke-width:2px
   classDef ex fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1px
-  class S root
   class SC,T,C kind
   class SCEx,TEx,CEx ex
 ```
 
-Each form appears in a different location and carries its own pitfalls.
+Each form appears in a different location and carries its own pitfalls (Textbook §6.3, p. 268).
 
 ---
 
@@ -118,7 +113,7 @@ FROM   student
 WHERE  gpa > (SELECT avg(gpa) FROM student);
 ```
 
-The inner query must return **exactly one row, one column**. PostgreSQL raises an error at runtime if it returns more than one row.
+The inner query must return **exactly one row, one column** (Textbook §6.3.1, p. 269). PostgreSQL raises an error at runtime if it returns more than one row.
 
 ```sql
 -- "Each student plus the campus average"
@@ -157,7 +152,7 @@ JOIN (
 WHERE  ec.course_count >= 3;
 ```
 
-A `SELECT` inside `FROM` is just another table to the outer query. **PostgreSQL requires an alias** for the derived table (here, `ec`).
+A `SELECT` inside `FROM` is just another table to the outer query (Textbook §6.3.5, p. 274). **PostgreSQL requires an alias** for the derived table (here, `ec`).
 
 The pre-aggregate-then-join pattern is one of the most useful shapes in SQL. It avoids the join multiplication trap from Day 11.
 
@@ -181,12 +176,75 @@ WHERE  s.gpa > (
 );
 ```
 
-The inner query depends on the outer row. The optimizer re-evaluates it (conceptually) for each outer row.
+The inner query depends on the outer row (Textbook §6.3.4, p. 273). The optimizer re-evaluates it (conceptually) for each outer row.
 
 A correlated subquery is the SQL way to say "for each row, look up something specific to it."
 
 <!--
 Correlated subqueries are how most students first solve "compare each row to its group." It's almost always cleaner with a window function (Friday). Showing the correlated form now sets up the comparison.
+-->
+
+---
+
+# Correlated Evaluation, Row by Row
+
+<div class="columns">
+<div>
+
+**student** — outer row in hand: Ada
+
+<table>
+<thead><tr><th>name</th><th>dname</th><th>gpa</th></tr></thead>
+<tbody>
+<tr style="background:#F8BBD0"><td>Ada</td><td>CS</td><td>3.90</td></tr>
+<tr style="background:#FFE082"><td>Bose</td><td>CS</td><td>3.10</td></tr>
+<tr style="background:#FFE082"><td>Chen</td><td>CS</td><td>3.50</td></tr>
+<tr><td>Devi</td><td>EE</td><td>3.80</td></tr>
+<tr><td>Evan</td><td>EE</td><td>2.90</td></tr>
+<tr><td>Fei</td><td>EE</td><td>3.40</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+For Ada, the inner query reads every row with her `dname`, her own row included: avg = (3.90 + 3.10 + 3.50) / 3 = 3.50.
+
+</div>
+
+</div>
+<div>
+
+**one test per outer row**
+
+<table>
+<thead><tr><th>name</th><th>gpa</th><th>dept avg</th><th>gpa &gt; avg?</th></tr></thead>
+<tbody>
+<tr style="background:#E8F5E9"><td>Ada</td><td>3.90</td><td>3.50</td><td>yes</td></tr>
+<tr><td>Bose</td><td>3.10</td><td>3.50</td><td>no</td></tr>
+<tr><td>Chen</td><td>3.50</td><td>3.50</td><td>no</td></tr>
+<tr style="background:#E8F5E9"><td>Devi</td><td>3.80</td><td>3.37</td><td>yes</td></tr>
+<tr><td>Evan</td><td>2.90</td><td>3.37</td><td>no</td></tr>
+<tr style="background:#E8F5E9"><td>Fei</td><td>3.40</td><td>3.37</td><td>yes</td></tr>
+</tbody>
+</table>
+
+<div class="small">
+
+The inner query reruns for each outer row, so every student is tested against their own department's average (EE's 3.37 is rounded).
+
+</div>
+
+</div>
+</div>
+
+<div class="small">
+
+Pink is the outer row in hand, amber is what its inner query reads, and green is what the query returns.
+
+</div>
+
+<!--
+Walk Ada's test out loud, then point at the right table where the department average changes at Devi's row — the inner query has been recomputed with dname = 'EE'. Chen is the strictness catch: 3.50 > 3.50 is false. Six outer rows means six inner evaluations; that cost sets up the rewriting section and Friday's window functions.
 -->
 
 ---
@@ -514,6 +572,12 @@ WHERE  e.grade IS NOT NULL;
 
 PostgreSQL's optimizer often rewrites correlated EXISTS into a semi-join, but not always. Check `EXPLAIN` when performance matters.
 
+<div class="small">
+
+A semi-join returns each outer row that has at least one match in the inner table, without duplicating it per match (Day 11).
+
+</div>
+
 ---
 
 # Wrap-up
@@ -544,7 +608,7 @@ Five queries:
 4. Departments where every faculty member earns above 80,000 (ALL).
 5. Students not enrolled in any course this term (NOT EXISTS).
 
-Answers due in your repo before 8:30 AM Wed Sep 23.
+This is an exercise.
 
 ---
 

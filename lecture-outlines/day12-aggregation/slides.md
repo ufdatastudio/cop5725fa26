@@ -144,17 +144,56 @@ GROUP BY major
 ORDER BY n DESC;
 ```
 
-```mermaid
-graph LR
-  R["9 student rows"] --> G["Group by major"]
-  G --> M["2 groups<br/>(one per major)"]
-  M --> A["Aggregate<br/>each group"]
-  A --> O["2 result rows"]
-  classDef rows fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-  classDef proc fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  class R,M,O rows
-  class G,A proc
-```
+<div class="columns-3">
+<div class="small">
+
+**CS group**
+
+<table>
+<thead><tr><th>sid</th><th>name</th><th>gpa</th></tr></thead>
+<tbody>
+<tr style="background:#FFE082"><td>1</td><td>Ada</td><td>3.9</td></tr>
+<tr style="background:#FFE082"><td>2</td><td>Bose</td><td>3.4</td></tr>
+<tr style="background:#FFE082"><td>3</td><td>Chen</td><td>4.0</td></tr>
+<tr style="background:#FFE082"><td>4</td><td>Devi</td><td>2.8</td></tr>
+<tr style="background:#FFE082"><td>5</td><td>Evan</td><td>3.6</td></tr>
+<tr style="background:#FFE082"><td>6</td><td>Fei</td><td>3.1</td></tr>
+</tbody>
+</table>
+
+</div>
+<div class="small">
+
+**EE group**
+
+<table>
+<thead><tr><th>sid</th><th>name</th><th>gpa</th></tr></thead>
+<tbody>
+<tr style="background:#A5D6A7"><td>7</td><td>Gita</td><td>3.8</td></tr>
+<tr style="background:#A5D6A7"><td>8</td><td>Hari</td><td>2.9</td></tr>
+<tr style="background:#A5D6A7"><td>9</td><td>Ivy</td><td><strong>NULL</strong></td></tr>
+</tbody>
+</table>
+
+`GROUP BY major` splits the nine student rows into these two groups.
+
+</div>
+<div class="small">
+
+**result**
+
+<table>
+<thead><tr><th>major</th><th>n</th><th>mean_gpa</th></tr></thead>
+<tbody>
+<tr style="background:#FFE082"><td>CS</td><td>6</td><td>3.466…</td></tr>
+<tr style="background:#A5D6A7"><td>EE</td><td>3</td><td>3.35</td></tr>
+</tbody>
+</table>
+
+Each group collapses into the result row of its color. EE's `mean_gpa` averages two values because `avg` skips Ivy's NULL.
+
+</div>
+</div>
 
 Each output row corresponds to one group.
 
@@ -340,16 +379,30 @@ GROUP BY ROLLUP (major, graduation_year)
 ORDER BY major NULLS LAST, year NULLS LAST;
 ```
 
-| major | year | n |
-|-------|------|---|
-| CS | 2027 | 22 |
-| CS | 2028 | 18 |
-| CS | all years | 40 |
-| EE | 2027 | 12 |
-| EE | all years | 12 |
-| TOTAL | all years | 52 |
+<div class="columns">
+<div class="small">
+
+<table>
+<thead><tr><th>major</th><th>year</th><th>n</th></tr></thead>
+<tbody>
+<tr><td>CS</td><td>2027</td><td>22</td></tr>
+<tr><td>CS</td><td>2028</td><td>18</td></tr>
+<tr style="background:#FFE082"><td>CS</td><td>all years</td><td>40</td></tr>
+<tr><td>EE</td><td>2027</td><td>12</td></tr>
+<tr style="background:#FFE082"><td>EE</td><td>all years</td><td>12</td></tr>
+<tr style="background:#A5D6A7"><td>TOTAL</td><td>all years</td><td>52</td></tr>
+</tbody>
+</table>
+
+</div>
+<div>
+
+The plain rows are the ordinary (major, year) groups; the amber rows are the per-major subtotals ROLLUP adds, and the green row is the grand total.
 
 This is the subtotal and grand total form that reporting queries use.
+
+</div>
+</div>
 
 <!--
 ROLLUP and CUBE are mostly used by analysts; OLTP workloads rarely reach for them. But knowing they exist lets you replace 10 separate queries with one — useful when building dashboards.
@@ -442,7 +495,7 @@ Or a CTE (Day 14 preview). The optimizer collapses these into the same plan.
 
 ---
 
-# A Worked Composite Query
+# A Composite Query
 
 > "Among the majors with at least 5 students, show the average GPA, the number of honors students (GPA ≥ 3.5), and rank by average descending."
 
@@ -541,7 +594,7 @@ Six queries on the university schema:
 5. List majors where every enrolled student has GPA above 3.0.
 6. Find the median GPA in each major (hint: use percentile_cont).
 
-Answers due in your repo before 8:30 AM Mon Sep 21.
+This is an exercise.
 
 ---
 
