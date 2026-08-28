@@ -4,7 +4,7 @@ layout: default
 
 # Connecting to CISE PostgreSQL
 
-The UF Computer and Information Science and Engineering (CISE) department maintains a shared PostgreSQL server for student use. This guide walks through account registration, network access, and basic usage.
+The UF Computer and Information Science and Engineering (CISE) department maintains a shared PostgreSQL server for student use.
 
 ## Contents
 {: .no_toc}
@@ -25,14 +25,7 @@ To use CISE PostgreSQL, you must first register for an account.
 
 ### Password Requirements
 
-When prompted to set a password, it must meet these criteria:
-
-- 7 or 8 characters long (only the first 8 are used)
-- Contain at least one letter
-- Contain at least 2 special characters or digits, with at least 1 being non-alphanumeric
-- First character cannot be a dash (`-`)
-- Cannot contain your username
-- Avoid common 1-character replacements (e.g., `i` → `1`, `a` → `@`)
+Passwords must be 7–8 characters, include at least one letter, at least one non-alphanumeric character, and cannot start with a dash or contain your username.
 
 ---
 
@@ -64,17 +57,13 @@ The CISE PostgreSQL server only accepts connections from machines on the `*.cise
 
 #### SSH Tunnel Setup
 
-Set up an SSH tunnel through one of the remote-accessible CISE machines (sun01, storm, or thunder):
+Create an SSH tunnel through sun01, storm, or thunder:
 
 ```bash
 ssh -L 5432:postgres.cise.ufl.edu:5432 your_username@sun01.cise.ufl.edu
 ```
 
-This command:
-1. Connects you to `sun01.cise.ufl.edu` via SSH
-2. Creates a local tunnel that forwards port 5432 on your laptop to port 5432 on the CISE PostgreSQL server
-
-Keep this SSH connection open while you use PostgreSQL. In a separate terminal, connect as described in the next section.
+This forwards local port 5432 to the CISE PostgreSQL server. Keep the SSH connection open in a terminal while you connect to PostgreSQL in another.
 
 ---
 
@@ -82,7 +71,7 @@ Keep this SSH connection open while you use PostgreSQL. In a separate terminal, 
 
 ### Connecting with psql
 
-The `psql` client is the primary command-line tool for PostgreSQL. It comes built-in on most Linux and macOS systems. On Windows, install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/windows/) to get `psql`.
+`psql` is the PostgreSQL command-line client. On Linux and macOS it is usually installed; on Windows, install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/windows/).
 
 #### Direct Connection (from CISE lab machine)
 
@@ -92,13 +81,11 @@ psql -h postgres.cise.ufl.edu -U your_username -d your_username
 
 #### Connection via SSH Tunnel (from your laptop)
 
-After setting up the SSH tunnel as described above, use:
+Once your SSH tunnel is set up, use:
 
 ```bash
 psql -h localhost -U your_username -d your_username
 ```
-
-You will be prompted for your password. Enter the password you set during registration.
 
 #### Connection Strings (for code or tools)
 
@@ -116,8 +103,6 @@ postgresql://your_username:your_password@localhost:5432/your_username
 
 ### Creating Tables
 
-Once connected in `psql`, you can create tables with standard SQL:
-
 ```sql
 CREATE TABLE students (
     id SERIAL PRIMARY KEY,
@@ -125,8 +110,6 @@ CREATE TABLE students (
     gpa NUMERIC(3, 2)
 );
 ```
-
-The prompt will show `your_username=#` when you are connected as a superuser. Tables you create are owned by you and can be queried only if you grant permissions to other users.
 
 ### Inserting Data
 
@@ -167,13 +150,13 @@ SELECT count(*) FROM students;
 
 ### Exporting Query Results
 
-To save query results to a file from within `psql`, use the `\copy` command:
+Use `\copy` to save results:
 
 ```sql
 \copy (SELECT * FROM students) TO '/path/to/output.csv' WITH CSV HEADER;
 ```
 
-This exports with a header row. For other formats:
+Other formats:
 
 ```sql
 -- Tab-separated values
@@ -195,9 +178,19 @@ Or pipe through other tools:
 psql -h postgres.cise.ufl.edu -U your_username -d your_username -c "SELECT * FROM students;" | head -20
 ```
 
+### Alternative: GUI Clients
+
+If you prefer a graphical interface, popular options include:
+
+- [pgAdmin](https://www.pgadmin.org/) — Free, web-based; works well with remote servers
+- [DBeaver](https://dbeaver.io/) — Free and commercial versions; powerful query tools
+- [DataGrip](https://www.jetbrains.com/datagrip/) — Paid; integrates with JetBrains IDEs
+
+All support SSH tunneling. For this course, `psql` is sufficient and will be used in examples.
+
 ### Useful psql Commands
 
-Once inside `psql`, these commands are handy (they start with a backslash):
+Common commands in `psql` (prefixed with backslash):
 
 ```
 \dt                 -- List all tables
@@ -253,7 +246,7 @@ Keep it open, then connect in a separate terminal.
 
 ### Connection Timeout
 
-If you are off-campus and see a timeout, your SSH tunnel may not be running. Start it in a separate terminal and try again.
+If the connection times out, check that your SSH tunnel is running in another terminal.
 
 ### Database Name Confusion
 
