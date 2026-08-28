@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 470" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+<defs>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ffb300" flood-opacity="0.9"/>
+  </filter>
+  <marker id="lead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#ff6f00"/>
+  </marker>
+</defs>
+<rect width="1120" height="470" fill="#ffffff"/>
+  <line x1="300" y1="255" x2="120" y2="120" stroke="#4E342E" stroke-width="2.5"/>
+  <line x1="300" y1="255" x2="330" y2="115" stroke="#4E342E" stroke-width="2.5"/>
+  <line x1="300" y1="255" x2="135" y2="340" stroke="#4E342E" stroke-width="2.5"/>
+  <line x1="300" y1="255" x2="270" y2="400" stroke="#4E342E" stroke-width="2.5"/>
+  <g><rect x="225" y="229" width="150" height="52" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/><text x="300" y="262" font-size="19" fill="#0d47a1" text-anchor="middle">Student</text></g>
+  <g filter="url(#glow)"><ellipse cx="120" cy="120" rx="56" ry="23" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3.2"/><text x="120" y="126" font-size="16.5" fill="#4a148c" text-anchor="middle">student_id</text></g>
+  <g filter="url(#glow)"><ellipse cx="330" cy="115" rx="56" ry="23" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3.2"/><text x="330" y="121" font-size="16.5" fill="#4a148c" text-anchor="middle">name</text></g>
+  <g filter="url(#glow)"><ellipse cx="135" cy="340" rx="56" ry="23" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3.2"/><text x="135" y="346" font-size="16.5" fill="#4a148c" text-anchor="middle">major</text></g>
+  <g filter="url(#glow)"><ellipse cx="270" cy="400" rx="56" ry="23" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3.2"/><text x="270" y="406" font-size="16.5" fill="#4a148c" text-anchor="middle">gpa</text></g>
+  <g><line x1="660" y1="112" x2="390" y2="112" stroke="#ff6f00" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#lead)"/><rect x="660" y="80" width="430" height="120" rx="10" fill="#fff3e0" stroke="#ff6f00" stroke-width="1.5"/><rect x="660" y="80" width="6" height="120" rx="3" fill="#ff6f00"/><rect x="676" y="67" width="92" height="26" rx="13" fill="#ff6f00"/><text x="722" y="85" font-size="13.5" fill="#ffffff" text-anchor="middle">Step 2 of 5</text><text x="680" y="118" font-size="19" fill="#263238">Attach what you record</text><text x="680" y="142" font-size="15.5" fill="#37474f">Ovals hold the facts we keep per student.</text><text x="680" y="166" font-size="15.5" fill="#37474f">No oval is special yet.</text><text x="680" y="188" font-size="13.5" fill="#607D8B">Textbook §4.1.2, p. 126</text></g>
+</svg>

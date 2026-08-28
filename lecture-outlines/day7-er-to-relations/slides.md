@@ -513,6 +513,36 @@ Five entities, one weak, five relationships, one relationship attribute. We tran
 
 ---
 
+# The Translation, Animated
+
+<div class="build">
+
+![w:1050](images/translation-build-1.svg)
+
+::: appear
+![w:1050](images/translation-build-2.svg)
+:::
+
+::: appear
+![w:1050](images/translation-build-3.svg)
+:::
+
+::: appear
+![w:1050](images/translation-build-4.svg)
+:::
+
+::: appear
+![w:1050](images/translation-build-5.svg)
+:::
+
+</div>
+
+<!--
+The whole lecture in one figure before the rule-by-rule walk. Each right-arrow applies one rule: the amber wash marks the diagram region being translated, and the bright SQL lines are what that rule just produced. Frames: strong entities (§4.5.1), the two 1:N foreign keys (§4.5.2-4.5.3), the weak Section with its composite key plus the embedded teaches FK (§4.5.4), the M:N enrollment junction table, then the constraint polish. The detailed rules follow on the next slides; return to this slide at the end if time allows.
+-->
+
+---
+
 # Step 1: Strong Entities
 
 ```sql

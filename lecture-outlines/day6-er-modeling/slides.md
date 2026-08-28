@@ -212,112 +212,46 @@ Composite attributes invite the question "should I split this in the schema?" De
 
 ---
 
-# Student Entity, Step 1
+# Building the Student Entity
 
-Just the box.
+<div class="build">
 
-```mermaid
-graph TB
-  S["Student"]
-  classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  class S entity
-```
+![w:880](images/student-entity-build-1.svg)
 
-We know we have students. We do not yet know what we record about them.
+::: appear
+![w:880](images/student-entity-build-2.svg)
+:::
 
-<!--
-Hold this slide briefly. The next slide adds attributes. The progressive build is intentional — students should see that a useful diagram emerges from a sequence of small decisions, not in one heroic moment.
--->
+::: appear
+![w:880](images/student-entity-build-3.svg)
+:::
 
----
+::: appear
+![w:880](images/student-entity-build-4.svg)
+:::
 
-# Student Entity, Step 2
+::: appear
+![w:880](images/student-entity-build-5.svg)
+:::
 
-Add the obvious simple attributes.
+</div>
 
-```mermaid
-graph TB
-  S["Student"]
-  S --- SID(("student_id"))
-  S --- Name(("name"))
-  S --- Major(("major"))
-  S --- GPA(("gpa"))
-  classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-  classDef key fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
-  class S entity
-  class Name,Major,GPA attr
-  class SID key
-```
-
-The green attribute is the **primary key**. By convention we underline it on paper, color it on slides (Textbook §4.3.2, p. 149).
-
----
-
-# Student Entity, Step 3
-
-Replace `name` with a composite. Add a derived attribute.
-
-```mermaid
-graph TB
-  S["Student"]
-  S --- SID(("student_id"))
-  S --- N(("name"))
-  N --- F(("first"))
-  N --- L(("last"))
-  S --- DOB(("dob"))
-  S --- Age(("age (derived)"))
-  S --- Major(("major"))
-  S --- GPA(("gpa"))
-  classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-  classDef key fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
-  classDef derived fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray:4 3
-  class S entity
-  class N,F,L,Major,GPA,DOB attr
-  class SID key
-  class Age derived
-```
-
-The dashed oval is the convention for a **derived** attribute.
-
-<!--
-Derived attributes raise the storage-vs-compute question. We don't decide now; Day 7 (translation) is when we choose. The ER diagram captures the design intent.
--->
-
----
-
-# Student Entity, Step 4
-
-Allow many phone numbers.
-
-```mermaid
-graph TB
-  S["Student"]
-  S --- SID(("student_id"))
-  S --- N(("name"))
-  S --- Phone(("{phone}"))
-  S --- Major(("major"))
-  classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-  classDef key fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
-  classDef multi fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,stroke-dasharray:2 2
-  class S entity
-  class N,Major attr
-  class SID key
-  class Phone multi
-```
-
-The double-line convention (here shown as `{...}` braces and dashes) marks a **multi-valued** attribute.
-
+::: appear
 <div class="interactive">
 
 **Your turn:** Should `phone` be a separate entity? When would you split it?
 
 </div>
+:::
 
 <!--
-The answer: split it if you want to attach more attributes to a phone (type, primary/secondary, verified flag). Otherwise, keep it as multi-valued; Day 7 turns it into a separate table anyway.
+Present from the HTML deck: each right-arrow reveals the next annotated step in place. The PDF handout prints one page per step.
+Step 1: just the box. We know we have students; we do not yet know what we record about them. Hold it briefly.
+Step 2: the obvious simple attributes arrive as ovals.
+Step 3: pick the key. On paper you underline it; this deck also colors it green (Textbook §4.3.2, p. 149).
+Step 4: name becomes a composite and dob arrives with derived age. Derived attributes raise the storage-vs-compute question; we decide on Day 7, the diagram only captures intent.
+Step 5: the double oval allows many phone numbers. Then the prompt. The answer: split phone into an entity when a phone needs attributes of its own (type, primary/secondary, verified flag). Otherwise keep it multi-valued; Day 7 turns it into a separate table anyway.
+The build is intentional pacing. A useful diagram emerges from a sequence of small decisions, not in one heroic moment.
 -->
 
 ---
@@ -390,6 +324,12 @@ graph TB
 ```
 
 These three patterns cover almost every real-world association (Textbook §4.1.6, p. 129).
+
+<div class="small">
+
+Notation varies. This deck writes 1, N, M at the line ends; the Textbook instead draws an arrow into an entity set to say "at most one" (§4.1.6, p. 129). Same constraint, different ink.
+
+</div>
 
 ---
 
@@ -476,87 +416,52 @@ Bottom: faculty supervision is partial.
 </div>
 </div>
 
+<div class="small">
+
+The double line is the wider ER tradition's mark. The Textbook instead draws a rounded arrow into an entity set for "exactly one" (§4.3.3, p. 150) and writes other bounds as degree constraints (§4.3.4, p. 151).
+
+</div>
+
 <!--
 The classroom mnemonic: total = "must," partial = "may." A double line says "must." This will matter on Friday when we translate to schemas — total participation can force NOT NULL on the FK.
 -->
 
 ---
 
-# Student-Course, Step 1
+# Building a Relationship
 
-Two entities, no relationship yet.
+<div class="build">
 
-```mermaid
-graph LR
-  S["Student"]
-  C["Course"]
-  classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  class S,C entity
-```
+![w:880](images/relationship-build-1.svg)
 
-We know what they are. We have not yet named how they connect.
+::: appear
+![w:880](images/relationship-build-2.svg)
+:::
 
----
+::: appear
+![w:880](images/relationship-build-3.svg)
+:::
 
-# Student-Course, Step 2
+::: appear
+![w:880](images/relationship-build-4.svg)
+:::
 
-Add the relationship.
+</div>
 
-```mermaid
-graph LR
-  S["Student"] --- E{"Enrolls"} --- C["Course"]
-  classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
-  class S,C entity
-  class E rel
-```
-
-A diamond labeled with a verb. The verb names what the diamond means.
-
----
-
-# Student-Course, Step 3
-
-Mark the cardinality.
-
-```mermaid
-graph LR
-  S["Student"] -- "M" --- E{"Enrolls"} -- "N" --- C["Course"]
-  classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
-  class S,C entity
-  class E rel
-```
-
-Many students enroll in many courses. M:N.
-
----
-
-# Student-Course, Step 4
-
-The relationship has its own attribute.
-
-```mermaid
-graph TB
-  S["Student"] -- "M" --- E{"Enrolls"}
-  E -- "N" --- C["Course"]
-  E --- G(("grade"))
-  E --- T(("term"))
-  classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
-  classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-  class S,C entity
-  class E rel
-  class G,T attr
-```
-
-`grade` and `term` are properties of *the enrollment*, not of the student or the course (Textbook §4.1.9, p. 134).
-
+::: appear
 <div class="error">
 
 **Common error:** Putting `grade` on `Student` (one grade?) or on `Course` (whose grade?). The relationship is the right home.
 
 </div>
+:::
+
+<!--
+Step 1: two entity sets and no connection. Ask the class for the verb before revealing.
+Step 2: the diamond, labeled with the verb. The verb names what the diamond means.
+Step 3: cardinality. Many students enroll in many courses, so M:N. Mention the dialect gap here: the Textbook draws an arrow into the "at most one" side instead of writing letters (§4.1.6, p. 129).
+Step 4: grade and term hang off the diamond. They are properties of the enrollment, not of the student or the course (§4.1.9, p. 134). The common-error box lands after the last step; this is the payoff moment of the lecture.
+-->
 
 ---
 
@@ -579,6 +484,12 @@ Drawn with:
 - Dashed double-line border
 - Connected by a double-diamond *identifying relationship*
 - Partial key (dashed underline)
+
+<div class="small">
+
+The Textbook's mark is a double solid border on the weak entity set and its supporting relationship (§4.4.3, p. 156). The red dash is this deck's color code, not a standard.
+
+</div>
 
 </div>
 <div>
@@ -732,6 +643,23 @@ Most industry tools default to crow's foot because cardinality is read directly 
 
 ---
 
+# One Concept, Many Dialects
+
+![w:880](images/notation-dialects.svg)
+
+<div class="small">
+
+Chen's 1976 paper started the diamond-and-oval family; every book since has bent the details (Chen, ACM TODS 1(1), 1976, Week 3 reading list).
+Even where a mark lives differs by dialect. Check the legend before trusting anyone's diagram, including ours.
+
+</div>
+
+<!--
+The trap to call out: students will meet diagrams where the same mark means the opposite thing depending on the tool. The reliable move is to find the legend, or ask "one instance on the other side maps to how many here?" When drawing your own, state the convention. Exams accept any of the three dialects as long as the constraints are stated unambiguously.
+-->
+
+---
+
 <!-- _class: lead -->
 
 # Part 5: Build a Real Schema Together
@@ -743,6 +671,7 @@ Most industry tools default to crow's foot because cardinality is read directly 
 > *"We're building a registrar system. Students take sections of courses. Each course belongs to a department. Faculty members teach sections. Faculty members belong to a department. A course can have multiple sections per term. Students get grades. Some faculty supervise other faculty. We track each student's major as a department."*
 
 We will turn this paragraph into an ER diagram in five steps.
+The judgment calls follow the Textbook's design principles of faithfulness, avoiding redundancy, and simplicity (§4.2, p. 140).
 
 <div class="interactive">
 
@@ -924,6 +853,36 @@ A student's grade is a property of *their enrollment in this section*, not of th
 
 <!--
 This is the key payoff of the lecture. The "where does grade live?" question, which would torture someone designing schemas directly, falls out naturally from the ER process.
+-->
+
+---
+
+# The Whole Build, Animated
+
+<div class="build">
+
+![w:1050](images/registrar-build-1.svg)
+
+::: appear
+![w:1050](images/registrar-build-2.svg)
+:::
+
+::: appear
+![w:1050](images/registrar-build-3.svg)
+:::
+
+::: appear
+![w:1050](images/registrar-build-4.svg)
+:::
+
+::: appear
+![w:1050](images/registrar-build-5.svg)
+:::
+
+</div>
+
+<!--
+The five steps replayed as one animated figure, in place. Useful when recording or reviewing; each right-arrow reveals the next step and the glow marks what changed. Keys stand in for the full attribute list from Step 3. Narrate each reveal: nouns, then verbs (Section turns weak), then keys, then cardinalities, then grade landing on the diamond.
 -->
 
 ---

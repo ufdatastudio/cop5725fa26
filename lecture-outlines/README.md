@@ -128,6 +128,35 @@ K+1 pages, one per reveal step, so the handout mirrors the click-through.
 PDF expansion handles top-level appear blocks. A nested appear reveals together
 with its parent. Use `-` bullets inside an appear block.
 
+## Animated Diagram Builds
+
+A `.build` wrapper turns a stack of appear frames into an in-place diagram
+animation: every child occupies the same grid cell, so revealing a frame paints
+the next step over the previous one instead of pushing content down.
+
+```markdown
+<div class="build">
+
+![w:880](images/student-entity-build-1.svg)
+
+::: appear
+![w:880](images/student-entity-build-2.svg)
+:::
+
+</div>
+```
+
+Each frame is a complete, opaque image of the diagram at that step, with the
+new element highlighted and an annotation card describing it. Presenting from
+the HTML deck, each arrow key grows the diagram in place; the PDF build prints
+one annotated frame per page. Content after the closing `</div>` (an
+`::: appear` prompt box, for example) reveals after the last frame.
+
+`gen-er-frames.mjs` generates the ER frame sequences for Days 6 and 7 from
+fixed-coordinate scene descriptions (`node gen-er-frames.mjs` from this
+directory). Frames of one build share a viewBox so nothing shifts between
+steps; edit the coordinates there and regenerate rather than editing the SVGs.
+
 ## Multi-Column Layouts
 
 ```html
@@ -243,6 +272,8 @@ marp.config.js     marp-cli config: registers the engine and theme
 engine.js          custom engine: wires the plugins, inlines the runtime (HTML)
 build.mjs          builds every deck; expands appear blocks and pre-renders
                    mermaid for PDF
+gen-er-frames.mjs  regenerates the annotated ER build-animation frames
+                   (day6/day7 images/)
 lib/
   plugin-sql-run.mjs    ```sql run``` -> widget (HTML) / code (PDF)
   plugin-appear.mjs     ::: appear ::: -> fragment markup

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 420" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+<defs>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ffb300" flood-opacity="0.9"/>
+  </filter>
+  <marker id="lead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#ff6f00"/>
+  </marker>
+</defs>
+<rect width="1120" height="420" fill="#ffffff"/>
+  <line x1="245" y1="150" x2="345" y2="150" stroke="#4E342E" stroke-width="2.5"/>
+  <line x1="515" y1="150" x2="615" y2="150" stroke="#4E342E" stroke-width="2.5"/>
+  <g><rect x="95" y="124" width="150" height="52" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/><text x="170" y="157" font-size="19" fill="#0d47a1" text-anchor="middle">Student</text></g>
+  <g><rect x="615" y="124" width="150" height="52" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/><text x="690" y="157" font-size="19" fill="#0d47a1" text-anchor="middle">Course</text></g>
+  <g><polygon points="430,114 515,150 430,186 345,150" fill="#fff9c4" stroke="#f57f17" stroke-width="2.5"/><text x="430" y="156" font-size="16.5" fill="#e65100" text-anchor="middle">Enrolls</text></g>
+  <text x="285" y="132" font-size="21" fill="#e65100" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="6" filter="url(#glow)">M</text>
+  <text x="575" y="132" font-size="21" fill="#e65100" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="6" filter="url(#glow)">N</text>
+  <g><line x1="810" y1="120" x2="588" y2="120" stroke="#ff6f00" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#lead)"/><rect x="810" y="70" width="290" height="168" rx="10" fill="#fff3e0" stroke="#ff6f00" stroke-width="1.5"/><rect x="810" y="70" width="6" height="168" rx="3" fill="#ff6f00"/><rect x="826" y="57" width="92" height="26" rx="13" fill="#ff6f00"/><text x="872" y="75" font-size="13.5" fill="#ffffff" text-anchor="middle">Step 3 of 4</text><text x="830" y="108" font-size="19" fill="#263238">Count each side</text><text x="830" y="132" font-size="15.5" fill="#37474f">Many on both sides: M:N.</text><text x="830" y="156" font-size="15.5" fill="#37474f">Textbook dialect differs: an</text><text x="830" y="180" font-size="15.5" fill="#37474f">arrow into a set would mean</text><text x="830" y="204" font-size="15.5" fill="#37474f">"at most one" there.</text><text x="830" y="226" font-size="13.5" fill="#607D8B">Textbook §4.1.6, p. 129</text></g>
+</svg>

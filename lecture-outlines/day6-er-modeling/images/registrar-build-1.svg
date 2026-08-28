@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 560" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+<defs>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ffb300" flood-opacity="0.9"/>
+  </filter>
+  <marker id="lead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#ff6f00"/>
+  </marker>
+</defs>
+<rect width="1240" height="560" fill="#ffffff"/>
+  <g filter="url(#glow)"><rect x="55" y="86" width="130" height="48" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="3.5"/><text x="120" y="117" font-size="19" fill="#0d47a1" text-anchor="middle">Student</text></g>
+  <g filter="url(#glow)"><rect x="455" y="86" width="130" height="48" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="3.5"/><text x="520" y="117" font-size="19" fill="#0d47a1" text-anchor="middle">Section</text></g>
+  <g filter="url(#glow)"><rect x="855" y="86" width="130" height="48" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="3.5"/><text x="920" y="117" font-size="19" fill="#0d47a1" text-anchor="middle">Course</text></g>
+  <g filter="url(#glow)"><rect x="415" y="316" width="130" height="48" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="3.5"/><text x="480" y="347" font-size="19" fill="#0d47a1" text-anchor="middle">Faculty</text></g>
+  <g filter="url(#glow)"><rect x="845" y="416" width="150" height="48" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="3.5"/><text x="920" y="447" font-size="19" fill="#0d47a1" text-anchor="middle">Department</text></g>
+  <g><rect x="1020" y="385" width="205" height="168" rx="10" fill="#fff3e0" stroke="#ff6f00" stroke-width="1.5"/><rect x="1020" y="385" width="6" height="168" rx="3" fill="#ff6f00"/><rect x="1036" y="372" width="92" height="26" rx="13" fill="#ff6f00"/><text x="1082" y="390" font-size="13.5" fill="#ffffff" text-anchor="middle">Step 1 of 5</text><text x="1040" y="423" font-size="19" fill="#263238">Nouns → boxes</text><text x="1040" y="447" font-size="15.5" fill="#37474f">Five survive the audit.</text><text x="1040" y="471" font-size="15.5" fill="#37474f">grade and major do not;</text><text x="1040" y="495" font-size="15.5" fill="#37474f">they return in</text><text x="1040" y="519" font-size="15.5" fill="#37474f">other roles.</text><text x="1040" y="541" font-size="13.5" fill="#607D8B">§4.1.1 · §4.2, p. 140</text></g>
+</svg>
