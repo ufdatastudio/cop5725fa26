@@ -66,6 +66,51 @@ graph LR
 
 ---
 
+# Schema Shorthand: Underline the Key
+
+A schema is written as the relation name followed by its attributes.
+Underlining marks the attributes that form the key (Textbook §2.2.7, p. 25).
+
+<div class="columns">
+<div>
+
+<div style="font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace; font-size:0.8em; line-height:2; color:#8B1A1A; white-space:nowrap;">
+<span style="color:#1565C0">student</span>(<span style="text-decoration:underline; text-decoration-thickness:2px;">student_id</span>, name, major, gpa)<br>
+<span style="color:#1565C0">course</span>(<span style="text-decoration:underline; text-decoration-thickness:2px;">course_id</span>, title, credits)<br>
+<span style="color:#1565C0">enrollment</span>(<span style="text-decoration:underline; text-decoration-thickness:2px;">student_id</span>, <span style="text-decoration:underline; text-decoration-thickness:2px;">course_id</span>, <span style="text-decoration:underline; text-decoration-thickness:2px;">term</span>, grade)
+</div>
+
+<div class="small">
+
+Every underlined attribute is a member of the key: `enrollment` has one composite key with three members, not three keys. A student can retake a course in a later term.
+
+With several candidate keys, the underline marks the primary key (Textbook §4.3.2, p. 150).
+
+</div>
+
+</div>
+<div>
+
+### Variants you will meet elsewhere
+
+<div class="small">
+
+- A double underline, as in <span style="text-decoration:underline double;">sid</span>, marks the primary key where single underlines mark the other candidate keys.
+- A dashed or dotted underline, as in <span style="text-decoration:underline dotted;">cname</span>, marks a foreign key in some course materials. Others use italics, an FK tag, or an arrow to the referenced key.
+
+Only the solid underline is standard across textbooks. Slides and papers that use more state their legend.
+
+</div>
+
+</div>
+</div>
+
+<!--
+This is the same shorthand as Widom's Stanford College/Student/Apply slides, which some students have seen in the database MOOC. In this course a solid underline means primary key. The composite-key point is the one to say out loud: the three underlines in enrollment are one key together, not three independent keys — no attribute of it is unique on its own.
+-->
+
+---
+
 <!-- _class: lead -->
 
 # Part 1: Why an Algebra
