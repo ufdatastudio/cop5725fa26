@@ -50,7 +50,7 @@ Project 3 (Indexing + Query Plans) is due Friday.
 - Cost-driven choices
 
 ### Action Items
-- Read GMW Ch. 16.1-16.3
+- Read Textbook Ch. 16.1-16.3
 - Project 3 due Fri Nov 13
 
 ---

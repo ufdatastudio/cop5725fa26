@@ -125,11 +125,11 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 ## Week 2: From History to the Relational Model (Aug 24-28)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Aug 24 | History of Databases | Codd 1970 (assigned), GMW Ch. 1 |
-| Wed | Aug 26 | Relational Model and Data Types | GMW Ch. 2.1-2.3 |
-| Fri | Aug 28 | Relational Algebra I: Selection, Projection, Sets | GMW Ch. 2.4 |
+| Mon | Aug 24 | History of Databases | Codd 1970 (assigned), Textbook Ch. 1 |
+| Wed | Aug 26 | Relational Model and Data Types | Textbook Ch. 2.1-2.3 |
+| Fri | Aug 28 | Relational Algebra I: Selection, Projection, Sets | Textbook Ch. 2.4 |
 
 **Discussion:** PostgreSQL data type families (numeric, text, date/time, JSON, arrays, geometric, range) and how each fits the relational model.
 
@@ -137,11 +137,11 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 ## Week 3: Design Theory I (Aug 31 - Sep 4)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Aug 31 | Relational Algebra II: Joins, Division, Extended RA | GMW Ch. 2.4-2.5 |
-| Wed | Sep 2 | Entity-Relationship Modeling | GMW Ch. 4.1-4.5 |
-| Fri | Sep 4 | ER-to-Relations Translation | GMW Ch. 4.5-4.6 |
+| Mon | Aug 31 | Relational Algebra II: Joins, Division, Extended RA | Textbook Ch. 2.4-2.5 |
+| Wed | Sep 2 | Entity-Relationship Modeling | Textbook Ch. 4.1-4.5 |
+| Fri | Sep 4 | ER-to-Relations Translation | Textbook Ch. 4.5-4.6 |
 
 **Due:** Project 0 (setup, P/F) by 11:59 PM Fri Sep 4
 **Assigned:** Project 1 (released Wed Sep 2)
@@ -152,28 +152,28 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 *Monday Sep 7 - Labor Day, no class*
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Wed | Sep 9 | Functional Dependencies, Closure, Keys | GMW Ch. 3.1-3.3 |
-| Fri | Sep 11 | Normalization (1NF, 2NF, 3NF, BCNF) | GMW Ch. 3.4-3.7 |
+| Wed | Sep 9 | Functional Dependencies, Closure, Keys | Textbook Ch. 3.1-3.3 |
+| Fri | Sep 11 | Normalization (1NF, 2NF, 3NF, BCNF) | Textbook Ch. 3.4-3.7 |
 
 ---
 
 ## Week 5: SQL Fundamentals (Sep 14-18)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Sep 14 | SQL DDL and SELECT Basics | GMW Ch. 6.1-6.2 |
-| Wed | Sep 16 | SQL Joins: Inner, Outer, Semi, Anti | GMW Ch. 6.3 |
-| Fri | Sep 18 | Aggregation, GROUP BY, HAVING | GMW Ch. 6.4 |
+| Mon | Sep 14 | SQL DDL and SELECT Basics | Textbook Ch. 6.1-6.2 |
+| Wed | Sep 16 | SQL Joins: Inner, Outer, Semi, Anti | Textbook Ch. 6.3 |
+| Fri | Sep 18 | Aggregation, GROUP BY, HAVING | Textbook Ch. 6.4 |
 
 ---
 
 ## Week 6: Advanced SQL I (Sep 21-25)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Sep 21 | Subqueries: Nested, Correlated, EXISTS, IN | GMW Ch. 6.3.6, 10.2 |
+| Mon | Sep 21 | Subqueries: Nested, Correlated, EXISTS, IN | Textbook Ch. 6.3.6, 10.2 |
 | Wed | Sep 23 | Common Table Expressions (WITH) | PostgreSQL docs Ch. 7.8 |
 | Fri | Sep 25 | Window Functions I: OVER, PARTITION BY | PostgreSQL docs Ch. 3.5 |
 
@@ -184,11 +184,11 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 ## Week 7: Advanced SQL II (Sep 28 - Oct 2)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
 | Mon | Sep 28 | Window Functions II: Frames, Ranking, LAG/LEAD | PostgreSQL docs Ch. 9.22 |
-| Wed | Sep 30 | Recursive Queries (WITH RECURSIVE) | GMW Ch. 10.2; Hirn and Grust 2023 |
-| Fri | Oct 2 | Views, Constraints, Triggers | GMW Ch. 7-8 |
+| Wed | Sep 30 | Recursive Queries (WITH RECURSIVE) | Textbook Ch. 10.2; Hirn and Grust 2023 |
+| Fri | Oct 2 | Views, Constraints, Triggers | Textbook Ch. 7-8 |
 
 **Project 1 presentations:** Mon Sep 28 (group breakouts), Wed Sep 30 (winners to class)
 
@@ -207,21 +207,21 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 ## Week 9: Storage Introduction + Exam 1 (Oct 12-16)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Oct 12 | Storage Hierarchy: Disks, SSDs, Pages, Records | GMW Ch. 13.1-13.4 |
+| Mon | Oct 12 | Storage Hierarchy: Disks, SSDs, Pages, Records | Textbook Ch. 13.1-13.4 |
 | Wed | Oct 14 | **Exam 1** (covers Weeks 1-8) | — |
-| Fri | Oct 16 | Buffer Management and Memory | GMW Ch. 13.5-13.6 |
+| Fri | Oct 16 | Buffer Management and Memory | Textbook Ch. 13.5-13.6 |
 
 ---
 
 ## Week 10: Column Stores + B+ Trees (Oct 19-23)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Oct 19 | Row Stores vs Column Stores | GMW Ch. 13.7-13.8; Stonebraker C-Store |
-| Wed | Oct 21 | B+ Trees I: Structure, Search, Bulk Loading | GMW Ch. 14.1-14.2 |
-| Fri | Oct 23 | B+ Trees II: Insert, Delete, Cost Analysis | GMW Ch. 14.2-14.3 |
+| Mon | Oct 19 | Row Stores vs Column Stores | Textbook Ch. 13.7-13.8; Stonebraker C-Store |
+| Wed | Oct 21 | B+ Trees I: Structure, Search, Bulk Loading | Textbook Ch. 14.1-14.2 |
+| Fri | Oct 23 | B+ Trees II: Insert, Delete, Cost Analysis | Textbook Ch. 14.2-14.3 |
 
 **Due:** Project 2 (Advanced SQL) by 11:59 PM Fri Oct 23
 **Assigned:** Project 3 (released Mon Oct 19)
@@ -230,11 +230,11 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 ## Week 11: Indexing II + Sorting (Oct 26-30)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Oct 26 | Hash Indexes: Static, Extendible, Linear | GMW Ch. 14.4 |
+| Mon | Oct 26 | Hash Indexes: Static, Extendible, Linear | Textbook Ch. 14.4 |
 | Wed | Oct 28 | PostgreSQL Index Types: GiST, GIN, BRIN, Partial | PostgreSQL docs Ch. 11 |
-| Fri | Oct 30 | External Sorting | GMW Ch. 15.4 |
+| Fri | Oct 30 | External Sorting | Textbook Ch. 15.4 |
 
 **Project 2 presentations:** Mon Oct 26 (group breakouts), Wed Oct 28 (winners)
 
@@ -242,11 +242,11 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 ## Week 12: Join Algorithms and Execution (Nov 2-6)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Nov 2 | Joins I: Nested Loop, Block NL, Index NL | GMW Ch. 15.2-15.3 |
-| Wed | Nov 4 | Joins II: Sort-Merge, Hash, Grace Hash | GMW Ch. 15.4-15.5 |
-| Fri | Nov 6 | Iterator (Volcano) Model and Pipelining | GMW Ch. 15.1; Graefe 1994 |
+| Mon | Nov 2 | Joins I: Nested Loop, Block NL, Index NL | Textbook Ch. 15.2-15.3 |
+| Wed | Nov 4 | Joins II: Sort-Merge, Hash, Grace Hash | Textbook Ch. 15.4-15.5 |
+| Fri | Nov 6 | Iterator (Volcano) Model and Pipelining | Textbook Ch. 15.1; Graefe 1994 |
 
 ---
 
@@ -254,10 +254,10 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 *Wednesday Nov 11 - Veterans Day, no class*
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Nov 9 | Vectorized Execution; Optimization I (Equivalence) | GMW Ch. 16.1-16.2; Boncz MonetDB/X100 |
-| Fri | Nov 13 | Optimization II: Cost Estimation, System R | GMW Ch. 16.3-16.5; Leis 2015 |
+| Mon | Nov 9 | Vectorized Execution; Optimization I (Equivalence) | Textbook Ch. 16.1-16.2; Boncz MonetDB/X100 |
+| Fri | Nov 13 | Optimization II: Cost Estimation, System R | Textbook Ch. 16.3-16.5; Leis 2015 |
 
 **Due:** Project 3 (Indexing + Query Plans) by 11:59 PM Fri Nov 13
 **Assigned:** Final Project (released Mon Nov 16)
@@ -266,11 +266,11 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 ## Week 14: Transactions + Exam 2 (Nov 16-20)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Nov 16 | Transactions and ACID; Serializability | GMW Ch. 18.1-18.3 |
+| Mon | Nov 16 | Transactions and ACID; Serializability | Textbook Ch. 18.1-18.3 |
 | Wed | Nov 18 | **Exam 2** (covers Weeks 9-13) | — |
-| Fri | Nov 20 | Two-Phase Locking; Deadlock Handling | GMW Ch. 18.4-18.5 |
+| Fri | Nov 20 | Two-Phase Locking; Deadlock Handling | Textbook Ch. 18.4-18.5 |
 
 **Project 3 presentations:** Mon Nov 16 (group breakouts), Fri Nov 20 (winners)
 
@@ -284,10 +284,10 @@ A complete reading list, including supplementary papers tied to each lecture, is
 
 ## Week 16: Concurrency, Recovery, Modern (Nov 30 - Dec 2)
 
-| Day | Date | Topic | Reading (GMW) |
+| Day | Date | Topic | Reading |
 |-----|------|-------|---------------|
-| Mon | Nov 30 | MVCC, Snapshot Isolation, Timestamps | GMW Ch. 18.7-18.9 |
-| Wed | Dec 2 | Recovery (WAL, ARIES) + Distributed + Modern  | GMW Ch. 17, 20-22; Mohan ARIES; DuckDB paper |
+| Mon | Nov 30 | MVCC, Snapshot Isolation, Timestamps | Textbook Ch. 18.7-18.9 |
+| Wed | Dec 2 | Recovery (WAL, ARIES) + Distributed + Modern  | Textbook Ch. 17, 20-22; Mohan ARIES; DuckDB paper |
 
 *Thursday Dec 3 - Friday Dec 4: Reading days, no class*
 

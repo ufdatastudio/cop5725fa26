@@ -47,7 +47,7 @@ The Final Exam is Friday, Dec 11, 10:00 AM-12:00 PM in MALA 1000; the Final Proj
 - Final Project work intensifies
 
 ### Action Items
-- Read GMW Ch. 18.7-18.9
+- Read Textbook Ch. 18.7-18.9
 - Read PostgreSQL docs [Ch. 13.4 Caveats](https://www.postgresql.org/docs/current/applevel-consistency.html) and [Ch. 25.1 Routine Vacuuming](https://www.postgresql.org/docs/current/routine-vacuuming.html)
 
 ---

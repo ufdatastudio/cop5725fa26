@@ -168,12 +168,12 @@ For full topic details, readings, and rubrics see the [Schedule](schedule) and [
   <div class="cal-day"><span class="cal-day-num">23</span></div>
   <div class="cal-day">
     <span class="cal-day-num">24</span>
-    <span class="cal-event cal-s1">History of Databases <small>Codd 1970, GMW Ch. 1</small></span>
+    <span class="cal-event cal-s1">History of Databases <small>Codd 1970, Textbook Ch. 1</small></span>
   </div>
   <div class="cal-day"><span class="cal-day-num">25</span></div>
   <div class="cal-day">
     <span class="cal-day-num">26</span>
-    <span class="cal-event cal-s1">Relational Model &amp; Data Types <small>GMW 2.1-2.3</small></span>
+    <span class="cal-event cal-s1">Relational Model &amp; Data Types <small>Textbook 2.1-2.3</small></span>
   </div>
   <div class="cal-day"><span class="cal-day-num">27</span></div>
   <div class="cal-day">
@@ -205,13 +205,13 @@ For full topic details, readings, and rubrics see the [Schedule](schedule) and [
   <div class="cal-day"><span class="cal-day-num">1</span></div>
   <div class="cal-day">
     <span class="cal-day-num">2</span>
-    <span class="cal-event cal-s1">ER Modeling <small>GMW 4.1-4.5</small></span>
+    <span class="cal-event cal-s1">ER Modeling <small>Textbook 4.1-4.5</small></span>
     <span class="cal-event cal-rel">Project 1 released</span>
   </div>
   <div class="cal-day"><span class="cal-day-num">3</span></div>
   <div class="cal-day">
     <span class="cal-day-num">4</span>
-    <span class="cal-event cal-s1">ER-to-Relations <small>GMW 4.5-4.6</small></span>
+    <span class="cal-event cal-s1">ER-to-Relations <small>Textbook 4.5-4.6</small></span>
     <span class="cal-event cal-due">Project 0 due 11:59 PM</span>
   </div>
   <div class="cal-day"><span class="cal-day-num">5</span></div>
@@ -237,7 +237,7 @@ For full topic details, readings, and rubrics see the [Schedule](schedule) and [
   <div class="cal-day"><span class="cal-day-num">13</span></div>
   <div class="cal-day">
     <span class="cal-day-num">14</span>
-    <span class="cal-event cal-s2">SQL DDL &amp; SELECT Basics <small>GMW 6.1-6.2</small></span>
+    <span class="cal-event cal-s2">SQL DDL &amp; SELECT Basics <small>Textbook 6.1-6.2</small></span>
   </div>
   <div class="cal-day"><span class="cal-day-num">15</span></div>
   <div class="cal-day">
@@ -247,7 +247,7 @@ For full topic details, readings, and rubrics see the [Schedule](schedule) and [
   <div class="cal-day"><span class="cal-day-num">17</span></div>
   <div class="cal-day">
     <span class="cal-day-num">18</span>
-    <span class="cal-event cal-s2">Aggregation, GROUP BY, HAVING <small>GMW 6.4</small></span>
+    <span class="cal-event cal-s2">Aggregation, GROUP BY, HAVING <small>Textbook 6.4</small></span>
   </div>
   <div class="cal-day"><span class="cal-day-num">19</span></div>
 
@@ -301,7 +301,7 @@ For full topic details, readings, and rubrics see the [Schedule](schedule) and [
   <div class="cal-day"><span class="cal-day-num">1</span></div>
   <div class="cal-day">
     <span class="cal-day-num">2</span>
-    <span class="cal-event cal-s2">Views, Constraints, Triggers <small>GMW 7-8</small></span>
+    <span class="cal-event cal-s2">Views, Constraints, Triggers <small>Textbook 7-8</small></span>
     <span class="cal-event cal-quiz">§2 Quiz (SQL Mastery)</span>
   </div>
   <div class="cal-day"><span class="cal-day-num">3</span></div>
@@ -336,7 +336,7 @@ For full topic details, readings, and rubrics see the [Schedule](schedule) and [
   <div class="cal-day"><span class="cal-day-num">15</span></div>
   <div class="cal-day">
     <span class="cal-day-num">16</span>
-    <span class="cal-event cal-s4">Buffer Management <small>GMW 13.5-13.6</small></span>
+    <span class="cal-event cal-s4">Buffer Management <small>Textbook 13.5-13.6</small></span>
   </div>
   <div class="cal-day"><span class="cal-day-num">17</span></div>
 
@@ -375,7 +375,7 @@ For full topic details, readings, and rubrics see the [Schedule](schedule) and [
   <div class="cal-day"><span class="cal-day-num">29</span></div>
   <div class="cal-day">
     <span class="cal-day-num">30</span>
-    <span class="cal-event cal-s4">External Sorting <small>GMW 15.4</small></span>
+    <span class="cal-event cal-s4">External Sorting <small>Textbook 15.4</small></span>
     <span class="cal-event cal-quiz">§4 Quiz (Storage)</span>
   </div>
   <div class="cal-day"><span class="cal-day-num">31</span></div>

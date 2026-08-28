@@ -48,7 +48,7 @@ Three days, two on joins and one on the iterator model that every query engine u
 - Project 3 work continues
 
 ### Action Items
-- Read GMW Ch. 15.2-15.3
+- Read Textbook Ch. 15.2-15.3
 - Project 3 due Fri Nov 13
 
 ---
@@ -81,7 +81,7 @@ Three days, two on joins and one on the iterator model that every query engine u
 - What PostgreSQL picks and when
 
 ### Action Items
-- Read GMW Ch. 15.4-15.5
+- Read Textbook Ch. 15.4-15.5
 - Continue Project 3
 
 ---

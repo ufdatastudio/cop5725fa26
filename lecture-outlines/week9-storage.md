@@ -46,7 +46,7 @@ Monday introduces the storage hierarchy; Wednesday is Exam 1 (Sections 1-3); Fri
 - Project 2 due Oct 23
 
 ### Action Items
-- Read GMW Ch. 13.1-13.4
+- Read Textbook Ch. 13.1-13.4
 - Practice exam packet (handed out Wed Oct 7) — work it through
 - Project 2 work continues
 
@@ -91,7 +91,7 @@ Practice packet from last Wednesday is the best preparation; office hours Tue af
 - Next week: Row vs Column stores (Mon), B+ Trees (Wed, Fri)
 
 ### Action Items
-- Read GMW Ch. 13.5-13.6
+- Read Textbook Ch. 13.5-13.6
 - Run `SELECT * FROM pg_buffercache` against your project schema
 
 ---

@@ -45,7 +45,7 @@ Friday covers external sorting and closes Section 4.
 - WAL-logged since PG 10
 
 ### Action Items
-- Read GMW Ch. 14.4
+- Read Textbook Ch. 14.4
 - Project 2 presentations Monday and Wednesday in class
 
 ---
@@ -111,7 +111,7 @@ Friday covers external sorting and closes Section 4.
 - Section 5 (Query Processing) opens Monday
 
 ### Action Items
-- Read GMW Ch. 15.4
+- Read Textbook Ch. 15.4
 - Project 3 (Indexing + Query Plans) due Fri Nov 13
 
 ---

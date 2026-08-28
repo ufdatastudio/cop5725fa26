@@ -49,7 +49,7 @@ Wednesday introduces the formal machinery of functional dependencies; Friday app
 - Why this matters for normalization
 
 ### Action Items
-- Read GMW Ch. 3.1-3.3
+- Read Textbook Ch. 3.1-3.3
 - Project 1 work continues; due Fri Sep 25
 
 ---
@@ -85,7 +85,7 @@ Wednesday introduces the formal machinery of functional dependencies; Friday app
 - Lowest of 5 quizzes is dropped
 
 ### Action Items
-- Read GMW Ch. 3.4-3.7
+- Read Textbook Ch. 3.4-3.7
 - Continue Project 1; due Fri Sep 25
 
 ---

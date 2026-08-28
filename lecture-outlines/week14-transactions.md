@@ -45,7 +45,7 @@ Project 3 small-group presentations run Monday; winners present Friday.
 **5. Wrap and Project 3 Presentations (12 min)**
 
 ### Action Items
-- Read GMW Ch. 18.1-18.3
+- Read Textbook Ch. 18.1-18.3
 - Project 3 presentations Monday; winners present Friday
 - Exam 2 Wednesday
 
@@ -89,7 +89,7 @@ Practice packet (`practice-exams/exam2.md`) is the best preparation.
 - Detecting blockers
 
 ### Action Items
-- Read GMW Ch. 18.4-18.5
+- Read Textbook Ch. 18.4-18.5
 - Read PostgreSQL docs [Ch. 13.3 Explicit Locking](https://www.postgresql.org/docs/current/explicit-locking.html)
 
 ---

@@ -85,7 +85,7 @@ Project 2 is due Friday at 11:59 PM.
 - Project 2 due Friday
 
 ### Action Items
-- Read GMW Ch. 14.1-14.2
+- Read Textbook Ch. 14.1-14.2
 - Practice: hand-draw a B+ tree of order 4 with keys 1-20
 
 ---
@@ -120,7 +120,7 @@ Project 2 is due Friday at 11:59 PM.
 - Presentations Monday and Wednesday
 
 ### Action Items
-- Read GMW Ch. 14.2-14.3
+- Read Textbook Ch. 14.2-14.3
 - **Project 2 due tonight at 11:59 PM**
 
 ---

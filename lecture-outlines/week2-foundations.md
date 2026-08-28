@@ -51,7 +51,7 @@ Covered in [week1-introduction.md](week1-introduction.md). Slide deck at [day2-d
 - Algebra symbols you should arrive on Friday already comfortable seeing
 
 ### Action Items
-- Read GMW Ch. 2.1-2.3
+- Read Textbook Ch. 2.1-2.3
 - Skim PostgreSQL data types docs (Ch. 8)
 - Project 1 released Wednesday; one-page Codd reading response embedded in Project 1
 
@@ -94,7 +94,7 @@ Covered in [week1-introduction.md](week1-introduction.md). Slide deck at [day2-d
 - Quiz 1 in two weeks closes this section
 
 ### Action Items
-- Read GMW Ch. 2.4
+- Read Textbook Ch. 2.4
 - Three practice problems on the Wednesday handout — answers due before Mon Aug 31 class
 
 ---

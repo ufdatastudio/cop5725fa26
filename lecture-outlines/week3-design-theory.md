@@ -43,7 +43,7 @@ Friday closes the loop by translating an ER diagram into a relational schema and
 - Preview of ER on Wednesday
 
 ### Action Items
-- Read GMW Ch. 2.5
+- Read Textbook Ch. 2.5
 - Complete the Wed Aug 26 handout if you have not
 
 ---
@@ -76,7 +76,7 @@ Friday closes the loop by translating an ER diagram into a relational schema and
 - Drawing it from interview transcripts
 
 ### Action Items
-- Read GMW Ch. 4.1-4.5
+- Read Textbook Ch. 4.1-4.5
 - Project 1 specification posted Wednesday
 
 ---
@@ -105,7 +105,7 @@ Friday closes the loop by translating an ER diagram into a relational schema and
 - Looking ahead to FDs and normalization
 
 ### Action Items
-- Read GMW Ch. 4.5-4.6
+- Read Textbook Ch. 4.5-4.6
 - **Project 0 due tonight at 11:59 PM**
 
 ---

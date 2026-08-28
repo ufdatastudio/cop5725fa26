@@ -4,7 +4,7 @@ layout: default
 
 # Lecture Readings - COP 5725 Database Management Systems Fall 2026
 
-Each lecture has a primary chapter reading from Garcia-Molina, Ullman, Widom *Database Systems: The Complete Book* (referred to below as **GMW**).
+Each lecture has a primary chapter reading from the textbook, Garcia-Molina, Ullman, Widom *Database Systems: The Complete Book*.
 Five featured paper readings throughout the semester anchor the conceptual material in primary research literature.
 Supplementary papers expand each topic for graduate-level depth.
 
@@ -17,7 +17,7 @@ Featured paper entries below include a direct PDF link.
 
 ### Week 2: History and the Relational Model
 
-- **Primary:** GMW Ch. 1 (Worlds of Database Systems), Ch. 2.1-2.3 (Relational Model)
+- **Primary:** Textbook Ch. 1 (Worlds of Database Systems), Ch. 2.1-2.3 (Relational Model)
 - **Featured paper:** Codd, E.F. "A Relational Model of Data for Large Shared Data Banks." Communications of the ACM 13(6), 1970. [PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/codd1970.pdf) · [DOI](https://dl.acm.org/doi/10.1145/362384.362685)
 - **Supplementary:**
   - Chamberlin, D. and Astrahan, M. et al. "A History and Evaluation of System R." CACM 24(10), 1981.
@@ -25,13 +25,13 @@ Featured paper entries below include a direct PDF link.
 
 ### Week 3: Relational Algebra and ER Modeling
 
-- **Primary:** GMW Ch. 2.4-2.5 (Algebra), Ch. 4.1-4.6 (ER)
+- **Primary:** Textbook Ch. 2.4-2.5 (Algebra), Ch. 4.1-4.6 (ER)
 - **Supplementary:**
   - Chen, P. "The Entity-Relationship Model — Toward a Unified View of Data." ACM TODS 1(1), 1976.
 
 ### Week 4: Functional Dependencies and Normalization
 
-- **Primary:** GMW Ch. 3 (Design Theory)
+- **Primary:** Textbook Ch. 3 (Design Theory)
 - **Supplementary:**
   - Kent, W. "A Simple Guide to Five Normal Forms in Relational Database Theory." CACM 26(2), 1983.
   - Codd, E.F. "Further Normalization of the Data Base Relational Model." Courant Symposia, 1972.
@@ -42,17 +42,17 @@ Featured paper entries below include a direct PDF link.
 
 ### Week 5: SQL Fundamentals
 
-- **Primary:** GMW Ch. 6.1-6.4
+- **Primary:** Textbook Ch. 6.1-6.4
 - **Supplementary:** PostgreSQL docs Chapter 7 (Queries), Chapter 9 (Functions and Operators).
 
 ### Week 6: Advanced SQL I (Subqueries, CTEs, Window Basics)
 
-- **Primary:** GMW Ch. 6.3.6, 10.2; PostgreSQL docs Ch. 7.8, 3.5
+- **Primary:** Textbook Ch. 6.3.6, 10.2; PostgreSQL docs Ch. 7.8, 3.5
 - **Featured paper:** Hirn, D. and Grust, T. "A Fix for the Fixation on Fixpoints." CIDR 2023. [PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/hirn2023.pdf)
 
 ### Week 7: Advanced SQL II (Window Frames, Recursion, Views)
 
-- **Primary:** PostgreSQL docs Ch. 9.22; GMW Ch. 7-8
+- **Primary:** PostgreSQL docs Ch. 9.22; Textbook Ch. 7-8
 - **Supplementary:**
   - Eisenberg, A. et al. "SQL:2003 Has Been Published." SIGMOD Record 33(1), 2004 (window functions, MERGE).
   - Mumick, I.S., Pirahesh, H., Ramakrishnan, R. "The Magic of Duplicates and Aggregates." VLDB 1990.
@@ -71,13 +71,13 @@ Featured paper entries below include a direct PDF link.
 
 ### Week 9: Storage Hierarchy
 
-- **Primary:** GMW Ch. 13.1-13.4
+- **Primary:** Textbook Ch. 13.1-13.4
 - **Supplementary:**
   - Hellerstein, J.M., Stonebraker, M., Hamilton, J. "Architecture of a Database System." Foundations and Trends in Databases 1(2), 2007 (Red Book Ch. 1).
 
 ### Week 10: Row vs Column Stores and B+ Trees
 
-- **Primary:** GMW Ch. 13.5-13.8, 14.1-14.3
+- **Primary:** Textbook Ch. 13.5-13.8, 14.1-14.3
 - **Featured paper:** Stonebraker, M. et al. "C-Store: A Column-oriented DBMS." VLDB 2005. [PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/stonebraker2005.pdf)
 - **Supplementary:**
   - Boncz, P., Zukowski, M., Nes, N. "MonetDB/X100: Hyper-Pipelining Query Execution." CIDR 2005.
@@ -85,7 +85,7 @@ Featured paper entries below include a direct PDF link.
 
 ### Week 11: Hash Indexes, PostgreSQL Indexes, External Sorting
 
-- **Primary:** GMW Ch. 14.4, 15.4; PostgreSQL docs Ch. 11
+- **Primary:** Textbook Ch. 14.4, 15.4; PostgreSQL docs Ch. 11
 - **Supplementary:**
   - O'Neil, P. et al. "The Log-Structured Merge-Tree (LSM-Tree)." Acta Informatica 33, 1996.
   - Leis, V., Kemper, A., Neumann, T. "The Adaptive Radix Tree." ICDE 2013.
@@ -97,13 +97,13 @@ Featured paper entries below include a direct PDF link.
 
 ### Week 12: Join Algorithms and Iterator Model
 
-- **Primary:** GMW Ch. 15.1-15.5
+- **Primary:** Textbook Ch. 15.1-15.5
 - **Supplementary:**
   - Graefe, G. "Volcano: An Extensible and Parallel Query Evaluation System." IEEE TKDE 6(1), 1994.
 
 ### Week 13: Vectorized Execution and Optimization
 
-- **Primary:** GMW Ch. 16
+- **Primary:** Textbook Ch. 16
 - **Featured paper:** Leis, V. et al. "How Good Are Query Optimizers, Really?" PVLDB 9(3), 2015. [PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/leis2015.pdf)
 - **Supplementary:**
   - Selinger, P. et al. "Access Path Selection in a Relational Database Management System." SIGMOD 1979.
@@ -115,13 +115,13 @@ Featured paper entries below include a direct PDF link.
 
 ### Week 14: Transactions and Two-Phase Locking
 
-- **Primary:** GMW Ch. 18.1-18.5
+- **Primary:** Textbook Ch. 18.1-18.5
 - **Supplementary:**
   - Bernstein, P.A. and Goodman, N. "Concurrency Control in Distributed Database Systems." ACM Computing Surveys 13(2), 1981.
 
 ### Week 16: MVCC, Recovery, Distributed and Modern
 
-- **Primary:** GMW Ch. 17, 18.7-18.9, 20-22
+- **Primary:** Textbook Ch. 17, 18.7-18.9, 20-22
 - **Featured paper (Recovery):** Mohan, C. et al. "ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking..." ACM TODS 17(1), 1992. [PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/mohan1992.pdf)
 - **Featured paper (Modern):** Raasveldt, M. and Mühleisen, H. "DuckDB: An Embeddable Analytical Database." SIGMOD 2019. [PDF](https://ufdatastudio.com/cop5725fa26/papers/pdfs/raasveldt2019.pdf)
 - **Supplementary:**
