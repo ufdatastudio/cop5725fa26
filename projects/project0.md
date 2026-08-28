@@ -257,6 +257,8 @@ The opt-in PostgreSQL check should run against the department's hosted service, 
 2. Choose **Postgres** and create a database.
 3. Put the connection details in your `.env` as `DATABASE_URL`, then run `uv run --env-file .env --extra postgres setup/verify.py`.
 
+For help registering, connecting from off-campus, and using PostgreSQL from the command line, see [Connecting to CISE PostgreSQL](../documents/cise-postgres-guide.html).
+
 ![The CISE Database Management portal, with MySQL, Postgres, and Oracle providers](../assets/img/cise-databases.jpg)
 
 The [CISE IT support documentation](https://it.cise.ufl.edu/support/) (GatorLink login required) covers the database services. Parts of it are out of date, so where the docs and the registration portal disagree, trust the portal.
@@ -306,6 +308,9 @@ A: No. Use the API with a field filter and a seeded sample; see [Getting an Open
 
 **Q: Can I pick the same slice as a classmate?**
 A: Yes. The letter rule spreads the class across sources for variety, but your schema, queries, and writeups must be your own work either way.
+
+**Q: How do I connect to CISE PostgreSQL?**
+A: See [Connecting to CISE PostgreSQL](../documents/cise-postgres-guide.html) for account registration, SSH tunneling for off-campus access, and command-line usage with `psql`.
 
 ---
 
