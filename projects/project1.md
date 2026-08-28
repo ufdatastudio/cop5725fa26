@@ -14,9 +14,46 @@ layout: default
 
 ## Goal
 
-Turn raw data from your claimed dataset into a queryable, normalized PostgreSQL schema, and answer 10-15 business-style questions in SQL.
+Turn raw data from your claimed dataset into a queryable, normalized PostgreSQL schema, and answer 12-15 business-style questions in SQL.
 
 Your repo's `README.md` should let any data engineer load and run your work without reading your code.
+
+---
+
+## Design Scenarios
+
+A schema is easier to design when you know who will query it.
+Pick one of the scenarios below for your dataset family, adapt it, or invent your own.
+State your scenario in one sentence at the top of your README's schema overview.
+Your business questions in `queries/` should be questions your stakeholder would actually ask.
+
+The scenario names a stakeholder, not a table list.
+Two students using the same scenario will still produce different schemas because their slices, entities, and questions differ.
+
+### NYC Taxi (A-E)
+
+- You are an analyst at the TLC. The commissioners want monthly reporting on trip volume, fare revenue, and tipping behavior broken down by pickup zone and payment type.
+- You run operations for a fleet company. Dispatch wants to know where and when to stage vehicles, so they need demand by borough, hour of day, and day of week.
+
+### IMDb (F-J)
+
+- You work on the acquisitions team of a streaming service. They want to build a catalog in your genre and need to know which titles, people, and eras rate well with audiences.
+- You maintain the research database for an entertainment newsroom. Reporters ask career-trajectory questions, such as how a director's ratings have moved across their filmography.
+
+### Hacker News (K-O)
+
+- You lead developer relations for a company in your slice's topic area. Marketing wants to know how the topic is discussed, which stories drew the deepest comment threads, and who the recurring voices are.
+- You build moderation tooling for a discussion forum. The trust-and-safety team needs posting patterns per user, comment-tree depth, and activity trends over time.
+
+### OpenAlex (P-T)
+
+- You work in a university research office. The provost wants an annual report on your field's output, covering venues, collaboration patterns, and citation impact.
+- You are building a literature-mapping tool for new graduate students. It needs works, authors, and the citation links between them to suggest what to read next.
+
+### US Census (U-Z)
+
+- You are a data analyst for a state economic development agency. Site-selection consultants ask for county comparisons on population, income, and housing.
+- You support a nonprofit that places services by need. The program team asks which areas have the largest populations matching the groups they serve.
 
 ---
 
@@ -94,6 +131,7 @@ ORDER BY n DESC;
 
 Questions should:
 
+- Read as requests your [design scenario](#design-scenarios)'s stakeholder would make
 - Include at least **3 joins**
 - Include at least **2 GROUP BY** queries
 - Include at least **1 LEFT JOIN** to find missing relationships
