@@ -188,6 +188,8 @@ If you prefer a graphical interface, popular options include:
 
 All support SSH tunneling. For this course, `psql` is sufficient and will be used in examples.
 
+![pgAdmin 4 interface showing object explorer on the left and SQL editor on the right](../assets/img/pgadmin-screenshot.png)
+
 ### Useful psql Commands
 
 Common commands in `psql` (prefixed with backslash):
