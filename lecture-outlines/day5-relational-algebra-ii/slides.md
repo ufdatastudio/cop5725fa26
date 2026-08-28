@@ -667,7 +667,7 @@ Three more problems on the handout in the day-5 folder:
 2. Express the average enrollment per course in algebra and SQL.
 3. Translate this plan tree back into a SQL query.
 
-Answers due in your repo before 8:30 AM Wed Sep 2.
+This is an exercise.
 
 <!--
 Problem 3 is the hardest — it goes from a plan tree (what the optimizer sees) back up to surface SQL. This is a skill students need by Section 5; introducing it on a low-stakes handout gives them a chance to fail safely.

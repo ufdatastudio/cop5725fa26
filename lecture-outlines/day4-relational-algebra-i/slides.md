@@ -915,7 +915,7 @@ Three problems on the handout posted with these slides:
 2. Translate three algebra expressions to SQL.
 3. Argue whether $\sigma_p(R \cup S) = \sigma_p(R) \cup \sigma_p(S)$ and prove it or find a counterexample.
 
-Answers due in your repo before 8:30 AM Mon Aug 31.
+This is an exercise.
 
 <!--
 Problem 3 is the most interesting — it asks students to reason about why the identity holds, not just to recall it. Good first taste of algebra-as-proof.
