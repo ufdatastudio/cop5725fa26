@@ -45,9 +45,6 @@ graph TD
   Core["Core Algebra<br/>σ π ∪ ∩ − × ρ"] --> Joins["Joins<br/>⋈θ ⋈ ⟕ ⟖ ⟗"]
   Core --> Div["Division ÷"]
   Core --> Ext["Extended<br/>γ τ δ π̃"]
-  Joins --> SQL["SQL"]
-  Div --> SQL
-  Ext --> SQL
 ```
 
 </div>
@@ -147,19 +144,25 @@ Natural join is elegant on paper but a footgun in production: rename one column 
 
 **student**
 
-| student_id | name | major |
-|-----|------|-------|
-| 1 | Ada | CS |
-| 2 | Bob | EE |
-| 3 | Chia | CS |
+<table>
+<thead><tr><th>student_id</th><th>name</th><th>major</th></tr></thead>
+<tbody>
+<tr style="background:#F8BBD0"><td>1</td><td>Ada</td><td>CS</td></tr>
+<tr><td>2</td><td>Bob</td><td>EE</td></tr>
+<tr style="background:#90CAF9"><td>3</td><td>Chia</td><td>CS</td></tr>
+</tbody>
+</table>
 
 **enrollment**
 
-| student_id | course_id |
-|-----|--------|
-| 1 | COP5725 |
-| 1 | COT5405 |
-| 3 | COP5725 |
+<table>
+<thead><tr><th>student_id</th><th>course_id</th></tr></thead>
+<tbody>
+<tr style="background:#F8BBD0"><td>1</td><td>COP5725</td></tr>
+<tr style="background:#F8BBD0"><td>1</td><td>COT5405</td></tr>
+<tr style="background:#90CAF9"><td>3</td><td>COP5725</td></tr>
+</tbody>
+</table>
 
 </div>
 <div>
@@ -168,13 +171,18 @@ Natural join is elegant on paper but a footgun in production: rename one column 
 
 (joins on `student_id`)
 
-| student_id | name | major | course_id |
-|-----|------|-------|--------|
-| 1 | Ada | CS | COP5725 |
-| 1 | Ada | CS | COT5405 |
-| 3 | Chia | CS | COP5725 |
+<table>
+<thead><tr><th>student_id</th><th>name</th><th>major</th><th>course_id</th></tr></thead>
+<tbody>
+<tr style="background:#F8BBD0"><td>1</td><td>Ada</td><td>CS</td><td>COP5725</td></tr>
+<tr style="background:#F8BBD0"><td>1</td><td>Ada</td><td>CS</td><td>COT5405</td></tr>
+<tr style="background:#90CAF9"><td>3</td><td>Chia</td><td>CS</td><td>COP5725</td></tr>
+</tbody>
+</table>
 
-Bob disappears: he has no enrollment row, so he matches nothing.
+Rows sharing a color share a `student_id`; each result row combines the two same-colored sources.
+
+Bob's row is uncolored and disappears: he has no enrollment row, so he matches nothing.
 
 </div>
 </div>
@@ -196,13 +204,11 @@ Walk row-by-row through the join for Ada to make the matching concrete. The fact
 An inner join drops any row that has no match on the other side.
 An outer join keeps it, filling the missing attributes with NULL (Textbook §5.2.7, p. 219).
 
-```mermaid
-graph LR
-  L["Left Outer ⟕<br/>keep all of LEFT"] --> A((A))
-  F["Full Outer ⟗<br/>keep both sides"] --> A
-  R["Right Outer ⟖<br/>keep all of RIGHT"] --> A
-  A["NULLs fill unmatched attrs"]
-```
+![w:920px](images/outer-joins.svg)
+
+<!--
+Read the four panels left to right: each shades the rows that survive. The inner join keeps only matched pairs. Each outer variant adds back one side's unmatched rows (or both), and the +NULL pill marks where the missing attributes get padded.
+-->
 
 <!--
 Outer joins are how you find what is missing. The classic interview question "find students who have never enrolled" is just student ⟕ enrollment with WHERE enrollment.student_id IS NULL. The NULL filter on the right side is the giveaway.
@@ -217,18 +223,22 @@ Outer joins are how you find what is missing. The classic interview question "fi
 
 **student ⟕ enrollment**
 
-| student_id | name | major | course_id |
-|-----|------|-------|--------|
-| 1 | Ada | CS | COP5725 |
-| 1 | Ada | CS | COT5405 |
-| 2 | Bob | EE | NULL |
-| 3 | Chia | CS | COP5725 |
+<table>
+<thead><tr><th>student_id</th><th>name</th><th>major</th><th>course_id</th></tr></thead>
+<tbody>
+<tr style="background:#F8BBD0"><td>1</td><td>Ada</td><td>CS</td><td>COP5725</td></tr>
+<tr style="background:#F8BBD0"><td>1</td><td>Ada</td><td>CS</td><td>COT5405</td></tr>
+<tr style="background:#FFE082"><td>2</td><td>Bob</td><td>EE</td><td><strong>NULL</strong></td></tr>
+<tr style="background:#90CAF9"><td>3</td><td>Chia</td><td>CS</td><td>COP5725</td></tr>
+</tbody>
+</table>
 
 </div>
 <div>
 
-Bob comes back because he is in the left relation.
+The pink and blue rows are the inner join from the previous slide.
 
+Bob comes back (the amber row) because he is in the left relation.
 His `course_id` is NULL because there is no enrollment row for him.
 
 </div>
@@ -318,6 +328,8 @@ $$R \div S = \{\, t : t \in \pi_A(R) \,\land\, \forall s \in S,\, (t, s) \in R \
 
 In words: $R \div S$ returns the $A$-values from $R$ that are paired with **every** $B$-value in $S$.
 
+The Textbook defines this operator as the *quotient* in Exercise 2.4.10 (p. 58) and asks you to build it from the core operators.
+
 <!--
 The formal definition is the hardest one of the day. Encourage students to translate this into English on the spot: "for an A-value to qualify, it must appear in R alongside every B-value in S." Then walk through the example.
 -->
@@ -331,36 +343,47 @@ The formal definition is the hardest one of the day. Encourage students to trans
 
 **enrollment** (R)
 
-| student_id | course_id |
-|-----|--------|
-| 1 | COP5725 |
-| 1 | COT5405 |
-| 1 | CIS4301 |
-| 2 | COP5725 |
-| 3 | COP5725 |
-| 3 | COT5405 |
+<table>
+<thead><tr><th>student_id</th><th>course_id</th></tr></thead>
+<tbody>
+<tr><td>1</td><td style="background:#FFE082">COP5725</td></tr>
+<tr><td>1</td><td style="background:#A5D6A7">COT5405</td></tr>
+<tr><td>1</td><td>CIS4301</td></tr>
+<tr><td>2</td><td style="background:#FFE082">COP5725</td></tr>
+<tr><td>3</td><td style="background:#FFE082">COP5725</td></tr>
+<tr><td>3</td><td style="background:#A5D6A7">COT5405</td></tr>
+</tbody>
+</table>
 
 </div>
 <div>
 
 **required** (S)
 
-| course_id |
-|--------|
-| COP5725 |
-| COT5405 |
+<table>
+<thead><tr><th>course_id</th></tr></thead>
+<tbody>
+<tr><td style="background:#FFE082">COP5725</td></tr>
+<tr><td style="background:#A5D6A7">COT5405</td></tr>
+</tbody>
+</table>
+
+A student qualifies when their rows cover **every** color in `required`.
 
 </div>
 <div>
 
 **enrollment ÷ required**
 
-| student_id |
-|-----|
-| 1 |
-| 3 |
+<table>
+<thead><tr><th>student_id</th></tr></thead>
+<tbody>
+<tr style="background:#E8F5E9"><td>1</td></tr>
+<tr style="background:#E8F5E9"><td>3</td></tr>
+</tbody>
+</table>
 
-Student 2 took only one of the required courses, so they do not qualify.
+Students 1 and 3 have both amber and green rows. Student 2 has no green row, so they do not qualify.
 
 </div>
 </div>
@@ -409,23 +432,15 @@ The double-NOT-EXISTS form is the classic relational-calculus translation but ve
 
 # Limits of the Pure Algebra
 
-The pure algebra (σ, π, ∪, ∩, −, ×, ρ, ⋈, ÷) cannot express:
+The pure algebra (σ, π, ∪, ∩, −, ×, ρ, ⋈, ÷) cannot express any of the queries below.
+Each one needs a new operator (Textbook §5.2, p. 213).
 
-- "Average salary per department"
-- "Top 5 students by GPA"
-- "All distinct majors"
-- "name as `Last, First`"
-
-We extend the algebra with three operators plus a generalized projection (Textbook §5.2, p. 213).
-
-```mermaid
-graph LR
-  P[Pure Algebra] --> E[Extended Algebra]
-  E --> G["γ — Aggregation"]
-  E --> T["τ — Sort"]
-  E --> D["δ — Deduplicate"]
-  E --> PI["π̃ — Generalized projection"]
-```
+| Query it cannot express | Operator that fixes it | Textbook |
+|-------------------------|------------------------|----------|
+| "Average salary per department" | γ aggregation | §5.2.4, p. 216 |
+| "Top 5 students by GPA" | τ sort | §5.2.6, p. 219 |
+| "All distinct majors" over SQL's bags | δ duplicate elimination | §5.2.1, p. 214 |
+| "name as `Last, First`" | π̃ generalized projection | §5.2.5, p. 217 |
 
 <!--
 The point of this slide is that SQL's expressiveness is exactly the extended algebra. Optimizers translate SQL into trees of these operators. By Week 12 students will read plans whose nodes are labeled with these symbols.
@@ -437,10 +452,10 @@ The point of this slide is that SQL's expressiveness is exactly the extended alg
 
 $$\gamma_{G, A_1, A_2, ...; F_1(B_1), F_2(B_2), ...}(R)$$
 
-- $G, A_1, ...$ are grouping attributes
+- $G, A_1, ...$ are grouping attributes (Textbook §5.2.4, p. 216)
 - $F_i(B_i)$ are aggregate functions over attribute $B_i$
 
-Aggregate functions: `count`, `sum`, `avg`, `min`, `max` (Textbook §5.2.4, p. 216).
+Aggregate functions: `count`, `sum`, `avg`, `min`, `max` (Textbook §5.2.2, p. 214).
 
 <div class="columns">
 <div>
