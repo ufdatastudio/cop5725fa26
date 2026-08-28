@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 990 372" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+
+  <!-- ============ panel 1: compatible ============ -->
+  <g>
+    <text x="165" y="30" font-size="23" fill="#263238" text-anchor="middle">compatible</text>
+
+    <text x="40" y="68" font-size="19" fill="#607D8B">student</text>
+    <rect x="40" y="76" width="118" height="42" rx="8" fill="#90CAF9" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="99" y="103" font-size="18" fill="#263238" text-anchor="middle">name</text>
+    <rect x="164" y="76" width="118" height="42" rx="8" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="223" y="103" font-size="18" fill="#263238" text-anchor="middle">gpa</text>
+
+    <text x="165" y="158" font-size="32" fill="#263238" text-anchor="middle">&#8746;</text>
+
+    <text x="40" y="182" font-size="19" fill="#607D8B">faculty</text>
+    <rect x="40" y="190" width="118" height="42" rx="8" fill="#90CAF9" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="99" y="217" font-size="18" fill="#263238" text-anchor="middle">fname</text>
+    <rect x="164" y="190" width="118" height="42" rx="8" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="223" y="217" font-size="18" fill="#263238" text-anchor="middle">salary</text>
+
+    <circle cx="165" cy="272" r="24" fill="#A5D6A7" stroke="#2E7D32" stroke-width="3"/>
+    <path d="M 154 274 L 162 282 L 177 263" fill="none" stroke="#2E7D32" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <text x="165" y="322" font-size="17" fill="#37474F" text-anchor="middle">two attributes, text + number</text>
+    <text x="165" y="343" font-size="17" fill="#37474F" text-anchor="middle">names differ, still fine</text>
+  </g>
+
+  <!-- ============ panel 2: arity mismatch ============ -->
+  <g>
+    <text x="495" y="30" font-size="23" fill="#263238" text-anchor="middle">different arity</text>
+
+    <text x="370" y="68" font-size="19" fill="#607D8B">student</text>
+    <rect x="370" y="76" width="118" height="42" rx="8" fill="#90CAF9" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="429" y="103" font-size="18" fill="#263238" text-anchor="middle">name</text>
+    <rect x="494" y="76" width="118" height="42" rx="8" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="553" y="103" font-size="18" fill="#263238" text-anchor="middle">gpa</text>
+
+    <text x="495" y="158" font-size="32" fill="#263238" text-anchor="middle">&#8746;</text>
+
+    <text x="366" y="182" font-size="19" fill="#607D8B">course</text>
+    <rect x="366" y="190" width="84" height="42" rx="8" fill="#90CAF9" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="408" y="217" font-size="18" fill="#263238" text-anchor="middle">cid</text>
+    <rect x="454" y="190" width="84" height="42" rx="8" fill="#90CAF9" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="496" y="217" font-size="18" fill="#263238" text-anchor="middle">title</text>
+    <rect x="542" y="190" width="84" height="42" rx="8" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="584" y="217" font-size="17" fill="#263238" text-anchor="middle">credits</text>
+
+    <circle cx="495" cy="272" r="24" fill="#FFCDD2" stroke="#C62828" stroke-width="3"/>
+    <path d="M 485 262 L 505 282 M 505 262 L 485 282" fill="none" stroke="#C62828" stroke-width="5" stroke-linecap="round"/>
+
+    <text x="495" y="322" font-size="17" fill="#37474F" text-anchor="middle">two attributes vs three</text>
+  </g>
+
+  <!-- ============ panel 3: domain mismatch ============ -->
+  <g>
+    <text x="825" y="30" font-size="23" fill="#263238" text-anchor="middle">different domains</text>
+
+    <text x="700" y="68" font-size="19" fill="#607D8B">student</text>
+    <rect x="700" y="76" width="118" height="42" rx="8" fill="#90CAF9" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="759" y="103" font-size="18" fill="#263238" text-anchor="middle">name</text>
+    <rect x="824" y="76" width="118" height="42" rx="8" fill="#FFE082" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="883" y="103" font-size="18" fill="#263238" text-anchor="middle">gpa</text>
+
+    <text x="825" y="158" font-size="32" fill="#263238" text-anchor="middle">&#8746;</text>
+
+    <text x="700" y="182" font-size="19" fill="#607D8B">pet</text>
+    <rect x="700" y="190" width="118" height="42" rx="8" fill="#90CAF9" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="759" y="217" font-size="18" fill="#263238" text-anchor="middle">name</text>
+    <rect x="824" y="190" width="118" height="42" rx="8" fill="#90CAF9" stroke="#4E342E" stroke-width="2.5"/>
+    <text x="883" y="217" font-size="18" fill="#263238" text-anchor="middle">species</text>
+
+    <circle cx="825" cy="272" r="24" fill="#FFCDD2" stroke="#C62828" stroke-width="3"/>
+    <path d="M 815 262 L 835 282 M 835 262 L 815 282" fill="none" stroke="#C62828" stroke-width="5" stroke-linecap="round"/>
+
+    <text x="825" y="322" font-size="17" fill="#37474F" text-anchor="middle">position 2: number vs text</text>
+  </g>
+
+  <!-- ============ legend ============ -->
+  <g>
+    <rect x="388" y="352" width="22" height="15" rx="4" fill="#90CAF9" stroke="#4E342E" stroke-width="2"/>
+    <text x="418" y="365" font-size="16" fill="#607D8B">text</text>
+    <rect x="480" y="352" width="22" height="15" rx="4" fill="#FFE082" stroke="#4E342E" stroke-width="2"/>
+    <text x="510" y="365" font-size="16" fill="#607D8B">number</text>
+  </g>
+</svg>

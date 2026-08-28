@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="soarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+  </defs>
+
+  <!-- ============ source relation R ============ -->
+  <g>
+    <text x="280" y="48" font-size="28" fill="#263238" text-anchor="middle">R</text>
+    <rect x="200" y="58" width="160" height="102" rx="12" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+    <rect x="215" y="68" width="130" height="36" rx="18" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+    <text x="280" y="93" font-size="20" fill="#263238" text-anchor="middle">Ada</text>
+    <rect x="215" y="112" width="130" height="36" rx="18" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+    <text x="280" y="137" font-size="20" fill="#263238" text-anchor="middle">Bob</text>
+  </g>
+
+  <!-- ============ source relation S ============ -->
+  <g>
+    <text x="670" y="48" font-size="28" fill="#263238" text-anchor="middle">S</text>
+    <rect x="590" y="58" width="160" height="102" rx="12" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+    <rect x="605" y="68" width="130" height="36" rx="18" fill="#90CAF9" stroke="#1565C0" stroke-width="2.5"/>
+    <text x="670" y="93" font-size="20" fill="#263238" text-anchor="middle">Bob</text>
+    <rect x="605" y="112" width="130" height="36" rx="18" fill="#90CAF9" stroke="#1565C0" stroke-width="2.5"/>
+    <text x="670" y="137" font-size="20" fill="#263238" text-anchor="middle">Chia</text>
+  </g>
+
+  <!-- ============ legend between the sources ============ -->
+  <g>
+    <rect x="437" y="60" width="36" height="18" rx="9" fill="#F8BBD0" stroke="#AD1457" stroke-width="2"/>
+    <text x="484" y="75" font-size="17" fill="#37474F">from R</text>
+    <rect x="437" y="90" width="36" height="18" rx="9" fill="#90CAF9" stroke="#1565C0" stroke-width="2"/>
+    <text x="484" y="105" font-size="17" fill="#37474F">from S</text>
+    <rect x="437" y="120" width="36" height="18" rx="9" fill="#E1BEE7" stroke="#6A1B9A" stroke-width="2"/>
+    <text x="484" y="135" font-size="17" fill="#37474F">in both</text>
+  </g>
+
+  <!-- ============ union panel ============ -->
+  <g>
+    <text x="155" y="236" font-size="26" fill="#263238" text-anchor="middle">R &#8746; S</text>
+    <g transform="translate(225 228)">
+      <circle cx="0" cy="0" r="15" fill="#FFE082"/>
+      <circle cx="20" cy="0" r="15" fill="#FFE082"/>
+      <circle cx="0" cy="0" r="15" fill="none" stroke="#4E342E" stroke-width="2"/>
+      <circle cx="20" cy="0" r="15" fill="none" stroke="#4E342E" stroke-width="2"/>
+    </g>
+    <rect x="95" y="252" width="170" height="140" rx="12" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+    <rect x="110" y="262" width="140" height="34" rx="17" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+    <text x="180" y="286" font-size="19" fill="#263238" text-anchor="middle">Ada</text>
+    <rect x="110" y="304" width="140" height="34" rx="17" fill="#E1BEE7" stroke="#6A1B9A" stroke-width="2.5"/>
+    <text x="180" y="328" font-size="19" fill="#263238" text-anchor="middle">Bob</text>
+    <rect x="110" y="346" width="140" height="34" rx="17" fill="#90CAF9" stroke="#1565C0" stroke-width="2.5"/>
+    <text x="180" y="370" font-size="19" fill="#263238" text-anchor="middle">Chia</text>
+    <text x="180" y="420" font-size="18" fill="#607D8B" text-anchor="middle">everything, once</text>
+
+    <text x="280" y="318" font-size="17" fill="#6A1B9A">Bob once,</text>
+    <text x="280" y="339" font-size="17" fill="#6A1B9A">not twice!</text>
+    <path d="M 276 324 Q 264 322 256 321" fill="none" stroke="#4E342E" stroke-width="2.5" marker-end="url(#soarrow)"/>
+  </g>
+
+  <!-- ============ intersection panel ============ -->
+  <g>
+    <text x="455" y="236" font-size="26" fill="#263238" text-anchor="middle">R &#8745; S</text>
+    <g transform="translate(525 228)">
+      <path d="M 10 -11.2 A 15 15 0 0 1 10 11.2 A 15 15 0 0 1 10 -11.2 Z" fill="#FFE082"/>
+      <circle cx="0" cy="0" r="15" fill="none" stroke="#4E342E" stroke-width="2"/>
+      <circle cx="20" cy="0" r="15" fill="none" stroke="#4E342E" stroke-width="2"/>
+    </g>
+    <rect x="395" y="252" width="170" height="54" rx="12" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+    <rect x="410" y="262" width="140" height="34" rx="17" fill="#E1BEE7" stroke="#6A1B9A" stroke-width="2.5"/>
+    <text x="480" y="286" font-size="19" fill="#263238" text-anchor="middle">Bob</text>
+    <text x="480" y="334" font-size="18" fill="#607D8B" text-anchor="middle">only what is in both</text>
+  </g>
+
+  <!-- ============ difference panel ============ -->
+  <g>
+    <text x="755" y="236" font-size="26" fill="#263238" text-anchor="middle">R &#8722; S</text>
+    <g transform="translate(825 228)">
+      <circle cx="0" cy="0" r="15" fill="#FFE082"/>
+      <circle cx="20" cy="0" r="15" fill="#FFFFFF"/>
+      <circle cx="0" cy="0" r="15" fill="none" stroke="#4E342E" stroke-width="2"/>
+      <circle cx="20" cy="0" r="15" fill="none" stroke="#4E342E" stroke-width="2"/>
+    </g>
+    <rect x="695" y="252" width="170" height="54" rx="12" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+    <rect x="710" y="262" width="140" height="34" rx="17" fill="#F8BBD0" stroke="#AD1457" stroke-width="2.5"/>
+    <text x="780" y="286" font-size="19" fill="#263238" text-anchor="middle">Ada</text>
+    <text x="780" y="334" font-size="18" fill="#607D8B" text-anchor="middle">in R but not in S</text>
+  </g>
+</svg>

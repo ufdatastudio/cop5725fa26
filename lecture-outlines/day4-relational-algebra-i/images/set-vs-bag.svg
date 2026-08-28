@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 450" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+  <defs>
+    <marker id="sbarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#4E342E"/>
+    </marker>
+  </defs>
+
+  <!-- ============ source relation ============ -->
+  <g>
+    <text x="40" y="98" font-size="26" fill="#263238">student</text>
+
+    <!-- table body -->
+    <rect x="40" y="110" width="260" height="220" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+
+    <!-- header band -->
+    <rect x="41" y="111" width="258" height="42" rx="8" fill="#FFE082"/>
+    <path d="M 40 154 L 300 154" stroke="#4E342E" stroke-width="3"/>
+
+    <!-- major header highlight (the projected attribute) -->
+    <rect x="172" y="113" width="126" height="39" rx="8" fill="#A5D6A7" stroke="#2E7D32" stroke-width="3"/>
+
+    <!-- column separator -->
+    <path d="M 170 110 L 170 330" stroke="#4E342E" stroke-width="2"/>
+    <!-- row separators -->
+    <path d="M 40 198 L 300 198" stroke="#4E342E" stroke-width="1.5"/>
+    <path d="M 40 242 L 300 242" stroke="#4E342E" stroke-width="1.5"/>
+    <path d="M 40 286 L 300 286" stroke="#4E342E" stroke-width="1.5"/>
+
+    <!-- header text -->
+    <text x="55" y="141" font-size="21" fill="#263238">name</text>
+    <text x="185" y="141" font-size="21" fill="#263238">major</text>
+
+    <!-- rows: the three CS tuples share a color so the eye can track them -->
+    <text x="55" y="185" font-size="19" fill="#37474F">Ada</text>
+    <text x="185" y="185" font-size="19" fill="#AD1457">CS</text>
+
+    <text x="55" y="229" font-size="19" fill="#37474F">Bob</text>
+    <text x="185" y="229" font-size="19" fill="#AD1457">CS</text>
+
+    <text x="55" y="273" font-size="19" fill="#37474F">Chia</text>
+    <text x="185" y="273" font-size="19" fill="#1565C0">Math</text>
+
+    <text x="55" y="317" font-size="19" fill="#37474F">Dev</text>
+    <text x="185" y="317" font-size="19" fill="#AD1457">CS</text>
+  </g>
+
+  <!-- ============ arrows ============ -->
+  <path d="M 308 180 Q 420 120 535 128" fill="none" stroke="#4E342E" stroke-width="3" marker-end="url(#sbarrow)"/>
+  <text x="360" y="122" font-size="22" fill="#263238">&#960;<tspan dy="6" font-size="16">major</tspan></text>
+
+  <path d="M 308 262 Q 420 330 535 344" fill="none" stroke="#4E342E" stroke-width="3" marker-end="url(#sbarrow)"/>
+  <text x="360" y="352" font-size="22" fill="#263238">&#960;<tspan dy="6" font-size="16">major</tspan></text>
+
+  <!-- ============ set-semantics result ============ -->
+  <g>
+    <text x="545" y="44" font-size="24" fill="#263238">set semantics</text>
+    <text x="545" y="66" font-size="16" fill="#607D8B">algebra &#960;, or SELECT DISTINCT</text>
+
+    <rect x="545" y="74" width="150" height="120" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+    <rect x="546" y="75" width="148" height="38" rx="8" fill="#A5D6A7"/>
+    <path d="M 545 114 L 695 114" stroke="#4E342E" stroke-width="3"/>
+    <path d="M 545 154 L 695 154" stroke="#4E342E" stroke-width="1.5"/>
+
+    <text x="560" y="102" font-size="21" fill="#263238">major</text>
+    <text x="560" y="143" font-size="19" fill="#AD1457">CS</text>
+    <text x="560" y="183" font-size="19" fill="#1565C0">Math</text>
+  </g>
+
+  <!-- sticky note: collapse -->
+  <g transform="rotate(-4 810 100)">
+    <rect x="716" y="78" width="196" height="46" rx="16" fill="#90CAF9" stroke="#4E342E" stroke-width="3"/>
+    <text x="732" y="108" font-size="21" fill="#263238">3 CS became 1!</text>
+  </g>
+  <path d="M 714 118 Q 704 126 698 134" fill="none" stroke="#4E342E" stroke-width="3" marker-end="url(#sbarrow)"/>
+
+  <!-- ============ bag-semantics result ============ -->
+  <g>
+    <text x="545" y="252" font-size="24" fill="#263238">bag semantics</text>
+    <text x="545" y="274" font-size="16" fill="#607D8B">SQL default: SELECT major</text>
+
+    <rect x="545" y="282" width="150" height="158" rx="10" fill="#FFF8E1" stroke="#4E342E" stroke-width="3"/>
+    <rect x="546" y="283" width="148" height="36" rx="8" fill="#FFE082"/>
+    <path d="M 545 320 L 695 320" stroke="#4E342E" stroke-width="3"/>
+    <path d="M 545 350 L 695 350" stroke="#4E342E" stroke-width="1.5"/>
+    <path d="M 545 380 L 695 380" stroke="#4E342E" stroke-width="1.5"/>
+    <path d="M 545 410 L 695 410" stroke="#4E342E" stroke-width="1.5"/>
+
+    <text x="560" y="309" font-size="21" fill="#263238">major</text>
+    <text x="560" y="343" font-size="18" fill="#AD1457">CS</text>
+    <text x="560" y="373" font-size="18" fill="#AD1457">CS</text>
+    <text x="560" y="403" font-size="18" fill="#1565C0">Math</text>
+    <text x="560" y="433" font-size="18" fill="#AD1457">CS</text>
+  </g>
+
+  <!-- sticky note: keeps copies -->
+  <g transform="rotate(3 810 350)">
+    <rect x="716" y="330" width="196" height="46" rx="16" fill="#A5D6A7" stroke="#4E342E" stroke-width="3"/>
+    <text x="732" y="360" font-size="21" fill="#263238">every copy kept</text>
+  </g>
+  <path d="M 714 366 Q 704 370 698 372" fill="none" stroke="#4E342E" stroke-width="3" marker-end="url(#sbarrow)"/>
+</svg>
