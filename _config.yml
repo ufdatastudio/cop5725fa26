@@ -23,6 +23,8 @@ published_lectures:
   - day1-introduction
   - day2-database-history
   - day3-relational-model
+  - day4-relational-algebra-i
+  - day5-relational-algebra-ii
 
 exclude:
   - simple-syllabus.md
