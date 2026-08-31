@@ -78,12 +78,38 @@ This is the densest algebra day. Pace check at slide 12 (after outer joins). If 
 
 # Joins as Cross Product plus Selection
 
-Every join is a cross product followed by a selection on matching attributes (Textbook §2.4.9, p. 45).
+Every join is a cross product followed by a selection on matching attributes <span class="cite">(Textbook §2.4.9, p. 45)</span>.
 
-$$R \bowtie_\theta S \;=\; \sigma_\theta(R \times S)$$
+$$R \bowtie_\theta S \;=\; \textcolor{#c62828}{\sigma_\theta}(\textcolor{#1565c0}{R \times S})$$
+
+::: appear
+
+<div class="columns">
+<div>
+
+<pre><code><span style="color:#1565c0">for each tuple r in R:
+  for each tuple s in S:</span>
+    <span style="color:#c62828">if θ(r, s):</span>
+      output the combined tuple rs
+</code></pre>
+
+</div>
+<div>
+
+The <span style="color:#1565c0">blue loops</span> enumerate the cross product $R \times S$.
+The <span style="color:#c62828">red test</span> is the selection; swapping in a different $\theta$ gives a different join.
+
+</div>
+</div>
+
+:::
 
 The optimizer treats this as a single operator because it can execute the combined form in one pass through memory.
 The algebra treats it as one operator because it shows up everywhere.
+
+<!--
+Build choreography: explain the equation first, then click. The pseudocode appears with the same colors as the equation: blue for the cross product loops, red for the theta test. Say the difference out loud — the algebra reads as "materialize R × S, then filter", but the algorithm never materializes the cross product; the filter runs inside the loop.
+-->
 
 <!--
 Stress that the optimizer's distinction here is not pedantic. A naive cross product blows up to |R| * |S| tuples. A join algorithm (hash, sort-merge, nested loop with predicate pushdown) avoids materializing that intermediate. We will see those algorithms in Section 5, Week 12.
@@ -129,7 +155,7 @@ Convenient. Dangerous if a column name overlaps by accident.
 </div>
 </div>
 
-Textbook §2.4.8 (natural joins, p. 43) and §2.4.9 (theta-joins, p. 45).
+<span class="cite">Textbook §2.4.8 (natural joins, p. 43) and §2.4.9 (theta-joins, p. 45).</span>
 
 <!--
 Natural join is elegant on paper but a footgun in production: rename one column and your join silently changes. I recommend students write explicit equi-joins in SQL even when the natural form is shorter.
@@ -188,7 +214,59 @@ Bob's row is uncolored and disappears: he has no enrollment row, so he matches n
 </div>
 
 <!--
-Walk row-by-row through the join for Ada to make the matching concrete. The fact that Bob disappears motivates the next slide on outer joins.
+Walk row-by-row through the join for Ada to make the matching concrete. The fact that Bob disappears motivates the outer join slides in Part 2. First, though, the next slide shows how a natural join fails.
+-->
+
+---
+
+# When Natural Join Goes Wrong
+
+Natural join matches on column names only; all three of our engines ignore declared foreign keys.
+
+<div class="columns">
+<div>
+
+The key column is misspelled `sid`:
+
+```sql
+CREATE TABLE enrollment (
+  sid INT REFERENCES student(student_id),
+  course_id TEXT);
+```
+
+The foreign key still points at `student`, but `student ⋈ enrollment` now shares **no** column name, so nothing constrains the pairing.
+
+<div class="small">
+
+With no shared names:
+
+- PostgreSQL and SQLite silently fall back to a cross join
+- DuckDB errors: "No columns found to join on"
+
+</div>
+
+</div>
+<div>
+
+**student ⋈ enrollment** (the misspelled schema)
+
+<table>
+<thead><tr><th>student_id</th><th>name</th><th>sid</th><th>course_id</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Ada</td><td>1</td><td>COP5725</td></tr>
+<tr style="background:#FFCDD2"><td>1</td><td>Ada</td><td>3</td><td>COT5405</td></tr>
+<tr style="background:#FFCDD2"><td>2</td><td>Bob</td><td>1</td><td>COP5725</td></tr>
+<tr style="background:#FFCDD2"><td>2</td><td>Bob</td><td>3</td><td>COT5405</td></tr>
+</tbody>
+</table>
+
+Every student pairs with every enrollment. The red rows are nonsense, and two engines return them without complaint.
+
+</div>
+</div>
+
+<!--
+This is the footgun from two slides back made concrete. The PostgreSQL manual (Queries: Table Expressions, §7.2.1.1) says NATURAL "forms a USING list consisting of all column names that appear in both input tables" and that with no common names it behaves like CROSS JOIN. SQLite implements the same rule (verified on 3.51). DuckDB is the only one of the three that refuses: its binder raises "No columns found to join on in NATURAL JOIN" and suggests CROSS JOIN (verified on 1.5.5). No SQL engine consults foreign keys for natural join; the constraint metadata exists, the join simply does not read it. One more failure mode worth saying out loud: the opposite mistake, where an ACCIDENTAL shared name (say both tables have a "notes" column) silently joins on it and drops rows.
 -->
 
 ---
@@ -202,7 +280,7 @@ Walk row-by-row through the join for Ada to make the matching concrete. The fact
 # Outer Joins
 
 An inner join drops any row that has no match on the other side.
-An outer join keeps it, filling the missing attributes with NULL (Textbook §5.2.7, p. 219).
+An outer join keeps it, filling the missing attributes with NULL <span class="cite">(Textbook §5.2.7, p. 219)</span>.
 
 ![w:920px](images/outer-joins.svg)
 
@@ -266,9 +344,9 @@ LEFT vs LEFT OUTER are interchangeable in SQL; the OUTER keyword is optional but
 
 **With difference**
 
-$$\pi_{student\_id}(student) - \pi_{student\_id}(enrollment)$$
+$$\pi_{name}\big(student \bowtie (\pi_{student\_id}(student) - \pi_{student\_id}(enrollment))\big)$$
 
-Then join back to student to recover names.
+The difference finds the ids; the join back to `student` recovers the names.
 
 </div>
 <div>
@@ -281,6 +359,13 @@ Often faster because one scan and one merge replace the second pass.
 
 </div>
 </div>
+
+Why IS NULL and not IS NOT NULL? The outer join pads a never-enrolled student's `course_id` with NULL (Bob's amber row, two slides back).
+Keeping the NULL rows keeps exactly the students with no enrollment; IS NOT NULL would return the enrolled students instead.
+
+<!--
+Students regularly ask whether the filter should be IS NOT NULL. It should not: the padded NULL is the marker of a missing match, so IS NULL selects the unmatched students. Tie it back to the left outer join example — the amber Bob row is the only one the filter keeps.
+-->
 
 <!--
 The optimizer can usually transform one into the other. This is one of the classic rewrites discussed in the Selinger 1979 paper we will read in Section 5. Both are legal answers on quizzes.
@@ -328,7 +413,7 @@ $$R \div S = \{\, t : t \in \pi_A(R) \,\land\, \forall s \in S,\, (t, s) \in R \
 
 In words: $R \div S$ returns the $A$-values from $R$ that are paired with **every** $B$-value in $S$.
 
-The Textbook defines this operator as the *quotient* in Exercise 2.4.10 (p. 58) and asks you to build it from the core operators.
+<span class="cite">The Textbook defines this operator as the quotient in Exercise 2.4.10 (p. 58) and asks you to build it from the core operators.</span>
 
 <!--
 The formal definition is the hardest one of the day. Encourage students to translate this into English on the spot: "for an A-value to qualify, it must appear in R alongside every B-value in S." Then walk through the example.
@@ -433,14 +518,16 @@ The double-NOT-EXISTS form is the classic relational-calculus translation but ve
 # Limits of the Pure Algebra
 
 The pure algebra (σ, π, ∪, ∩, −, ×, ρ, ⋈, ÷) cannot express any of the queries below.
-Each one needs a new operator (Textbook §5.2, p. 213).
+Each one needs a new operator <span class="cite">(Textbook §5.2, p. 213)</span>.
 
 | Query it cannot express | Operator that fixes it | Textbook |
 |-------------------------|------------------------|----------|
-| "Average salary per department" | γ aggregation | §5.2.4, p. 216 |
-| "Top 5 students by GPA" | τ sort | §5.2.6, p. 219 |
-| "All distinct majors" over SQL's bags | δ duplicate elimination | §5.2.1, p. 214 |
-| "name as `Last, First`" | π̃ generalized projection | §5.2.5, p. 217 |
+| "Average salary per department" | γ aggregation | <span class="cite">§5.2.4, p. 216</span> |
+| "Top 5 students by GPA" | τ sort | <span class="cite">§5.2.6, p. 219</span> |
+| "All distinct majors" over SQL's bags | δ duplicate elimination | <span class="cite">§5.2.1, p. 214</span> |
+| "name as `Last, First`" | π̃ generalized projection | <span class="cite">§5.2.5, p. 217</span> |
+
+<span class="small">The tilde on π̃ distinguishes generalized projection from plain π: the projection list may contain computed expressions, not just attribute names. It gets its own slide shortly.</span>
 
 <!--
 The point of this slide is that SQL's expressiveness is exactly the extended algebra. Optimizers translate SQL into trees of these operators. By Week 12 students will read plans whose nodes are labeled with these symbols.
@@ -452,10 +539,8 @@ The point of this slide is that SQL's expressiveness is exactly the extended alg
 
 $$\gamma_{G, A_1, A_2, ...; F_1(B_1), F_2(B_2), ...}(R)$$
 
-- $G, A_1, ...$ are grouping attributes (Textbook §5.2.4, p. 216)
-- $F_i(B_i)$ are aggregate functions over attribute $B_i$
-
-Aggregate functions: `count`, `sum`, `avg`, `min`, `max` (Textbook §5.2.2, p. 214).
+- $G, A_1, ...$ are grouping attributes <span class="cite">(Textbook §5.2.4, p. 216)</span>
+- $F_i(B_i)$ are aggregates (`count`, `sum`, `avg`, `min`, `max`) <span class="cite">(Textbook §5.2.2, p. 214)</span>
 
 <div class="columns">
 <div>
@@ -478,15 +563,26 @@ GROUP BY major;
 </div>
 </div>
 
+<div class="small">
+
+A lone aggregate needs no GROUP BY. The whole relation is one group, and `SELECT avg(gpa) FROM student;` returns exactly one row.
+A GROUP BY needs no aggregate. `SELECT major FROM student GROUP BY major;` returns one row per distinct value, the same result as `SELECT DISTINCT`.
+
+</div>
+
+<!--
+The two degenerate cases are worth a beat each. An aggregate with no GROUP BY is still a γ — the group is the whole table, so a lone avg() never errors and always yields one row. GROUP BY with no aggregate is δ in disguise; students will see optimizers rewrite one into the other.
+-->
+
 ---
 
 # Sort τ
 
 $$\tau_{A_1, A_2, ...}(R)$$
 
-Returns the tuples of $R$ in the order given by the listed attributes (Textbook §5.2.6, p. 219).
+Returns the tuples of $R$ in the order given by the listed attributes <span class="cite">(Textbook §5.2.6, p. 219)</span>.
 
-Sort breaks set semantics because the result is a *list*, not a relation. This is why SQL allows `ORDER BY` only on the **outermost** query.
+Sort breaks set semantics because the result is a *list*, not a relation. Only an `ORDER BY` on the **outermost** query guarantees the order of the final result.
 
 <div class="columns">
 <div>
@@ -508,8 +604,15 @@ ORDER BY gpa DESC;
 </div>
 </div>
 
+<div class="small">
+
+PostgreSQL, DuckDB, and SQLite all accept `ORDER BY` inside a subquery, and it matters there when paired with `LIMIT` (top-N).
+Without `LIMIT`, the outer query is free to reorder the rows; the PostgreSQL manual says row order is unspecified unless the sort is the final step.
+
+</div>
+
 <!--
-Brief note: subqueries cannot have ORDER BY in standard SQL (PostgreSQL allows it as an extension, but the order is not preserved through downstream operators). This is the algebra reason why.
+The common misconception is that ORDER BY is rejected inside subqueries. All three course engines parse it fine (verified on DuckDB 1.5.5 and SQLite 3.51; PostgreSQL likewise). The real rule is about guarantees: an inner ORDER BY establishes an order the outer operators may destroy (a hash join or hash aggregate above it will). The one place an inner ORDER BY has defined meaning is with LIMIT/OFFSET, where it picks WHICH rows survive. PostgreSQL manual, Queries: Sorting Rows (§7.5): without an explicit sort at the top, "the rows will be returned in an unspecified order ... must not be relied on."
 -->
 
 ---
@@ -518,7 +621,7 @@ Brief note: subqueries cannot have ORDER BY in standard SQL (PostgreSQL allows i
 
 $$\delta(R)$$
 
-Returns $R$ with duplicate tuples removed. Turns a bag back into a set (Textbook §5.2.1, p. 214).
+Returns $R$ with duplicate tuples removed. Turns a bag back into a set <span class="cite">(Textbook §5.2.1, p. 214)</span>.
 
 Algebra operators preserve set semantics by default, so δ rarely appears explicitly in algebra expressions. It is essential when reasoning about the bag-semantics of real SQL.
 
@@ -546,7 +649,7 @@ SELECT DISTINCT major FROM student;
 # Generalized Projection $\tilde{\pi}$
 
 Standard projection picks attributes by name.
-Generalized projection allows computed expressions (Textbook §5.2.5, p. 217).
+Generalized projection allows computed expressions <span class="cite">(Textbook §5.2.5, p. 217)</span>.
 
 <div class="columns">
 <div>
@@ -586,14 +689,20 @@ Many texts write this as plain π. We keep the tilde when we want to emphasize t
 <div class="columns">
 <div>
 
+::: appear
+
 ### Algebra
 
 $$\tau_{avg\_gpa\,desc}\big( \sigma_{n \geq 5}\big( \gamma_{major; \text{count}(*) \to n, \text{avg}(gpa) \to avg\_gpa}(student) \big) \big)$$
 
 Three operators: γ, σ, τ.
 
+:::
+
 </div>
 <div>
+
+::: appear
 
 ### SQL
 
@@ -607,10 +716,14 @@ HAVING count(*) >= 5
 ORDER BY avg_gpa DESC;
 ```
 
-Four clauses: SELECT, GROUP BY, HAVING, ORDER BY.
+:::
 
 </div>
 </div>
+
+<!--
+Run this as a student exercise. Show only the English question first and have the class write both forms. First click reveals the algebra to check against; second click reveals the SQL.
+-->
 
 <!--
 The mapping is consistent: WHERE → σ before γ, HAVING → σ after γ, GROUP BY → γ, ORDER BY → τ, SELECT → π or π̃. Drive this mapping until it is automatic; students will read plans in this shape all semester.
@@ -626,6 +739,9 @@ graph BT
   agg --> sel["σ_count(*) ≥ 5"]
   sel --> sort["τ_avg_gpa desc"]
   sort --> out["result"]
+  classDef planop fill:#ffffff,stroke:#334155,stroke-width:1.5px,color:#111
+  class scan,agg,sel,sort,out planop
+  linkStyle default stroke:#334155,stroke-width:3px
 ```
 
 This is what `EXPLAIN` will show you in Section 5.
@@ -661,7 +777,7 @@ Reading: Textbook §4.1-4.5, pp. 125-163.
 
 # Practice Before Wednesday
 
-Three more problems on the handout in the day-5 folder:
+Three more problems on the handout posted with these slides:
 
 1. Find suppliers who supply every part in `red_parts`.
 2. Express the average enrollment per course in algebra and SQL.
@@ -679,4 +795,4 @@ Problem 3 is the hardest — it goes from a plan tree (what the optimizer sees) 
 
 What is on your mind?
 
-Project 1 ships Wednesday. Project 0 setup remains due Fri Sep 4.
+Project 1 will be posted Wednesday. Project 0 setup remains due Fri Sep 4.

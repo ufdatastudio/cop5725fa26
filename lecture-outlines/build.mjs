@@ -32,7 +32,7 @@ async function findDecks() {
     if (!entry.isDirectory() || !/^day\d+/.test(entry.name)) continue;
     // Match `--only day2` to day2-database-history without also catching day20.
     if (only && entry.name !== only && !entry.name.startsWith(`${only}-`)) continue;
-    for (const file of ['slides.md', 'clicker.md']) {
+    for (const file of ['slides.md', 'clicker.md', 'handout.md']) {
       const path = join(entry.name, file);
       if (existsSync(path)) decks.push(path);
     }

@@ -41,6 +41,9 @@ if (!siteDir) {
 const files = ['slides.html', 'slides.pdf',
   ...(PUBLISH_CLICKER ? ['clicker.html', 'clicker.pdf'] : [])];
 
+// Present for some decks only; copied when built, never reported missing.
+const optionalFiles = ['handout.pdf'];
+
 let published = 0;
 let missing = 0;
 const decks = readdirSync(SRC, { withFileTypes: true })
@@ -68,6 +71,10 @@ for (const deck of decks) {
       continue;
     }
     cpSync(from, join(dest, file));
+  }
+  for (const file of optionalFiles) {
+    const from = join(SRC, deck, file);
+    if (existsSync(from)) cpSync(from, join(dest, file));
   }
   const images = join(SRC, deck, 'images');
   if (existsSync(images)) cpSync(images, join(dest, 'images'), { recursive: true });
