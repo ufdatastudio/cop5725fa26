@@ -12,7 +12,9 @@
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { readdir, readFile, rm, writeFile } from 'node:fs/promises';
-import { basename, dirname, join } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
+
+import { chromium } from 'playwright';
 
 import { expandFragments, hasAppear } from './lib/expand-fragments.mjs';
 import { createMermaidRenderer, hasMermaid, replaceMermaid } from './lib/render-mermaid.mjs';
@@ -54,17 +56,58 @@ function marp(inputs, extraArgs, target) {
   });
 }
 
+/*
+ * PDF printer backed by one headless browser. marp-cli's own --pdf pass runs
+ * the printed file through pdf-lib to stamp metadata, and that rewrite drops
+ * the tagged (accessible) structure Chrome generates — image alt text never
+ * reaches the PDF. Printing the marp HTML ourselves with `tagged: true`
+ * keeps the accessibility tree intact.
+ */
+async function createPdfPrinter() {
+  let browser;
+  try {
+    browser = await chromium.launch({ channel: 'chrome' });
+  } catch {
+    browser = await chromium.launch();
+  }
+  return {
+    async print(htmlPath, outPath) {
+      const page = await browser.newPage();
+      try {
+        await page.goto(`file://${resolve(htmlPath)}`, { waitUntil: 'networkidle' });
+        await page.evaluate(() => document.fonts.ready);
+        // The bespoke template marks every non-active slide aria-hidden/inert,
+        // which removes it from the accessibility tree — and therefore from
+        // the tagged PDF. Print CSS shows all slides, so unhide them for the
+        // accessibility tree too.
+        await page.evaluate(() => {
+          for (const el of document.querySelectorAll('[aria-hidden], [inert]')) {
+            el.removeAttribute('aria-hidden');
+            el.removeAttribute('inert');
+          }
+        });
+        await page.pdf({
+          path: outPath,
+          printBackground: true,
+          preferCSSPageSize: true, // the deck's @page rule carries the slide size
+          tagged: true,
+        });
+      } finally {
+        await page.close();
+      }
+    },
+    close: () => browser.close(),
+  };
+}
+
 // Build one deck to one target. Mermaid is pre-rendered to images for both
 // targets, so neither build depends on a CDN at view time. `::: appear` blocks
 // expand into one page per reveal step for PDF only.
-async function buildDeck(deck, source, target, renderer) {
+async function buildDeck(deck, source, target, renderer, printer) {
   const base = basename(deck, '.md');
   const dir = dirname(deck);
   const ext = target === 'pdf' ? 'pdf' : 'html';
   const out = join(dir, `${base}.${ext}`);
-  const marpArgs = target === 'pdf'
-    ? ['--pdf', '--allow-local-files', '-o', out]
-    : ['--html', '-o', out];
 
   let markdown = source;
   let rewritten = false;
@@ -76,26 +119,32 @@ async function buildDeck(deck, source, target, renderer) {
     markdown = expandFragments(markdown, (m) => console.warn(`  warn ${deck}: ${m}`));
     rewritten = true;
   }
-  if (!rewritten) {
-    await marp([deck], marpArgs, target);
-    return;
-  }
-  // Write the transformed deck beside the original so relative images resolve.
-  const tmp = join(dir, `.${base}.${ext}-src.md`);
-  await writeFile(tmp, markdown);
+
+  // The PDF target converts to HTML first (still under MARP_TARGET=pdf so the
+  // engine renders print variants), then prints it with the tagged option.
+  const viaPrinter = target === 'pdf' && printer;
+  const marpOut = viaPrinter ? join(dir, `.${base}.pdf-print.html`) : out;
+  const marpArgs = target === 'pdf' && !viaPrinter
+    ? ['--pdf', '--allow-local-files', '-o', marpOut]
+    : ['--html', '-o', marpOut];
+
+  const input = rewritten ? join(dir, `.${base}.${ext}-src.md`) : deck;
+  if (rewritten) await writeFile(input, markdown);
   try {
-    await marp([tmp], marpArgs, target);
+    await marp([input], marpArgs, target);
+    if (viaPrinter) await printer.print(marpOut, out);
   } finally {
-    await rm(tmp, { force: true });
+    if (rewritten) await rm(input, { force: true });
+    if (viaPrinter) await rm(marpOut, { force: true });
   }
 }
 
-async function buildAll(decks, sources, target, renderer) {
+async function buildAll(decks, sources, target, renderer, printer) {
   console.log(`${target.toUpperCase()}  ${decks.length} deck(s) …`);
   let failed = 0;
   for (let i = 0; i < decks.length; i += 1) {
     try {
-      await buildDeck(decks[i], sources[i], target, renderer);
+      await buildDeck(decks[i], sources[i], target, renderer, printer);
       console.log(`  ok   ${decks[i]}`);
     } catch (error) {
       failed += 1;
@@ -126,12 +175,22 @@ if (sources.some(hasMermaid)) {
   }
 }
 
+let printer = null;
+if (wantPdf) {
+  try {
+    printer = await createPdfPrinter();
+  } catch (error) {
+    console.warn(`  tagged PDF printer unavailable, falling back to marp --pdf: ${error.message}`);
+  }
+}
+
 let failed = 0;
 try {
   if (wantHtml) failed += await buildAll(decks, sources, 'html', renderer);
-  if (wantPdf) failed += await buildAll(decks, sources, 'pdf', renderer);
+  if (wantPdf) failed += await buildAll(decks, sources, 'pdf', renderer, printer);
 } finally {
   if (renderer) await renderer.close();
+  if (printer) await printer.close();
 }
 if (failed) {
   console.error(`\n${failed} build(s) failed.`);

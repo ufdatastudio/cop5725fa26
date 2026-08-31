@@ -101,6 +101,31 @@ export async function createMermaidRenderer() {
 }
 
 /**
+ * Alt text for a rendered diagram, for screen readers and tagged PDFs.
+ * A `%% alt: ...` comment in the mermaid source wins; otherwise the text is
+ * reconstructed from the diagram's own labels, line by line, so every
+ * diagram ships with at least a structural description.
+ */
+export function mermaidAlt(source) {
+  const custom = source.match(/^\s*%%\s*alt:\s*(.+)$/m);
+  if (custom) return custom[1].trim();
+  const parts = [];
+  for (const raw of source.split('\n')) {
+    const line = raw.trim();
+    if (!line || /^(graph|flowchart|erDiagram|classDiagram|sequenceDiagram|classDef|class |style |linkStyle|subgraph|end$|%%|direction)/.test(line)) continue;
+    const labels = [...line.matchAll(/"([^"]+)"/g)].map((m) => m[1]
+      .replace(/<br\s*\/?>/gi, ' ')
+      .replace(/<[^>]+>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim());
+    if (labels.length) parts.push(labels.join(', '));
+  }
+  return parts.length ? `Diagram: ${parts.join('. ')}.` : 'Diagram';
+}
+
+const escapeAttr = (text) => text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+/**
  * Replace every ```mermaid block in `source` with a rendered <img>.
  * A diagram that fails to render is left as its original code block.
  */
@@ -123,7 +148,8 @@ export async function replaceMermaid(source, renderer) {
       // the browser derives height from the intrinsic ratio, so any further
       // max-width clamp stays proportional.
       const displayWidth = Math.round(width * Math.min(1, MAX_DISPLAY_HEIGHT / height));
-      out.push(`<img class="mermaid" src="${dataUri}" width="${displayWidth}" />`);
+      const alt = escapeAttr(mermaidAlt(body.join('\n')));
+      out.push(`<img class="mermaid" src="${dataUri}" width="${displayWidth}" alt="${alt}" />`);
     } catch {
       out.push('```mermaid', ...body, '```');
     }
