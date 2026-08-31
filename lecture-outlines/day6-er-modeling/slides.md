@@ -31,7 +31,7 @@ First non-algebra day in the section. Students will arrive expecting more math; 
 The first five classes covered manipulating relations with the algebra and SQL.
 Today covers designing them.
 
-ER modeling sits between a domain expert and a SQL `CREATE TABLE` statement. It is the layer where you reason about the world before you commit to a schema (Textbook §4.1, p. 126).
+ER modeling sits between a domain expert and a SQL `CREATE TABLE` statement. It is the layer where you reason about the world before you commit to a schema <span class="cite">(Textbook §4.1, p. 126)</span>.
 
 </div>
 <div>
@@ -90,7 +90,7 @@ Yellow diamonds.
 <div>
 
 <span class="weak">Weak entities</span>
-Red dashed.
+Red, double border.
 
 </div>
 </div>
@@ -164,7 +164,7 @@ An **entity** is a distinguishable thing in the world.
 - The course COP 5725
 - The Computer Science department
 
-An **entity set** is a collection of entities of the same kind (Textbook §4.1.1, p. 126).
+An **entity set** is a collection of entities of the same kind <span class="cite">(Textbook §4.1.1, p. 126)</span>.
 
 - All students
 - All courses
@@ -202,7 +202,7 @@ Four kinds of attribute. The first is easy. The other three force design choices
 
 <div class="small">
 
-The Textbook's E/R model keeps attributes primitive and treats struct-valued (composite) and set-valued (multi-valued) attributes as variations (Textbook §4.1.2, p. 126–127). Derived attributes come from the wider ER tradition.
+The Textbook's E/R model keeps attributes primitive and treats struct-valued (composite) and set-valued (multi-valued) attributes as variations <span class="cite">(Textbook §4.1.2, p. 126–127)</span>. Derived attributes come from the wider ER tradition.
 
 </div>
 
@@ -279,7 +279,7 @@ A **relationship** is an association between two or more entities.
 - A faculty member *teaches* a section
 - A course *belongs to* a department
 
-A **relationship set** is the collection of all such associations (Textbook §4.1.3, p. 127).
+A **relationship set** is the collection of all such associations <span class="cite">(Textbook §4.1.3, p. 127)</span>.
 
 We draw relationship sets as <span class="relationship">yellow diamonds</span> between the entity boxes they connect.
 
@@ -323,11 +323,11 @@ graph TB
   class R1,R2,R3 rel
 ```
 
-These three patterns cover almost every real-world association (Textbook §4.1.6, p. 129).
+These three patterns cover almost every real-world association <span class="cite">(Textbook §4.1.6, p. 129)</span>.
 
 <div class="small">
 
-Notation varies. This deck writes 1, N, M at the line ends; the Textbook instead draws an arrow into an entity set to say "at most one" (§4.1.6, p. 129). Same constraint, different ink.
+Notation varies. This deck writes 1, N, M at the line ends; the Textbook instead draws an arrow into an entity set to say "at most one" <span class="cite">(§4.1.6, p. 129)</span>. Same constraint, different ink.
 
 </div>
 
@@ -418,12 +418,24 @@ Bottom: faculty supervision is partial.
 
 <div class="small">
 
-The double line is the wider ER tradition's mark. The Textbook instead draws a rounded arrow into an entity set for "exactly one" (§4.3.3, p. 150) and writes other bounds as degree constraints (§4.3.4, p. 151).
+The double line is the wider ER tradition's mark. The Textbook instead draws a rounded arrow into an entity set for "exactly one" <span class="cite">(§4.3.3, p. 150)</span> and writes other bounds as degree constraints <span class="cite">(§4.3.4, p. 151)</span>.
 
 </div>
 
 <!--
 The classroom mnemonic: total = "must," partial = "may." A double line says "must." This will matter on Friday when we translate to schemas — total participation can force NOT NULL on the FK.
+-->
+
+---
+
+# The Textbook's Arrows
+
+![w:1050](images/textbook-arrows.svg)
+
+A pointed arrowhead into an entity set says **at most one**; the rounded head, a partial circle wrapping the "one" side, strengthens it to **exactly one**.
+
+<!--
+This slide makes the previous slide's note concrete. Read the rounded head as a hug: the arrow does not just point at Department, it wraps it, so the department must be there. Exactly one = at most one (the pointed arrow's promise) + at least one (total participation). On Friday the rounded arrow becomes a NOT NULL foreign key; the pointed arrow becomes a nullable one.
 -->
 
 ---
@@ -451,7 +463,7 @@ The classroom mnemonic: total = "must," partial = "may." A double line says "mus
 ::: appear
 <div class="error">
 
-**Common error:** Putting `grade` on `Student` (one grade?) or on `Course` (whose grade?). The relationship is the right home.
+**Common error:** Putting `grade` on `Student` (one grade?) or on `Course` (whose grade?).
 
 </div>
 :::
@@ -476,40 +488,25 @@ Step 4: grade and term hang off the diamond. They are properties of the enrollme
 <div class="columns">
 <div>
 
-A **weak entity** is one whose identity depends on another entity (Textbook §4.4, p. 152).
+A **weak entity** is one whose identity depends on another entity <span class="cite">(Textbook §4.4, p. 152)</span>.
 
 A Section of a course has no meaning without its course. `Section 001` of `COP 5725` is identified only by **both** values together.
 
-Drawn with:
-- Dashed double-line border
-- Connected by a double-diamond *identifying relationship*
+Drawn with the Textbook's marks <span class="cite">(§4.4.3, p. 156)</span>:
+- Double border on the weak entity set
+- Double-diamond *identifying relationship*
 - Partial key (dashed underline)
 
 <div class="small">
 
-The Textbook's mark is a double solid border on the weak entity set and its supporting relationship (§4.4.3, p. 156). The red dash is this deck's color code, not a standard.
+The red tint is this deck's color code, layered on top of the standard double border.
 
 </div>
 
 </div>
 <div>
 
-```mermaid
-graph LR
-  C["Course"] === I{{"Offers"}} === S["Section"]
-  S --- SN(("section_num"))
-  S --- T(("term"))
-  S --- R(("room"))
-  classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
-  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,stroke-dasharray:5 5,color:#b71c1c
-  classDef irel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,stroke-dasharray:5 5,color:#e65100
-  classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-  class C entity
-  class S weak
-  class I irel
-  class SN,T,R attr
-```
+![w:520](images/weak-entity.svg)
 
 </div>
 </div>
@@ -525,7 +522,7 @@ The Section example is the standard. Other classic weak entities: LineItem (owne
 <div class="columns">
 <div>
 
-Two entity sets that share most of their attributes can be modeled as **subclasses** of a parent (Textbook §4.1.11, p. 135).
+Two entity sets that share most of their attributes can be modeled as **subclasses** of a parent <span class="cite">(Textbook §4.1.11, p. 135)</span>.
 
 - `Person` → `Student`, `Faculty`
 - `Account` → `Checking`, `Savings`
@@ -592,6 +589,12 @@ graph LR
 
 Explicit relationship boxes. Attributes hang off as ovals.
 
+<div class="small">
+
+"Chen" is Peter Pin-Shan Chen (then at MIT Sloan), whose paper introduced the notation <span class="cite">(Chen, "The Entity-Relationship Model: Toward a Unified View of Data," ACM TODS 1(1), 1976)</span>.
+
+</div>
+
 </div>
 <div>
 
@@ -602,11 +605,9 @@ erDiagram
   STUDENT }o--o{ COURSE : "enrolls in"
   STUDENT {
     bigint student_id PK
-    text name
   }
   COURSE {
     text course_id PK
-    text title
   }
 ```
 
@@ -621,21 +622,23 @@ Cardinality drawn at the line ends. Attributes inside the entity box.
 classDiagram
   class Student {
     +bigint student_id
-    +text name
   }
   class Course {
     +text course_id
-    +text title
   }
   Student "*" -- "*" Course : enrolls
 ```
 
-Common in software design tools (Textbook §4.7, p. 171).
+Common in software design tools <span class="cite">(Textbook §4.7, p. 171)</span>.
 
 </div>
 </div>
+
+<div class="small">
 
 We use Chen for teaching (the textbook does), then translate to crow's foot when working with tools like dbdiagram.io or DataGrip.
+
+</div>
 
 <!--
 Most industry tools default to crow's foot because cardinality is read directly off the line. Chen's diamond form is more explicit but takes more space. Both notations describe identical concepts.
@@ -649,8 +652,8 @@ Most industry tools default to crow's foot because cardinality is read directly 
 
 <div class="small">
 
-Chen's 1976 paper started the diamond-and-oval family; every book since has bent the details (Chen, ACM TODS 1(1), 1976, Week 3 reading list).
-Even where a mark lives differs by dialect. Check the legend before trusting anyone's diagram, including ours.
+Chen's 1976 paper started the diamond-and-oval family; every book since has bent the details <span class="cite">(Chen, ACM TODS 1(1), 1976)</span>.
+Check the legend before trusting anyone's diagram, including ours.
 
 </div>
 
@@ -671,7 +674,7 @@ The trap to call out: students will meet diagrams where the same mark means the 
 > *"We're building a registrar system. Students take sections of courses. Each course belongs to a department. Faculty members teach sections. Faculty members belong to a department. A course can have multiple sections per term. Students get grades. Some faculty supervise other faculty. We track each student's major as a department."*
 
 We will turn this paragraph into an ER diagram in five steps.
-The judgment calls follow the Textbook's design principles of faithfulness, avoiding redundancy, and simplicity (§4.2, p. 140).
+The judgment calls follow the Textbook's design principles of faithfulness, avoiding redundancy, and simplicity <span class="cite">(§4.2, p. 140)</span>.
 
 <div class="interactive">
 
@@ -680,7 +683,22 @@ The judgment calls follow the Textbook's design principles of faithfulness, avoi
 </div>
 
 <!--
-Take a beat — 30 seconds for students to write nouns. Then collect a few on the board. Most students will pick up: students, sections, courses, departments, faculty, grades, supervisors, majors. Discuss whether each is an entity, attribute, or relationship.
+Take a beat — 30 seconds for students to write nouns. Then collect a few on the board. Most students will pick up: students, sections, courses, departments, faculty, grades, supervisors, majors. Discuss whether each is an entity, attribute, or relationship. The next slide is the reveal.
+-->
+
+---
+
+# The Nouns
+
+> *"We're building a registrar system. <span class="hl-entity">Students</span> take <span class="hl-weak">sections</span> of <span class="hl-entity">courses</span>. Each <span class="hl-entity">course</span> belongs to a <span class="hl-entity">department</span>. <span class="hl-entity">Faculty members</span> teach <span class="hl-weak">sections</span>. <span class="hl-entity">Faculty members</span> belong to a <span class="hl-entity">department</span>. A <span class="hl-entity">course</span> can have multiple <span class="hl-weak">sections</span> per <span class="hl-attr">term</span>. <span class="hl-entity">Students</span> get <span class="hl-attr">grades</span>. Some <span class="hl-entity">faculty</span> supervise other <span class="hl-entity">faculty</span>. We track each <span class="hl-entity">student</span>'s <span class="hl-rel">major</span> as a <span class="hl-entity">department</span>."*
+
+Blue nouns become entity sets; sections (red) turns out to be weak.
+`term` and `grades` (purple) survive as attributes.
+`major` (yellow) is a noun that becomes a *relationship* to Department.
+"Registrar system" and "supervisor" name the whole system and a role, so neither gets a box.
+
+<!--
+The reveal for the your-turn prompt. Walk it left to right: repeated nouns collapse into one entity set each. The interesting calls: term and grade are facts, not things; major looks like a thing but is really an association between Student and Department; supervisor is Faculty wearing a different hat. This classification IS the first design decision of the build.
 -->
 
 ---
@@ -708,14 +726,29 @@ Five entities, no relationships drawn yet.
 
 ---
 
+# The Verbs
+
+> *"We're building a registrar system. Students <span class="hl-rel">take</span> sections of courses. Each course <span class="hl-rel">belongs to</span> a department. Faculty members <span class="hl-rel">teach</span> sections. Faculty members <span class="hl-rel">belong to</span> a department. A course can <span class="hl-rel">have</span> multiple sections per term. Students <span class="hl-rel">get</span> grades. Some faculty <span class="hl-rel">supervise</span> other faculty. We <span class="hl-rel">track</span> each student's major as a department."*
+
+Verbs that connect two entities become relationships; they need their endpoints, which is why the entity boxes came first in Step 1.
+Not every verb qualifies. "Get grades" attaches a fact to an existing connection, and "track" describes us, not the world.
+
+<!--
+Mirror of the noun slide, run right before Step 2. The order matters and students ask about it: nouns first because a diamond needs two boxes to connect; hunting verbs before the entities exist gives the verbs nowhere to land. "take" becomes enrolls-in; "have multiple sections" becomes offered-as; "track major as department" is the majors-in relationship hiding in a sentence about us rather than the domain.
+-->
+
+---
+
 # Step 2: Add Relationships
 
-Verbs that **connect** entities become relationships.
+Verbs that **connect** entities become relationships. This scenario has seven.
+
+<div class="diagram-narrow">
 
 ```mermaid
 graph LR
-  S["Student"] --- E{"enrolls in"} --- Sec["Section"]
-  Sec --- O{{"offered as"}} --- C["Course"]
+  S["Student"] --- E{"enrolls in"} --- Sec["<span class='weak-inner'>Section</span>"]
+  Sec === O{"offered as"} --- C["Course"]
   C --- B{"belongs to"} --- D["Department"]
   F["Faculty"] --- M{"member of"} --- D
   F --- T{"teaches"} --- Sec
@@ -723,17 +756,17 @@ graph LR
   F --- Sup{"supervises"} --- F
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
   classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
-  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,stroke-dasharray:5 5
+  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   class S,C,F,D entity
   class Sec weak
   class O rel
   class E,B,M,T,Maj,Sup rel
 ```
 
-Seven relationships. Note `Section` is already weak (dashed border, double-diamond "offered as" relationship).
+</div>
 
 <!--
-Walk the diagram once and ask the class which relationship is missing or surprising. The recursive `supervises` between Faculty and Faculty is the one students often forget. The `majors in` between Student and Department is sometimes argued — should it be an attribute on Student? Discuss briefly.
+Walk the diagram once and ask the class which relationship is missing or surprising. The recursive `supervises` between Faculty and Faculty is the one students often forget. The `majors in` between Student and Department is sometimes argued — should it be an attribute on Student? Discuss briefly. Section already carries the weak entity double border; "offered as" is its identifying relationship (drawn with a double diamond in the figures; mermaid can only manage the double border and the double connecting line).
 -->
 
 ---
@@ -743,29 +776,29 @@ Walk the diagram once and ask the class which relationship is missing or surpris
 ```mermaid
 graph TB
   S["Student"]
-  S --- SID(("student_id"))
+  S --- SID(("<u>student_id</u>"))
   S --- SName(("name"))
   S --- GPA(("gpa"))
   C["Course"]
-  C --- CID(("course_id"))
+  C --- CID(("<u>course_id</u>"))
   C --- Title(("title"))
   C --- Cr(("credits"))
-  Sec["Section"]
-  Sec --- SNum(("section_num"))
+  Sec["<span class='weak-inner'>Section</span>"]
+  Sec --- SNum(("<u>section_num</u>"))
   Sec --- Term(("term"))
   Sec --- Room(("room"))
   F["Faculty"]
-  F --- FID(("fid"))
+  F --- FID(("<u>fid</u>"))
   F --- FName(("name"))
   F --- Sal(("salary"))
   D["Department"]
-  D --- DN(("dname"))
+  D --- DN(("<u>dname</u>"))
   D --- Bldg(("building"))
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,stroke-dasharray:5 5
+  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
   classDef key fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
-  classDef partkey fill:#fff9c4,stroke:#f57f17,stroke-width:3px,stroke-dasharray:3 3
+  classDef partkey fill:#fff9c4,stroke:#f57f17,stroke-width:3px
   class S,C,F,D entity
   class Sec weak
   class SName,GPA,Title,Cr,Term,Room,FName,Sal,Bldg attr
@@ -773,7 +806,7 @@ graph TB
   class SNum partkey
 ```
 
-Green = primary key. Yellow dashed = **partial key** of the weak entity.
+Keys are **underlined**, the standard mark; the green tint repeats it in color. The yellow `section_num` is the weak entity's **partial key** (a dashed underline on paper).
 
 <!--
 Each entity gets at least a key and a few descriptive attributes. The Section's partial key `section_num` is the local identifier — it's only unique *within a course in a term*.
@@ -786,8 +819,8 @@ Each entity gets at least a key and a few descriptive attributes. The Section's 
 ```mermaid
 graph LR
   S["Student"] -- "M" --- E{"enrolls in"}
-  E -- "N" --- Sec["Section"]
-  Sec -- "N" --- O{{"offered as"}}
+  E -- "N" --- Sec["<span class='weak-inner'>Section</span>"]
+  Sec -- "N" === O{"offered as"}
   O -- "1" --- C["Course"]
   C -- "N" --- B{"belongs to"}
   B -- "1" --- D["Department"]
@@ -796,7 +829,7 @@ graph LR
   F -- "1" --- T{"teaches"}
   T -- "N" --- Sec
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,stroke-dasharray:5 5
+  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
   class S,C,F,D entity
   class Sec weak
@@ -830,16 +863,16 @@ Pause and ask: why is teach 1:N and enrolls M:N? One faculty teaches a given sec
 ```mermaid
 graph TB
   S["Student"] -- "M" --- E{"enrolls in"}
-  E -- "N" --- Sec["Section"]
+  E -- "N" --- Sec["<span class='weak-inner'>Section</span>"]
   E --- G(("grade"))
-  Sec -- "N" --- O{{"offered as"}}
+  Sec -- "N" === O{"offered as"}
   O -- "1" --- C["Course"]
   C -- "N" --- B{"belongs to"}
   B -- "1" --- D["Department"]
   F["Faculty"] -- "1" --- T{"teaches"}
   T -- "N" --- Sec
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,stroke-dasharray:5 5
+  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
   class S,C,F,D entity
@@ -848,7 +881,7 @@ graph TB
   class G attr
 ```
 
-`grade` lives on the `enrolls in` relationship.
+`grade` is an attribute of the `enrolls in` relationship.
 A student's grade is a property of *their enrollment in this section*, not of the student and not of the section.
 
 <!--
@@ -857,7 +890,7 @@ This is the key payoff of the lecture. The "where does grade live?" question, wh
 
 ---
 
-# The Whole Build, Animated
+# The Whole Build
 
 <div class="build">
 
@@ -883,6 +916,37 @@ This is the key payoff of the lecture. The "where does grade live?" question, wh
 
 <!--
 The five steps replayed as one animated figure, in place. Useful when recording or reviewing; each right-arrow reveals the next step and the glow marks what changed. Keys stand in for the full attribute list from Step 3. Narrate each reveal: nouns, then verbs (Section turns weak), then keys, then cardinalities, then grade landing on the diamond.
+-->
+
+---
+
+# The Design Decisions
+
+Every diagram today came from answering these. Run the list on any new scenario.
+
+<div class="columns small">
+<div>
+
+☐ **Entity or attribute?** Does it need attributes of its own?
+☐ **Entity or relationship attribute?** Whose fact is it? Think `grade`.
+☐ **Composite attribute:** keep it whole or split it?
+☐ **Derived attribute:** store it or compute it?
+☐ **Multi-valued attribute:** double oval, or promote to an entity?
+
+</div>
+<div>
+
+☐ **Cardinality:** 1:1, 1:N, or M:N? State the time scope.
+☐ **Participation:** total or partial? Must vs. may.
+☐ **Strong or weak?** Can it be identified without an owner?
+☐ **ISA or separate entities?** How much do the sets share?
+☐ **Notation:** pick one dialect and state the legend.
+
+</div>
+</div>
+
+<!--
+Wrap-up checklist of every judgment call from the hour. Have students copy it or photograph it; it is the rubric they should run on the library scenario in the practice problems and on their Project 1 designs. A version with a small example picture per decision would make a good printable reference card if there is demand.
 -->
 
 ---
@@ -916,13 +980,13 @@ Topic: translating ER diagrams into relational schemas and SQL DDL.
 
 Reading: Textbook §4.5-4.6, pp. 157-171.
 
-The Project 0 setup task is due Friday at 11:59 PM.
+Reminder: submit Project 0 (setup, P/F) if you have not already. It is due Friday, September 4 at 11:59 PM.
 
 ---
 
 # Practice Before Friday
 
-Three problems on the handout in this folder:
+Three problems on the handout posted with these slides:
 
 1. The library scenario: design an ER diagram for a library that loans books, with multiple branches, authors, and patrons.
 2. Cardinality identification: ten scenarios, classify each as 1:1, 1:N, or M:N.
@@ -935,8 +999,6 @@ This is an exercise.
 # Questions
 
 What is on your mind?
-
-Today we drew. Friday we translate.
 
 Project 1 releases today. Project 0 setup remains due Fri Sep 4.
 

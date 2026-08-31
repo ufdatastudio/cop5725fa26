@@ -86,8 +86,14 @@ section::before {
 
 .entity { background: #e3f2fd; border: 2px solid #1976d2; padding: 0.4em 0.8em; border-radius: 4px; display: inline-block; color: #0d47a1; font-weight: 600; }
 .relationship { background: #fff9c4; border: 2px solid #f57f17; padding: 0.4em 0.8em; border-radius: 4px; display: inline-block; color: #e65100; font-weight: 600; }
-.weak { background: #ffebee; border: 2px dashed #c62828; padding: 0.4em 0.8em; border-radius: 4px; display: inline-block; color: #b71c1c; font-weight: 600; }
+.weak { background: #ffebee; border: 5px double #c62828; padding: 0.4em 0.8em; border-radius: 4px; display: inline-block; color: #b71c1c; font-weight: 600; }
 .attr { background: #f3e5f5; border: 1px solid #7b1fa2; padding: 0.3em 0.6em; border-radius: 20px; display: inline-block; color: #4a148c; }
+/* Lightweight in-prose highlights matching the ER color code — for marking
+   words inside a paragraph without the chip classes' bulk. */
+.hl-entity { background: #e3f2fd; border-bottom: 2px solid #1976d2; padding: 0 0.15em; }
+.hl-weak { background: #ffebee; border-bottom: 2px double #c62828; padding: 0 0.15em; }
+.hl-rel { background: #fff9c4; border-bottom: 2px solid #f57f17; padding: 0 0.15em; }
+.hl-attr { background: #f3e5f5; border-bottom: 2px solid #7b1fa2; padding: 0 0.15em; }
 .key { text-decoration: underline; text-decoration-style: solid; text-decoration-thickness: 2px; }
 
 /* ---- SQL runner widget (hydrated by slide-runtime.js in HTML builds) --- */

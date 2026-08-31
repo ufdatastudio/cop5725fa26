@@ -20,7 +20,11 @@
       'https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.esm.min.mjs'
     );
     // securityLevel 'loose' keeps <br/> in node labels working.
-    mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'loose' });
+    // Keep themeCSS in sync with lib/render-mermaid.mjs (weak entity double
+    // border, multi-valued attribute double oval).
+    mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'loose',
+      themeCSS: '.weak-inner{display:inline-block;border:1.7px solid #c62828;border-radius:4px;padding:1px 9px;}'
+        + '.multi-inner{display:inline-block;border:1.7px solid #7b1fa2;border-radius:999px;padding:2px 10px;}' });
     // Wait for the theme fonts so label widths are measured against the real
     // font rather than a fallback.
     if (document.fonts && document.fonts.ready) await document.fonts.ready;

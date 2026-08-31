@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 400" font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive">
+<defs>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ffb300" flood-opacity="0.9"/>
+  </filter>
+  <marker id="lead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#ff6f00"/>
+  </marker>
+</defs>
+<rect width="940" height="400" fill="#ffffff"/>
+  <line x1="225" y1="110" x2="330" y2="110" stroke="#4E342E" stroke-width="2.5"/>
+  <line x1="505" y1="107" x2="610" y2="107" stroke="#4E342E" stroke-width="2"/><line x1="505" y1="113" x2="610" y2="113" stroke="#4E342E" stroke-width="2"/>
+  <line x1="640" y1="133" x2="560" y2="275" stroke="#4E342E" stroke-width="2.5"/>
+  <line x1="690" y1="136" x2="690" y2="292" stroke="#4E342E" stroke-width="2.5"/>
+  <line x1="742" y1="133" x2="830" y2="255" stroke="#4E342E" stroke-width="2.5"/>
+  <g><rect x="75" y="84" width="150" height="52" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/><text x="150" y="117" font-size="19" fill="#0d47a1" text-anchor="middle">Course</text></g>
+  <g><polygon points="420,73 505,110 420,147 335,110" fill="#fff9c4" stroke="#f57f17" stroke-width="2.5"/><polygon points="420,78 497,110 420,142 343,110" fill="none" stroke="#f57f17" stroke-width="1.8"/><text x="420" y="116" font-size="16.5" fill="#e65100" text-anchor="middle">Offers</text></g>
+  <g><rect x="610" y="84" width="160" height="52" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="2.5"/><rect x="615" y="89" width="150" height="42" rx="5" fill="none" stroke="#c62828" stroke-width="1.8"/><text x="690" y="117" font-size="19" fill="#b71c1c" text-anchor="middle">Section</text></g>
+  <g><ellipse cx="545" cy="300" rx="68" ry="23" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2.5"/><text x="545" y="306" font-size="16.5" fill="#4a148c" text-anchor="middle">section_num</text><line x1="499.9" y1="312" x2="590.1" y2="312" stroke="#f57f17" stroke-width="2.2" stroke-dasharray="5 4"/></g>
+  <g><ellipse cx="690" cy="318" rx="46" ry="21" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2.5"/><text x="690" y="324" font-size="16.5" fill="#4a148c" text-anchor="middle">term</text></g>
+  <g><ellipse cx="845" cy="280" rx="46" ry="21" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2.5"/><text x="845" y="286" font-size="16.5" fill="#4a148c" text-anchor="middle">room</text></g>
+</svg>

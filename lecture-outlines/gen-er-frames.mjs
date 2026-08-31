@@ -68,11 +68,11 @@ const entity = (cx, cy, label, o = {}) => el(o, 1, (isNew) => {
   const fill = weak ? C.weakFill : C.entityFill;
   const stroke = weak ? C.weakStroke : C.entityStroke;
   const text = weak ? C.weakText : C.entityText;
-  const dash = weak ? ' stroke-dasharray="7 4"' : '';
   let s = `<g${glow(isNew)}>`;
-  s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="${isNew ? 3.5 : 2.5}"${dash}/>`;
-  // Weak entities get the Textbook's double border on top of the deck's red dash.
-  if (weak) s += `<rect x="${x + 5}" y="${y + 5}" width="${w - 10}" height="${h - 10}" rx="5" fill="none" stroke="${stroke}" stroke-width="1.8"${dash}/>`;
+  s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="${isNew ? 3.5 : 2.5}"/>`;
+  // Weak entities use the Textbook's double border (§4.4.3); the red tint is
+  // the deck's color code layered on top of the standard mark.
+  if (weak) s += `<rect x="${x + 5}" y="${y + 5}" width="${w - 10}" height="${h - 10}" rx="5" fill="none" stroke="${stroke}" stroke-width="1.8"/>`;
   s += `<text x="${cx}" y="${cy + 7}" font-size="19" fill="${text}" text-anchor="middle">${label}</text></g>`;
   return s;
 });
@@ -397,8 +397,9 @@ function notationFigure() {
   s += `<rect x="${colX.textbook - 60}" y="${rowY[3] - 18}" width="120" height="36" rx="6" fill="${C.entityFill}" stroke="${C.entityStroke}" stroke-width="2"/>`;
   s += `<rect x="${colX.textbook - 55}" y="${rowY[3] - 13}" width="110" height="26" rx="4" fill="none" stroke="${C.entityStroke}" stroke-width="1.6"/>`;
   s += `<text x="${colX.textbook + 90}" y="${rowY[3] + 6}" font-size="14" fill="${C.caption}">double border (§4.4.3)</text>`;
-  s += `<rect x="${colX.deck - 60}" y="${rowY[3] - 18}" width="120" height="36" rx="6" fill="${C.weakFill}" stroke="${C.weakStroke}" stroke-width="2" stroke-dasharray="7 4"/>`;
-  s += `<text x="${colX.deck + 80}" y="${rowY[3] + 6}" font-size="14" fill="${C.caption}">red dashed color code</text>`;
+  s += `<rect x="${colX.deck - 60}" y="${rowY[3] - 18}" width="120" height="36" rx="6" fill="${C.weakFill}" stroke="${C.weakStroke}" stroke-width="2"/>`;
+  s += `<rect x="${colX.deck - 55}" y="${rowY[3] - 13}" width="110" height="26" rx="4" fill="none" stroke="${C.weakStroke}" stroke-width="1.6"/>`;
+  s += `<text x="${colX.deck + 80}" y="${rowY[3] + 6}" font-size="14" fill="${C.caption}">red tint, same mark</text>`;
   s += `<text x="${colX.crow}" y="${rowY[3] + 6}" font-size="14" fill="${C.caption}">solid vs. dashed line marks</text>`;
   s += `<text x="${colX.crow}" y="${rowY[3] + 26}" font-size="14" fill="${C.caption}">identifying relationships</text>`;
 
@@ -407,6 +408,84 @@ function notationFigure() {
 ${s}
 </svg>
 `;
+}
+
+/* ---- Day 6: the Textbook's arrowheads (single static figure) ------------ */
+
+function arrowsFigure() {
+  const W = 1120;
+  const H = 400;
+  let s = '';
+
+  const box = (cx, cy, label, w = 170) =>
+    `<rect x="${cx - w / 2}" y="${cy - 26}" width="${w}" height="52" rx="8" fill="${C.entityFill}" stroke="${C.entityStroke}" stroke-width="2.5"/>`
+    + `<text x="${cx}" y="${cy + 7}" font-size="19" fill="${C.entityText}" text-anchor="middle">${label}</text>`;
+  const dia = (cx, cy, label) => {
+    const pts = `${cx},${cy - 36} ${cx + 85},${cy} ${cx},${cy + 36} ${cx - 85},${cy}`;
+    return `<polygon points="${pts}" fill="${C.relFill}" stroke="${C.relStroke}" stroke-width="2.5"/>`
+      + `<text x="${cx}" y="${cy + 6}" font-size="17" fill="${C.relText}" text-anchor="middle">${label}</text>`;
+  };
+
+  const row = (y, head, title, lines) => {
+    let g = box(130, y, 'Faculty');
+    g += `<line x1="215" y1="${y}" x2="315" y2="${y}" stroke="${INK}" stroke-width="2.5"/>`;
+    g += dia(400, y, 'member of');
+    g += `<line x1="485" y1="${y}" x2="588" y2="${y}" stroke="${INK}" stroke-width="2.5"/>`;
+    g += head(596, y);
+    g += box(690, y, 'Department');
+    g += `<text x="810" y="${y - 24}" font-size="19" fill="${C.title}">${title}</text>`;
+    lines.forEach((t, i) => {
+      g += `<text x="810" y="${y + 4 + i * 24}" font-size="15.5" fill="${C.body}">${t}</text>`;
+    });
+    return g;
+  };
+
+  // Pointed arrowhead: an ordinary open arrow into the "one" side.
+  const pointed = (x, y) =>
+    `<path d="M ${x - 14} ${y - 12} L ${x + 8} ${y} L ${x - 14} ${y + 12}" fill="none" stroke="${INK}" stroke-width="3"/>`;
+  // Rounded arrowhead: the head bends into a partial circle hugging the box.
+  const rounded = (x, y) =>
+    `<path d="M ${x - 14} ${y - 16} Q ${x + 20} ${y} ${x - 14} ${y + 16}" fill="none" stroke="${INK}" stroke-width="3"/>`;
+
+  s += row(110, pointed, 'Pointed arrow: at most one',
+    ['Each faculty member is related to at', 'most one department. Zero is allowed.']);
+  s += `<text x="810" y="176" font-size="14" fill="${C.caption}">Textbook §4.1.6, p. 129</text>`;
+
+  s += row(280, rounded, 'Rounded arrow: exactly one',
+    ['At most one AND at least one; the', 'department must exist for the faculty', 'row to be valid (referential integrity).']);
+  s += `<text x="810" y="370" font-size="14" fill="${C.caption}">Textbook §4.3.3, p. 150</text>`;
+
+  s += `<text x="20" y="380" font-size="14" fill="${C.caption}">The rounded head is drawn as a partial circle opening toward the diamond: the "one" side is wrapped, not just pointed at.</text>`;
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" font-family="${FONT}">
+<rect width="${W}" height="${H}" fill="#ffffff"/>
+${s}
+</svg>
+`;
+}
+
+/* ---- Day 6: weak entity figure (single static figure) ------------------- */
+
+function weakEntityFigure() {
+  const build = {
+    width: 940, height: 400, frames: 1,
+    elements: [
+      entity(150, 110, 'Course', { step: 1, w: 150, h: 52 }),
+      line(225, 110, 330, 110, { step: 1 }),
+      diamond(420, 110, 'Offers', { step: 1, w: 170, h: 74, identifying: true }),
+      line(505, 110, 610, 110, { step: 1, double: true }),
+      entity(690, 110, 'Section', { step: 1, w: 160, h: 52, weak: true }),
+      line(640, 133, 560, 275, { step: 1 }),
+      line(690, 136, 690, 292, { step: 1 }),
+      line(742, 133, 830, 255, { step: 1 }),
+      attr(545, 300, 'section_num', { step: 1, kind: 'partial', rx: 68, ry: 23 }),
+      attr(690, 318, 'term', { step: 1, rx: 46, ry: 21 }),
+      attr(845, 280, 'room', { step: 1, rx: 46, ry: 21 }),
+    ],
+  };
+  // Render one step past the elements' entry step so nothing carries the
+  // amber "new this frame" glow.
+  return renderFrame(build, 2);
 }
 
 /* ---- Day 7: diagram-to-DDL translation --------------------------------- */
@@ -532,4 +611,8 @@ writeBuild(day6, 'relationship-build', relationship);
 writeBuild(day6, 'registrar-build', registrar);
 writeFileSync(join(day6, 'notation-dialects.svg'), notationFigure());
 console.log(`  wrote ${join(day6, 'notation-dialects.svg')}`);
+writeFileSync(join(day6, 'textbook-arrows.svg'), arrowsFigure());
+console.log(`  wrote ${join(day6, 'textbook-arrows.svg')}`);
+writeFileSync(join(day6, 'weak-entity.svg'), weakEntityFigure());
+console.log(`  wrote ${join(day6, 'weak-entity.svg')}`);
 writeBuild(day7, 'translation-build', translation);

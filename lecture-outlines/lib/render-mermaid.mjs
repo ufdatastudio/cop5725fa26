@@ -46,6 +46,12 @@ export async function createMermaidRenderer() {
       startOnLoad: false,
       theme: 'neutral',
       securityLevel: 'loose',
+      // Weak entity sets carry the Textbook's double border. Mermaid has no
+      // double stroke, so decks wrap the node label in a `.weak-inner` span
+      // whose border draws the inner rectangle (inline styles are sanitized
+      // away by mermaid; a themeCSS class survives).
+      themeCSS: '.weak-inner{display:inline-block;border:1.7px solid #c62828;border-radius:4px;padding:1px 9px;}'
+        + '.multi-inner{display:inline-block;border:1.7px solid #7b1fa2;border-radius:999px;padding:2px 10px;}',
       // Tighter layout so diagrams stay proportionate to slide text. Only the
       // gaps between nodes shrink; node label text keeps its size.
       flowchart: { nodeSpacing: 30, rankSpacing: 36 },
