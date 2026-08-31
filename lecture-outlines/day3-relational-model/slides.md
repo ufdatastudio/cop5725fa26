@@ -74,7 +74,7 @@ graph LR
 </div>
 <div>
 
-![w:520px](images/relation-anatomy.svg)
+![Anatomy of a relation: schema and attribute names across the top, tuples as rows w:520px](images/relation-anatomy.svg)
 
 </div>
 </div>
@@ -202,7 +202,7 @@ This is the concrete case before the formal ladder on the next slide. Ask the ro
 </div>
 <div>
 
-![w:520px](images/key-types.svg)
+![Key vocabulary: superkeys contain candidate keys, and one candidate key is chosen as primary w:520px](images/key-types.svg)
 
 </div>
 </div>

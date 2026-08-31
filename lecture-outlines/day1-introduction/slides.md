@@ -70,7 +70,7 @@ Subject line **must** include `cop5725fa26`.
 </div>
 <div>
 
-![w:260px](images/ufdatastudio-logo.png)
+![UF Data Studio lab logo w:260px](images/ufdatastudio-logo.png)
 
 <div class="caption">
 
@@ -458,7 +458,7 @@ Does AI assistance change what you learn? Anthropic randomized 52 engineers to b
 </div>
 <div>
 
-![w:500px](images/anthropic-ai-coding-skills.png)
+![Anthropic research post titled How AI assistance impacts the formation of coding skills w:500px](images/anthropic-ai-coding-skills.png)
 
 <div class="caption">
 

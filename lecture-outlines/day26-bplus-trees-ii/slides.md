@@ -193,7 +193,7 @@ When the **root** itself splits, the tree grows one level. A new root is created
 
 This is the **only way** a B+ tree's height changes.
 
-![w:840px](images/root-split.svg)
+![A B+ tree root split: the full root divides and a new root above it adds a level w:840px](images/root-split.svg)
 
 In practice, a 5-level B+ tree grows to 6 levels only after billions of inserts.
 

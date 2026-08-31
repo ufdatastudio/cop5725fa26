@@ -431,7 +431,7 @@ The colors carry the explanation: pink marks the rows σ keeps, green marks the 
 
 # Duplicates Collapse: Set vs Bag
 
-![w:880px](images/set-vs-bag.svg)
+![Set semantics collapses duplicate tuples while bag semantics keeps their counts w:880px](images/set-vs-bag.svg)
 
 Relational algebra uses set semantics, so π collapses the duplicates it creates. SQL uses bag (multiset) semantics and keeps them <span class="cite">(Textbook §5.1.1–5.1.3, p. 206–208)</span>.
 
@@ -477,7 +477,7 @@ For exam purposes, students should treat these as algebraically equivalent. For 
 
 # Union Compatibility
 
-![w:850px](images/union-compatibility.svg)
+![Union compatibility: relations must match in attribute count and corresponding domains w:850px](images/union-compatibility.svg)
 
 <div class="columns">
 <div>
@@ -501,7 +501,7 @@ Walk the three panels left to right. Panel 1: two attributes, text then number, 
 
 # Set Operations by Example
 
-![w:840px](images/set-operations.svg)
+![Union, intersection, and difference applied to two example relations w:840px](images/set-operations.svg)
 
 Same two relations each time. Union collects every name once, intersection keeps the shared ones, and difference keeps what only $R$ has.
 

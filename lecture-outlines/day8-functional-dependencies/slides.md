@@ -179,7 +179,7 @@ $$t_1[X] = t_2[X] \Rightarrow t_1[Y] = t_2[Y]$$
 In English: any two tuples that agree on $X$ must agree on $Y$.
 We read $X \rightarrow Y$ as "$X$ functionally determines $Y$" or "$X$ implies $Y$."
 
-![w:840px](images/fd-two-tuples.svg)
+![Two tuples that agree on the X attributes must agree on the Y attributes, the functional dependency condition w:840px](images/fd-two-tuples.svg)
 
 <!--
 Stress: the FD is a statement *about the meaning of the data*, not about a particular table. Whether `course_id → course_title` holds depends on the real world (one title per course id), not on which rows happen to be loaded.

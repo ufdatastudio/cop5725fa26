@@ -176,7 +176,7 @@ Sequential reads skip the seek and rotation. **Random reads incur all three.**
 </div>
 <div>
 
-![w:430px](images/disk-anatomy.svg)
+![Hard disk anatomy: spinning platters with tracks and sectors and a moving read-write head w:430px](images/disk-anatomy.svg)
 
 </div>
 </div>
@@ -205,7 +205,7 @@ The 100-1000× sequential-vs-random gap on HDDs is the original reason database 
 </div>
 <div>
 
-![w:400px](images/ssd-erase.svg)
+![SSD layout: pages grouped into blocks that must be erased as a unit w:400px](images/ssd-erase.svg)
 
 </div>
 </div>
@@ -257,7 +257,7 @@ The Textbook's word for this unit is block <span class="cite">(§13.5.2, p. 592)
 
 # Slotted Page Layout (PostgreSQL)
 
-![w:800px](images/slotted-page.svg)
+![Slotted page layout: header and slot array at one end, tuple data growing from the other w:800px](images/slotted-page.svg)
 
 Two halves grow toward each other, and colors pair each line pointer with the tuple it addresses.
 Reference: [PostgreSQL Ch. 73.6 Database Page Layout](https://www.postgresql.org/docs/current/storage-page-layout.html).

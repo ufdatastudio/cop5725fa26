@@ -99,7 +99,7 @@ The Textbook covers this variant under the family name B-tree <span class="cite"
 
 # Why Disk-Friendly Matters
 
-![w:720px](images/tall-vs-wide.svg)
+![A tall, deep binary tree contrasted with a short, wide B+ tree over the same keys w:720px](images/tall-vs-wide.svg)
 
 For 1 billion rows:
 - A binary tree has height ~30, so a lookup costs 30 disk reads.
@@ -121,7 +121,7 @@ Fan-out is the single most important number in a B+ tree. Doubling fan-out cuts 
 
 # A B+ Tree
 
-![w:880px](images/bplus-tree.svg)
+![A B+ tree: root and internal nodes guide searches to linked leaf nodes holding the keys w:880px](images/bplus-tree.svg)
 
 Three levels. Internal nodes route. Leaves hold all data. The dashed arrows are the **leaf-level linked list** <span class="cite">(Textbook §14.2.1, p. 634)</span>.
 

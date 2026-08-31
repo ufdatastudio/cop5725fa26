@@ -190,7 +190,7 @@ Day 16. Skip for now.
 
 # The Three Pieces
 
-![w:920px](images/partition-order-frame.svg)
+![A window function's partition, ordering, and frame regions marked over a table's rows w:920px](images/partition-order-frame.svg)
 
 Each row's window is the partition it belongs to, optionally ordered, optionally sliced by frame.
 

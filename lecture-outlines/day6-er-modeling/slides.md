@@ -196,7 +196,7 @@ Vocabulary note: most texts call the diagram element an "entity," even though it
 
 # Attribute Kinds
 
-![w:880px](images/attribute-kinds.svg)
+![Four attribute kinds on ovals: simple, composite split into parts, derived drawn dashed, and multi-valued drawn with a double oval w:880px](images/attribute-kinds.svg)
 
 Four kinds of attribute. The first is easy. The other three force design choices.
 
@@ -216,22 +216,22 @@ Composite attributes invite the question "should I split this in the schema?" De
 
 <div class="build">
 
-![w:880](images/student-entity-build-1.svg)
+![Student entity build, step 1 of 5: the Student entity box alone w:880](images/student-entity-build-1.svg)
 
 ::: appear
-![w:880](images/student-entity-build-2.svg)
+![Student entity build, step 2 of 5: simple attribute ovals attached to Student w:880](images/student-entity-build-2.svg)
 :::
 
 ::: appear
-![w:880](images/student-entity-build-3.svg)
+![Student entity build, step 3 of 5: student_id underlined and colored as the key w:880](images/student-entity-build-3.svg)
 :::
 
 ::: appear
-![w:880](images/student-entity-build-4.svg)
+![Student entity build, step 4 of 5: name split into a composite, dob stored with derived age dashed w:880](images/student-entity-build-4.svg)
 :::
 
 ::: appear
-![w:880](images/student-entity-build-5.svg)
+![Student entity build, step 5 of 5: multi-valued phone added as a double oval w:880](images/student-entity-build-5.svg)
 :::
 
 </div>
@@ -430,7 +430,7 @@ The classroom mnemonic: total = "must," partial = "may." A double line says "mus
 
 # The Textbook's Arrows
 
-![w:1050](images/textbook-arrows.svg)
+![Faculty, member of, Department drawn twice: a pointed arrowhead into Department means at most one; a rounded partial-circle arrowhead means exactly one w:1050](images/textbook-arrows.svg)
 
 A pointed arrowhead into an entity set says **at most one**; the rounded head, a partial circle wrapping the "one" side, strengthens it to **exactly one**.
 
@@ -444,18 +444,18 @@ This slide makes the previous slide's note concrete. Read the rounded head as a 
 
 <div class="build">
 
-![w:880](images/relationship-build-1.svg)
+![Relationship build, step 1 of 4: Student and Course entity boxes with nothing connecting them w:880](images/relationship-build-1.svg)
 
 ::: appear
-![w:880](images/relationship-build-2.svg)
+![Relationship build, step 2 of 4: the Enrolls diamond connects Student and Course w:880](images/relationship-build-2.svg)
 :::
 
 ::: appear
-![w:880](images/relationship-build-3.svg)
+![Relationship build, step 3 of 4: M and N cardinality labels on the connecting lines w:880](images/relationship-build-3.svg)
 :::
 
 ::: appear
-![w:880](images/relationship-build-4.svg)
+![Relationship build, step 4 of 4: grade and term attribute ovals hang off the Enrolls diamond w:880](images/relationship-build-4.svg)
 :::
 
 </div>
@@ -506,7 +506,7 @@ The red tint is this deck's color code, layered on top of the standard double bo
 </div>
 <div>
 
-![w:520](images/weak-entity.svg)
+![Course connects through the double-diamond Offers relationship and a double line to the double-bordered weak entity Section, whose attributes are the partial key section_num, term, and room w:520](images/weak-entity.svg)
 
 </div>
 </div>
@@ -648,7 +648,7 @@ Most industry tools default to crow's foot because cardinality is read directly 
 
 # One Concept, Many Dialects
 
-![w:880](images/notation-dialects.svg)
+![Table comparing the Textbook, this deck, and crow's foot notation for many-to-many, at most one, exactly one, and weak entities w:880](images/notation-dialects.svg)
 
 <div class="small">
 
@@ -894,22 +894,22 @@ This is the key payoff of the lecture. The "where does grade live?" question, wh
 
 <div class="build">
 
-![w:1050](images/registrar-build-1.svg)
+![Registrar diagram build, step 1 of 5: five entity boxes for Student, Section, Course, Faculty, and Department w:1050](images/registrar-build-1.svg)
 
 ::: appear
-![w:1050](images/registrar-build-2.svg)
+![Registrar diagram build, step 2 of 5: seven relationship diamonds added and Section drawn weak with a double border w:1050](images/registrar-build-2.svg)
 :::
 
 ::: appear
-![w:1050](images/registrar-build-3.svg)
+![Registrar diagram build, step 3 of 5: keys underlined on each entity, section_num as the dashed partial key w:1050](images/registrar-build-3.svg)
 :::
 
 ::: appear
-![w:1050](images/registrar-build-4.svg)
+![Registrar diagram build, step 4 of 5: cardinality labels on every relationship w:1050](images/registrar-build-4.svg)
 :::
 
 ::: appear
-![w:1050](images/registrar-build-5.svg)
+![Registrar diagram build, step 5 of 5: the grade attribute lands on the enrolls in diamond w:1050](images/registrar-build-5.svg)
 :::
 
 </div>

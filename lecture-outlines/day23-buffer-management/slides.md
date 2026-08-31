@@ -296,7 +296,7 @@ PostgreSQL uses a variant: **clock-sweep** with usage counters.
 </div>
 <div>
 
-![w:430px](images/clock-sweep.svg)
+![Clock sweep replacement: buffer frames arranged in a ring, each with a reference bit the sweeping hand clears w:430px](images/clock-sweep.svg)
 
 </div>
 </div>

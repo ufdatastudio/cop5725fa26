@@ -282,7 +282,7 @@ This is the footgun from two slides back made concrete. The PostgreSQL manual (Q
 An inner join drops any row that has no match on the other side.
 An outer join keeps it, filling the missing attributes with NULL <span class="cite">(Textbook §5.2.7, p. 219)</span>.
 
-![w:920px](images/outer-joins.svg)
+![Four panels: the inner join keeps matched rows only, and the left, right, and full outer joins add back one or both sides' unmatched rows padded with NULL w:920px](images/outer-joins.svg)
 
 <!--
 Read the four panels left to right: each shades the rows that survive. The inner join keeps only matched pairs. Each outer variant adds back one side's unmatched rows (or both), and the +NULL pill marks where the missing attributes get padded.

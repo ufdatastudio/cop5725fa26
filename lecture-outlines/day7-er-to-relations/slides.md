@@ -518,22 +518,22 @@ Five entities, one weak, five relationships, one relationship attribute. We tran
 
 <div class="build">
 
-![w:1050](images/translation-build-1.svg)
+![Translation build, step 1 of 5: the registrar diagram beside a SQL panel with CREATE TABLE for the four strong entities w:1050](images/translation-build-1.svg)
 
 ::: appear
-![w:1050](images/translation-build-2.svg)
+![Translation build, step 2 of 5: 1:N foreign keys added to course and faculty w:1050](images/translation-build-2.svg)
 :::
 
 ::: appear
-![w:1050](images/translation-build-3.svg)
+![Translation build, step 3 of 5: the weak Section table with its composite primary key and teaches foreign key w:1050](images/translation-build-3.svg)
 :::
 
 ::: appear
-![w:1050](images/translation-build-4.svg)
+![Translation build, step 4 of 5: the M:N enrollment junction table with grade w:1050](images/translation-build-4.svg)
 :::
 
 ::: appear
-![w:1050](images/translation-build-5.svg)
+![Translation build, step 5 of 5: NOT NULL constraints enforcing exactly-one participation w:1050](images/translation-build-5.svg)
 :::
 
 </div>

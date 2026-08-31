@@ -285,7 +285,7 @@ But bucket 1 is full (already has 5 and 7, both with last bit 1).
 
 Split bucket 1 by extending to look at the **last 2 bits**:
 
-![w:780px](images/extendible-split.svg)
+![Extendible hashing: an overflowing bucket splits and the directory doubles w:780px](images/extendible-split.svg)
 
 The directory doubles (g goes from 1 to 2). Bucket 0 keeps local depth 1, so both `dir[00]` and `dir[10]` point to it. Bucket 1 splits into two buckets at depth 2.
 

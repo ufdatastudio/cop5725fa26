@@ -104,7 +104,7 @@ Two layouts can hold the same data. SQL never tells you which.
 
 # Row Layout
 
-![w:800px](images/row-layout.svg)
+![Row store layout: each tuple's values stored contiguously w:800px](images/row-layout.svg)
 
 Reading one full row takes one page access.
 Computing `SUM(amount)` across 100 M rows reads every page and throws away 80% of the bytes.
@@ -113,7 +113,7 @@ Computing `SUM(amount)` across 100 M rows reads every page and throws away 80% o
 
 # Column Layout
 
-![w:800px](images/column-layout.svg)
+![Column store layout: each column's values stored contiguously w:800px](images/column-layout.svg)
 
 Reading one full row means assembling values from many places.
 Computing `SUM(amount)` reads only the amount column. The 80% byte savings shows up as a 5-10× scan speedup.

@@ -119,7 +119,7 @@ The interpretation overhead drops by roughly 1000× just from changing the granu
 
 # What Goes Inside a Batch
 
-![w:840px](images/batch-layout.svg)
+![Vectorized execution: values processed in column batches instead of one tuple at a time w:840px](images/batch-layout.svg)
 
 The batch holds one contiguous array per **column** (cache-friendly) and a **selection vector** (or bitmap) marking which rows are still alive.
 
@@ -426,7 +426,7 @@ $$\pi_L(R \bowtie S) \equiv \pi_L((\pi_{L_R}(R)) \bowtie (\pi_{L_S}(S)))$$
 
 If we only want columns $L$ in the result, we can drop unneeded columns from R and S before the join <span class="cite">(Textbook §16.2.4, p. 774)</span>.
 
-![w:680px](images/projection-pushdown.svg)
+![Projection pushdown: unneeded columns dropped below the join instead of above it w:680px](images/projection-pushdown.svg)
 
 Projection pushdown is especially valuable in column stores, where the projected-away columns never need to be read at all.
 

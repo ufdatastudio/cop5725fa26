@@ -191,7 +191,7 @@ Multi-way joins read top-down. The order of the JOIN clauses does not affect cor
 
 # The Three Outer Joins
 
-![w:920px](images/outer-joins.svg)
+![Four panels: the inner join keeps matched rows only, and the left, right, and full outer joins add back one or both sides' unmatched rows padded with NULL w:920px](images/outer-joins.svg)
 
 When a row from the kept side has no match, missing columns become NULL.
 

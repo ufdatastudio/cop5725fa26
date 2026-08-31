@@ -178,7 +178,7 @@ Stonebraker tells the story in his 2024 paper: customers calling vendors begging
 
 <div class="portrait">
 
-![w:240px](images/codd.jpg)
+![Portrait of Edgar F. Codd w:240px](images/codd.jpg)
 
 </div>
 
@@ -305,7 +305,7 @@ graph BT
 
 <div class="portrait">
 
-![w:200px](images/ibm-almaden.jpg)
+![IBM Almaden Research Center building w:200px](images/ibm-almaden.jpg)
 
 </div>
 
@@ -364,7 +364,7 @@ The "weeks N" pointers are deliberate: System R is the source of half this cours
 
 <div class="portrait">
 
-![w:200px](images/selinger.jpg)
+![Portrait of Patricia Selinger w:200px](images/selinger.jpg)
 
 </div>
 
@@ -402,7 +402,7 @@ We'll read sections of the Selinger paper in Week 13. The 2015 Leis paper "How G
 
 <div class="portrait">
 
-![w:200px](images/gray.jpg)
+![Portrait of Jim Gray w:200px](images/gray.jpg)
 
 </div>
 
@@ -444,7 +444,7 @@ Gray's "Notes on Database Operating Systems" is one of the great essays in compu
 
 <div class="portrait">
 
-![w:200px](images/berkeley-soda.jpg)
+![Soda Hall at UC Berkeley w:200px](images/berkeley-soda.jpg)
 
 </div>
 
@@ -592,7 +592,7 @@ The standard moves slowly and vendors ship ahead of it, but the standard's vocab
 <div class="columns">
 <div>
 
-![w:460px](images/bell-labs-campus.png)
+![Bell Labs campus w:460px](images/bell-labs-campus.png)
 
 <div class="caption">
 
@@ -625,7 +625,7 @@ Students often don't realize how much of the modern computing stack came out of 
 
 <div class="portrait">
 
-![w:240px](images/ritchie-thompson.jpg)
+![Dennis Ritchie and Ken Thompson at a PDP-11 w:240px](images/ritchie-thompson.jpg)
 
 </div>
 
@@ -684,8 +684,8 @@ PostgreSQL's parser was originally generated with yacc (now bison, the GNU equiv
 
 <div class="portrait">
 
-![w:200px](images/ullman.jpg)
-![w:200px](images/aho.jpg)
+![Portrait of Jeffrey Ullman w:200px](images/ullman.jpg)
+![Portrait of Alfred Aho w:200px](images/aho.jpg)
 
 </div>
 
@@ -862,7 +862,7 @@ The version-numbering story lands well: there was never an Oracle V1 because Ell
 
 <div class="portrait">
 
-![w:240px](images/stonebraker.jpg)
+![Portrait of Michael Stonebraker w:240px](images/stonebraker.jpg)
 
 </div>
 
@@ -939,7 +939,7 @@ By the time you graduate, PostgreSQL will be the second-most-deployed RDBMS in t
 </div>
 <div>
 
-![w:170px](images/postgresql-logo.png)
+![PostgreSQL elephant logo w:170px](images/postgresql-logo.png)
 
 </div>
 </div>
@@ -1154,7 +1154,7 @@ Many students will not have heard of Netezza, Greenplum, or Aster — these beca
 
 <div class="portrait">
 
-![w:200px](images/dean-ghemawat.jpg)
+![Jeff Dean and Sanjay Ghemawat w:200px](images/dean-ghemawat.jpg)
 
 </div>
 
@@ -1194,7 +1194,7 @@ MapReduce was not a new idea — functional programmers had been using map/reduc
 
 <div class="portrait">
 
-![w:200px](images/cutting.jpg)
+![Portrait of Doug Cutting w:200px](images/cutting.jpg)
 
 </div>
 
@@ -1387,9 +1387,9 @@ Stonebraker's "one size does not fit all" argument from 2005 is now the consensu
 </div>
 <div>
 
-![w:190px](images/postgresql-logo.png)
+![PostgreSQL elephant logo w:190px](images/postgresql-logo.png)
 
-![w:280px](images/duckdb-logo.png)
+![DuckDB duck logo w:280px](images/duckdb-logo.png)
 
 </div>
 </div>
