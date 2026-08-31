@@ -344,7 +344,11 @@ LEFT vs LEFT OUTER are interchangeable in SQL; the OUTER keyword is optional but
 
 **With difference**
 
+<div style="font-size:0.72em">
+
 $$\pi_{name}\big(student \bowtie (\pi_{student\_id}(student) - \pi_{student\_id}(enrollment))\big)$$
+
+</div>
 
 The difference finds the ids; the join back to `student` recovers the names.
 
@@ -353,7 +357,11 @@ The difference finds the ids; the join back to `student` recovers the names.
 
 **With outer join**
 
+<div style="font-size:0.72em">
+
 $$\pi_{name}(\sigma_{course\_id\,IS\,NULL}(student \;⟕\; enrollment))$$
+
+</div>
 
 Often faster because one scan and one merge replace the second pass.
 
@@ -693,7 +701,11 @@ Many texts write this as plain π. We keep the tilde when we want to emphasize t
 
 ### Algebra
 
+<div style="font-size:0.68em">
+
 $$\tau_{avg\_gpa\,desc}\big( \sigma_{n \geq 5}\big( \gamma_{major; \text{count}(*) \to n, \text{avg}(gpa) \to avg\_gpa}(student) \big) \big)$$
+
+</div>
 
 Three operators: γ, σ, τ.
 
