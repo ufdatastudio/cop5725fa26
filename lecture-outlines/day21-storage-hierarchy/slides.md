@@ -106,7 +106,7 @@ graph TB
   class D,T slow
 ```
 
-Each step is **10×-1000×** slower than the previous. The gaps shape every database decision (Textbook §13.1.1, p. 557).
+Each step is **10×-1000×** slower than the previous. The gaps shape every database decision <span class="cite">(Textbook §13.1.1, p. 557)</span>.
 
 <!--
 The "10-1000x slower per layer" is the key intuition. Database engines are mostly about working around these gaps — caching the next layer, batching reads, avoiding random access where sequential will do.
@@ -163,9 +163,9 @@ Every major DB feature is a workaround for the latency gap.
 <div class="columns-left-wide">
 <div>
 
-A hard disk is **a stack of spinning platters** with a read/write head that physically moves (Textbook §13.2.1, p. 562).
+A hard disk is **a stack of spinning platters** with a read/write head that physically moves <span class="cite">(Textbook §13.2.1, p. 562)</span>.
 
-Three time costs to access a block (Textbook §13.2.3, p. 564):
+Three time costs to access a block <span class="cite">(Textbook §13.2.3, p. 564)</span>:
 
 - **Seek time:** move the head to the right track (~5-10 ms)
 - **Rotational latency:** wait for the right sector to pass under the head (~3-4 ms)
@@ -249,7 +249,7 @@ A page holds many records. Reading one record means reading the page that contai
 
 <div class="small">
 
-The Textbook's word for this unit is block (§13.5.2, p. 592); PostgreSQL's word is page. Same idea.
+The Textbook's word for this unit is block <span class="cite">(§13.5.2, p. 592)</span>; PostgreSQL's word is page. Same idea.
 
 </div>
 
@@ -414,7 +414,7 @@ CLUSTER student USING student_gpa_idx;
 
 After `CLUSTER`, rows are physically sorted by GPA until the next insert/update breaks the order.
 
-Sorted files suit read-mostly tables; the Textbook calls them sequential files (§14.1.1, p. 621).
+Sorted files suit read-mostly tables; the Textbook calls them sequential files <span class="cite">(§14.1.1, p. 621)</span>.
 B+ trees (Week 10) keep lookups fast while also keeping inserts cheap.
 
 </div>

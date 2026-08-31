@@ -172,7 +172,7 @@ The phrase "facts about the world that the schema does not enforce" is the key i
 
 # Functional Dependency
 
-Given a relation $R$, an **FD** $X \rightarrow Y$ holds if for every pair of tuples $t_1, t_2 \in R$ (Textbook §3.1.1, p. 68):
+Given a relation $R$, an **FD** $X \rightarrow Y$ holds if for every pair of tuples $t_1, t_2 \in R$ <span class="cite">(Textbook §3.1.1, p. 68)</span>:
 
 $$t_1[X] = t_2[X] \Rightarrow t_1[Y] = t_2[Y]$$
 
@@ -220,7 +220,7 @@ Walk these FDs out loud. The class should agree that each holds in the real worl
 
 ### Trivial
 
-$X \rightarrow Y$ is **trivial** if $Y \subseteq X$ (Textbook §3.2.3, p. 74).
+$X \rightarrow Y$ is **trivial** if $Y \subseteq X$ <span class="cite">(Textbook §3.2.3, p. 74)</span>.
 
 Always holds. Useless on its own.
 
@@ -256,7 +256,7 @@ Most discussion of FDs is implicitly about non-trivial ones. Trivial FDs are a c
 
 # What Closure Means
 
-Given a set of FDs $F$ and an attribute set $X$, the **closure** $X^+$ is every attribute that $X$ functionally determines, directly or transitively (Textbook §3.2.4, p. 75).
+Given a set of FDs $F$ and an attribute set $X$, the **closure** $X^+$ is every attribute that $X$ functionally determines, directly or transitively <span class="cite">(Textbook §3.2.4, p. 75)</span>.
 
 $$X^+ = \{\, A : F \models X \rightarrow A \,\}$$
 
@@ -418,7 +418,7 @@ Chains compose.
 </div>
 
 These three rules are **sound** (everything they derive is true) and **complete** (everything true is derivable).
-The textbook calls them Armstrong's axioms (§3.2.7, p. 81); Armstrong published them in 1974 (§3.9, p. 122).
+The textbook calls them Armstrong's axioms <span class="cite">(§3.2.7, p. 81)</span>; Armstrong published them in 1974 <span class="cite">(§3.9, p. 122)</span>.
 
 <!--
 Sound + complete is a strong claim — we can use *only* these three rules and recover every valid FD that follows from a given set. The closure algorithm is one efficient way to apply them.
@@ -471,7 +471,7 @@ Two FD sets $F$ and $G$ are **equivalent** if they derive the same conclusions.
 
 $$F \equiv G \iff F^+ = G^+$$
 
-where $F^+$, the **closure of the FD set itself**, is the set of all FDs derivable from $F$ (Textbook §3.2.7, p. 80).
+where $F^+$, the **closure of the FD set itself**, is the set of all FDs derivable from $F$ <span class="cite">(Textbook §3.2.7, p. 80)</span>.
 
 How to check $F \equiv G$ without computing $F^+$ directly:
 
@@ -519,7 +519,7 @@ If $F - \{X \rightarrow Y\}$ still implies $X \rightarrow Y$, drop it.
 </div>
 </div>
 
-Minimal covers are not unique and can even differ in size. Textbook Example 3.11 gives one relation a three-FD minimal basis and a four-FD minimal basis (§3.2.7, pp. 80-81).
+Minimal covers are not unique and can even differ in size. Textbook Example 3.11 gives one relation a three-FD minimal basis and a four-FD minimal basis <span class="cite">(§3.2.7, pp. 80-81)</span>.
 
 ---
 
@@ -552,7 +552,7 @@ Walk this on the board. The order of operations matters: do single-RHS first, th
 
 # Candidate Keys
 
-In Day 3 we defined keys intuitively. With FDs we get a precise definition (Textbook §3.1.2-3.1.3, pp. 70-71).
+In Day 3 we defined keys intuitively. With FDs we get a precise definition <span class="cite">(Textbook §3.1.2-3.1.3, pp. 70-71)</span>.
 
 <div class="columns">
 <div>

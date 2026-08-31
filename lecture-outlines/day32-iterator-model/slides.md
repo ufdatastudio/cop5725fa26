@@ -116,7 +116,7 @@ class Operator:
         """Release resources."""
 ```
 
-This is the **Volcano interface**: three methods in total. The textbook builds its physical operators on the same Open, GetNext, and Close methods (Textbook §15.1.6, p. 707).
+This is the **Volcano interface**: three methods in total. The textbook builds its physical operators on the same Open, GetNext, and Close methods <span class="cite">(Textbook §15.1.6, p. 707)</span>.
 
 Operators are composed by **child pointers** in the tree. When an operator needs more input, it calls `next()` on its child.
 

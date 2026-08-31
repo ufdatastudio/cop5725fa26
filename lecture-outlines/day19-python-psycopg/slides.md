@@ -30,7 +30,7 @@ First class of Section 3. Many students arrive familiar with psycopg2 from inter
 
 Sections 1-2 covered three weeks of SQL, run in `psql` and DuckDB shells.
 
-Real systems run SQL from application code, and the application is usually written in Python, Java, or Go (Textbook §9.3, p. 378).
+Real systems run SQL from application code, and the application is usually written in Python, Java, or Go <span class="cite">(Textbook §9.3, p. 378)</span>.
 
 Today covers connecting Python to PostgreSQL with psycopg. Wednesday covers DuckDB for analytical work.
 

@@ -69,7 +69,7 @@ graph LR
 # Schema Shorthand
 
 A schema is written as the relation name followed by its attributes.
-Underlining marks the attributes that form the key (Textbook §2.2.7, p. 25).
+Underlining marks the attributes that form the key <span class="cite">(Textbook §2.2.7, p. 25)</span>.
 
 <div class="columns">
 <div>
@@ -84,7 +84,7 @@ Underlining marks the attributes that form the key (Textbook §2.2.7, p. 25).
 
 Every underlined attribute is a member of the key: `enrollment` has one composite key with three members, not three keys. A student can retake a course in a later term.
 
-With several candidate keys, the underline marks the primary key (Textbook §4.3.2, p. 150).
+With several candidate keys, the underline marks the primary key <span class="cite">(Textbook §4.3.2, p. 150)</span>.
 
 </div>
 
@@ -119,7 +119,7 @@ This is the same shorthand as Widom's Stanford College/Student/Apply slides, whi
 
 # Closure and Composition
 
-A relational algebra is a small set of operators with two properties (Textbook §2.4.2, p. 38).
+A relational algebra is a small set of operators with two properties <span class="cite">(Textbook §2.4.2, p. 38)</span>.
 
 **Closure**: every operator takes relations and returns a relation.
 
@@ -158,12 +158,12 @@ We return to this pipeline in Section 5 when we study query plans.
 
 | Symbol | Name | Arity | Textbook |
 |--------|------|-------|----------|
-| σ | Selection | unary | §2.4.6, p. 42 |
-| π | Projection | unary | §2.4.5, p. 41 |
-| ∪ | Union | binary | §2.4.4, p. 39 |
-| − | Difference | binary | §2.4.4, p. 39 |
-| × | Cross product | binary | §2.4.7, p. 43 |
-| ρ | Rename | unary | §2.4.11, p. 49 |
+| σ | Selection | unary | <span class="cite">§2.4.6, p. 42</span> |
+| π | Projection | unary | <span class="cite">§2.4.5, p. 41</span> |
+| ∪ | Union | binary | <span class="cite">§2.4.4, p. 39</span> |
+| − | Difference | binary | <span class="cite">§2.4.4, p. 39</span> |
+| × | Cross product | binary | <span class="cite">§2.4.7, p. 43</span> |
+| ρ | Rename | unary | <span class="cite">§2.4.11, p. 49</span> |
 
 </div>
 <div>
@@ -175,7 +175,7 @@ graph TD
   Derived["Derived<br/>∩ ⋈"]
 ```
 
-Intersection ∩ (§2.4.4, p. 39) and join ⋈ (§2.4.8, p. 43) can be derived from these six. We treat them as first-class for convenience.
+Intersection ∩ <span class="cite">(§2.4.4, p. 39)</span> and join ⋈ <span class="cite">(§2.4.8, p. 43)</span> can be derived from these six. We treat them as first-class for convenience.
 
 </div>
 </div>
@@ -192,7 +192,7 @@ Intersection ∩ (§2.4.4, p. 39) and join ⋈ (§2.4.8, p. 43) can be derived f
 
 $$\sigma_{\text{predicate}}(R)$$
 
-Returns every tuple in $R$ for which the predicate is true (Textbook §2.4.6, p. 42).
+Returns every tuple in $R$ for which the predicate is true <span class="cite">(Textbook §2.4.6, p. 42)</span>.
 The predicate is evaluated once per tuple and must return true or false.
 
 <div class="columns">
@@ -274,7 +274,7 @@ Plant the seed: every time you write a WHERE clause, the database guesses what f
 
 # Selection Identities
 
-Relational algebra is an algebra, so its operators obey rewrite laws called identities, the way $+$ and $\times$ do in arithmetic (Textbook §16.2, p. 768).
+Relational algebra is an algebra, so its operators obey rewrite laws called identities, the way $+$ and $\times$ do in arithmetic <span class="cite">(Textbook §16.2, p. 768)</span>.
 
 <div class="small">
 
@@ -288,7 +288,7 @@ Relational algebra is an algebra, so its operators obey rewrite laws called iden
 
 </div>
 
-Complicated predicates are rewritten with these laws (Textbook §16.2.2, p. 770).
+Complicated predicates are rewritten with these laws <span class="cite">(Textbook §16.2.2, p. 770)</span>.
 The optimizer splits a predicate into pieces, reorders the pieces, and pushes each one as close to the stored data as it can go.
 
 <!--
@@ -308,7 +308,7 @@ The ∨ split needs set semantics: on bags, a tuple satisfying both p and q appe
 
 $$\pi_{A_1, A_2, ..., A_k}(R)$$
 
-Keeps only the listed attributes and drops the rest (Textbook §2.4.5, p. 41).
+Keeps only the listed attributes and drops the rest <span class="cite">(Textbook §2.4.5, p. 41)</span>.
 
 <div class="columns">
 <div>
@@ -433,7 +433,7 @@ The colors carry the explanation: pink marks the rows σ keeps, green marks the 
 
 ![w:880px](images/set-vs-bag.svg)
 
-Relational algebra uses set semantics, so π collapses the duplicates it creates. SQL uses bag (multiset) semantics and keeps them (Textbook §5.1.1–5.1.3, p. 206–208).
+Relational algebra uses set semantics, so π collapses the duplicates it creates. SQL uses bag (multiset) semantics and keeps them <span class="cite">(Textbook §5.1.1–5.1.3, p. 206–208)</span>.
 
 <!--
 The same π_major, run under both semantics. The color tracks the three CS tuples: the set result folds them into one; the bag result keeps all three. This is the picture behind the previous slide's DISTINCT discussion, and Day 5 studies bag operators in full.
@@ -482,7 +482,7 @@ For exam purposes, students should treat these as algebraically equivalent. For 
 <div class="columns">
 <div>
 
-Set operations require **union-compatible** relations (Textbook §2.4.4, p. 39): same number of attributes, and corresponding attributes drawn from the same domain.
+Set operations require **union-compatible** relations <span class="cite">(Textbook §2.4.4, p. 39)</span>: same number of attributes, and corresponding attributes drawn from the same domain.
 
 </div>
 <div>
@@ -658,7 +658,7 @@ Many programmers default to "join + WHERE" for everything. The set operations ar
 
 $$R \times S = \{\, (r, s) : r \in R \,\land\, s \in S \,\}$$
 
-Every tuple in $R$ paired with every tuple in $S$ (Textbook §2.4.7, p. 43).
+Every tuple in $R$ paired with every tuple in $S$ <span class="cite">(Textbook §2.4.7, p. 43)</span>.
 
 The result has $|R| \cdot |S|$ tuples and the union of both schemas.
 
@@ -761,7 +761,7 @@ graph LR
 </div>
 </div>
 
-Rename does no computation. It exists to make joins and self-references writable (Textbook §2.4.11, p. 49).
+Rename does no computation. It exists to make joins and self-references writable <span class="cite">(Textbook §2.4.11, p. 49)</span>.
 
 ---
 

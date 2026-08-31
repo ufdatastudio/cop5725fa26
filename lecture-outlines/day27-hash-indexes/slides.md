@@ -176,7 +176,7 @@ graph TB
   class O0 ov
 ```
 
-Pick `N` buckets up front. Each bucket is a page, or a chain of pages (Textbook §14.3.1, p. 649).
+Pick `N` buckets up front. Each bucket is a page, or a chain of pages <span class="cite">(Textbook §14.3.1, p. 649)</span>.
 
 The simplest scheme. Fast when load is light.
 
@@ -345,7 +345,7 @@ Lookups remain O(1): one directory access + one bucket access.
 </div>
 </div>
 
-Extendible hashing is the version the textbook presents, under the spelling extensible hashing (§14.3.5-14.3.6, pp. 652-655).
+Extendible hashing is the version the textbook presents, under the spelling extensible hashing <span class="cite">(§14.3.5-14.3.6, pp. 652-655)</span>.
 
 PostgreSQL's hash index instead builds on linear hashing, covered next.
 
@@ -359,7 +359,7 @@ PostgreSQL's hash index instead builds on linear hashing, covered next.
 
 # Linear Hashing
 
-Litwin's 1980 alternative (Textbook §14.3.7, p. 655).
+Litwin's 1980 alternative <span class="cite">(Textbook §14.3.7, p. 655)</span>.
 
 - No directory
 - Buckets split **in order**, one at a time

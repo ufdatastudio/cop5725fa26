@@ -121,7 +121,7 @@ WHERE  e.grade IS NULL;
 SELECT * FROM active_enrollments WHERE student LIKE 'A%';
 ```
 
-The query is rewritten to use the view's underlying SELECT. Textbook §8.1, p. 341. Reference: [PostgreSQL docs CREATE VIEW](https://www.postgresql.org/docs/current/sql-createview.html).
+The query is rewritten to use the view's underlying SELECT. <span class="cite">Textbook §8.1, p. 341.</span> Reference: [PostgreSQL docs CREATE VIEW](https://www.postgresql.org/docs/current/sql-createview.html).
 
 ---
 
@@ -168,7 +168,7 @@ DELETE FROM recent_students WHERE student_id = 100;            -- works
 
 PostgreSQL's "simple updatable view" rules cover views with a single base table, no aggregation, no DISTINCT, no GROUP BY, no UNION.
 
-For anything more complex, use an `INSTEAD OF` trigger (Part 3) to define your own update semantics. Textbook §8.2.2, p. 345. Reference: [PostgreSQL docs CREATE VIEW, Updatable Views](https://www.postgresql.org/docs/current/sql-createview.html#SQL-CREATEVIEW-UPDATABLE-VIEWS).
+For anything more complex, use an `INSTEAD OF` trigger (Part 3) to define your own update semantics. <span class="cite">Textbook §8.2.2, p. 345.</span> Reference: [PostgreSQL docs CREATE VIEW, Updatable Views](https://www.postgresql.org/docs/current/sql-createview.html#SQL-CREATEVIEW-UPDATABLE-VIEWS).
 
 ---
 
@@ -196,7 +196,7 @@ A **materialized view** stores the query's result. Reads hit the cache, not the 
 
 <div class="small">
 
-Textbook §8.5, p. 359. Reference: [PostgreSQL docs REFRESH MATERIALIZED VIEW](https://www.postgresql.org/docs/current/sql-refreshmaterializedview.html).
+<span class="cite">Textbook §8.5, p. 359.</span> Reference: [PostgreSQL docs REFRESH MATERIALIZED VIEW](https://www.postgresql.org/docs/current/sql-refreshmaterializedview.html).
 
 </div>
 
@@ -254,7 +254,7 @@ INSERT INTO node VALUES (2, 1);  -- circular
 COMMIT;                          -- both FKs check at commit time
 ```
 
-`DEFERRABLE INITIALLY DEFERRED` postpones FK checking until commit. Textbook §7.1.3, p. 315.
+`DEFERRABLE INITIALLY DEFERRED` postpones FK checking until commit. <span class="cite">Textbook §7.1.3, p. 315.</span>
 
 Useful for:
 - Circular references inserted in one transaction
@@ -286,7 +286,7 @@ An invariant is a condition on the data that must hold after every insert and up
 
 </div>
 
-PostgreSQL allows `CHECK` to reference only the row being inserted/updated. Cross-row invariants need a trigger. Textbook §7.2, p. 319.
+PostgreSQL allows `CHECK` to reference only the row being inserted/updated. Cross-row invariants need a trigger. <span class="cite">Textbook §7.2, p. 319.</span>
 
 ---
 
@@ -324,7 +324,7 @@ AFTER UPDATE OF gpa ON student
 FOR EACH ROW EXECUTE FUNCTION log_student_gpa_change();
 ```
 
-Textbook §7.5, p. 332. References: [PostgreSQL docs Triggers](https://www.postgresql.org/docs/current/triggers.html), [PL/pgSQL](https://www.postgresql.org/docs/current/plpgsql.html).
+<span class="cite">Textbook §7.5, p. 332.</span> References: [PostgreSQL docs Triggers](https://www.postgresql.org/docs/current/triggers.html), [PL/pgSQL](https://www.postgresql.org/docs/current/plpgsql.html).
 
 ---
 

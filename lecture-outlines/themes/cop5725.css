@@ -47,6 +47,9 @@ img.mermaid {
    proportion. For slides where a full-width diagram would clip at the bottom. */
 .diagram-narrow { max-width: 82%; margin: 0 auto; }
 .caption { font-size: 0.75em; color: #666; text-align: center; }
+/* Textbook citations: italic light gray so the pointer sits quietly beside
+   the sentence it annotates instead of competing with it. */
+.cite { font-style: italic; color: #999; }
 
 /* ---- UF Data Studio corner badge --------------------------------------- */
 

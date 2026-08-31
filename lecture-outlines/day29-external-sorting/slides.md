@@ -151,7 +151,7 @@ Each color is one memory-load of M values, sorted in place and written out as on
 
 </div>
 
-After Phase 1, you have $\lceil B / M \rceil$ sorted runs on disk (Textbook §15.4.1, p. 723).
+After Phase 1, you have $\lceil B / M \rceil$ sorted runs on disk <span class="cite">(Textbook §15.4.1, p. 723)</span>.
 
 **I/O cost:** read B, write B = 2B.
 
@@ -214,7 +214,7 @@ But if M is large enough to merge all runs at once, **two passes is enough**.
 # When Two Passes Suffice
 
 Phase 1 produces $\lceil B / M \rceil$ runs.
-We can merge $M - 1$ runs in one pass (Textbook §15.4.1, p. 723).
+We can merge $M - 1$ runs in one pass <span class="cite">(Textbook §15.4.1, p. 723)</span>.
 
 Two passes suffice when:
 $$\frac{B}{M} \leq M - 1$$
@@ -273,7 +273,7 @@ graph TB
   class Out out
 ```
 
-Each level of the merge tree adds a 2B I/O pass (Textbook §15.8.1, p. 752).
+Each level of the merge tree adds a 2B I/O pass <span class="cite">(Textbook §15.8.1, p. 752)</span>.
 
 ---
 

@@ -95,7 +95,7 @@ graph TB
   class SCEx,TEx,CEx ex
 ```
 
-Each form appears in a different location and carries its own pitfalls (Textbook §6.3, p. 268).
+Each form appears in a different location and carries its own pitfalls <span class="cite">(Textbook §6.3, p. 268)</span>.
 
 ---
 
@@ -113,7 +113,7 @@ FROM   student
 WHERE  gpa > (SELECT avg(gpa) FROM student);
 ```
 
-The inner query must return **exactly one row, one column** (Textbook §6.3.1, p. 269). PostgreSQL raises an error at runtime if it returns more than one row.
+The inner query must return **exactly one row, one column** <span class="cite">(Textbook §6.3.1, p. 269)</span>. PostgreSQL raises an error at runtime if it returns more than one row.
 
 ```sql
 -- "Each student plus the campus average"
@@ -152,7 +152,7 @@ JOIN (
 WHERE  ec.course_count >= 3;
 ```
 
-A `SELECT` inside `FROM` is just another table to the outer query (Textbook §6.3.5, p. 274). **PostgreSQL requires an alias** for the derived table (here, `ec`).
+A `SELECT` inside `FROM` is just another table to the outer query <span class="cite">(Textbook §6.3.5, p. 274)</span>. **PostgreSQL requires an alias** for the derived table (here, `ec`).
 
 The pre-aggregate-then-join pattern is one of the most useful shapes in SQL. It avoids the join multiplication trap from Day 11.
 
@@ -176,7 +176,7 @@ WHERE  s.gpa > (
 );
 ```
 
-The inner query depends on the outer row (Textbook §6.3.4, p. 273). The optimizer re-evaluates it (conceptually) for each outer row.
+The inner query depends on the outer row <span class="cite">(Textbook §6.3.4, p. 273)</span>. The optimizer re-evaluates it (conceptually) for each outer row.
 
 A correlated subquery is the SQL way to say "for each row, look up something specific to it."
 

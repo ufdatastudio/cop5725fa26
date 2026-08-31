@@ -146,7 +146,7 @@ for r in R:
             yield (r, s)
 ```
 
-For each tuple in R, scan every tuple in S (Textbook §15.3.1, p. 719).
+For each tuple in R, scan every tuple in S <span class="cite">(Textbook §15.3.1, p. 719)</span>.
 
 **Cost:** $B_R + |R| \cdot B_S$ page reads.
 
@@ -235,7 +235,7 @@ PostgreSQL's planner picks NL when the outer side is small enough.
 
 # Better Use of Memory
 
-The naive NL ignores that we have **M pages of buffer**. We could read M-2 pages of R at a time, then scan S once per **block** instead of once per tuple (Textbook §15.3.3, p. 719).
+The naive NL ignores that we have **M pages of buffer**. We could read M-2 pages of R at a time, then scan S once per **block** instead of once per tuple <span class="cite">(Textbook §15.3.3, p. 719)</span>.
 
 ```python
 for chunk in chunks_of(R, M - 2):       # M-2 pages, 1 for S, 1 for output
@@ -300,7 +300,7 @@ The optimizer picks the order. The query writer's job is to trust it and verify 
 
 # When One Side Has an Index
 
-If S has a B+ tree (or hash) index on the join key (Textbook §15.6.3, p. 742):
+If S has a B+ tree (or hash) index on the join key <span class="cite">(Textbook §15.6.3, p. 742)</span>:
 
 ```python
 for r in R:

@@ -318,7 +318,7 @@ What the query means, in algebra:
     student ⋈_{sid} enrollment
 ```
 
-The relational algebra tree (Textbook §16.3, p. 781).
+The relational algebra tree <span class="cite">(Textbook §16.3, p. 781)</span>.
 No commitment to algorithm or access path.
 
 </div>
@@ -336,7 +336,7 @@ Project name
       Seq Scan on enrollment
 ```
 
-Operators are concrete. Costs are computed. Order is committed (Textbook §16.7, p. 826).
+Operators are concrete. Costs are computed. Order is committed <span class="cite">(Textbook §16.7, p. 826)</span>.
 
 </div>
 </div>
@@ -416,7 +416,7 @@ graph TB
 
 The selection filters R **before** the join. The join touches fewer tuples.
 
-> Push selections down whenever possible. Textbook §16.2.3, p. 772.
+> Push selections down whenever possible. <span class="cite">Textbook §16.2.3, p. 772.</span>
 
 ---
 
@@ -424,7 +424,7 @@ The selection filters R **before** the join. The join touches fewer tuples.
 
 $$\pi_L(R \bowtie S) \equiv \pi_L((\pi_{L_R}(R)) \bowtie (\pi_{L_S}(S)))$$
 
-If we only want columns $L$ in the result, we can drop unneeded columns from R and S before the join (Textbook §16.2.4, p. 774).
+If we only want columns $L$ in the result, we can drop unneeded columns from R and S before the join <span class="cite">(Textbook §16.2.4, p. 774)</span>.
 
 ![w:680px](images/projection-pushdown.svg)
 
@@ -494,11 +494,11 @@ The join is **always** cheaper than cross-product-plus-filter. Modern optimizers
 
 # The Search Problem
 
-For an `n`-way join, the number of distinct **left-deep** plans is `n!` (Textbook §16.6.2, p. 815).
+For an `n`-way join, the number of distinct **left-deep** plans is `n!` <span class="cite">(Textbook §16.6.2, p. 815)</span>.
 
 <div class="small">
 
-A plan is left-deep when the right input of every join is a base relation, so the plan adds one new relation at a time (Textbook §16.6.3, p. 816).
+A plan is left-deep when the right input of every join is a base relation, so the plan adds one new relation at a time <span class="cite">(Textbook §16.6.3, p. 816)</span>.
 
 </div>
 

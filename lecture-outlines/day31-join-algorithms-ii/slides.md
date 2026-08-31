@@ -86,7 +86,7 @@ Reference: Textbook §§15.4-15.5, pp. 723-738; PostgreSQL docs [Statistics Used
 
 # The Sort-Merge Idea
 
-If both relations were **sorted on the join key**, we could merge them in one pass, just as external sort merges sorted runs (Day 29; Textbook §15.4.6, p. 728).
+If both relations were **sorted on the join key**, we could merge them in one pass, just as external sort merges sorted runs <span class="cite">(Day 29; Textbook §15.4.6, p. 728)</span>.
 
 ```python
 sort R on join key
@@ -115,7 +115,7 @@ Phase 2: sort S                  → ~2 B_S reads + writes
 Phase 3: merge in lockstep       → B_R + B_S reads
 ```
 
-**Total cost:** $\approx 3(B_R + B_S)$ page reads (Textbook §15.4.8, p. 729).
+**Total cost:** $\approx 3(B_R + B_S)$ page reads <span class="cite">(Textbook §15.4.8, p. 729)</span>.
 
 <div class="small">
 
@@ -193,7 +193,7 @@ Repeated keys make sort-merge's cost slightly worse than the formula suggests; i
 
 # The Hash Join Idea
 
-If we had a **hash table mapping S.y → S tuples**, we could probe it once per R tuple (Textbook §15.2.3, p. 715).
+If we had a **hash table mapping S.y → S tuples**, we could probe it once per R tuple <span class="cite">(Textbook §15.2.3, p. 715)</span>.
 
 <div class="columns">
 <div>
@@ -322,7 +322,7 @@ for i in range(k):
         probe hash table for matches
 ```
 
-Tuples with the same join key always end up in the same partition pair, so joining partition pairs covers all matches (Textbook §15.5.5, p. 734).
+Tuples with the same join key always end up in the same partition pair, so joining partition pairs covers all matches <span class="cite">(Textbook §15.5.5, p. 734)</span>.
 
 ---
 
@@ -385,7 +385,7 @@ The cost matches sort-merge with **no need to maintain sort order** at the end. 
 
 # Keeping One Partition in Memory
 
-In grace hash, **every** partition gets written to disk. But the first partition could just stay in memory while we partition (Textbook §15.5.6, p. 735).
+In grace hash, **every** partition gets written to disk. But the first partition could just stay in memory while we partition <span class="cite">(Textbook §15.5.6, p. 735)</span>.
 
 ```python
 # Hybrid: keep partition 0 in memory

@@ -158,7 +158,7 @@ The green buckets lie entirely above 3.5 and count in full. The amber bucket str
 
 </div>
 
-These are **equi-depth histograms**, the Textbook's equal-height histograms (§16.5.1, p. 804). They are cheap to compute and accurate for most range predicates.
+These are **equi-depth histograms**, the Textbook's equal-height histograms <span class="cite">(§16.5.1, p. 804)</span>. They are cheap to compute and accurate for most range predicates.
 
 <!--
 Equi-depth is the default histogram strategy. Other engines support multi-dimensional, equi-width, or sample-based histograms. PostgreSQL's choice is a pragmatic compromise: accurate for most queries and cheap to maintain.
@@ -315,7 +315,7 @@ Almost every modern relational optimizer descends from these five ideas.
 
 # Why Left-Deep Plans
 
-In a **left-deep** plan, the right side of every join is a base table (Textbook §16.6.3, p. 816):
+In a **left-deep** plan, the right side of every join is a base table <span class="cite">(Textbook §16.6.3, p. 816)</span>:
 
 ```
 ((A ⋈ B) ⋈ C) ⋈ D
@@ -590,7 +590,7 @@ Section 6 (Transactions / Concurrency / Recovery) opens Monday.
 - PostgreSQL keeps per-column statistics in pg_stats, including histograms and MCVs
 - The cost model is a weighted sum of I/O and CPU coefficients
 - Selectivity estimation multiplies per-predicate fractions and assumes independence
-- Selinger's dynamic program picks join orders subset by subset (Textbook §16.6.4, p. 819)
+- Selinger's dynamic program picks join orders subset by subset <span class="cite">(Textbook §16.6.4, p. 819)</span>
 - Leis 2015 measured large join-cardinality errors in every engine tested
 - Join order matters more than cost-model tuning
 - Cardinality estimation remains the central open problem in optimization

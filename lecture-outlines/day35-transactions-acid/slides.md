@@ -279,7 +279,7 @@ The synchronous_commit tradeoff is the classic durability-vs-speed knob. Modern 
 
 # A Schedule
 
-A **schedule** is an interleaving of operations from multiple transactions (Textbook §18.1.1, p. 884).
+A **schedule** is an interleaving of operations from multiple transactions <span class="cite">(Textbook §18.1.1, p. 884)</span>.
 
 For transactions T1 (read A, write A) and T2 (read A, write A):
 
@@ -335,7 +335,7 @@ Two operations **conflict** if:
 | w(A) | w(A) | yes |
 | r(A) | r(B) | no |
 
-Two non-conflicting operations can be swapped without changing the result (Textbook §18.2.1, p. 890).
+Two non-conflicting operations can be swapped without changing the result <span class="cite">(Textbook §18.2.1, p. 890)</span>.
 
 ---
 
@@ -372,7 +372,7 @@ Edges = directed, from T_i to T_j if some operation of T_i conflicts with (and p
 ```
 
 A schedule is **conflict serializable iff its conflict graph is acyclic**.
-The textbook calls this the precedence graph (§18.2.2, p. 892).
+The textbook calls this the precedence graph <span class="cite">(§18.2.2, p. 892)</span>.
 
 ```mermaid
 graph LR
@@ -592,9 +592,9 @@ The Read Committed lost-update cell is the subtle one. A single UPDATE statement
 # Wrap-up
 
 - A transaction packages operations between BEGIN and COMMIT or ROLLBACK
-- ACID names the four guarantees: atomicity, consistency, isolation, durability (Textbook §1.2.4, p. 8-9)
+- ACID names the four guarantees: atomicity, consistency, isolation, durability <span class="cite">(Textbook §1.2.4, p. 8-9)</span>
 - A schedule interleaves operations; conflict serializability makes it equivalent to some serial order
-- An acyclic conflict graph proves a schedule conflict serializable (Textbook §18.2.2, p. 892)
+- An acyclic conflict graph proves a schedule conflict serializable <span class="cite">(Textbook §18.2.2, p. 892)</span>
 - Dirty reads, lost updates, non-repeatable reads, and phantoms are the four anomaly types
 - PostgreSQL's isolation levels decide which anomalies a transaction can observe
 

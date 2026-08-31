@@ -30,7 +30,7 @@ Closes Section 1. Full 50 min of lecture: 5 min anomalies, 12 min for the 1NF→
 
 Wednesday covered functional dependencies, the language for data constraints beyond what the schema declares.
 
-Today we use FDs to detect problems and fix them (Textbook §3.3, p. 85).
+Today we use FDs to detect problems and fix them <span class="cite">(Textbook §3.3, p. 85)</span>.
 
 Today covers:
 
@@ -164,7 +164,7 @@ Student data tied to enrollment data.
 </div>
 </div>
 
-The unifying cause is redundancy (Textbook §3.3.1, p. 86). Anomalies are the symptoms; redundancy is the disease.
+The unifying cause is redundancy <span class="cite">(Textbook §3.3.1, p. 86)</span>. Anomalies are the symptoms; redundancy is the disease.
 
 <!--
 The three anomalies are the empirical motivation for normalization. Students who haven't seen them in a real system sometimes find normalization abstract. Walk one concrete failure for each.
@@ -182,7 +182,7 @@ The three anomalies are the empirical motivation for normalization. Students who
 
 <div class="nf">
 
-**Rule:** Every attribute is atomic: single-valued, no sets, no nested structure (Textbook §3.5, p. 103).
+**Rule:** Every attribute is atomic: single-valued, no sets, no nested structure <span class="cite">(Textbook §3.5, p. 103)</span>.
 
 </div>
 
@@ -507,7 +507,7 @@ Most well-designed schemas in production aim for 3NF.
 
 # 3NF Defined
 
-Formal definition (Textbook §3.5.1, p. 102): for every non-trivial FD $X \rightarrow A$ in the relation,
+Formal definition <span class="cite">(Textbook §3.5.1, p. 102)</span>: for every non-trivial FD $X \rightarrow A$ in the relation,
 
 at least one of the following must hold:
 
@@ -532,7 +532,7 @@ The "A is part of a candidate key" allowance is what saves 3NF in cases where st
 
 <div class="nf">
 
-**Rule:** For every non-trivial FD $X \rightarrow Y$, $X$ is a superkey (Textbook §3.3.3, p. 88).
+**Rule:** For every non-trivial FD $X \rightarrow Y$, $X$ is a superkey <span class="cite">(Textbook §3.3.3, p. 88)</span>.
 
 (No exception for "A part of a candidate key.")
 
@@ -604,7 +604,7 @@ This is the classic illustration of the BCNF / 3NF / dependency-preservation ten
 
 ### Lossless Join (required)
 
-The natural join of the decomposed tables must reproduce the original (Textbook §3.4.1, p. 94).
+The natural join of the decomposed tables must reproduce the original <span class="cite">(Textbook §3.4.1, p. 94)</span>.
 
 Formal test: for $R \rightarrow R_1, R_2$, the decomposition is lossless if
 $$R_1 \cap R_2 \rightarrow R_1\;\;\text{or}\;\;R_1 \cap R_2 \rightarrow R_2$$
@@ -616,7 +616,7 @@ $$R_1 \cap R_2 \rightarrow R_1\;\;\text{or}\;\;R_1 \cap R_2 \rightarrow R_2$$
 
 ### Dependency Preservation (preferred)
 
-Every FD in the original schema can still be enforced after decomposition, either inside a single decomposed table or as a constraint that doesn't require a join (Textbook §3.4.4, p. 100).
+Every FD in the original schema can still be enforced after decomposition, either inside a single decomposed table or as a constraint that doesn't require a join <span class="cite">(Textbook §3.4.4, p. 100)</span>.
 
 Some BCNF decompositions cannot preserve dependencies. 3NF synthesis can always preserve them.
 
@@ -661,7 +661,7 @@ Run the counter-example with two concrete rows, e.g. (a1, b1, c1) and (a2, b2, c
 
 # The Synthesis Algorithm
 
-3NF synthesis is the constructive proof that **every relation has a 3NF decomposition** that has a lossless join and preserves all dependencies (Textbook §3.5.2, p. 103).
+3NF synthesis is the constructive proof that **every relation has a 3NF decomposition** that has a lossless join and preserves all dependencies <span class="cite">(Textbook §3.5.2, p. 103)</span>.
 
 ```
 Algorithm: SynthesizeTo3NF(R, F)

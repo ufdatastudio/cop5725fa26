@@ -204,7 +204,7 @@ graph LR
   class CP cp
 ```
 
-After a checkpoint, the log records from before the checkpoint are no longer needed for recovery. They can be archived or recycled (Textbook §17.2.4, p. 857).
+After a checkpoint, the log records from before the checkpoint are no longer needed for recovery. They can be archived or recycled <span class="cite">(Textbook §17.2.4, p. 857)</span>.
 
 PostgreSQL runs checkpoints periodically (every ~5 minutes by default, or when WAL grows large enough).
 
@@ -443,7 +443,7 @@ In phase 2 (COMMIT), if all vote yes, the coordinator tells everyone to commit.
 
 2PC is slow (multiple round trips) and blocks if the coordinator dies. Modern systems use **Paxos** or **Raft** for coordinator failure tolerance.
 
-Textbook §20.5.2, p. 1009 works through the protocol.
+<span class="cite">Textbook §20.5.2, p. 1009 works through the protocol.</span>
 
 ---
 

@@ -93,7 +93,7 @@ Each attribute $A_i$ has a **domain** $dom(A_i)$, the set of legal values.
 
 A **tuple** over $R$ is a function $t : \{A_1, ..., A_n\} \rightarrow \bigcup dom(A_i)$ with $t(A_i) \in dom(A_i)$.
 
-A **relation instance** is a finite set of such tuples (Textbook §2.2.1–2.2.6, p. 22–24).
+A **relation instance** is a finite set of such tuples <span class="cite">(Textbook §2.2.1–2.2.6, p. 22–24)</span>.
 
 Properties:
 
@@ -195,7 +195,7 @@ This is the concrete case before the formal ladder on the next slide. Ask the ro
 
 <div class="small">
 
-Textbook: keys and underlining §2.2.7, p. 25; superkeys §3.1.3, p. 71; foreign keys §7.1, p. 311.
+<span class="cite">Textbook: keys and underlining §2.2.7, p. 25; superkeys §3.1.3, p. 71; foreign keys §7.1, p. 311.</span>
 
 </div>
 
@@ -257,7 +257,7 @@ Land the general point first: integrity rules fail quietly, and the damage surfa
 
 # The Atomic-Value Debate
 
-Codd's *First Normal Form* says every attribute value is **atomic**, indivisible from the database's perspective (Textbook §2.2.4, p. 23). We return to normal forms later in the semester.
+Codd's *First Normal Form* says every attribute value is **atomic**, indivisible from the database's perspective <span class="cite">(Textbook §2.2.4, p. 23)</span>. We return to normal forms later in the semester.
 
 That definition is older than every type system on the next slide.
 
@@ -649,7 +649,7 @@ The caution runs the other way for rules that change often. A complex `CHECK` or
 
 # Transactions
 
-A transaction is a group of database operations executed as one unit, atomically and in apparent isolation from every other transaction (Textbook §1.2.4, p. 8).
+A transaction is a group of database operations executed as one unit, atomically and in apparent isolation from every other transaction <span class="cite">(Textbook §1.2.4, p. 8)</span>.
 
 ```sql
 BEGIN;
@@ -670,7 +670,7 @@ First mention of transactions in the course. Keep it at the definition level —
 
 # The ACID Test
 
-A transaction makes four guarantees, remembered by the acronym ACID (Textbook §1.2.4, p. 9).
+A transaction makes four guarantees, remembered by the acronym ACID <span class="cite">(Textbook §1.2.4, p. 9)</span>.
 
 | Letter | Property | Guarantee |
 |--------|----------|-----------|

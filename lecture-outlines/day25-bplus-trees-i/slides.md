@@ -93,7 +93,7 @@ Reference: Textbook §14.1-14.2, pp. 620-646; PostgreSQL docs [B-Tree Indexes](h
 | LSM tree | Write-heavy | O(log N) batched |
 
 The "+" in B+ tree refers to all data living at the leaf level; internal nodes contain only routing keys.
-The Textbook covers this variant under the family name B-tree (§14.2, p. 633).
+The Textbook covers this variant under the family name B-tree <span class="cite">(§14.2, p. 633)</span>.
 
 ---
 
@@ -123,7 +123,7 @@ Fan-out is the single most important number in a B+ tree. Doubling fan-out cuts 
 
 ![w:880px](images/bplus-tree.svg)
 
-Three levels. Internal nodes route. Leaves hold all data. The dashed arrows are the **leaf-level linked list** (Textbook §14.2.1, p. 634).
+Three levels. Internal nodes route. Leaves hold all data. The dashed arrows are the **leaf-level linked list** <span class="cite">(Textbook §14.2.1, p. 634)</span>.
 
 ---
 
@@ -214,7 +214,7 @@ Find(key):
   return data
 ```
 
-Each step descends one level. Total cost: tree height (Textbook §14.2.3, p. 639).
+Each step descends one level. Total cost: tree height <span class="cite">(Textbook §14.2.3, p. 639)</span>.
 
 ---
 
@@ -289,7 +289,7 @@ For `WHERE key BETWEEN 25 AND 60`:
 2. Walk the leaf-level linked list, reading each leaf
 3. Stop when key > 60
 
-Cost: O(log_F N) + the number of leaves in range (Textbook §14.2.4, p. 639).
+Cost: O(log_F N) + the number of leaves in range <span class="cite">(Textbook §14.2.4, p. 639)</span>.
 
 ---
 

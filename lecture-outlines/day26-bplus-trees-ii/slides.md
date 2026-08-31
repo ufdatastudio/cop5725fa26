@@ -111,7 +111,7 @@ graph TB
   class L2 leaf
 ```
 
-Find the right leaf, slot the value in sorted order (Textbook §14.2.5, p. 640). Done.
+Find the right leaf, slot the value in sorted order <span class="cite">(Textbook §14.2.5, p. 640)</span>. Done.
 
 ---
 
@@ -265,7 +265,7 @@ graph TB
   class L2 leaf
 ```
 
-Find, remove, done (Textbook §14.2.6, p. 642). The leaf remains at least half full.
+Find, remove, done <span class="cite">(Textbook §14.2.6, p. 642)</span>. The leaf remains at least half full.
 
 ---
 
@@ -422,7 +422,7 @@ The tree's height stays stable across realistic dataset sizes.
 | Build a new index | O(N log N) sort + O(N) build | `CREATE INDEX CONCURRENTLY` |
 
 The full-scan-via-index row is surprising: scanning the heap directly is usually faster than scanning every leaf of an index. The optimizer knows this.
-The height-bound analysis behind the first four rows is Textbook §14.2.7, p. 645.
+<span class="cite">The height-bound analysis behind the first four rows is Textbook §14.2.7, p. 645.</span>
 
 ---
 

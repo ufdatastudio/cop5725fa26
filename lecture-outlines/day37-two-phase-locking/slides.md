@@ -105,14 +105,14 @@ graph TB
 
 **Shared lock (S):** multiple transactions can hold it simultaneously. Many readers in parallel.
 
-**Exclusive lock (X):** only one transaction. No other reader or writer (Textbook §18.4.1, p. 905).
+**Exclusive lock (X):** only one transaction. No other reader or writer <span class="cite">(Textbook §18.4.1, p. 905)</span>.
 
 | You want → | with S held | with X held |
 |------------|-------------|-------------|
 | **S** | OK | wait |
 | **X** | wait | wait |
 
-The compatibility matrix (Textbook §18.4.2, p. 907). Two readers don't block each other. A writer blocks everyone.
+The compatibility matrix <span class="cite">(Textbook §18.4.2, p. 907)</span>. Two readers don't block each other. A writer blocks everyone.
 
 ---
 
@@ -168,7 +168,7 @@ Once you've released your first lock, you can no longer acquire any. The transac
 
 **Theorem:** any schedule produced by 2PL transactions is conflict serializable.
 
-Textbook §18.3.3, p. 900; the argument for why 2PL works is §18.3.4, p. 901.
+<span class="cite">Textbook §18.3.3, p. 900; the argument for why 2PL works is §18.3.4, p. 901.</span>
 
 ---
 
@@ -257,7 +257,7 @@ T1 waits on T2; T2 waits on T1. Neither can proceed.
 
 This is a **deadlock**. Without intervention, both transactions block forever.
 
-Textbook §19.2.2, p. 967 develops the waits-for graph.
+<span class="cite">Textbook §19.2.2, p. 967 develops the waits-for graph.</span>
 
 ---
 
@@ -368,7 +368,7 @@ Contention is transactions waiting on each other's locks for the same items.
 
 PostgreSQL uses **row-level** locks by default plus **table-level** locks for DDL. It does *not* use page-level locks the way SQL Server does for some operations.
 
-Textbook §18.6, p. 921 covers lock hierarchies.
+<span class="cite">Textbook §18.6, p. 921 covers lock hierarchies.</span>
 
 ---
 
@@ -386,7 +386,7 @@ T2's new row never existed when T1 took its locks. Row locks **cannot lock rows 
 
 Predicate locking is expensive and few engines implement it fully. PostgreSQL's `SERIALIZABLE` level uses **Serializable Snapshot Isolation** (SSI) to detect this case after the fact.
 
-Textbook §18.6.3, p. 926 treats phantoms and insertions.
+<span class="cite">Textbook §18.6.3, p. 926 treats phantoms and insertions.</span>
 
 ---
 
@@ -495,7 +495,7 @@ The Final Project released Mon Nov 16 and is due Wed Dec 9. The capstone is grad
 # Wrap-up
 
 - Shared locks allow parallel readers; exclusive locks admit one writer
-- Two-phase locking separates a growing phase from a shrinking phase and guarantees conflict serializability (Textbook §18.3, p. 897)
+- Two-phase locking separates a growing phase from a shrinking phase and guarantees conflict serializability <span class="cite">(Textbook §18.3, p. 897)</span>
 - Strict 2PL holds every lock until commit, which adds recoverability and cascadeless aborts
 - Deadlocks appear as cycles in the waits-for graph; PostgreSQL detects them and aborts a victim
 - Acquiring locks in a global order prevents deadlocks in application code

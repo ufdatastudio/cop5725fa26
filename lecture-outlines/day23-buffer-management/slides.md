@@ -171,7 +171,7 @@ graph TB
   class F1,F2,F3,Fn frame
 ```
 
-A **frame** is a fixed-size slot that holds one page in memory; the frames together form the buffer pool (Textbook §15.7.1, p. 746).
+A **frame** is a fixed-size slot that holds one page in memory; the frames together form the buffer pool <span class="cite">(Textbook §15.7.1, p. 746)</span>.
 The **page table** maps disk-page ID to frame.
 Each frame has a **pin count** (how many threads are using it) and a **dirty bit** (modified since loaded).
 
@@ -199,14 +199,14 @@ sequenceDiagram
   Q->>BP: ReleasePage (unpin)
 ```
 
-The pin count protects pages in use; unpinned pages are eviction candidates (Textbook §15.7.2, p. 749).
+The pin count protects pages in use; unpinned pages are eviction candidates <span class="cite">(Textbook §15.7.2, p. 749)</span>.
 
 ---
 
 # Dirty Pages and Write-Back
 
 A page is **dirty** when something in memory has been modified but the disk does not yet know.
-A clean page can simply be dropped; a dirty page must be written back before its frame is reused (Textbook §15.7.1, p. 747).
+A clean page can simply be dropped; a dirty page must be written back before its frame is reused <span class="cite">(Textbook §15.7.1, p. 747)</span>.
 
 Two write-back strategies:
 
@@ -229,7 +229,7 @@ Real databases use **write-back with a write-ahead log** (Section 6). The log ma
 
 When a new page needs a frame and the pool is full, **which frame is evicted**?
 
-A bad choice evicts a page that is about to be re-used, forcing an immediate disk read (Textbook §15.7.2, p. 747).
+A bad choice evicts a page that is about to be re-used, forcing an immediate disk read <span class="cite">(Textbook §15.7.2, p. 747)</span>.
 
 Five common strategies:
 
@@ -283,7 +283,7 @@ graph LR
 <div>
 
 ### Idea
-Arrange frames in a ring with a "reference bit" per frame (Textbook §15.7.2, p. 748).
+Arrange frames in a ring with a "reference bit" per frame <span class="cite">(Textbook §15.7.2, p. 748)</span>.
 
 On access, set the reference bit.
 When evicting, advance a clock hand. If the current frame's bit is 1, clear it and advance; if 0, evict it.
