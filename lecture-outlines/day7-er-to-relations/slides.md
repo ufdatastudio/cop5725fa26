@@ -29,7 +29,7 @@ Project 0 is due tonight. The lecture's job is to close the design loop: take th
 <div>
 
 Wednesday we drew an ER diagram for a registrar system.
-Today we turn that diagram into SQL `CREATE TABLE` statements (Textbook §4.5, p. 157).
+Today we turn that diagram into SQL `CREATE TABLE` statements <span class="cite">(Textbook §4.5, p. 157)</span>.
 
 The translation is mechanical for most ER constructs.
 A few cases, such as 1:1 relationships and ISA hierarchies, require a design choice.
@@ -92,7 +92,7 @@ The "what ER did not tell us" section is foreshadowing for Week 4: functional de
 
 ISA hierarchies add three strategies of their own.
 
-We will apply each rule to the registrar diagram (Textbook §4.5, p. 157 and §4.6, p. 165).
+We will apply each rule to the registrar diagram <span class="cite">(Textbook §4.5, p. 157 and §4.6, p. 165)</span>.
 
 ---
 
@@ -104,7 +104,7 @@ We will apply each rule to the registrar diagram (Textbook §4.5, p. 157 and §4
 ```mermaid
 graph TB
   S["Student"]
-  S --- SID(("student_id"))
+  S --- SID(("<u>student_id</u>"))
   S --- N(("name"))
   S --- G(("gpa"))
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
@@ -131,7 +131,7 @@ CREATE TABLE student (
 
 <div class="rule">
 
-**Rule:** Each strong entity becomes a table. The primary key in the diagram becomes the `PRIMARY KEY` in the table (Textbook §4.5.1, p. 157).
+**Rule:** Each strong entity becomes a table. The primary key in the diagram becomes the `PRIMARY KEY` in the table <span class="cite">(Textbook §4.5.1, p. 157)</span>.
 
 </div>
 
@@ -148,15 +148,15 @@ The simplest rule and the most common. The only design choice is the SQL data ty
 
 ```mermaid
 graph LR
-  C["Course"] === O{{"offered as"}} === Sec["Section"]
-  Sec --- SN(("section_num"))
+  C["Course"] === O{"offered as"} === Sec["<span class='weak-inner'>Section</span>"]
+  Sec --- SN(("<u>section_num</u>"))
   Sec --- T(("term"))
   Sec --- R(("room"))
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,stroke-dasharray:5 5
-  classDef irel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,stroke-dasharray:5 5
+  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
+  classDef irel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-  classDef key fill:#fff9c4,stroke:#f57f17,stroke-width:3px,stroke-dasharray:3 3
+  classDef key fill:#fff9c4,stroke:#f57f17,stroke-width:3px
   class C entity
   class Sec weak
   class O irel
@@ -182,12 +182,13 @@ CREATE TABLE section (
 
 <div class="rule">
 
-**Rule:** Weak entity becomes a table whose primary key is the **owner's primary key** concatenated with the **partial key**. The owner's key is also a foreign key (Textbook §4.5.4, p. 161).
+**Rule:** Weak entity becomes a table whose primary key is the **owner's primary key** concatenated with the **partial key**. The owner's key is also a foreign key <span class="cite">(Textbook §4.5.4, p. 161)</span>.
 
 </div>
 
 <!--
 The composite key has three parts here because `term` is also part of the identity — Section 001 of COP5725 in Fall 2026 is a different section from Section 001 in Spring 2027. The exact composition depends on what makes the section unique.
+The underlined section_num in yellow is the partial key (drawn with a dashed underline on paper, per the Day 6 convention).
 -->
 
 ---
@@ -272,7 +273,7 @@ graph LR
   D["Department"] -- "1" --- B{"belongs to"}
   B -- "N" --- C["Course"]
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+  classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
   class D,C entity
   class B rel
 ```
@@ -294,7 +295,7 @@ CREATE TABLE course (
 
 <div class="rule">
 
-**Rule:** Embed the foreign key on the **N** side. Each course has *one* department; the dname column captures that (Textbook §4.5.2, p. 158 and §4.5.3, p. 160).
+**Rule:** Embed the foreign key on the **N** side. Each course has *one* department; the dname column captures that <span class="cite">(Textbook §4.5.2, p. 158 and §4.5.3, p. 160)</span>.
 
 </div>
 
@@ -314,11 +315,11 @@ This is the workhorse rule. Most relationships in real schemas are 1:N, and most
 ```mermaid
 graph LR
   S["Student"] -- "M" --- E{"enrolls in"}
-  E -- "N" --- Sec["Section"]
+  E -- "N" --- Sec["<span class='weak-inner'>Section</span>"]
   E --- G(("grade"))
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,stroke-dasharray:5 5
-  classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
+  classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
   class S entity
   class Sec weak
@@ -347,7 +348,7 @@ CREATE TABLE enrollment (
 
 <div class="rule">
 
-**Rule:** Every M:N relationship becomes its own table. Primary key = both side FKs. Relationship attributes become additional columns (Textbook §4.5.2, p. 158).
+**Rule:** Every M:N relationship becomes its own table. Primary key = both side FKs. Relationship attributes become additional columns <span class="cite">(Textbook §4.5.2, p. 158)</span>.
 
 </div>
 
@@ -365,9 +366,9 @@ The junction-table pattern is everywhere. The complication here is that Section 
 ```mermaid
 graph TB
   S["Student"]
-  S --- Phone(("{phone}"))
+  S --- Phone(("<span class='multi-inner'>phone</span>"))
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef multi fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,stroke-dasharray:2 2
+  classDef multi fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
   class S entity
   class Phone multi
 ```
@@ -400,7 +401,7 @@ PostgreSQL's array support lets you sidestep this rule when you don't query into
 
 # ISA Hierarchies
 
-Three strategies (Textbook §4.6, p. 165):
+Three strategies <span class="cite">(Textbook §4.6, p. 165)</span>:
 
 <div class="columns-3">
 <div>
@@ -489,8 +490,8 @@ PostgreSQL has table inheritance (CREATE TABLE student INHERITS person), which i
 ```mermaid
 graph LR
   S["Student"] -- "M" --- E{"enrolls in"}
-  E -- "N" --- Sec["Section"]
-  Sec -- "N" --- O{{"offered as"}}
+  E -- "N" --- Sec["<span class='weak-inner'>Section</span>"]
+  Sec -- "N" --- O{"offered as"}
   O -- "1" --- C["Course"]
   C -- "N" --- B{"belongs to"}
   B -- "1" --- D["Department"]
@@ -500,7 +501,7 @@ graph LR
   T -- "N" --- Sec
   E --- G(("grade"))
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
-  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,stroke-dasharray:5 5
+  classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
   class S,C,F,D entity
@@ -513,7 +514,7 @@ Five entities, one weak, five relationships, one relationship attribute. We tran
 
 ---
 
-# The Translation, Animated
+# The Translation
 
 <div class="build">
 
@@ -987,7 +988,7 @@ The Project 0 grader runs the same `verify` script the students run locally. If 
 
 # Practice Before Wednesday
 
-Three problems on the handout:
+Three problems on the handout posted with these slides:
 
 1. Produce the SQL DDL for the library ER diagram you drew Wednesday.
 2. Given a Person→{Student, Faculty} hierarchy, argue for one of the three ISA strategies based on stated access patterns.
@@ -1008,8 +1009,6 @@ This is an exercise.
 <!--
 Close by walking the list against the registrar schema on the previous slide: point to the table that each bullet produced. The common student mistake all term will be putting the FK on the 1 side of a 1:N relationship — call it out here one more time.
 -->
-
-
 
 ---
 
