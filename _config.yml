@@ -25,6 +25,8 @@ published_lectures:
   - day3-relational-model
   - day4-relational-algebra-i
   - day5-relational-algebra-ii
+  - day6-er-modeling
+  - day7-er-to-relations
 
 exclude:
   - simple-syllabus.md
