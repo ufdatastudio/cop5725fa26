@@ -13,6 +13,7 @@ html: true
 COP 5725 Database Management Systems, Fall 2026. Ungraded practice following the Monday, August 31 lecture.
 Everything here is answerable with the algebra from Days 4 and 5; no SQL is required or expected.
 Several questions are deliberately tricky corner cases. Attempt them before reading the solutions; the SQL shown there is only a preview of what we build starting September 14.
+Difficulty ratings: <span style="color:#f57f17">★☆☆</span> lecture recall, <span style="color:#f57f17">★★☆</span> combines ideas, <span style="color:#f57f17">★★★</span> corner case, expect a fight.
 
 </div>
 
@@ -23,11 +24,11 @@ A parts warehouse tracks which supplier ships which part.
 - `supplies(sid, pid)` records that supplier `sid` ships part `pid`
 - `red_parts(pid)` lists the parts painted red
 
-(a) Write an algebra expression for the suppliers who supply **every** part in `red_parts`. The division operator ÷ is allowed.
+(a) <span style="color:#f57f17">★☆☆</span> Write an algebra expression for the suppliers who supply **every** part in `red_parts`. The division operator ÷ is allowed.
 
 <div class="answer-space" style="min-height:80px"></div>
 
-(b) The corner case: suppose the paint shop closed and `red_parts` is **empty**. What does your expression return? Justify it from the definition of ÷, with its "for every $s \in S$" condition.
+(b) <span style="color:#f57f17">★★★</span> The corner case: suppose the paint shop closed and `red_parts` is **empty**. What does your expression return? Justify it from the definition of ÷, with its "for every $s \in S$" condition.
 
 <div class="answer-space" style="min-height:100px"></div>
 
@@ -35,11 +36,11 @@ A parts warehouse tracks which supplier ships which part.
 
 The registrar stores one row per student per course in `enrollment(student_id, course_id)`.
 
-(a) Write an algebra expression for the **average enrollment per course**, a single number. With three courses holding 40, 25, and 10 students, the answer is 25. A hint: it takes two γs, and the outer one has an empty grouping list.
+(a) <span style="color:#f57f17">★★☆</span> Write an algebra expression for the **average enrollment per course**, a single number. With three courses holding 40, 25, and 10 students, the answer is 25. A hint: it takes two γs, and the outer one has an empty grouping list.
 
 <div class="answer-space" style="min-height:80px"></div>
 
-(b) The corner case: what does your expression produce when `enrollment` is **empty**? Work it out γ by γ: how many rows does the inner γ return, and how many does the outer γ return?
+(b) <span style="color:#f57f17">★★★</span> The corner case: what does your expression produce when `enrollment` is **empty**? Work it out γ by γ: how many rows does the inner γ return, and how many does the outer γ return?
 
 <div class="answer-space" style="min-height:100px"></div>
 
@@ -60,11 +61,11 @@ graph BT
   linkStyle default stroke:#334155,stroke-width:3px
 ```
 
-(a) Write the tree as a single nested algebra expression.
+(a) <span style="color:#f57f17">★☆☆</span> Write the tree as a single nested algebra expression.
 
 <div class="answer-space" style="min-height:80px"></div>
 
-(b) Could the σ be pushed **below** the γ, the way selections were pushed toward the base relations on Day 4? Say why or why not.
+(b) <span style="color:#f57f17">★★☆</span> Could the σ be pushed **below** the γ, the way selections were pushed toward the base relations on Day 4? Say why or why not.
 
 <div class="answer-space" style="min-height:90px"></div>
 
@@ -72,21 +73,21 @@ graph BT
 
 Short answers, a few sentences each. These probe the edges of the definitions from lecture.
 
-**Problem 4.** $R$ and $S$ have **identical** schemas. Show that $R \bowtie S = R \cap S$. Then the other extreme: what is $R \bowtie S$ when the schemas share **no** attribute names, and which of our three engines refuses to run it?
+**Problem 4.** <span style="color:#f57f17">★★☆</span> $R$ and $S$ have **identical** schemas. Show that $R \bowtie S = R \cap S$. Then the other extreme: what is $R \bowtie S$ when the schemas share **no** attribute names, and which of our three engines refuses to run it?
 
 <div class="answer-space" style="min-height:110px"></div>
 
 ---
 
-**Problem 5.** Day 4 gave the identity $\sigma_{p \lor q}(R) = \sigma_p(R) \cup \sigma_q(R)$. It is only guaranteed under **set** semantics. Give a one-relation example showing it fail under bag semantics, where union adds multiplicities.
+**Problem 5.** <span style="color:#f57f17">★★★</span> Day 4 gave the identity $\sigma_{p \lor q}(R) = \sigma_p(R) \cup \sigma_q(R)$. It is only guaranteed under **set** semantics. Give a one-relation example showing it fail under bag semantics, where union adds multiplicities.
 
 <div class="answer-space" style="min-height:110px"></div>
 
-**Problem 6.** Let $|R| = r$ and $|S| = s$ under set semantics. Give the minimum and maximum possible sizes of $R \cup S$, $R - S$, and $R \bowtie S$, with a justification and a witness for each bound.
+**Problem 6.** <span style="color:#f57f17">★★☆</span> Let $|R| = r$ and $|S| = s$ under set semantics. Give the minimum and maximum possible sizes of $R \cup S$, $R - S$, and $R \bowtie S$, with a justification and a witness for each bound.
 
 <div class="answer-space" style="min-height:140px"></div>
 
-**Problem 7.** Using the lecture's tables, compare
+**Problem 7.** <span style="color:#f57f17">★★★</span> Using the lecture's tables, compare
 
 <div style="font-size:0.85em">
 
@@ -102,15 +103,15 @@ Are they equal? If not, name a student from the lecture example who appears in o
 
 ---
 
-**Problem 8.** Division undoes a cross product: $(R \times S) \div S = R$. The other direction fails: $(R \div S) \times S \subseteq R$ always holds, but equality can fail. Prove the containment, then give a smallest-possible $R$ and $S$ where $(R \div S) \times S \neq R$.
+**Problem 8.** <span style="color:#f57f17">★★★</span> Division undoes a cross product: $(R \times S) \div S = R$. The other direction fails: $(R \div S) \times S \subseteq R$ always holds, but equality can fail. Prove the containment, then give a smallest-possible $R$ and $S$ where $(R \div S) \times S \neq R$.
 
 <div class="answer-space" style="min-height:110px"></div>
 
-**Problem 9.** Under bag semantics, does $\delta(\pi_A(R)) = \pi_A(\delta(R))$? If not, give a two-row counterexample and state which side is the safe way to compute "distinct values of A."
+**Problem 9.** <span style="color:#f57f17">★★☆</span> Under bag semantics, does $\delta(\pi_A(R)) = \pi_A(\delta(R))$? If not, give a two-row counterexample and state which side is the safe way to compute "distinct values of A."
 
 <div class="answer-space" style="min-height:110px"></div>
 
-**Problem 10.** The Textbook defines ÷ as the *quotient* and asks you to build it from the core operators <span class="cite">(Exercise 2.4.10, p. 58)</span>. Do it: express $R(A, B) \div S(B)$ using only π, ×, and −. A hint: first build the set of (candidate, required value) pairs that are *missing* from $R$.
+**Problem 10.** <span style="color:#f57f17">★★★</span> The Textbook defines ÷ as the *quotient* and asks you to build it from the core operators <span class="cite">(Exercise 2.4.10, p. 58)</span>. Do it: express $R(A, B) \div S(B)$ using only π, ×, and −. A hint: first build the set of (candidate, required value) pairs that are *missing* from $R$.
 
 <div class="answer-space" style="min-height:120px"></div>
 
