@@ -820,7 +820,7 @@ Each entity gets at least a key and a few descriptive attributes. The Section's 
 graph LR
   S["Student"] -- "M" --- E{"enrolls in"}
   E -- "N" --- Sec["<span class='weak-inner'>Section</span>"]
-  Sec -- "N" === O{"offered as"}
+  Sec == "N" === O{"offered as"}
   O -- "1" --- C["Course"]
   C -- "N" --- B{"belongs to"}
   B -- "1" --- D["Department"]
@@ -861,11 +861,11 @@ Pause and ask: why is teach 1:N and enrolls M:N? One faculty teaches a given sec
 # Step 5: Relationship Attributes
 
 ```mermaid
-graph TB
+graph LR
   S["Student"] -- "M" --- E{"enrolls in"}
   E -- "N" --- Sec["<span class='weak-inner'>Section</span>"]
   E --- G(("grade"))
-  Sec -- "N" === O{"offered as"}
+  Sec == "N" === O{"offered as"}
   O -- "1" --- C["Course"]
   C -- "N" --- B{"belongs to"}
   B -- "1" --- D["Department"]

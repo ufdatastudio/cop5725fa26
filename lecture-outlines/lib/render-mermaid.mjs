@@ -150,7 +150,10 @@ export async function replaceMermaid(source, renderer) {
       const displayWidth = Math.round(width * Math.min(1, MAX_DISPLAY_HEIGHT / height));
       const alt = escapeAttr(mermaidAlt(body.join('\n')));
       out.push(`<img class="mermaid" src="${dataUri}" width="${displayWidth}" alt="${alt}" />`);
-    } catch {
+    } catch (error) {
+      // Leave the code block for the runtime renderer, but say so loudly:
+      // a syntax error here otherwise ships as an error bomb on the slide.
+      console.warn(`  warn mermaid render failed (${error.message ?? error}); first line: ${body[0] ?? ''}`);
       out.push('```mermaid', ...body, '```');
     }
     i = j; // skip past the closing ```

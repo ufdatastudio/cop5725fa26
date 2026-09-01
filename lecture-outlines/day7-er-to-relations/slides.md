@@ -79,7 +79,7 @@ The "what ER did not tell us" section is foreshadowing for Week 4: functional de
 
 ---
 
-# The Six Rules
+# ER Diagram Construction Rules
 
 | ER Construct | Translation |
 |--------------|-------------|
@@ -403,7 +403,7 @@ PostgreSQL's array support lets you sidestep this rule when you don't query into
 
 Three strategies <span class="cite">(Textbook §4.6, p. 165)</span>:
 
-<div class="columns-3">
+<div class="columns-3 small">
 <div>
 
 ### Strategy 1: Single Table
@@ -546,19 +546,29 @@ The whole lecture in one figure before the rule-by-rule walk. Each right-arrow a
 
 # Step 1: Strong Entities
 
+<div class="columns">
+<div>
+
 ```sql
 CREATE TABLE student (
-  student_id  bigint        PRIMARY KEY,
-  name        text          NOT NULL,
-  gpa         numeric(3, 2) CHECK (gpa BETWEEN 0 AND 4.0)
+  student_id  bigint PRIMARY KEY,
+  name        text   NOT NULL,
+  gpa         numeric(3, 2)
+    CHECK (gpa BETWEEN 0 AND 4.0)
 );
 
 CREATE TABLE course (
   course_id  text PRIMARY KEY,
   title      text NOT NULL,
-  credits    int  NOT NULL CHECK (credits BETWEEN 1 AND 6)
+  credits    int  NOT NULL
+    CHECK (credits BETWEEN 1 AND 6)
 );
+```
 
+</div>
+<div>
+
+```sql
 CREATE TABLE faculty (
   fid    bigint PRIMARY KEY,
   name   text NOT NULL,
@@ -570,6 +580,9 @@ CREATE TABLE department (
   building text
 );
 ```
+
+</div>
+</div>
 
 Four `CREATE TABLE`s, one per strong entity. No foreign keys yet.
 
@@ -721,6 +734,9 @@ Indexes are a Week 9 topic, mentioned in passing here.
 
 # The Full Schema
 
+<div class="columns small">
+<div>
+
 ```sql
 CREATE TABLE department (
   dname text PRIMARY KEY,
@@ -729,19 +745,29 @@ CREATE TABLE department (
 CREATE TABLE student (
   student_id bigint PRIMARY KEY,
   name text NOT NULL,
-  gpa numeric(3,2) CHECK (gpa BETWEEN 0 AND 4.0)
+  gpa numeric(3,2)
+    CHECK (gpa BETWEEN 0 AND 4.0)
 );
 CREATE TABLE faculty (
   fid bigint PRIMARY KEY,
   name text NOT NULL,
   salary numeric(12,2),
-  dname text NOT NULL REFERENCES department(dname)
+  dname text NOT NULL
+    REFERENCES department(dname)
 );
+```
+
+</div>
+<div>
+
+```sql
 CREATE TABLE course (
   course_id text PRIMARY KEY,
   title text NOT NULL,
-  credits int NOT NULL CHECK (credits BETWEEN 1 AND 6),
-  dname text NOT NULL REFERENCES department(dname)
+  credits int NOT NULL
+    CHECK (credits BETWEEN 1 AND 6),
+  dname text NOT NULL
+    REFERENCES department(dname)
 );
 CREATE TABLE section (
   course_id text REFERENCES course(course_id),
@@ -755,15 +781,18 @@ CREATE TABLE enrollment (
   student_id bigint REFERENCES student(student_id),
   course_id text, section_num int, term text,
   grade char(2),
-  PRIMARY KEY (student_id, course_id, section_num, term),
-  FOREIGN KEY (course_id, section_num, term) REFERENCES section(course_id, section_num, term)
+  PRIMARY KEY (student_id, course_id,
+               section_num, term),
+  FOREIGN KEY (course_id, section_num, term)
+    REFERENCES section(course_id, section_num, term)
 );
 ```
 
-One diagram produced six tables and about sixty lines of DDL.
+</div>
+</div>
 
 <!--
-Worth pausing to note: this is the entire registrar schema in 60 lines. Real schemas grow from here, but the bones are this small. ER thinking is what makes the bones obvious.
+One diagram produced six tables and about sixty lines of DDL. Worth pausing to note: this is the entire registrar schema in 60 lines. Real schemas grow from here, but the bones are this small. ER thinking is what makes the bones obvious.
 -->
 
 ---
@@ -808,29 +837,42 @@ graph TD
 
 # Multi-Valued Attributes in Practice
 
+<div class="columns">
+<div>
+
 ```sql
 -- Textbook rule: side table
 CREATE TABLE student_phone (
-  student_id bigint REFERENCES student(student_id),
+  student_id bigint
+    REFERENCES student(student_id),
   phone text,
   PRIMARY KEY (student_id, phone)
 );
 
 -- PostgreSQL array
-ALTER TABLE student ADD COLUMN phones text[];
+ALTER TABLE student
+  ADD COLUMN phones text[];
 
 -- JSONB document
-ALTER TABLE student ADD COLUMN contacts jsonb;
--- contacts: {"phones": ["555-1234"], "emails": ["ada@uf.edu"]}
+ALTER TABLE student
+  ADD COLUMN contacts jsonb;
+-- {"phones": ["555-1234"],
+--  "emails": ["ada@uf.edu"]}
 ```
 
-<div class="tradeoff">
+</div>
+<div>
+
+<div class="tradeoff small">
 
 **When to pick which:**
 - Use a side table when you query individual values, join on them, or update one at a time.
 - Use an array when reads grab the whole list, writes replace the whole list, and nothing references individual elements.
 - Use JSONB when the structure is varied or evolving and queries are exploratory.
 
+</div>
+
+</div>
 </div>
 
 <!--
@@ -960,10 +1002,10 @@ Quiz 1 is a week from today. The single best preparation: walk the algebra ↔ S
 
 ### Due tonight, 11:59 PM
 
-- PostgreSQL 16+ running locally
-- DuckDB installed and reachable
-- Python via `uv`, with `psycopg` and `duckdb` packages
-- `git clone` of the assigned repo, with at least one verified push
+- SQLite, DuckDB, and Python managed by `uv`
+- Your dataset selected, with the 1000-row sample committed
+- Private GitHub repo with the course staff added
+- PostgreSQL is **optional** for Project 0; class resources come later
 
 </div>
 <div>
@@ -971,17 +1013,17 @@ Quiz 1 is a week from today. The single best preparation: walk the algebra ↔ S
 ### Pass criteria
 
 ```bash
-python -m project0.verify
+uv run setup/verify.py
 ```
 
-Exits 0 if all four checks pass.
-Submit by pushing to your project0 branch and tagging `v0`.
+Exits 0 when the four required checks pass.
+Submit by <mark>tagging the commit `v0`</mark>, pushing the tag, and posting the repo URL on Canvas.
 
 </div>
 </div>
 
 <!--
-The Project 0 grader runs the same `verify` script the students run locally. If their local check passes, the grade passes. The grader was the first script I wrote; it lives in scripts/grade_project0.py.
+The Project 0 grader runs the same `verify` script the students run locally. If their local check passes, the grade passes. The optional PostgreSQL check only runs when DATABASE_URL is set; students who want it now can use the CISE PostgreSQL service described in the project page.
 -->
 
 ---
