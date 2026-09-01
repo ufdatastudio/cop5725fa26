@@ -789,16 +789,17 @@ Reading: Textbook §4.1-4.5, pp. 125-163.
 
 # Practice Before Wednesday
 
-Three more problems on the handout posted with these slides:
+Ten problems on the handout posted with these slides, all pure algebra:
 
-1. Find suppliers who supply every part in `red_parts`.
-2. Express the average enrollment per course in algebra and SQL.
-3. Translate this plan tree back into a SQL query.
+1. Find suppliers who supply every part in `red_parts`, and the empty-set corner of ÷.
+2. Express the average enrollment per course, and what it returns on an empty relation.
+3. Translate a plan tree back into a nested algebra expression.
+4. Seven corner-case teasers: joins on identical schemas, bag-semantics traps, size bounds, outer-join pitfalls, and building ÷ from the core operators.
 
-This is an exercise.
+This is ungraded, and several problems are deliberately tricky.
 
 <!--
-Problem 3 is the hardest — it goes from a plan tree (what the optimizer sees) back up to surface SQL. This is a skill students need by Section 5; introducing it on a low-stakes handout gives them a chance to fail safely.
+No SQL is asked for anywhere on the handout — SQL starts Sept 14; the solutions show equivalent queries only as a labeled preview. The corner cases are where the definitions earn their keep: division over an empty divisor (vacuous truth), γ with no groups versus γ with no grouping list, selections that cannot cross an outer join, and the Textbook's Exercise 2.4.10 quotient construction. Problem 3 goes from a plan tree back up to an expression — the skill students need by Section 5, introduced here where failing is free.
 -->
 
 ---
