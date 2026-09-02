@@ -763,13 +763,15 @@ graph TB
   classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
   classDef key fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
+  classDef partkey fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray:6 4
   class S,C,F,D entity
   class Sec weak
-  class SName,GPA,Title,Cr,Term,Room,FName,Sal,Bldg,SNum attr
+  class SName,GPA,Title,Cr,Term,Room,FName,Sal,Bldg attr
+  class SNum partkey
   class SID,CID,FID,DN key
 ```
 
-Keys are **underlined**, the standard mark, and the green tint repeats it in color. The dashed underline on `section_num` marks the weak entity's **partial key**.
+Keys are **underlined**, the standard mark, and the green tint repeats it in color. The dashed oval and dashed underline on `section_num` mark the weak entity's **partial key**.
 
 <!--
 Each entity gets at least a key and a few descriptive attributes. The Section's partial key `section_num` is the local identifier — it's only unique *within a course in a term*.

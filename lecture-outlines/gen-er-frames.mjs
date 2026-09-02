@@ -201,7 +201,7 @@ const studentEntity = {
       lines: ['Ovals hold the facts we keep per student.', 'No oval is special yet.'],
       cite: 'Textbook §4.1.2, p. 126' }),
     note({ step: 3, total: 5, x: 660, y: 80, title: 'Choose the key', tx: 185, ty: 148, sy: 232,
-      lines: ['Underline the attributes that tell two', 'students apart. Here one oval is enough;', 'these slides also color it green.'],
+      lines: ['Underline the attributes that tell two', 'students apart. Here one oval is enough.'],
       cite: 'Textbook §4.3.1–4.3.2, pp. 148–149' }),
     note({ step: 4, total: 5, x: 660, y: 80, title: 'Refine the shapes', tx: 610, ty: 205,
       lines: ['name splits into a composite. dob is', 'stored; age is derived, so its oval is', 'dashed. Both marks are the wider ER', 'dialect; the Textbook keeps ovals plain.'],
