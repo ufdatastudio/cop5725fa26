@@ -781,7 +781,7 @@ This is the decision procedure for quiz/exam questions: given a schema and FDs, 
 - 3NF synthesis always achieves both properties; BCNF sometimes cannot preserve dependencies.
 - Design to BCNF and denormalize only against measured query patterns.
 
-Project 0 was due last Friday. Project 1 is due Sep 25 (schema design and SQL on your dataset) and embeds the Codd reading response.
+Project 0 was due last Friday. Project 1 is due Sep 25 (schema design and SQL on your dataset), followed by the ER diagram exchange with a classmate.
 
 <!--
 One flat recap, one bullet per part of the lecture. The last two bullets carry the design advice students should take into Project 1. Leave the Section 2 preview for the next slide.

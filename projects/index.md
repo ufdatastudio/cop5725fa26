@@ -36,23 +36,6 @@ Project weights grow with scope; each builds on the same dataset.
 
 {% comment %} Hidden until each project is released. Move a section above this block to publish it.
 
-## Project 1: Schema Design + SQL ETL (4%)
-
-**Goal:** Turn raw data into a queryable PostgreSQL schema, then answer 10-15 business-style questions.
-
-**Deliverables in your repo:**
-
-- `schema.sql` — `CREATE TABLE` statements, normalized to at least 3NF
-- `er-diagram.png` or `er-diagram.md` — ER diagram for your schema
-- `load.py` — script that ETLs raw source into your tables
-- `queries/q01.sql` through `q15.sql` — one file per question, with a comment naming the question
-- `queries/results/` — captured outputs (CSV or markdown table)
-- `README.md` updated with: schema explanation, query summaries, how to reproduce
-
-**Submission:** Tag the commit `v1` and push.
-
----
-
 ## Project 2: Advanced SQL Analytics (6%)
 
 **Goal:** Use the same dataset and answer 8-10 questions that *require* advanced SQL — CTEs, window functions, recursive queries.

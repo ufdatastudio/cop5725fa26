@@ -568,7 +568,7 @@ Due Friday, September 25 at 11:59 PM.
 
 - Schema DDL based on a written scenario
 - 12-15 SQL queries answering specific questions
-- Reading response to Codd 1970 (one page)
+- Anonymous ER diagram a classmate will rebuild DDL from
 
 </div>
 <div>
