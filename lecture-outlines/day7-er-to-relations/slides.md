@@ -79,7 +79,7 @@ The "what ER did not tell us" section is foreshadowing for Week 4: functional de
 
 ---
 
-# ER Diagram Construction Rules
+# The Translation Rules
 
 | ER Construct | Translation |
 |--------------|-------------|
@@ -136,7 +136,7 @@ CREATE TABLE student (
 </div>
 
 <!--
-The simplest rule and the most common. The only design choice is the SQL data type — which we covered on Day 3.
+The simplest rule and the most common. The only design choice is the SQL data type, which we covered on Day 3.
 -->
 
 ---
@@ -149,19 +149,19 @@ The simplest rule and the most common. The only design choice is the SQL data ty
 ```mermaid
 graph LR
   C["Course"] === O{"offered as"} === Sec["<span class='weak-inner'>Section</span>"]
-  Sec --- SN(("<u>section_num</u>"))
+  Sec --- SN(("<span class='partial-key'>section_num</span>"))
   Sec --- T(("term"))
   Sec --- R(("room"))
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
   classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   classDef irel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-  classDef key fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+  classDef partkey fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray:6 4
   class C entity
   class Sec weak
   class O irel
   class T,R attr
-  class SN key
+  class SN partkey
 ```
 
 </div>
@@ -187,8 +187,8 @@ CREATE TABLE section (
 </div>
 
 <!--
-The composite key has three parts here because `term` is also part of the identity — Section 001 of COP5725 in Fall 2026 is a different section from Section 001 in Spring 2027. The exact composition depends on what makes the section unique.
-The underlined section_num in yellow is the partial key (drawn with a dashed underline on paper, per the Day 6 convention).
+The composite key has three parts here because `term` is also part of the identity. Section 001 of COP5725 in Fall 2026 is a different section from Section 001 in Spring 2027. The exact composition depends on what makes the section unique.
+The dashed oval and dashed underline on section_num mark the partial key.
 -->
 
 ---
@@ -474,7 +474,7 @@ Con: every read joins.
 </div>
 
 <!--
-PostgreSQL has table inheritance (CREATE TABLE student INHERITS person), which is a built-in version of Strategy 3 with some performance optimizations. It's underused — useful when you want polymorphic reads.
+PostgreSQL has table inheritance (CREATE TABLE student INHERITS person), which is a built-in version of Strategy 3 with some performance optimizations. It is useful when you want polymorphic reads.
 -->
 
 ---
@@ -510,7 +510,7 @@ graph LR
   class G attr
 ```
 
-Five entities, one weak, five relationships, one relationship attribute. We translate each.
+We translate each construct in turn.
 
 ---
 
@@ -620,13 +620,12 @@ CREATE TABLE section (
 );
 ```
 
-Two things happened in one table:
-
-1. **Section** is a weak entity, so its PK is composite.
-2. **Faculty teaches Section** is 1:N, so `fid` is an FK on Section (the N side).
+Two rules landed in one table.
+**Section** is a weak entity, so its primary key is composite.
+**Faculty teaches Section** is 1:N, so `fid` is a foreign key on Section, the N side.
 
 <!--
-Combining the weak entity translation with the teaches FK in one table is the natural result. We didn't need a separate "teaches" table because the relationship is 1:N — embedding works.
+Combining the weak entity translation with the teaches FK in one table is the natural result. We did not need a separate "teaches" table because the relationship is 1:N, so embedding works.
 -->
 
 ---
@@ -700,7 +699,7 @@ Pink cells copy the student key, blue cells copy section's composite key, and th
 </div>
 
 <!--
-The colors trace provenance: enrollment stores nothing of its own except grade — every other column is a borrowed key. Bob's NULL grade is an enrollment awaiting grading, the reason grade is nullable in the DDL on the previous slide.
+The colors trace provenance: enrollment stores nothing of its own except grade. Every other column is a borrowed key. Bob's NULL grade is an enrollment awaiting grading, the reason grade is nullable in the DDL on the previous slide.
 -->
 
 ---
@@ -792,7 +791,7 @@ CREATE TABLE enrollment (
 </div>
 
 <!--
-One diagram produced six tables and about sixty lines of DDL. Worth pausing to note: this is the entire registrar schema in 60 lines. Real schemas grow from here, but the bones are this small. ER thinking is what makes the bones obvious.
+One diagram produced six tables and about sixty lines of DDL. This is the entire registrar schema in 60 lines. Real schemas grow from here, but the bones are this small. ER thinking is what makes the bones obvious.
 -->
 
 ---

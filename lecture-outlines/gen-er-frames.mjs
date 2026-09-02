@@ -98,7 +98,8 @@ const attr = (cx, cy, label, o = {}) => el(o, 1, (isNew) => {
   const fill = key ? C.keyFill : C.attrFill;
   const stroke = key ? C.keyStroke : C.attrStroke;
   const text = key ? C.keyText : C.attrText;
-  const dash = kind === 'derived' ? ' stroke-dasharray="6 4"' : '';
+  // Derived attributes and a weak entity's partial key both take a dashed oval.
+  const dash = kind === 'derived' || kind === 'partial' ? ' stroke-dasharray="6 4"' : '';
   let s = `<g${glow(isNew)}>`;
   s += `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${stroke}" stroke-width="${isNew ? 3.2 : 2.5}"${dash}/>`;
   // Multi-valued attributes use the wider tradition's double oval.
@@ -107,7 +108,7 @@ const attr = (cx, cy, label, o = {}) => el(o, 1, (isNew) => {
   // Keys are underlined; a weak entity's partial key gets a dashed underline.
   const half = label.length * 4.1;
   if (key) s += `<line x1="${cx - half}" y1="${cy + 12}" x2="${cx + half}" y2="${cy + 12}" stroke="${C.keyStroke}" stroke-width="2.2"/>`;
-  if (kind === 'partial') s += `<line x1="${cx - half}" y1="${cy + 12}" x2="${cx + half}" y2="${cy + 12}" stroke="${C.relStroke}" stroke-width="2.2" stroke-dasharray="5 4"/>`;
+  if (kind === 'partial') s += `<line x1="${cx - half}" y1="${cy + 12}" x2="${cx + half}" y2="${cy + 12}" stroke="${C.attrStroke}" stroke-width="2.2" stroke-dasharray="5 4"/>`;
   return `${s}</g>`;
 });
 
