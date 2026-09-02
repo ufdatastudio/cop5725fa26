@@ -30,7 +30,6 @@ published_lectures:
 
 exclude:
   - simple-syllabus.md
-  - projects/project1.md
   - projects/project2.md
   - projects/project3.md
   - projects/project-final.md
