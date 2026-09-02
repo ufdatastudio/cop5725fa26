@@ -51,7 +51,9 @@ export async function createMermaidRenderer() {
       // whose border draws the inner rectangle (inline styles are sanitized
       // away by mermaid; a themeCSS class survives).
       themeCSS: '.weak-inner{display:inline-block;border:1.7px solid #c62828;border-radius:4px;padding:1px 9px;}'
-        + '.multi-inner{display:inline-block;border:1.7px solid #7b1fa2;border-radius:999px;padding:2px 10px;}',
+        + '.multi-inner{display:inline-block;border:1.7px solid #7b1fa2;border-radius:999px;padding:2px 10px;}'
+        // Partial key of a weak entity: the Textbook's dashed underline (§4.4.3).
+        + '.partial-key{text-decoration:underline dashed;text-decoration-thickness:1.5px;}',
       // Tighter layout so diagrams stay proportionate to slide text. Only the
       // gaps between nodes shrink; node label text keeps its size.
       flowchart: { nodeSpacing: 30, rankSpacing: 36 },

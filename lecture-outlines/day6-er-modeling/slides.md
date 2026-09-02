@@ -15,7 +15,7 @@ html: true
 **COP 5725 - Database Management Systems**
 Wednesday, September 2, 2026
 
-Entities and relationships before tables
+Designing Entities and Relationships
 
 <!--
 First non-algebra day in the section. Students will arrive expecting more math; instead we shift mode entirely into design thinking. The hour is heavily interactive — multiple "your turn" prompts. Pace: 50 min with the last 12 min on the full worked example.
@@ -28,10 +28,9 @@ First non-algebra day in the section. Students will arrive expecting more math; 
 <div class="columns-left-wide">
 <div>
 
-The first five classes covered manipulating relations with the algebra and SQL.
-Today covers designing them.
+After learning to manipulate relations with algebras, we will learn how to design them.
 
-ER modeling sits between a domain expert and a SQL `CREATE TABLE` statement. It is the layer where you reason about the world before you commit to a schema <span class="cite">(Textbook §4.1, p. 126)</span>.
+Database designers and architects use Entity-Relationship (ER) diagrams to design the structure of a database. Designers take the messy world they will be representing and create ER diagrams to represent it. You can reason about the world before implementation <span class="cite">(Textbook §4.1, p. 126)</span>.
 
 </div>
 <div>
@@ -72,30 +71,30 @@ graph LR
   class P1,P2,P3,P4,P5 step
 ```
 
-Color code we will use the whole hour:
+Color codes:
 
 <div class="columns-3">
 <div>
 
-<span class="entity">Entities</span>
+<span class="entity">Entity</span>
 Solid blue rectangles.
 
 </div>
 <div>
 
-<span class="relationship">Relationships</span>
+<span class="relationship">Relationship</span>
 Yellow diamonds.
 
 </div>
 <div>
 
-<span class="weak">Weak entities</span>
+<span class="weak">Weak entity</span>
 Red, double border.
 
 </div>
 </div>
 
-<span class="attr">attributes</span> are purple ovals. <span class="key">keys</span> are underlined.
+<span class="attr">attribute</span> Purple ovals. <span class="attr key">key</span> Green ovals, underlined. <span class="attr partial-key">partial key</span> Dashed underline.
 
 <!--
 Drill the color code now. By the end of the hour, students should see "blue means thing, yellow means action between things, red means dependent thing." The color reinforcement compounds.
@@ -105,41 +104,17 @@ Drill the color code now. By the end of the hour, students should see "blue mean
 
 # Why ER Comes Before SQL
 
-<div class="columns">
-<div>
-
-### Designing in tables forces premature decisions
+### Designing first avoids difficult reorganizations and lost representations
 
 - "Should this be one table or two?" You don't know yet.
 - "Should this be a column or a separate row?" Depends on cardinality.
 - "Where does the foreign key go?" Depends on the relationship type.
 
-### ER lets you reason in concepts
+### ER lets you debate structure in natural language
 
 - "This is a Student"
 - "Students take Courses"
 - "A Course has Sections"
-
-</div>
-<div>
-
-```mermaid
-graph TD
-  Q["Question:<br/>'where to put grade?'"]
-  Q --> S["Schema-first:<br/>guess and edit"]
-  Q --> E["ER-first:<br/>the relationship has it"]
-  S --> Bad["Schema<br/>migration"]
-  E --> Good["Right answer<br/>on day one"]
-  classDef q fill:#fff3e0,stroke:#e65100
-  classDef bad fill:#ffebee,stroke:#c62828
-  classDef good fill:#e8f5e9,stroke:#388e3c
-  class Q q
-  class S,Bad bad
-  class E,Good good
-```
-
-</div>
-</div>
 
 <!--
 The "where does grade live" question is the classic ER teaching moment. Students who try to model it as a column on student or on course will hit walls. The relationship-with-attributes answer falls out naturally from ER thinking.
@@ -198,8 +173,6 @@ Vocabulary note: most texts call the diagram element an "entity," even though it
 
 ![Four attribute kinds on ovals: simple, composite split into parts, derived drawn dashed, and multi-valued drawn with a double oval w:880px](images/attribute-kinds.svg)
 
-Four kinds of attribute. The first is easy. The other three force design choices.
-
 <div class="small">
 
 The Textbook's E/R model keeps attributes primitive and treats struct-valued (composite) and set-valued (multi-valued) attributes as variations <span class="cite">(Textbook §4.1.2, p. 126–127)</span>. Derived attributes come from the wider ER tradition.
@@ -245,10 +218,10 @@ Composite attributes invite the question "should I split this in the schema?" De
 :::
 
 <!--
-Present from the HTML deck: each right-arrow reveals the next annotated step in place. The PDF handout prints one page per step.
+Present from the HTML slides: each right-arrow reveals the next annotated step in place. The PDF handout prints one page per step.
 Step 1: just the box. We know we have students; we do not yet know what we record about them. Hold it briefly.
 Step 2: the obvious simple attributes arrive as ovals.
-Step 3: pick the key. On paper you underline it; this deck also colors it green (Textbook §4.3.2, p. 149).
+Step 3: pick the key. On paper you underline it; the figure also colors it green (Textbook §4.3.2, p. 149).
 Step 4: name becomes a composite and dob arrives with derived age. Derived attributes raise the storage-vs-compute question; we decide on Day 7, the diagram only captures intent.
 Step 5: the double oval allows many phone numbers. Then the prompt. The answer: split phone into an entity when a phone needs attributes of its own (type, primary/secondary, verified flag). Otherwise keep it multi-valued; Day 7 turns it into a separate table anyway.
 The build is intentional pacing. A useful diagram emerges from a sequence of small decisions, not in one heroic moment.
@@ -262,7 +235,7 @@ The build is intentional pacing. A useful diagram emerges from a sequence of sma
 
 <div class="caption">
 
-Cardinality of a relationship: how many entities on one side can pair with each entity on the other. Day 4 used the same word for |R|, a relation's tuple count.
+Cardinality of a relationship: how many entities on one side can pair with each entity on the other.
 
 </div>
 
@@ -323,11 +296,11 @@ graph TB
   class R1,R2,R3 rel
 ```
 
-These three patterns cover almost every real-world association <span class="cite">(Textbook §4.1.6, p. 129)</span>.
+These patterns cover almost every real-world association <span class="cite">(Textbook §4.1.6, p. 129)</span>.
 
 <div class="small">
 
-Notation varies. This deck writes 1, N, M at the line ends; the Textbook instead draws an arrow into an entity set to say "at most one" <span class="cite">(§4.1.6, p. 129)</span>. Same constraint, different ink.
+The Textbook draws an arrow into an entity set to say "at most one" <span class="cite">(§4.1.6, p. 129)</span>.
 
 </div>
 
@@ -497,12 +470,6 @@ Drawn with the Textbook's marks <span class="cite">(§4.4.3, p. 156)</span>:
 - Double-diamond *identifying relationship*
 - Partial key (dashed underline)
 
-<div class="small">
-
-The red tint is this deck's color code, layered on top of the standard double border.
-
-</div>
-
 </div>
 <div>
 
@@ -570,7 +537,7 @@ ISA has three translation strategies on Friday: single table, joined table per s
 
 ---
 
-# Three Notations
+# Other Relationship Notations
 
 <div class="columns-3">
 <div>
@@ -587,7 +554,7 @@ graph LR
   class E rel
 ```
 
-Explicit relationship boxes. Attributes hang off as ovals.
+Relationship diamonds, attribute ovals. Arrows mark the "at most one" side.
 
 <div class="small">
 
@@ -646,9 +613,9 @@ Most industry tools default to crow's foot because cardinality is read directly 
 
 ---
 
-# One Concept, Many Dialects
+# ER Relationship Notation Cheatsheet
 
-![Table comparing the Textbook, this deck, and crow's foot notation for many-to-many, at most one, exactly one, and weak entities w:880](images/notation-dialects.svg)
+![Table comparing the Textbook, these slides, and crow's foot notation for many-to-many, at most one, exactly one, and weak entities w:880](images/notation-dialects.svg)
 
 <div class="small">
 
@@ -673,8 +640,8 @@ The trap to call out: students will meet diagrams where the same mark means the 
 
 > *"We're building a registrar system. Students take sections of courses. Each course belongs to a department. Faculty members teach sections. Faculty members belong to a department. A course can have multiple sections per term. Students get grades. Some faculty supervise other faculty. We track each student's major as a department."*
 
-We will turn this paragraph into an ER diagram in five steps.
-The judgment calls follow the Textbook's design principles of faithfulness, avoiding redundancy, and simplicity <span class="cite">(§4.2, p. 140)</span>.
+We will turn this paragraph into an ER diagram.
+The Textbook uses design principles of faithfulness, avoiding redundancy, and simplicity <span class="cite">(§4.2, p. 140)</span>.
 
 <div class="interactive">
 
@@ -718,8 +685,6 @@ graph TB
   class S,C,Sec,F,D entity
 ```
 
-Five entities, no relationships drawn yet.
-
 <!--
 `grade` and `major` are not entities; they will be attributes (grade) or relationships (major-as-department). `Supervisor` is not an entity either — it's faculty in a different role.
 -->
@@ -730,7 +695,7 @@ Five entities, no relationships drawn yet.
 
 > *"We're building a registrar system. Students <span class="hl-rel">take</span> sections of courses. Each course <span class="hl-rel">belongs to</span> a department. Faculty members <span class="hl-rel">teach</span> sections. Faculty members <span class="hl-rel">belong to</span> a department. A course can <span class="hl-rel">have</span> multiple sections per term. Students <span class="hl-rel">get</span> grades. Some faculty <span class="hl-rel">supervise</span> other faculty. We <span class="hl-rel">track</span> each student's major as a department."*
 
-Verbs that connect two entities become relationships; they need their endpoints, which is why the entity boxes came first in Step 1.
+Verbs that connect two entities become relationships.
 Not every verb qualifies. "Get grades" attaches a fact to an existing connection, and "track" describes us, not the world.
 
 <!--
@@ -784,7 +749,7 @@ graph TB
   C --- Title(("title"))
   C --- Cr(("credits"))
   Sec["<span class='weak-inner'>Section</span>"]
-  Sec --- SNum(("<u>section_num</u>"))
+  Sec --- SNum(("<span class='partial-key'>section_num</span>"))
   Sec --- Term(("term"))
   Sec --- Room(("room"))
   F["Faculty"]
@@ -798,15 +763,13 @@ graph TB
   classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
   classDef key fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
-  classDef partkey fill:#fff9c4,stroke:#f57f17,stroke-width:3px
   class S,C,F,D entity
   class Sec weak
-  class SName,GPA,Title,Cr,Term,Room,FName,Sal,Bldg attr
+  class SName,GPA,Title,Cr,Term,Room,FName,Sal,Bldg,SNum attr
   class SID,CID,FID,DN key
-  class SNum partkey
 ```
 
-Keys are **underlined**, the standard mark; the green tint repeats it in color. The yellow `section_num` is the weak entity's **partial key** (a dashed underline on paper).
+Keys are **underlined**, the standard mark, and the green tint repeats it in color. The dashed underline on `section_num` marks the weak entity's **partial key**.
 
 <!--
 Each entity gets at least a key and a few descriptive attributes. The Section's partial key `section_num` is the local identifier — it's only unique *within a course in a term*.
@@ -955,8 +918,8 @@ Wrap-up checklist of every judgment call from the hour. Have students copy it or
 
 ```mermaid
 graph TD
-  Today["What you can now do:<br/>Draw an ER diagram"]
-  Friday["What Friday adds:<br/>Translate to relations"]
+  Today["Today:<br/>Design ER diagrams"]
+  Friday["Friday:<br/>ER diagrams to relations"]
   Today --> Friday
   Friday --> Tables["SQL DDL"]
   classDef now fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
@@ -965,8 +928,8 @@ graph TD
   class Friday,Tables next
 ```
 
-Today we decided what to model.
-Friday we decide how to store it.
+We can now design ER diagrams.
+Next, we will need to go from ER diagrams to SQL.
 
 <!--
 The translation rules on Friday turn this diagram into 5-6 tables. Some choices are mechanical; others involve real tradeoffs (where to put 1:1 attributes, whether to embed multi-valued attributes as arrays). That's why ER lives before SQL.

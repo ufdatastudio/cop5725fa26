@@ -71,7 +71,7 @@ const entity = (cx, cy, label, o = {}) => el(o, 1, (isNew) => {
   let s = `<g${glow(isNew)}>`;
   s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="${isNew ? 3.5 : 2.5}"/>`;
   // Weak entities use the Textbook's double border (§4.4.3); the red tint is
-  // the deck's color code layered on top of the standard mark.
+  // the slides' color code layered on top of the standard mark.
   if (weak) s += `<rect x="${x + 5}" y="${y + 5}" width="${w - 10}" height="${h - 10}" rx="5" fill="none" stroke="${stroke}" stroke-width="1.8"/>`;
   s += `<text x="${cx}" y="${cy + 7}" font-size="19" fill="${text}" text-anchor="middle">${label}</text></g>`;
   return s;
@@ -201,7 +201,7 @@ const studentEntity = {
       lines: ['Ovals hold the facts we keep per student.', 'No oval is special yet.'],
       cite: 'Textbook §4.1.2, p. 126' }),
     note({ step: 3, total: 5, x: 660, y: 80, title: 'Choose the key', tx: 185, ty: 148, sy: 232,
-      lines: ['Underline the attributes that tell two', 'students apart. Here one oval is enough;', 'this deck also colors it green.'],
+      lines: ['Underline the attributes that tell two', 'students apart. Here one oval is enough;', 'these slides also color it green.'],
       cite: 'Textbook §4.3.1–4.3.2, pp. 148–149' }),
     note({ step: 4, total: 5, x: 660, y: 80, title: 'Refine the shapes', tx: 610, ty: 205,
       lines: ['name splits into a composite. dob is', 'stored; age is derived, so its oval is', 'dashed. Both marks are the wider ER', 'dialect; the Textbook keeps ovals plain.'],
@@ -333,7 +333,7 @@ function notationFigure() {
   const header = (x, label) => `<text x="${x}" y="52" font-size="20" fill="${C.title}">${label}</text>`;
   s += `<text x="${colX.concept}" y="52" font-size="20" fill="${C.title}">Constraint</text>`;
   s += header(colX.textbook - 90, 'Textbook (§4.1.6, §4.3.3)');
-  s += header(colX.deck - 60, 'This deck');
+  s += header(colX.deck - 60, 'These slides');
   s += header(colX.crow - 15, "Crow's foot");
   s += `<line x1="20" y1="66" x2="1100" y2="66" stroke="${C.caption}" stroke-width="1.5"/>`;
 
