@@ -16,13 +16,13 @@ layout: default
 - [Calendar](calendar)
 - [Projects](projects/)
 - [Cited Papers](papers/)
+- [Documents](documents/)
 
 {% comment %} Hidden until ready. Move a line above this block to publish its link.
 - [Schedule](schedule)
 - [Assignments and Quizzes](assignments)
 - [Lecture Readings](LECTURE_READINGS)
 - [Real-World Datasets](datasets/)
-- [Documents](documents)
 {% endcomment %}
 
 ---
