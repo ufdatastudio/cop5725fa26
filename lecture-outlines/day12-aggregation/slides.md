@@ -567,7 +567,7 @@ Due Friday, September 25 at 11:59 PM.
 ### Deliverables
 
 - Schema DDL based on a written scenario
-- 12-15 SQL queries answering specific questions
+- 8 SQL queries answering specific questions
 - Anonymous ER diagram a classmate will rebuild DDL from
 
 </div>

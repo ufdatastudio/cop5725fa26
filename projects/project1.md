@@ -10,12 +10,12 @@ layout: default
 | **Weight** | 4% of course grade |
 | **Released** | Wednesday, September 2, 2026 |
 | **Due** | Friday, September 25, 2026 at 11:59 PM |
-| **ER diagram to Canvas** | Friday, September 11, 2026 at 11:59 PM (see [Schema Reconstruction Review](#schema-reconstruction-review)) |
+| **ER diagram in repo** | Friday, September 11, 2026 at 11:59 PM (see [Schema Reconstruction Review](#schema-reconstruction-review)) |
 
 ---
 
 Project 1 turns the dataset you selected in Project 0 into a normalized PostgreSQL database.
-You will design a schema in at least third normal form, write a Python script that loads your raw data into it, and answer 12 to 15 questions in SQL that a named stakeholder would ask.
+You will design a schema in at least third normal form, write a Python script that loads your raw data into it, and answer 8 questions in SQL that a named stakeholder would ask.
 Your repo's `README.md` should let a data engineer who has never seen your code load the database and run every query.
 
 Midway through the project, two classmates rebuild a schema from your ER diagram alone, and you rebuild schemas from two of theirs.
@@ -163,7 +163,7 @@ cop5725fa26-project/
 │   ├── q01.sql          # one file per question
 │   ├── q02.sql
 │   ├── ...
-│   ├── q15.sql
+│   ├── q08.sql
 │   └── results/
 │       ├── q01.csv      # first 100 rows of each query's output
 │       └── ...
@@ -230,7 +230,7 @@ A loader that only handles the 1000-row sample does not meet the requirement.
 
 ### `queries/`
 
-12 to 15 business questions, with at least one SQL file per question.
+8 business questions, with at least one SQL file per question.
 A question that takes two queries to answer gets two files, such as `q07a.sql` and `q07b.sql`.
 Each file has this shape:
 
@@ -292,31 +292,34 @@ Peer review for this project is an exchange of ER diagrams.
 A diagram is a specification.
 If a classmate cannot rebuild your schema from it, the diagram did not say what you meant, and finding that out two weeks before the deadline leaves time to fix it.
 
-The exchange runs through Canvas.
-Your repository holds only your own work plus the response you write at the end.
+The plan below is how we intend to run the exchange.
+We will contact you with the exact details, such as where the diagrams are posted and how your reviews come back to you, before each step.
 
-### Step 1: submit your diagram (Friday, September 11)
+### Step 1: commit your diagram (Friday, September 11)
 
-Upload `er-diagram.png` to the Canvas assignment "Project 1 ER Diagram" by 11:59 PM.
+Have `er-diagram.png` committed and pushed on `main` by 11:59 PM.
+At the deadline we pull every diagram from every repository, so there is nothing to upload and no tag to make.
 This is the draft that goes to your reviewers, so it must already meet the [diagram requirements](#er-diagrampng) above, including the rule that nothing in the image identifies you.
 You will revise it before September 25; that is expected.
 
 ### Step 2: reconstruct two classmates' schemas (Friday, September 18)
 
-On Monday, September 14, the instructors post two ER diagrams to you in the Canvas assignment "Project 1 Schema Review".
+We number the diagrams and post them where the class can fetch them, most likely a shared folder on HiPerGator.
+Each student receives two numbers.
+Those are the diagrams you reconstruct.
 You do not learn whose they are, and you do not see their `schema.sql`.
 
-For each diagram, write the DDL it specifies and save it as a `.sql` file.
+For each diagram, write the DDL it specifies and save it as a `.sql` file named after the diagram number.
 The file follows the same rules as your own `schema.sql`: it drops and creates the tables, declares keys and constraints, and runs cleanly against an empty database.
 Where the diagram left a choice open, such as a missing cardinality or an attribute that could be a key, make a reasonable decision and list it in a comment block at the top of the file.
 Keep your name out of the files.
 
-Upload both files to the Canvas assignment by 11:59 PM on Friday, September 18.
+Submit both files to the Canvas assignment for the schema review by 11:59 PM on Friday, September 18.
 
 ### Step 3: respond and revise (with the September 25 submission)
 
-The TA routes each reconstruction to the diagram's author.
-By Monday, September 21, you receive the two `.sql` files your classmates wrote from your diagram, again through Canvas.
+We deliver the two reconstructions of your diagram to you, as an issue on your repository, by email, or by another method we will announce.
+Expect them by Monday, September 21.
 
 Compare them with your own `schema.sql` and write `schema.md` in your repository.
 For each difference, say what it is and put it in one of three categories.
@@ -348,8 +351,8 @@ The lectures that cover each piece of the project are scheduled during the three
 | Week | Lectures | Project 1 step |
 |------|----------|----------------|
 | Sep 2 to 4 | ER modeling, ER-to-relations | Pick a scenario, draw the ER diagram, list candidate tables |
-| Sep 9 to 11 | Functional dependencies, normalization | Check every table for 3NF; upload the diagram to Canvas by Fri Sep 11 |
-| Sep 14 to 18 | SQL DDL, joins, aggregation | Reconstruct two classmates' diagrams by Fri Sep 18; draft `schema.sql` and `load.py` |
+| Sep 9 to 11 | Functional dependencies, normalization | Check every table for 3NF; push the diagram by Fri Sep 11 |
+| Sep 14 to 18 | SQL DDL, joins, aggregation | Reconstruct your two assigned diagrams by Fri Sep 18; draft `schema.sql` and `load.py` |
 | Sep 21 to 25 | Subqueries, CTEs, windows | Read your reviews, write `schema.md`, revise, finish the queries, tag `v1` |
 
 Start the ER diagram this week, since it is due in nine days.
@@ -368,24 +371,26 @@ git tag v1
 git push origin main v1
 ```
 
-The diagram draft and the two reconstructions are Canvas uploads on September 11 and 18 and do not need a tag.
+The September 11 diagram is read from `main`, and the two reconstructions go to Canvas on September 18. Neither needs a tag.
 
 ---
 
 ## Grading Rubric
 
 100 points total.
+The staff grade the `v1` tag on HiPerGator by running `schema.sql` and `load.py` against an empty database, then every query, then reading the README, `schema.md`, and `COLLABORATORS.md`.
 
 | Component | Points | Criteria |
 |-----------|--------|----------|
 | Schema design | 25 | 3NF or better; types fit the values; constraints declared; relationships between tables |
 | ETL | 15 | `load.py` runs from an empty database; runs twice without duplicating rows; reports errors instead of silently skipping rows |
-| Queries | 30 | 12 to 15 queries; required patterns present; results correct; readable SQL |
+| Queries | 30 | 8 questions answered; required patterns present; results correct; readable SQL |
 | Documentation | 10 | README reproduces the load; ER diagram matches `schema.sql` and gave your reviewers enough to rebuild it |
-| Schema reviews | 10 | Diagram uploaded by Sep 11; both `.sql` files uploaded by Sep 18, run, and follow the classmates' diagrams; the header comments name the real ambiguities |
+| Schema reviews | 10 | Diagram on `main` by Sep 11; both reconstructions on Canvas by Sep 18; each runs and follows its diagram; the header comments name the real ambiguities |
 | Review response | 5 | `schema.md` classifies every difference honestly and explains the revisions you made |
 | Repo hygiene | 5 | Tag `v1` exists; `COLLABORATORS.md` present and honest; commit history readable; no committed credentials or raw data |
 
+The review points are yours alone: they depend on what you submitted and when, not on what your reviewers did.
 The two reconstructions of your diagram are evidence when the staff grade your schema design and documentation, so a clear diagram protects you and a careful reconstruction protects your classmate.
 
 ---
@@ -406,7 +411,7 @@ Present one question your stakeholder cares about, the SQL that answers it, and 
 - A diagram that only you can read. Missing cardinalities and unmarked keys cost points twice, once in documentation and again when your reviewer has to guess.
 - Hardcoded paths or credentials in `load.py`. Use `DATABASE_URL` and paths relative to the repo root.
 - A loader that is not repeatable. Running `load.py` twice should leave the same row counts. Running `schema.sql` first, or using `ON CONFLICT`, both work.
-- Fifteen counts. Fifteen `SELECT count(*)` queries do not show fifteen questions.
+- Eight counts. Eight `SELECT count(*)` queries do not show eight questions.
 - Committing raw data. Multi-gigabyte files in git make the repo unusable. Keep them in `data/raw/` and gitignored.
 
 ---
@@ -428,8 +433,8 @@ A: Email the course staff the day you receive it. You will get a different diagr
 **Q: A reconstruction of my diagram is nothing like my schema.**
 A: That is the case `schema.md` is for. Classify each difference and argue it. The staff read both sides before grading either of you.
 
-**Q: I missed the September 11 diagram upload.**
-A: You lose the review points for it and the class cannot review you, but the rest of the project is unaffected. Email the staff, since a late diagram can still be routed if the reviewers have not been assigned.
+**Q: My diagram was not on `main` at the September 11 deadline.**
+A: You lose the review points for it and the class cannot review you, but the rest of the project is unaffected. Email the staff, since a late diagram can still be numbered if the assignments have not gone out.
 
 **Q: I proposed an alternative dataset in Project 0.**
 A: Write your own scenario in the style of the ones above and state it in your README.
