@@ -1,9 +1,12 @@
 #!/bin/bash
 # pg-server.sbatch: run a private PostgreSQL server in an Apptainer container.
 #
-# Submit it with pg-start.sh, which fills in the resources from pg.conf.
-# You can also submit it directly with sbatch; then the #SBATCH lines below
-# and the defaults in pg-lib.sh apply.
+# Submit it with pg-start.sh, which fills in the resources from pg.conf and
+# names the job postgres-<gatorlink>. You can also submit it directly with
+# sbatch; then the #SBATCH lines below and the defaults in pg-lib.sh apply.
+# SLURM does not expand $USER in #SBATCH lines, so submit through pg-start.sh
+# (or pass --job-name=postgres-$USER yourself) to get the per-user name that
+# pg-info.sh and pg-connect.sh look for.
 #
 # Adapted from a Grand Valley State University recipe
 # (https://services.gvsu.edu/TDClient/60/Portal/KB/PrintArticle?ID=24265),

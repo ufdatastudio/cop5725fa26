@@ -60,7 +60,8 @@ The scripts default to `PG_HOME=/blue/cop5725/$USER/postgresql`, and that direct
 
 ## Quick start
 
-Log in to HiPerGator, copy the toolkit into your folder, and run the scripts in order.
+Log in to HiPerGator, put your own copy of the toolkit in your folder, and run the scripts in order.
+Every student runs their own copy from `/blue/cop5725/<gatorlink>/pg-tools/`, so the server, the connection file, and the configuration all belong to you.
 
 ```bash
 ssh <gatorlink>@hpg.rc.ufl.edu
@@ -70,7 +71,7 @@ cd /blue/cop5725/$USER/pg-tools
 
 ./pg-create.sh      # once: folders and password
 ./pg-start.sh       # each session: submit the server job
-squeue -u $USER     # wait until the postgres job shows R
+squeue -u $USER     # wait until the postgres-<gatorlink> job shows R
 ./pg-info.sh        # host, port, password, DATABASE_URL
 ./pg-connect.sh     # interactive pgcli session
 ```
@@ -78,7 +79,19 @@ squeue -u $USER     # wait until the postgres job shows R
 When you are done for the day, run `./pg-stop.sh`.
 The job would end on its own at the walltime, but stopping it frees the node for other students.
 
-The toolkit is also published on the course site at [documents/hipergator-postgres/](hipergator-postgres/), so you can read every script in a browser before running it.
+The same files are published on the course site at [documents/hipergator-postgres/](hipergator-postgres/), where you can read every script in a browser before running it.
+If the share folder is unavailable, or you want a fresh copy after the staff update a script, download the toolkit from the site instead.
+
+```bash
+mkdir -p /blue/cop5725/$USER/pg-tools
+cd /blue/cop5725/$USER/pg-tools
+for f in pg-lib.sh pg.conf pg-create.sh pg-start.sh pg-info.sh pg-connect.sh pg-stop.sh pg-destroy.sh pg-server.sbatch; do
+  curl -fsSLO https://ufdatastudio.com/cop5725fa26/documents/hipergator-postgres/$f
+done
+chmod +x pg-*.sh pg-server.sbatch
+```
+
+`wget` works the same way with `wget -q https://ufdatastudio.com/cop5725fa26/documents/hipergator-postgres/$f` inside the loop.
 
 ## The scripts
 
@@ -121,7 +134,7 @@ Edit it once and every script picks up the change.
 | `PG_DB` | `cop5725` | Database created on first start |
 | `PG_IMAGE` | `docker://postgres:18` | Container image to run |
 | `PG_SHARED_SIF` | `/blue/cop5725/share/images/postgres-18.sif` | Prebuilt image; used when readable so nobody downloads it twice |
-| `PG_JOB_NAME` | `postgres` | SLURM job name; the singleton rule keys on it |
+| `PG_JOB_NAME` | `postgres-$USER` | SLURM job name, with your GatorLink id appended; the singleton rule keys on it |
 | `PG_CPUS` | `2` | Cores for the server |
 | `PG_MEM` | `8GB` | Memory for the server |
 | `PG_TIME` | `04:00:00` | Walltime. Raise it for long loads |
@@ -162,6 +175,8 @@ Copy `pg.conf` to `pg-scratch.conf`, change `PG_HOME` and `PG_JOB_NAME`, and pas
 ```
 
 `pg-start.sh` overrides the resource lines from `pg.conf` on the `sbatch` command line, so the values in the file only matter if you submit the job by hand.
+The job name is one of them.
+SLURM does not expand `$USER` inside `#SBATCH` lines, so the file says `postgres` while `pg-start.sh` submits it as `postgres-<gatorlink>`, which is the name the other scripts look for.
 
 `--dependency=singleton` tells SLURM never to run two of your jobs with this name at once, so a second submission waits instead of starting a second server on the same data directory.
 `--signal=B:SIGINT@60` sends the script an interrupt one minute before the walltime.
@@ -226,21 +241,22 @@ The trailing `&` runs the server in the background so the script can catch the s
 
 ```
 $ ./pg-start.sh
-[pg] submitting with: --job-name=postgres --cpus-per-task=2 --mem=8GB --time=04:00:00 ... --account=cop5725 --qos=cop5725
+[pg] submitting with: --job-name=postgres-gatorlnk --cpus-per-task=2 --mem=8GB --time=04:00:00 ... --account=cop5725 --qos=cop5725
 Submitted batch job 40908172
 
-$ squeue -u $USER -n postgres
-             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-          40908172 hpg-defau postgres gatorlnk  R       0:41      1 c0704a-s6
+$ squeue -u $USER -n postgres-$USER -o "%i %j %T %N"
+JOBID NAME STATE NODELIST
+40908172 postgres-gatorlnk RUNNING c0704a-s6
 ```
 
 In testing the job started within a minute of submission.
+The default `squeue` layout cuts the NAME column to eight characters, so `postgres-gatorlnk` shows up there as `postgres`; the `-o` format above prints the full name.
 
 Once the state column shows `R`, ask for the details.
 
 ```
 $ ./pg-info.sh
-Jobs named postgres (id, state, node):
+Jobs named postgres-gatorlnk (id, state, node):
 40908172 RUNNING c0704a-s6
 
 The server is running as job 40908172.
@@ -252,7 +268,7 @@ Database:  cop5725
 Password:  3b1ead72-fd3e-42e3-9f32-c581f25d14a4
 
 Interactive client on a login node:
-  /blue/cop5725/gatorlnk/pg-tools/pg-connect.sh
+  /blue/cop5725/<gatorlnk>/pg-tools/pg-connect.sh
 
 For a .env file (Project 1 DATABASE_URL):
   DATABASE_URL=postgresql://gatorlnk:3b1ead72-...@c0704a-s6.ufhpc:32098/cop5725
@@ -327,10 +343,10 @@ The next `./pg-start.sh` brings the same database back on whichever node and por
 If you ever submit twice by hand, the singleton rule holds the second job in the queue.
 
 ```
-$ squeue -u $USER -n postgres
-             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-          40908172 hpg-defau postgres gatorlnk  R       6:24      1 c0704a-s6
-          40908201 hpg-defau postgres gatorlnk PD       0:00      1 (Dependency)
+$ squeue -u $USER -n postgres-$USER -o "%i %j %T %N %r"
+JOBID NAME STATE NODELIST REASON
+40908172 postgres-gatorlnk RUNNING c0704a-s6 None
+40908201 postgres-gatorlnk PENDING  Dependency
 ```
 
 `./pg-stop.sh` cancels both.
@@ -358,6 +374,10 @@ Your HiPerGator account may not be in the `cop5725` group yet. Run `showAssoc $U
 
 I want to run PostgreSQL 16 instead.
 Set `PG_IMAGE=docker://postgres:16` and `PG_SHARED_SIF=` (empty) in `pg.conf` and run `pg-destroy.sh -a` first, because a data directory initialized by one major version cannot be opened by another.
+
+---
+
+[back](index)
 
 <!--
 Instructor notes (do not publish as-is):

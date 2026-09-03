@@ -58,6 +58,6 @@ pg_log "submitting with: ${args[*]}"
 sbatch "${args[@]}" "$PG_TOOLS_DIR/pg-server.sbatch" || pg_die "sbatch failed"
 
 echo
-echo "Watch the queue with:  squeue -u $USER -n $PG_JOB_NAME"
+echo "Watch the queue with:  squeue -u $USER -n $PG_JOB_NAME -o \"%i %j %T %N\""
 echo "Once it is RUNNING:    $PG_TOOLS_DIR/pg-info.sh"
 echo "Logs land in:          $PG_HOME/logs/"

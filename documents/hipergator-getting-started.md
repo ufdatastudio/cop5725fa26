@@ -26,7 +26,7 @@ Nothing in the course needs a GPU, so leave the GPU options in every form and sc
 
 Your HiPerGator username is your GatorLink username, and the course staff have already added the class to the `cop5725` allocation.
 There is no form to fill out.
-If [showAssoc](#checking-your-allocation) does not list `cop5725` after you log in, email the instructor.
+If [showAssoc](#checking-your-allocation) does not list `cop5725` after you log in, contact the TA as described under [Where to get help](#where-to-get-help).
 Research Computing's own overview is at [docs.rc.ufl.edu/quickstart/](https://docs.rc.ufl.edu/quickstart/), and the [Research Computing Orientation slides](research-computing-orientation.pdf) give the same material in slide form.
 
 ## Logging in
@@ -99,6 +99,16 @@ Run `load.py` there, run `duckdb` there, unpack a large download there.
 Type `exit` to end the job and return to the login node.
 Ask only for the time you will use, since an idle interactive job holds a node that another student could be using.
 
+### The allocation is shared
+
+The `cop5725` allocation is small, and the whole class draws from it.
+As of September 2026 it has 32 cores and 250 GB of memory in total.
+A student who requests eight cores for a day blocks a quarter of the class until that job ends.
+Keep requests to the two cores and 8 GB in the examples above, end interactive jobs when you stop typing, and give batch jobs a time limit close to what they need.
+`showQos cop5725` prints the current limits, and `squeue --account=cop5725` shows who is using the allocation right now.
+Tell the instructor if you cannot connect or if your jobs sit pending for a long time.
+Those are signs the allocation needs adjusting, which only the instructor can request.
+
 ### Batch jobs
 
 A batch job is a shell script with `#SBATCH` lines at the top that you hand to `sbatch`.
@@ -133,7 +143,7 @@ scancel <jobid>         # end one of them
 ```
 
 If `sbatch` or `srun` reports an invalid account or QoS, the `cop5725` group is not attached to your account.
-Check `showAssoc` and email the instructor.
+Check `showAssoc` and contact the TA, not Research Computing, as described under [Where to get help](#where-to-get-help).
 
 ## Software modules
 
@@ -207,9 +217,17 @@ Press Ctrl-C to close the tunnel.
 
 ## Where to get help
 
+Course-related questions go to the course staff, not to HiPerGator.
+Ask the TA first, and bring the question to the instructor if the TA cannot resolve it.
+This covers configuration problems on the cluster, the `cop5725` allocation, the PostgreSQL toolkit, and anything about a project.
+Do not open a Research Computing ticket for a course issue.
+Research Computing does not know how the class is set up, and a ticket there takes longer than a message to the TA.
+Put `cop5725fa26` in the subject line of any email to the staff.
+
+Before you write, check whether the problem has already been solved.
+
+- [support.rc.ufl.edu](https://support.rc.ufl.edu/) lists known issues and answers to common problems on the cluster. Read it to see whether your symptom is a cluster-wide outage or a known fix, but leave the ticket form alone for course issues.
 - [docs.rc.ufl.edu](https://docs.rc.ufl.edu/) is the Research Computing documentation. The pages on [storage](https://docs.rc.ufl.edu/quickstart/practical_storage/), [SLURM commands](https://docs.rc.ufl.edu/scheduler/slurm_commands/), and [modules](https://docs.rc.ufl.edu/software/modules_basics/) cover everything above in more depth.
-- [support.rc.ufl.edu](https://support.rc.ufl.edu/) opens a ticket with Research Computing for account, quota, and cluster problems.
-- The course staff handle questions about the `cop5725` allocation and the PostgreSQL toolkit.
 
 ---
 

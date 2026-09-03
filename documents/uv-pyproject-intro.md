@@ -206,7 +206,15 @@ uv lock --upgrade
 uv sync
 ```
 
-## Comparison with pip and venv
+## <span style="color: red;">Comparison with pip and venv</span>
+
+<style>
+.pip-venv, .pip-venv th, .pip-venv td, .pip-venv code { color: red; }
+</style>
+
+This course does not use `pip` or `venv`.
+The table is here so you can translate commands you already know into their `uv` equivalents.
+{: .pip-venv}
 
 | Task | pip and venv | uv |
 |------|--------------|-----|
@@ -214,6 +222,7 @@ uv sync
 | Install a package | `pip install duckdb` | `uv add duckdb` |
 | Install from a file | `pip install -r requirements.txt` | `uv sync` |
 | Run a script | `source .venv/bin/activate && python script.py` | `uv run script.py` |
+{: .pip-venv}
 
 ## Further reading
 

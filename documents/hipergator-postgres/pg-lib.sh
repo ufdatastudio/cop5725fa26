@@ -43,7 +43,7 @@ pg_load_config() {
   PG_DB="cop5725"
   PG_IMAGE="docker://postgres:18"
   PG_SHARED_SIF="/blue/cop5725/share/images/postgres-18.sif"
-  PG_JOB_NAME="postgres"
+  PG_JOB_NAME="postgres-$USER"
   PG_CPUS="2"
   PG_MEM="8GB"
   PG_TIME="04:00:00"
