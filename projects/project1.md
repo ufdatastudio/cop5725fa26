@@ -18,6 +18,7 @@ layout: default
 ---
 
 Project 1 turns the dataset you selected in Project 0 into a normalized PostgreSQL database.
+Your slice is a filter on the whole source, so you will pull every relation the source publishes for that month, genre, year, field, or state, not just the file you sampled.
 You will design a schema in at least third normal form, write a Python script that loads your raw data into it, and answer 8 questions in SQL that a named stakeholder would ask.
 Your repo's `README.md` should let a data engineer who has never seen your code load the database and run every query.
 
@@ -58,7 +59,9 @@ Ask the instructor by email before removing any of the Project 0 data or switchi
 
 The slice you chose in Project 0 (a month, a genre, a year, a field, a state) is a filter on the source, not a single file.
 Every source in the course publishes several relations, and your slice selects the matching rows from each of them.
+For example, an IMDb student whose slice is "Documentary" pulls the documentary titles, then the ratings, cast, crew, episodes, and alternate titles for those same titles, and the people who appear in them.
 A schema with more than 5 entities and more than 5 relationships comes from pulling all of those relations, not from splitting one CSV.
+Project 0 asked for one sample file because it only checked your tooling; Project 1 is where the rest of the source comes in.
 
 | Family | Slice | Relations to pull for the slice |
 |---|---|---|
@@ -463,6 +466,12 @@ A: Keep the table and pick one state to filter it by. Then add the geography hie
 
 **Q: I proposed an alternative dataset in Project 0.**
 A: Write your own scenario in the style of the ones above and state it in your README.
+
+---
+
+## Errata
+
+- September 3, 2026: Clarified that a slice is a filter across every relation the source publishes, not a single file. Added the [Your slice is a filter](#your-slice-is-a-filter) subsection with a per-family list of relations to pull, the `data/samples/` requirement of one sample per relation, and a FAQ for Census students who chose a survey table in Project 0. The class announcement already carried this correction.
 
 ---
 
