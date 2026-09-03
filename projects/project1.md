@@ -471,7 +471,7 @@ A: Write your own scenario in the style of the ones above and state it in your R
 
 ## Errata
 
-- September 3, 2026: Clarified that a slice is a filter across every relation the source publishes, not a single file. Added the [Your slice is a filter](#your-slice-is-a-filter) subsection with a per-family list of relations to pull, the `data/samples/` requirement of one sample per relation, and a FAQ for Census students who chose a survey table in Project 0. The class announcement already carried this correction.
+- September 3, 2026: Clarified that a slice is a filter across every relation the source publishes, not a single file. Added the [Your slice is a filter](#your-slice-is-a-filter) subsection with a per-family list of relations to pull, the `data/samples/` requirement of one sample per relation, and a FAQ for Census students who chose a survey table in Project 0.
 
 ---
 
