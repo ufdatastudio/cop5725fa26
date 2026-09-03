@@ -10,7 +10,10 @@ layout: default
 | **Weight** | 4% of course grade |
 | **Released** | Wednesday, September 2, 2026 |
 | **Due** | Friday, September 25, 2026 at 11:59 PM |
-| **ER diagram in repo** | Friday, September 11, 2026 at 11:59 PM (see [Schema Reconstruction Review](#schema-reconstruction-review)) |
+| **ER diagram in repo** | Friday, September 11, 2026 at 11:59 PM (see [Schema Reconstruction Review](#schema-reconstruction-review))\* |
+| **Schema reviews** | Friday, September 18, 2026 at 11:59 PM\* |
+
+\* Submission details for the review steps may change. We will announce them before each step.
 
 ---
 
@@ -292,8 +295,8 @@ Peer review for this project is an exchange of ER diagrams.
 A diagram is a specification.
 If a classmate cannot rebuild your schema from it, the diagram did not say what you meant, and finding that out two weeks before the deadline leaves time to fix it.
 
-The plan below is how we intend to run the exchange.
-We will contact you with the exact details, such as where the diagrams are posted and how your reviews come back to you, before each step.
+The plan below is how we intend to run the exchange.\*
+We will contact you with the exact details, such as where the diagrams are posted, where you submit your reconstructions, and how your reviews come back to you, before each step.
 
 ### Step 1: commit your diagram (Friday, September 11)
 
@@ -314,7 +317,7 @@ The file follows the same rules as your own `schema.sql`: it drops and creates t
 Where the diagram left a choice open, such as a missing cardinality or an attribute that could be a key, make a reasonable decision and list it in a comment block at the top of the file.
 Keep your name out of the files.
 
-Submit both files to the Canvas assignment for the schema review by 11:59 PM on Friday, September 18.
+Submit both files by 11:59 PM on Friday, September 18, most likely by placing them in a folder on HiPerGator that we will name when the diagram numbers go out.\*
 
 ### Step 3: respond and revise (with the September 25 submission)
 
@@ -371,7 +374,7 @@ git tag v1
 git push origin main v1
 ```
 
-The September 11 diagram is read from `main`, and the two reconstructions go to Canvas on September 18. Neither needs a tag.
+The September 11 diagram is read from `main`, and the two reconstructions are submitted separately on September 18.\* Neither needs a tag.
 
 ---
 
@@ -386,7 +389,7 @@ The staff grade the `v1` tag on HiPerGator by running `schema.sql` and `load.py`
 | ETL | 15 | `load.py` runs from an empty database; runs twice without duplicating rows; reports errors instead of silently skipping rows |
 | Queries | 30 | 8 questions answered; required patterns present; results correct; readable SQL |
 | Documentation | 10 | README reproduces the load; ER diagram matches `schema.sql` and gave your reviewers enough to rebuild it |
-| Schema reviews | 10 | Diagram on `main` by Sep 11; both reconstructions on Canvas by Sep 18; each runs and follows its diagram; the header comments name the real ambiguities |
+| Schema reviews | 10 | Diagram on `main` by Sep 11; both reconstructions submitted by Sep 18; each runs and follows its diagram; the header comments name the real ambiguities |
 | Review response | 5 | `schema.md` classifies every difference honestly and explains the revisions you made |
 | Repo hygiene | 5 | Tag `v1` exists; `COLLABORATORS.md` present and honest; commit history readable; no committed credentials or raw data |
 
