@@ -41,7 +41,7 @@ Project 0 gave you a repository, a `pyproject.toml` managed by `uv`, a `.env.exa
 Project 1 uses each of these.
 
 - `data/source.md` stays a human-readable description of where the raw data comes from. `load.py` fetches from the URL or follows the steps you wrote there, so a reader can check that the two agree.
-- `data/sample.csv` stays in the repo as a smoke test. Point `load.py` at it while you develop, then at the full slice.
+- `data/sample.csv` stays in the repo, joined by a sample of every other source relation you use (see [Your slice is a filter](#your-slice-is-a-filter)). Point `load.py` at the samples while you develop, then at the full slice.
 - `setup/verify.py` still runs. Once `DATABASE_URL` is set, its PostgreSQL check confirms your connection before you start loading.
 - `pyproject.toml` needs `psycopg` as a base dependency now that PostgreSQL is required. Run `uv add "psycopg[binary]"` once; the `postgres` optional extra from Project 0 can stay or go. [Introduction to uv and pyproject.toml](../documents/uv-pyproject-intro) covers the commands.
 
@@ -53,6 +53,24 @@ The repository holds the instructions for fetching the data, never the multi-gig
 Keep the dataset you selected in Project 0.
 You may add to it, for example a second month of trips, the ratings table alongside the titles, or a neighboring field of study, and adding is encouraged when your scenario needs it.
 Ask the instructor by email before removing any of the Project 0 data or switching to a different dataset.
+
+### Your slice is a filter
+
+The slice you chose in Project 0 (a month, a genre, a year, a field, a state) is a filter on the source, not a single file.
+Every source in the course publishes several relations, and your slice selects the matching rows from each of them.
+A schema with more than 5 entities and more than 5 relationships comes from pulling all of those relations, not from splitting one CSV.
+
+| Family | Slice | Relations to pull for the slice |
+|---|---|---|
+| NYC Taxi | one 2024 month | The yellow or green trip file, the TLC taxi zone lookup, and the other trip file (green, yellow, or for-hire) for the same month |
+| IMDb | one genre | Titles in the genre from `title.basics`, then the matching rows of `title.ratings`, `title.principals`, `title.crew`, `title.episode`, `title.akas`, and `name.basics` |
+| Hacker News | one year | Stories, comments, polls, and poll options with their parent links, and the users who posted them |
+| OpenAlex | one field | Works with their nested authorships, institutions, source, topics, funders, and referenced works; the Project 0 script dropped these with its `select` list, so fetch them now |
+| US Census | one state | The county and tract geographies, several ACS tables, their variables, and the estimates with margins of error |
+
+Commit a sample of each relation you use under `data/samples/`, one file per relation, with the first 1000 rows or the whole relation if it is smaller.
+The Project 0 `data/sample.csv` is the first of these; keep it where it is or move it into the folder.
+Update `data/source.md` so it names every relation, where each comes from, and how you filtered it.
 
 ### What goes in `.env`
 
@@ -154,8 +172,9 @@ cop5725fa26-project/
 ├── .env.example         # from Project 0, plus any new variables
 ├── .gitignore           # from Project 0, plus data/raw/
 ├── data/
-│   ├── source.md        # from Project 0
+│   ├── source.md        # from Project 0, now listing every relation
 │   ├── sample.csv       # from Project 0
+│   ├── samples/         # first 1000 rows of each other relation you use
 │   └── raw/             # gitignored; load.py fetches or reads raw files here
 ├── setup/
 │   └── verify.py        # from Project 0
@@ -214,7 +233,7 @@ A Python script that populates the database. It must:
 
 - Connect using `DATABASE_URL` from the environment, never a hardcoded connection string or file path
 - Run `schema.sql` first, so a second run rebuilds the same tables with the same row counts
-- Fetch the raw data from the location described in `data/source.md` into `data/raw/` if it is not already there
+- Fetch every relation described in `data/source.md` into `data/raw/` if it is not already there
 - Insert rows through `psycopg`, or stage them with DuckDB and pandas before inserting
 - Log progress with loguru or print statements, including the final row count per table
 
@@ -227,9 +246,9 @@ The TA runs it with:
 uv run --env-file .env load.py
 ```
 
-Load the whole slice you selected in Project 0 when it fits on your machine.
+Load the whole slice across every relation when it fits, which it will on HiPerGator.
 Otherwise load a documented subset, such as one month of trips or one year of stories, and describe the cut in your README.
-A loader that only handles the 1000-row sample does not meet the requirement.
+A loader that only handles the committed samples does not meet the requirement.
 
 ### `queries/`
 
@@ -359,7 +378,7 @@ The lectures that cover each piece of the project are scheduled during the three
 | Sep 21 to 25 | Subqueries, CTEs, windows | Read your reviews, write `schema.md`, revise, finish the queries, tag `v1` |
 
 Start the ER diagram this week, since it is due in nine days.
-The data-loading step usually takes longer than students expect because real data has quirks the sample hid.
+The data-loading step usually takes longer than students expect because real data has quirks the samples hid.
 
 ---
 
@@ -438,6 +457,9 @@ A: That is the case `schema.md` is for. Classify each difference and argue it. T
 
 **Q: My diagram was not on `main` at the September 11 deadline.**
 A: You lose the review points for it and the class cannot review you, but the rest of the project is unaffected. Email the staff, since a late diagram can still be numbered if the assignments have not gone out.
+
+**Q: I chose a Census survey table in Project 0, not a state.**
+A: Keep the table and pick one state to filter it by. Then add the geography hierarchy and at least two more ACS tables for that state, so the schema has the entities the project expects. Email the instructor if you are unsure which tables fit your scenario.
 
 **Q: I proposed an alternative dataset in Project 0.**
 A: Write your own scenario in the style of the ones above and state it in your README.
