@@ -82,7 +82,7 @@ After each deadline, students present in small breakout groups; the highest-scor
 | Project | Weight | Released | Due | Presentations | Industry analog |
 |---------|--------|----------|-----|---------------|-----------------|
 | [Project 0](projects/project0) | P/F | Fri, Aug 21 | Fri, Sep 4 | none (setup only) | "Onboarding ticket": tools + select your dataset |
-| Project 1 | 4% | Wed, Sep 2 | Fri, Sep 25 | Mon Sep 28 / Wed Sep 30 | "Load this new source": schema + ETL + business queries |
+| [Project 1](projects/project1) | 4% | Wed, Sep 2 | Fri, Sep 25 | Mon Sep 28 / Wed Sep 30 | "Load this new source": schema + ETL + business queries |
 | Project 2 | 6% | Mon, Sep 21 | Fri, Oct 23 | Mon Oct 26 / Wed Oct 28 | "Write the metrics": advanced SQL analytics |
 | Project 3 | 10% | Mon, Oct 19 | Fri, Nov 13 | Mon Nov 16 / Fri Nov 20 | "This dashboard is slow": indexing + tuning report |
 | Final Project | 15% | Mon, Nov 16 | Wed, Dec 9 | Fri Dec 11 (final exam block) | Ship a real artifact (report / API / dashboard / pipeline) |

@@ -27,7 +27,7 @@ Project weights grow with scope; each builds on the same dataset.
 | Project | Weight | Released | Due | Topic |
 |---------|--------|----------|-----|-------|
 | [Project 0](project0) | P/F | Fri, Aug 21 | Fri, Sep 4 | Setup + dataset selection + initial load |
-| Project 1 | 4% | Wed, Sep 2 | Fri, Sep 25 | Schema design + SQL ETL + basic queries |
+| [Project 1](project1) | 4% | Wed, Sep 2 | Fri, Sep 25 | Schema design + SQL ETL + basic queries |
 | Project 2 | 6% | Mon, Sep 21 | Fri, Oct 23 | Advanced SQL analytics on your dataset |
 | Project 3 | 10% | Mon, Oct 19 | Fri, Nov 13 | Indexing and query optimization investigation |
 | Final Project | 15% | Mon, Nov 16 | Wed, Dec 9 | Capstone — full database-backed solution |
