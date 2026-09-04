@@ -149,19 +149,22 @@ The simplest rule and the most common. The only design choice is the SQL data ty
 ```mermaid
 graph LR
   C["Course"] === O{"offered as"} === Sec["<span class='weak-inner'>Section</span>"]
+  C --- CID(("<u>course_id</u>"))
   Sec --- SN(("<span class='partial-key'>section_num</span>"))
-  Sec --- T(("term"))
+  Sec --- T(("<span class='partial-key'>term</span>"))
   Sec --- R(("room"))
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
   classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   classDef irel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+  classDef key fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
   classDef partkey fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray:6 4
   class C entity
   class Sec weak
   class O irel
-  class T,R attr
-  class SN partkey
+  class R attr
+  class CID key
+  class SN,T partkey
 ```
 
 </div>
@@ -187,15 +190,14 @@ CREATE TABLE section (
 </div>
 
 <!--
-The composite key has three parts here because `term` is also part of the identity. Section 001 of COP5725 in Fall 2026 is a different section from Section 001 in Spring 2027. The exact composition depends on what makes the section unique.
-The dashed oval and dashed underline on section_num mark the partial key.
+The composite key has three parts: the owner's key course_id, underlined on Course, plus the two partial-key attributes section_num and term, both dashed on Section. Section 001 of COP5725 in Fall 2026 is a different section from Section 001 in Spring 2027, so term is part of what identifies a section. The exact composition depends on what makes the section unique.
 -->
 
 ---
 
 # Rule 3: 1:1 Relationships
 
-<div class="columns-3">
+<div class="columns-3 small">
 <div>
 
 ### Option A: Merge
@@ -251,13 +253,29 @@ When: the relationship has its own attributes.
 </div>
 </div>
 
-<div class="tradeoff">
+<div class="columns-left-wide">
+<div class="tradeoff small">
 
 **Tradeoff:** Option A is fastest but loses independence. Option B is the working default. Option C adds a join but supports relationship attributes.
 
 </div>
+<div>
+
+```mermaid
+graph LR
+  P["Person"] -- "1" --- H{"has"}
+  H -- "1" --- PP["Passport"]
+  classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
+  classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
+  class P,PP entity
+  class H rel
+```
+
+</div>
+</div>
 
 <!--
+The small diagram is the 1:1 relationship all three options translate: one person has at most one passport, and one passport belongs to exactly one person.
 For most 1:1 cases, Option B is the right answer. The exceptions are when one of the entities makes no sense on its own (then Option A) or when the relationship has its own attributes (then Option C).
 -->
 
@@ -353,7 +371,7 @@ CREATE TABLE enrollment (
 </div>
 
 <!--
-The junction-table pattern is everywhere. The complication here is that Section is a weak entity, so its FK is three columns (course_id, section_num, term), not one. The FK declaration needs all three.
+The junction-table pattern is everywhere. The complication here is that Section is a weak entity, so its FK is the three-column key from Rule 2 (course_id, section_num, term), not one column. The FK declaration needs all three.
 -->
 
 ---
@@ -802,38 +820,6 @@ One diagram produced six tables and about sixty lines of DDL. This is the entire
 
 ---
 
-# Where the Rules Stop Working
-
-<div class="columns">
-<div>
-
-The rules give *a* schema, not necessarily the best one.
-
-Three places where judgment beats mechanical translation:
-
-1. Whether to embed or separate a 1:1 with partial participation
-2. Which of the three ISA strategies to use
-3. Whether a multi-valued attribute becomes an array, a side table, or a document
-
-</div>
-<div>
-
-```mermaid
-graph TD
-  R["Mechanical<br/>rules"] --> S["A schema"]
-  S --> N["Next week:<br/>normalize"]
-  S --> J["This week:<br/>judgment calls"]
-  classDef step fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-  classDef next fill:#fff3e0,stroke:#e65100,stroke-width:2px
-  class R,S step
-  class N,J next
-```
-
-</div>
-</div>
-
----
-
 # Multi-Valued Attributes in Practice
 
 <div class="columns">
@@ -880,6 +866,119 @@ The textbook ranking is reversed in practice. JSONB is the most common modern ch
 
 ---
 
+<!-- _class: lead -->
+
+# Part 4: What ER Did Not Tell Us
+
+---
+
+# Three Questions ER Cannot Answer
+
+<div class="columns-3">
+<div>
+
+### 1. Is the schema redundant?
+
+ER does not say if any data is duplicated.
+
+Example: if every section repeats the course title, we have redundancy.
+
+</div>
+<div>
+
+### 2. Is the schema lossless?
+
+If we split or merge tables, do we lose the ability to recover the original?
+
+ER assumes the diagram is faithful; normalization proves it.
+
+</div>
+<div>
+
+### 3. Are dependencies preserved?
+
+The functional dependencies in the data should still be enforceable after decomposition.
+
+ER does not enforce; normalization does.
+
+</div>
+</div>
+
+These three questions motivate functional dependencies and normalization in Week 4.
+
+<!--
+Foreshadow next week's content. Normalization is the math that proves an ER-derived schema is actually well-formed. Most ER diagrams produce 3NF schemas already; normalization is what tells you for sure.
+-->
+
+---
+
+# Project 0 Reminder
+
+<div class="columns">
+<div>
+
+### Due tonight, 11:59 PM
+
+- SQLite, DuckDB, and Python managed by `uv`
+- Your dataset selected, with the 1000-row sample committed
+- Private GitHub repo with the course staff added
+- PostgreSQL is **optional** for Project 0; class resources come later
+
+</div>
+<div>
+
+### Pass criteria
+
+```bash
+uv run setup/verify.py
+```
+
+Exits 0 when the four required checks pass.
+Submit by <mark>tagging the commit `v0`</mark>, pushing the tag, and posting the repo URL on Canvas.
+
+</div>
+</div>
+
+<!--
+The Project 0 grader runs the same `verify` script the students run locally. If their local check passes, the grade passes. The optional PostgreSQL check only runs when DATABASE_URL is set; students who want it now can use the CISE PostgreSQL service described in the project page.
+-->
+
+---
+
+# Wrap-up
+
+- Strong entities become tables; weak entities get composite keys that include the owner's key.
+- 1:N relationships embed a foreign key on the N side; M:N relationships become junction tables.
+- 1:1 relationships and ISA hierarchies require a choice among the documented options.
+- Multi-valued attributes become side tables, arrays, or JSONB depending on access pattern.
+- ER translation yields a starting schema; normalization checks it for redundancy.
+
+<!--
+Close by walking the list against the registrar schema on the previous slide: point to the table that each bullet produced. The common student mistake all term will be putting the FK on the 1 side of a 1:N relationship — call it out here one more time.
+-->
+
+---
+
+# Questions
+
+What is on your mind?
+
+Project 0 setup is due at 11:59 PM tonight.
+No class Monday (Labor Day).
+We resume Wednesday with functional dependencies.
+
+<!--
+Common questions to expect: "Why didn't we use surrogate keys everywhere?" (philosophy answer: natural keys carry meaning; pragmatic answer: surrogate keys are often cleaner, but both are correct). "Does PostgreSQL enforce all the FKs we declared?" (yes, unless DEFERRABLE INITIALLY DEFERRED). "Can the verify script run on Windows?" (the verify script is OS-agnostic; the install path differs but the checks are the same).
+-->
+
+---
+
+<!-- _class: lead -->
+
+# Backup Slides
+
+---
+
 # What the Rules Ignore
 
 The translation rules ignore three things that matter in production.
@@ -923,52 +1022,6 @@ ER thinking is necessary but not sufficient. Section 5 (Query Processing) and Se
 
 ---
 
-<!-- _class: lead -->
-
-# Part 4: What ER Did Not Tell Us
-
----
-
-# Three Questions ER Cannot Answer
-
-<div class="columns-3">
-<div>
-
-### 1. Is the schema redundant?
-
-ER tells us *what* lives where. It does not say if any data is duplicated.
-
-Example: if every section repeats the course title, we have redundancy.
-
-</div>
-<div>
-
-### 2. Is the schema lossless?
-
-If we split or merge tables, do we lose the ability to recover the original?
-
-ER assumes the diagram is faithful; normalization proves it.
-
-</div>
-<div>
-
-### 3. Are dependencies preserved?
-
-The functional dependencies in the data should still be enforceable after decomposition.
-
-ER does not enforce; normalization does.
-
-</div>
-</div>
-
-These three questions motivate functional dependencies and normalization in Week 4.
-
-<!--
-Foreshadow next week's content. Normalization is the math that proves an ER-derived schema is actually well-formed. Most ER diagrams produce 3NF schemas already; normalization is what tells you for sure.
--->
-
----
-
 # Looking Ahead to Week 4
 
 ```mermaid
@@ -992,75 +1045,3 @@ Reading for Wednesday: Textbook §3.1-3.3, pp. 67-92.
 Quiz 1 is a week from today. The single best preparation: walk the algebra ↔ SQL ↔ ER paths in both directions. Most quiz questions ask students to move between two of the three.
 -->
 
----
-
-# Project 0 Reminder
-
-<div class="columns">
-<div>
-
-### Due tonight, 11:59 PM
-
-- SQLite, DuckDB, and Python managed by `uv`
-- Your dataset selected, with the 1000-row sample committed
-- Private GitHub repo with the course staff added
-- PostgreSQL is **optional** for Project 0; class resources come later
-
-</div>
-<div>
-
-### Pass criteria
-
-```bash
-uv run setup/verify.py
-```
-
-Exits 0 when the four required checks pass.
-Submit by <mark>tagging the commit `v0`</mark>, pushing the tag, and posting the repo URL on Canvas.
-
-</div>
-</div>
-
-<!--
-The Project 0 grader runs the same `verify` script the students run locally. If their local check passes, the grade passes. The optional PostgreSQL check only runs when DATABASE_URL is set; students who want it now can use the CISE PostgreSQL service described in the project page.
--->
-
----
-
-# Practice Before Wednesday
-
-Three problems on the handout posted with these slides:
-
-1. Produce the SQL DDL for the library ER diagram you drew Wednesday.
-2. Given a Person→{Student, Faculty} hierarchy, argue for one of the three ISA strategies based on stated access patterns.
-3. Translate a Building → Floor → Room weak-entity chain into SQL DDL.
-
-This is an exercise.
-
----
-
-# Wrap-up
-
-- Strong entities become tables; weak entities get composite keys that include the owner's key.
-- 1:N relationships embed a foreign key on the N side; M:N relationships become junction tables.
-- 1:1 relationships and ISA hierarchies require a choice among the documented options.
-- Multi-valued attributes become side tables, arrays, or JSONB depending on access pattern.
-- ER translation yields a starting schema; normalization checks it for redundancy.
-
-<!--
-Close by walking the list against the registrar schema on the previous slide: point to the table that each bullet produced. The common student mistake all term will be putting the FK on the 1 side of a 1:N relationship — call it out here one more time.
--->
-
----
-
-# Questions
-
-What is on your mind?
-
-Project 0 setup is due at 11:59 PM tonight.
-No class Monday (Labor Day).
-We resume Wednesday with functional dependencies.
-
-<!--
-Common questions to expect: "Why didn't we use surrogate keys everywhere?" (philosophy answer: natural keys carry meaning; pragmatic answer: surrogate keys are often cleaner, but both are correct). "Does PostgreSQL enforce all the FKs we declared?" (yes, unless DEFERRABLE INITIALLY DEFERRED). "Can the verify script run on Windows?" (the verify script is OS-agnostic; the install path differs but the checks are the same).
--->
