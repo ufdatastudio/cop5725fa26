@@ -582,6 +582,19 @@ const translation = {
     diamond(270, 520, 'member of', { step: 1, w: 130, h: 56 }),
     line(228, 105, 148, 172, { step: 1 }),
     attr(120, 190, 'grade', { step: 1, rx: 46, ry: 20 }),
+    // Keys, matching the Rule 2 figure: underlined keys, dashed partial keys on Section.
+    line(110, 58, 110, 46, { step: 1 }),
+    attr(110, 26, 'student_id', { step: 1, kind: 'key', rx: 58, ry: 20 }),
+    line(490, 72, 512, 62, { step: 1 }),
+    attr(578, 56, 'section_num', { step: 1, kind: 'partial', rx: 66, ry: 22 }),
+    line(490, 90, 530, 112, { step: 1 }),
+    attr(576, 118, 'term', { step: 1, kind: 'partial', rx: 46, ry: 21 }),
+    line(490, 330, 514, 330, { step: 1 }),
+    attr(576, 330, 'course_id', { step: 1, kind: 'key', rx: 62, ry: 22 }),
+    line(610, 472, 610, 500, { step: 1 }),
+    attr(610, 520, 'dname', { step: 1, kind: 'key', rx: 46, ry: 20 }),
+    line(90, 352, 66, 380, { step: 1 }),
+    attr(56, 400, 'fid', { step: 1, kind: 'key', rx: 34, ry: 20 }),
     // Frame highlights.
     halo(40, 48, 140, 64, { step: 1, until: 1 }),   // Student
     halo(360, 298, 140, 64, { step: 1, until: 1 }), // Course

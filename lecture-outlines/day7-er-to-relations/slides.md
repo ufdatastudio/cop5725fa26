@@ -332,17 +332,24 @@ This is the workhorse rule. Most relationships in real schemas are 1:N, and most
 
 ```mermaid
 graph LR
-  S["Student"] -- "M" --- E{"enrolls in"}
+  SID(("<u>student_id</u>")) --- S["Student"]
+  S -- "M" --- E{"enrolls in"}
   E -- "N" --- Sec["<span class='weak-inner'>Section</span>"]
   E --- G(("grade"))
+  Sec --- SN(("<span class='partial-key'>section_num</span>"))
+  Sec --- T(("<span class='partial-key'>term</span>"))
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
   classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+  classDef key fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
+  classDef partkey fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray:6 4
   class S entity
   class Sec weak
   class E rel
   class G attr
+  class SID key
+  class SN,T partkey
 ```
 
 </div>
@@ -465,7 +472,7 @@ CREATE TABLE faculty (
 ```
 
 Pro: no NULLs.
-Con: queries over "all people" need UNION.
+Con: all-people queries need UNION.
 
 </div>
 <div>
@@ -518,17 +525,27 @@ graph LR
   F -- "1" --- T{"teaches"}
   T -- "N" --- Sec
   E --- G(("grade"))
+  SID(("<u>student_id</u>")) --- S
+  Sec --- SN(("<span class='partial-key'>section_num</span>"))
+  Sec --- TM(("<span class='partial-key'>term</span>"))
+  C --- CID(("<u>course_id</u>"))
+  D --- DN(("<u>dname</u>"))
+  FID(("<u>fid</u>")) --- F
   classDef entity fill:#e3f2fd,stroke:#1976d2,stroke-width:3px,color:#0d47a1
   classDef weak fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#b71c1c
   classDef rel fill:#fff9c4,stroke:#f57f17,stroke-width:3px,color:#e65100
   classDef attr fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+  classDef key fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
+  classDef partkey fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray:6 4
   class S,C,F,D entity
   class Sec weak
   class E,O,B,M,T rel
   class G attr
+  class SID,CID,DN,FID key
+  class SN,TM partkey
 ```
 
-We translate each construct in turn.
+Keys are underlined; the dashed ovals on Section are its partial key. We translate each construct in turn.
 
 ---
 
@@ -726,18 +743,13 @@ The colors trace provenance: enrollment stores nothing of its own except grade. 
 
 ```sql
 -- Total participation: every course must have a department
-ALTER TABLE course
-  ALTER COLUMN dname SET NOT NULL;
-
-ALTER TABLE faculty
-  ALTER COLUMN dname SET NOT NULL;
-
+ALTER TABLE course  ALTER COLUMN dname SET NOT NULL;
+ALTER TABLE faculty ALTER COLUMN dname SET NOT NULL;
 -- Some grades only
 ALTER TABLE enrollment
   ADD CONSTRAINT valid_grade
   CHECK (grade IS NULL OR grade IN ('A', 'A-', 'B+', 'B', 'B-',
                                     'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'));
-
 -- Indexes on frequent join columns
 CREATE INDEX idx_section_fid     ON section (fid);
 CREATE INDEX idx_enrollment_student_id  ON enrollment (student_id);
@@ -751,7 +763,7 @@ Indexes are a Week 9 topic, mentioned in passing here.
 
 # The Full Schema
 
-<div class="columns small">
+<div class="columns" style="font-size:0.78em">
 <div>
 
 ```sql
@@ -762,15 +774,19 @@ CREATE TABLE department (
 CREATE TABLE student (
   student_id bigint PRIMARY KEY,
   name text NOT NULL,
-  gpa numeric(3,2)
-    CHECK (gpa BETWEEN 0 AND 4.0)
+  gpa numeric(3,2) CHECK (gpa BETWEEN 0 AND 4.0)
 );
 CREATE TABLE faculty (
   fid bigint PRIMARY KEY,
   name text NOT NULL,
   salary numeric(12,2),
-  dname text NOT NULL
-    REFERENCES department(dname)
+  dname text NOT NULL REFERENCES department(dname)
+);
+CREATE TABLE course (
+  course_id text PRIMARY KEY,
+  title text NOT NULL,
+  credits int NOT NULL CHECK (credits BETWEEN 1 AND 6),
+  dname text NOT NULL REFERENCES department(dname)
 );
 ```
 
@@ -778,14 +794,6 @@ CREATE TABLE faculty (
 <div>
 
 ```sql
-CREATE TABLE course (
-  course_id text PRIMARY KEY,
-  title text NOT NULL,
-  credits int NOT NULL
-    CHECK (credits BETWEEN 1 AND 6),
-  dname text NOT NULL
-    REFERENCES department(dname)
-);
 CREATE TABLE section (
   course_id text REFERENCES course(course_id),
   section_num int NOT NULL,
@@ -798,8 +806,7 @@ CREATE TABLE enrollment (
   student_id bigint REFERENCES student(student_id),
   course_id text, section_num int, term text,
   grade char(2),
-  PRIMARY KEY (student_id, course_id,
-               section_num, term),
+  PRIMARY KEY (student_id, course_id, section_num, term),
   FOREIGN KEY (course_id, section_num, term)
     REFERENCES section(course_id, section_num, term)
 );
